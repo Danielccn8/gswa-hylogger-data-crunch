@@ -1,0 +1,109 @@
+# HyLogger Platform
+
+Interactive map of every NVCL HyLogger-scanned drill hole in Western Australia.
+PostGIS + FastAPI + Leaflet.
+
+![stack](https://img.shields.io/badge/stack-PostGIS%20%7C%20FastAPI%20%7C%20Leaflet-blue)
+
+---
+
+## Quick start
+
+You need **Docker Desktop** (running) and **Python 3.11+**.
+
+```bash
+pip install -r requirements.txt
+```
+
+```bash
+docker compose up -d
+```
+
+```bash
+python ../data_view/build_hole_index.py
+```
+
+```bash
+python etl/load_holes.py
+```
+
+```bash
+uvicorn backend.main:app --reload --port 8000
+```
+
+Open <http://localhost:8000>. API docs are at <http://localhost:8000/docs>.
+
+To stop the database: `docker compose down` (add `-v` to also delete the data).
+
+---
+
+## How it fits together
+
+```
+GSWA NVCL API  ──►  build_hole_index.py  ──►  wa_holes.csv
+                                                   │
+                                                   ▼
+                                            etl/load_holes.py
+                                                   │
+                                                   ▼
+                            PostgreSQL + PostGIS  (hole, hole_interval, hole_feature)
+                                                   │
+                                                   ▼
+                                     backend/main.py  (FastAPI, read-only)
+                                                   │
+                                                   ▼
+                                    frontend/index.html  (Leaflet)
+```
+
+**The rule this design exists to enforce:** the API only reads precomputed tables. It never runs
+a model and never calls GSWA. Every request is an indexed query — single-digit milliseconds — and
+a demo cannot fail because the venue wifi died.
+
+---
+
+## Layout
+
+| Path | What |
+|---|---|
+| `docker-compose.yml` | PostGIS 16-3.4 on host port **5433** |
+| `db/schema.sql` | Tables, indexes, comments. Applied automatically on first start. |
+| `etl/load_holes.py` | `wa_holes.csv` → `hole` table. Idempotent (upsert). |
+| `backend/main.py` | FastAPI. GeoJSON endpoints + the map page. |
+| `frontend/index.html` | Leaflet map, marker clustering, filters. No build step. |
+
+## Endpoints
+
+| Endpoint | Purpose |
+|---|---|
+| `GET /api/health` | Is the DB reachable, and how many holes are loaded |
+| `GET /api/stats` | Headline numbers for the UI |
+| `GET /api/filters` | Distinct values so the front-end hardcodes nothing |
+| `GET /api/holes` | GeoJSON FeatureCollection, filterable |
+| `GET /api/holes/{id}` | One hole plus its depth intervals |
+
+`/api/holes` accepts `min_length`, `max_length`, `project`, `operator`,
+`include_invalid_length`, and `near_lat` + `near_lon` + `radius_km` for spatial search.
+
+---
+
+## Data notes you will trip over
+
+These are measured facts about GSWA's data, not hypotheticals.
+
+- **Hole `YGD4` reports a length of −115,224 m.** Corrupt at source. We load it, flag it with
+  `length_is_valid = false`, and exclude it from sums — we do not silently drop or "fix" the
+  client's data.
+- **`drilling_method` is constant.** All 1,897 holes say `Diamond Core`, so it is useless as a
+  filter. The UI reports this instead of offering a dropdown that always returns everything.
+- **Not all holes are mineral exploration.** `Petrel 1-7` and `Tern 3-5` are offshore petroleum
+  wells in the Timor Sea, ~1,300 km north of the nearest mineral hole. Decide explicitly whether
+  they are in scope.
+- **`ST_MakePoint` takes (lon, lat)**, in that order. Swap them and every hole lands off the coast
+  of Somalia. `etl/load_holes.py` has a comment where it matters.
+- **The catalog spreadsheet and the live API disagree** — 1,951 vs 1,897 holes, with a few hundred
+  unique to each. Unresolved; a question for GSWA.
+
+## What is not built yet
+
+`hole_interval` and `hole_feature` exist in the schema but are empty. Filling them is Phase 1 and
+Phase 2 — see `Architectural Proposal` in the team's notes.

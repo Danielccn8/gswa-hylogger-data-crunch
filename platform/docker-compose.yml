@@ -1,0 +1,29 @@
+# The database. One command brings it up:
+#
+#     docker compose up -d
+#
+# Everyone on the team gets an identical Postgres + PostGIS, on any OS.
+# That is the whole point: when GSWA adopts this, they run the same command.
+services:
+  db:
+    image: postgis/postgis:16-3.4
+    container_name: hylogger_db
+    environment:
+      POSTGRES_USER: hylogger
+      POSTGRES_PASSWORD: hylogger
+      POSTGRES_DB: hylogger
+    ports:
+      # host:container — 5433 on the host so it cannot clash with a local Postgres
+      - "5433:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+      # Anything in this folder runs automatically the first time the DB is created
+      - ./db/schema.sql:/docker-entrypoint-initdb.d/01_schema.sql:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U hylogger -d hylogger"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+
+volumes:
+  pgdata:

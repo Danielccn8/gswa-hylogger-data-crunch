@@ -1,0 +1,48 @@
+# ---------------------------------------------------------------------------
+# CLIENT DATA — never commit
+# ---------------------------------------------------------------------------
+# GSWA drill-core packages. ~940 MB and growing, and it is the client's data.
+# Anyone can regenerate it: download a zip from the NVCL THREDDS catalog.
+data/
+*.zip
+
+# Raw HyLogger / spectral formats
+*.tsg
+*.bip
+*.cal
+*.dat
+*.npz
+
+# Material the client sent marked [SEC=OFFICIAL], plus course slides.
+# Keep these out of version control entirely.
+RE_ GSWA HyLogger Capstone*/
+*.pdf
+*.docx
+
+# ---------------------------------------------------------------------------
+# GENERATED — regenerable, so not worth versioning
+# ---------------------------------------------------------------------------
+# Rebuild with:  python data_view/build_hole_index.py
+data_view/outputs/
+*.csv
+
+# ---------------------------------------------------------------------------
+# Python
+# ---------------------------------------------------------------------------
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+env/
+.ipynb_checkpoints/
+.pytest_cache/
+
+# ---------------------------------------------------------------------------
+# Local config & editors
+# ---------------------------------------------------------------------------
+.env
+.env.local
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db

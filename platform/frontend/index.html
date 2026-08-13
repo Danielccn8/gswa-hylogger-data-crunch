@@ -1,0 +1,213 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>GSWA HyLogger — WA drill holes</title>
+
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+<link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.css">
+<link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.Default.css">
+
+<style>
+  :root {
+    --bg: #0f1419; --panel: #1a2028; --line: #2a323d;
+    --text: #e6edf3; --muted: #8b98a8; --accent: #4c9aff; --warn: #e0913a;
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; font: 14px/1.5 system-ui, -apple-system, Segoe UI, sans-serif;
+         background: var(--bg); color: var(--text); height: 100vh;
+         display: grid; grid-template-columns: 320px 1fr; }
+  @media (max-width: 800px) { body { grid-template-columns: 1fr; grid-template-rows: auto 1fr; } }
+
+  aside { background: var(--panel); border-right: 1px solid var(--line);
+          padding: 18px; overflow-y: auto; }
+  h1 { font-size: 17px; margin: 0 0 2px; }
+  .sub { color: var(--muted); font-size: 12px; margin-bottom: 18px; }
+
+  fieldset { border: 1px solid var(--line); border-radius: 8px; padding: 12px;
+             margin: 0 0 14px; }
+  legend { color: var(--muted); font-size: 11px; text-transform: uppercase;
+           letter-spacing: .06em; padding: 0 5px; }
+  label { display: block; font-size: 12px; color: var(--muted); margin: 9px 0 3px; }
+  input, select { width: 100%; background: #0d1117; color: var(--text);
+                  border: 1px solid var(--line); border-radius: 6px;
+                  padding: 7px 8px; font: inherit; }
+  .row { display: flex; gap: 8px; }
+  .check { display: flex; align-items: center; gap: 7px; margin-top: 11px;
+           font-size: 12px; color: var(--text); }
+  .check input { width: auto; }
+
+  .stats { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 16px; }
+  .stat { background: #0d1117; border: 1px solid var(--line);
+          border-radius: 8px; padding: 9px 11px; }
+  .stat b { display: block; font-size: 19px; font-variant-numeric: tabular-nums; }
+  .stat span { font-size: 10px; color: var(--muted); text-transform: uppercase;
+               letter-spacing: .05em; }
+
+  #map { height: 100vh; }
+  @media (max-width: 800px) { #map { height: 60vh; } }
+
+  .note { font-size: 11px; color: var(--muted); border-left: 2px solid var(--warn);
+          padding-left: 9px; margin-top: 14px; }
+  button { width: 100%; background: var(--accent); color: #04121f; border: 0;
+           border-radius: 6px; padding: 9px; font: 600 13px system-ui;
+           cursor: pointer; margin-top: 6px; }
+  button.ghost { background: transparent; color: var(--muted);
+                 border: 1px solid var(--line); }
+  .leaflet-popup-content-wrapper { background: var(--panel); color: var(--text); }
+  .leaflet-popup-tip { background: var(--panel); }
+  .pop b { color: var(--accent); }
+  .pop table { border-collapse: collapse; margin-top: 6px; }
+  .pop td { padding: 1px 9px 1px 0; font-size: 12px; }
+  .pop td:first-child { color: var(--muted); }
+</style>
+</head>
+<body>
+
+<aside>
+  <h1>HyLogger holes</h1>
+  <div class="sub">Every NVCL-scanned drill hole in Western Australia</div>
+
+  <div class="stats">
+    <div class="stat"><b id="s-shown">–</b><span>shown</span></div>
+    <div class="stat"><b id="s-total">–</b><span>total holes</span></div>
+    <div class="stat"><b id="s-metres">–</b><span>metres drilled</span></div>
+    <div class="stat"><b id="s-ops">–</b><span>operators</span></div>
+  </div>
+
+  <fieldset>
+    <legend>Filters</legend>
+
+    <label>Hole length (m)</label>
+    <div class="row">
+      <input type="number" id="min-len" placeholder="min">
+      <input type="number" id="max-len" placeholder="max">
+    </div>
+
+    <label>Project</label>
+    <select id="project"><option value="">any</option></select>
+
+    <label>Operator contains</label>
+    <input type="text" id="operator" placeholder="e.g. BHP">
+
+    <div class="check">
+      <input type="checkbox" id="invalid" checked>
+      <label for="invalid" style="margin:0">Keep holes with unusable length</label>
+    </div>
+
+    <button id="apply">Apply</button>
+    <button id="reset" class="ghost">Reset</button>
+  </fieldset>
+
+  <div class="note" id="note"></div>
+  <div class="note" id="constant-note"></div>
+</aside>
+
+<div id="map"></div>
+
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script src="https://unpkg.com/leaflet.markercluster@1.5.3/dist/leaflet.markercluster.js"></script>
+<script>
+// Western Australia, roughly centred.
+const map = L.map('map').setView([-26.0, 121.0], 5);
+
+L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
+  attribution: '&copy; OpenStreetMap, &copy; CARTO',
+  maxZoom: 19
+}).addTo(map);
+
+// 1,897 individual pins would be unreadable and slow. Clustering keeps it
+// legible at every zoom and is the single biggest usability win on this map.
+const cluster = L.markerClusterGroup({
+  chunkedLoading: true,
+  maxClusterRadius: 45,
+  spiderfyOnMaxZoom: true
+});
+map.addLayer(cluster);
+
+const $ = id => document.getElementById(id);
+const fmt = n => (n == null ? '–' : Number(n).toLocaleString());
+
+async function loadFilters() {
+  const f = await (await fetch('/api/filters')).json();
+
+  // Only offer filters that can actually distinguish holes. GSWA records
+  // drilling_method = 'Diamond Core' for every hole, so it is shown as a fact
+  // rather than a dropdown that always returns everything.
+  for (const p of f.projects) {
+    const o = document.createElement('option');
+    o.value = p.value;
+    o.textContent = `${p.value} (${p.n})`;
+    $('project').appendChild(o);
+  }
+
+  if (f.drilling_method_is_constant && f.drilling_methods.length) {
+    $('constant-note').textContent =
+      `All ${fmt(f.drilling_methods[0].n)} holes are recorded as ` +
+      `"${f.drilling_methods[0].value}" — not a useful filter.`;
+  }
+}
+
+async function loadStats() {
+  const s = await (await fetch('/api/stats')).json();
+  $('s-total').textContent  = fmt(s.holes);
+  $('s-metres').textContent = fmt(Math.round(s.total_metres));
+  $('s-ops').textContent    = fmt(s.operators);
+  if (s.holes_bad_length > 0) {
+    $('note').textContent =
+      `${s.holes_bad_length} hole(s) report a missing or impossible length ` +
+      `(one says -115,224 m). They are kept and flagged, not silently dropped.`;
+  }
+}
+
+function popup(p) {
+  const bad = !p.length_is_valid;
+  return `<div class="pop"><b>${p.hole_id}</b><table>
+    <tr><td>Length</td><td>${bad
+        ? `<span style="color:var(--warn)">${fmt(p.length_m)} m — invalid</span>`
+        : fmt(p.length_m) + ' m'}</td></tr>
+    <tr><td>Method</td><td>${p.drilling_method ?? '–'}</td></tr>
+    <tr><td>Operator</td><td>${p.operator ?? '–'}</td></tr>
+    <tr><td>Project</td><td>${p.project ?? '–'}</td></tr>
+  </table></div>`;
+}
+
+async function loadHoles() {
+  const q = new URLSearchParams();
+  if ($('min-len').value) q.set('min_length', $('min-len').value);
+  if ($('max-len').value) q.set('max_length', $('max-len').value);
+  if ($('project').value)  q.set('project', $('project').value);
+  if ($('operator').value) q.set('operator', $('operator').value);
+  q.set('include_invalid_length', $('invalid').checked);
+
+  const geo = await (await fetch('/api/holes?' + q)).json();
+
+  cluster.clearLayers();
+  const markers = geo.features.map(f => {
+    const [lon, lat] = f.geometry.coordinates;
+    const p = f.properties;
+    return L.circleMarker([lat, lon], {
+      radius: 5,
+      color: p.length_is_valid ? '#4c9aff' : '#e0913a',
+      weight: 1, fillOpacity: 0.75
+    }).bindPopup(popup(p));
+  });
+  cluster.addLayers(markers);
+  $('s-shown').textContent = fmt(geo.count);
+}
+
+$('apply').onclick = loadHoles;
+$('reset').onclick = () => {
+  ['min-len', 'max-len', 'operator'].forEach(id => $(id).value = '');
+  $('project').value = '';
+  $('invalid').checked = true;
+  loadHoles();
+};
+
+loadFilters();
+loadStats();
+loadHoles();
+</script>
+</body>
+</html>
