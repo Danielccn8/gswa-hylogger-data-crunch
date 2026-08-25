@@ -41,9 +41,9 @@ Python 3.11, 3.12, 3.13, or 3.14 is supported.
 The repository includes `uv.lock`. If [uv](https://docs.astral.sh/uv/) is installed, the shortest reproducible setup is:
 
 ```powershell
-uv sync --extra analysis --extra dev
-uv run hylogger init
-uv run hylogger doctor --online
+uv sync --extra analysis --extra dev  # Create the environment and install analysis/development dependencies
+uv run hylogger init  # Create the local project data and configuration folders
+uv run hylogger doctor --online  # Check the installation, configuration, and online services
 ```
 
 The standard-library `venv` setup below remains fully supported when uv is unavailable.
@@ -51,18 +51,18 @@ The standard-library `venv` setup below remains fully supported when uv is unava
 ### Windows PowerShell
 
 ```powershell
-python -m venv .venv
-.\.venv\Scripts\python.exe -m pip install --upgrade pip
-.\.venv\Scripts\python.exe -m pip install -e ".[analysis,dev]"
-.\.venv\Scripts\hylogger.exe init
-.\.venv\Scripts\hylogger.exe doctor --online
+python -m venv .venv  # Create an isolated Python environment in .venv
+.\.venv\Scripts\python.exe -m pip install --upgrade pip  # Upgrade pip inside the environment
+.\.venv\Scripts\python.exe -m pip install -e ".[analysis,dev]"  # Install this project and its analysis/development tools
+.\.venv\Scripts\hylogger.exe init  # Create the local project data and configuration folders
+.\.venv\Scripts\hylogger.exe doctor --online  # Check the installation, configuration, and online services
 ```
 
 Activate the environment if you prefer shorter commands:
 
 ```powershell
-.\.venv\Scripts\Activate.ps1
-hylogger doctor
+.\.venv\Scripts\Activate.ps1  # Activate the environment for shorter commands
+hylogger doctor  # Check the local installation and configuration
 ```
 
 If PowerShell blocks activation, keep using `.\.venv\Scripts\hylogger.exe`; activation is not required.
@@ -70,23 +70,23 @@ If PowerShell blocks activation, keep using `.\.venv\Scripts\hylogger.exe`; acti
 ### macOS or Linux
 
 ```bash
-python3 -m venv .venv
-.venv/bin/python -m pip install --upgrade pip
-.venv/bin/python -m pip install -e '.[analysis,dev]'
-.venv/bin/hylogger init
-.venv/bin/hylogger doctor --online
+python3 -m venv .venv  # Create an isolated Python environment in .venv
+.venv/bin/python -m pip install --upgrade pip  # Upgrade pip inside the environment
+.venv/bin/python -m pip install -e '.[analysis,dev]'  # Install this project and its analysis/development tools
+.venv/bin/hylogger init  # Create the local project data and configuration folders
+.venv/bin/hylogger doctor --online  # Check the installation, configuration, and online services
 ```
 
 Large datasets should normally live outside OneDrive. Copy `.env.example` to `.env` for reference and set the variable in your shell:
 
 ```powershell
-$env:HYLOGGER_DATA_DIR = "D:\HyLoggerData"
+$env:HYLOGGER_DATA_DIR = "D:\HyLoggerData"  # Store large downloads outside the repository and OneDrive
 ```
 
 The same setting can be applied to one command with `--data-dir` before the command name:
 
 ```powershell
-hylogger --data-dir D:\HyLoggerData status
+hylogger --data-dir D:\HyLoggerData status  # Use this data folder for this command and show download/preparation status
 ```
 
 ## Command quick start
@@ -94,10 +94,10 @@ hylogger --data-dir D:\HyLoggerData status
 ### 1. Build the combined catalog
 
 ```powershell
-hylogger catalog refresh
-hylogger catalog search --raw --processed --limit 20
-hylogger catalog search --operator "BHP" --raw
-hylogger catalog show 05GJD001
+hylogger catalog refresh  # Rebuild the combined processed/raw hole catalog from live sources
+hylogger catalog search --raw --processed --limit 20  # Show up to 20 holes available from both sources
+hylogger catalog search --operator "BHP" --raw  # Find BHP holes with a raw package available
+hylogger catalog show 05GJD001  # Show the complete catalog record for one hole
 ```
 
 `catalog refresh` combines the live NVCL borehole list with the NCI THREDDS raw-package catalog. It writes Parquet and CSV snapshots under `data/catalog/`.
@@ -105,8 +105,8 @@ hylogger catalog show 05GJD001
 ### 2. Preview processed TSG data
 
 ```powershell
-hylogger processed preview 05GJD001
-hylogger processed preview 05GJD001 --contains "Min1"
+hylogger processed preview 05GJD001  # List every processed dataset and scalar log for one hole
+hylogger processed preview 05GJD001 --contains "Min1"  # Show only log names containing Min1
 ```
 
 Preview does not download raw spectra. It lists datasets, log names, spectral regions, and inferred TSG processing levels:
@@ -119,9 +119,9 @@ Preview does not download raw spectra. It lists datasets, log names, spectral re
 ### 3. Create a shared pilot selection
 
 ```powershell
-hylogger selection create pilot --holes 05GJD001 --description "Initial cross-version pilot"
-hylogger selection add pilot 05KCD001 05AMD001
-hylogger selection show pilot
+hylogger selection create pilot --holes 05GJD001 --description "Initial cross-version pilot"  # Create a reusable pilot cohort
+hylogger selection add pilot 05KCD001 05AMD001  # Add two holes to the pilot cohort
+hylogger selection show pilot  # Display the pilot cohort and its hole IDs
 ```
 
 Commit `configs/selections/pilot.yaml`. Do not commit downloaded data.
@@ -129,10 +129,10 @@ Commit `configs/selections/pilot.yaml`. Do not commit downloaded data.
 ### 4. Download processed logs
 
 ```powershell
-hylogger processed fetch --selection pilot
-hylogger processed fetch 05GJD001 --profile minerals
-hylogger processed fetch 05GJD001 --all-logs
-hylogger processed fetch 05GJD001 --log "Min1 uTSAS" --log "Wt1 uTSAS"
+hylogger processed fetch --selection pilot  # All pilot holes; default clustering profile
+hylogger processed fetch 05GJD001 --profile minerals  # One hole; mineral, group, weight, and error logs
+hylogger processed fetch 05GJD001 --all-logs  # One hole; every processed scalar log
+hylogger processed fetch 05GJD001 --log "Min1 uTSAS" --log "Wt1 uTSAS"  # One hole; only these exact logs
 ```
 
 The default `clustering` profile is defined in `configs/project.toml`. Raw API responses are preserved as CSV and normalised copies are written as Parquet.
@@ -140,9 +140,9 @@ The default `clustering` profile is defined in `configs/project.toml`. Raw API r
 ### 5. Check a raw download before starting it
 
 ```powershell
-hylogger raw probe 05GJD001
-hylogger raw fetch 05GJD001 --components spectra --dry-run
-hylogger raw fetch --selection pilot --components spectra --dry-run
+hylogger raw probe 05GJD001  # Check the raw package URL, size, and resume support
+hylogger raw fetch 05GJD001 --components spectra --dry-run  # Estimate one spectral download without starting it
+hylogger raw fetch --selection pilot --components spectra --dry-run  # Estimate spectral downloads for every pilot hole
 ```
 
 Always use `--dry-run` for a large selection before downloading.
@@ -150,9 +150,9 @@ Always use `--dry-run` for a large selection before downloading.
 ### 6. Download or resume raw packages
 
 ```powershell
-hylogger raw fetch 05GJD001 --components spectra
-hylogger raw fetch --selection pilot --components spectra
-hylogger raw fetch 05GJD001 --components spectra,images,cras
+hylogger raw fetch 05GJD001 --components spectra  # Download one raw package and extract its spectra
+hylogger raw fetch --selection pilot --components spectra  # Download/resume spectra packages for all pilot holes
+hylogger raw fetch 05GJD001 --components spectra,images,cras  # Extract spectra, imagery, and CRAS data from one package
 ```
 
 Available components are `spectra`, `images`, `cras`, `lidar`, `docs`, `all`, and `none`. The archive itself is always downloaded in full. If interrupted, run the same command again; the `.part` file is resumed when the server supports HTTP Range.
@@ -160,23 +160,22 @@ Available components are `spectra`, `images`, `cras`, `lidar`, `docs`, `all`, an
 To register the existing team copy without duplicating it:
 
 ```powershell
-hylogger raw import "..\data\05GJD001.zip" --mode reference --components spectra
+hylogger raw import "..\data\05GJD001.zip" --mode reference --components spectra  # Register and extract spectra without copying the ZIP
 ```
 
 Use `--mode copy` only when you intentionally want another full copy under `HYLOGGER_DATA_DIR`.
 If the package is already extracted, register that directory without duplicating its contents:
 
 ```powershell
-hylogger raw import "..\data\05GJD001.zip" --mode reference `
-  --package-dir "..\data\05GJD001"
+hylogger raw import "..\data\05GJD001.zip" --mode reference --package-dir "..\data\05GJD001"  # Register an already-extracted package without copying it
 ```
 
 ### 7. Inspect a hole
 
 ```powershell
-hylogger inspect 05GJD001
-hylogger inspect 05GJD001 --report
-hylogger inspect 05GJD001 --report --open
+hylogger inspect 05GJD001  # Print a quality and availability summary for one hole
+hylogger inspect 05GJD001 --report  # Also generate an HTML inspection report
+hylogger inspect 05GJD001 --report --open  # Generate the report and open it in the browser
 ```
 
 The inspector works with processed data only, raw data only, or both. HTML reports are written to `reports/inspections/`.
@@ -184,9 +183,9 @@ The inspector works with processed data only, raw data only, or both. HTML repor
 ### 8. Prepare clustering inputs
 
 ```powershell
-hylogger prepare 05GJD001
-hylogger prepare --selection pilot
-hylogger status --selection pilot
+hylogger prepare 05GJD001  # Clean and build prepared tables/features for one hole
+hylogger prepare --selection pilot  # Prepare every hole and combine the pilot feature matrix
+hylogger status --selection pilot  # Show download and preparation status for the pilot cohort
 ```
 
 Preparation writes:
@@ -234,8 +233,8 @@ The authoritative libraries used by this project are:
 ## Tests and code quality
 
 ```powershell
-pytest
-ruff check .
+pytest  # Run the automated test suite
+ruff check .  # Check Python code style and common errors
 ```
 
 Network-dependent operations are not required for unit tests. Small fixtures simulate catalogs, scalar logs, and ZIP extraction.
