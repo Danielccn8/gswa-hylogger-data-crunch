@@ -1,0 +1,12 @@
+name: clustering_baseline
+selection: pilot
+feature_source: data/prepared/features/selection_pilot.parquet
+algorithm: kmeans
+parameters:
+  n_clusters: 5
+  random_state: 42
+  n_init: 20
+preprocessing:
+  missing_values: median
+  scaling: standard
+outputs: experiments/clustering_baseline

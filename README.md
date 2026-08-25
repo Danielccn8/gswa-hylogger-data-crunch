@@ -1,88 +1,241 @@
-# GSWA HyLogger — Data Crunch
+# GSWA HyLogger Data Crunch
 
-UWA CITS5553 Data Science Capstone · Group 7 · Client: **Geological Survey of Western Australia**
+UWA CITS5553 Data Science Capstone, Group 7. This repository provides a reproducible path from GSWA/NVCL data discovery to clustering-ready HyLogger features.
 
-Finding mineral patterns across ~1,900 hyperspectral drill-core scans spanning Western Australia,
-and making them explorable by a geoscientist in minutes rather than months.
+The primary workflow is:
 
----
+```text
+Search the catalog -> preview processed TSG logs -> select holes
+                   -> download processed logs and/or raw packages
+                   -> inspect quality -> prepare features -> run clustering
+```
+
+## What `processed` and `raw` mean
+
+| CLI term | Source | What it contains | Typical use |
+|---|---|---|---|
+| `processed` | NVCL Data Services through `nvcl-kit` | TSG-derived mineral, group, weight, error, mask, and diagnostic logs | Fast review and initial clustering |
+| `raw` | NCI THREDDS ZIP package | NIR/SWIR/TIR spectra, TSG headers, images, CRAS, lidar, and supporting files | Spectral feature engineering and validation |
+
+Processed logs are small and can be fetched individually. Raw data is published as one ZIP per hole; the downloader keeps the immutable ZIP and extracts only the requested local components.
 
 ## Repository map
 
-| Folder | What it is |
+| Path | Purpose |
 |---|---|
-| `platform/` | **The product.** PostGIS + FastAPI + Leaflet. See [platform/README.md](platform/README.md). |
-| `data_view/` | Exploration notebooks — how we worked out what the data actually is. |
-| `data/` | Downloaded drill-core packages. **Not in git** (~940 MB, and it is the client's data). |
+| `src/hylogger/` | Installable acquisition, inspection, and preparation library |
+| `configs/project.toml` | Service endpoints, download settings, and processed-log profiles |
+| `configs/selections/` | Small, version-controlled cohorts of hole IDs |
+| `data/` | Local catalog, downloads, manifests, and prepared data; ignored by Git |
+| `notebooks/` | Team analysis organised by workflow stage |
+| `experiments/` | Generated clustering runs and metrics; ignored by Git |
+| `reports/` | Generated local HTML inspection reports |
+| `tests/` | Offline fixtures, unit tests, and integration tests |
+| `platform/` | Existing FastAPI/PostGIS/Leaflet consumer of prepared outputs |
+| `docs/` | Data model, downloading, inspection, clustering, and team workflow guides |
 
-## Get running in five commands
+## Installation
 
-Requires **Docker Desktop** and **Python 3.11+**.
+Python 3.11, 3.12, 3.13, or 3.14 is supported.
 
-```bash
-pip install -r platform/requirements.txt
+The repository includes `uv.lock`. If [uv](https://docs.astral.sh/uv/) is installed, the shortest reproducible setup is:
+
+```powershell
+uv sync --extra analysis --extra dev
+uv run hylogger init
+uv run hylogger doctor --online
 ```
 
-```bash
-docker compose -f platform/docker-compose.yml up -d
+The standard-library `venv` setup below remains fully supported when uv is unavailable.
+
+### Windows PowerShell
+
+```powershell
+python -m venv .venv
+.\.venv\Scripts\python.exe -m pip install --upgrade pip
+.\.venv\Scripts\python.exe -m pip install -e ".[analysis,dev]"
+.\.venv\Scripts\hylogger.exe init
+.\.venv\Scripts\hylogger.exe doctor --online
 ```
 
-```bash
-python data_view/build_hole_index.py
+Activate the environment if you prefer shorter commands:
+
+```powershell
+.\.venv\Scripts\Activate.ps1
+hylogger doctor
 ```
 
-```bash
-python platform/etl/load_holes.py
-```
+If PowerShell blocks activation, keep using `.\.venv\Scripts\hylogger.exe`; activation is not required.
+
+### macOS or Linux
 
 ```bash
-cd platform && uvicorn backend.main:app --reload --port 8000
+python3 -m venv .venv
+.venv/bin/python -m pip install --upgrade pip
+.venv/bin/python -m pip install -e '.[analysis,dev]'
+.venv/bin/hylogger init
+.venv/bin/hylogger doctor --online
 ```
 
-Open <http://localhost:8000> — a map of every HyLogger-scanned hole in WA.
-API docs at <http://localhost:8000/docs>.
+Large datasets should normally live outside OneDrive. Copy `.env.example` to `.env` for reference and set the variable in your shell:
 
-## Understand the data first
+```powershell
+$env:HYLOGGER_DATA_DIR = "D:\HyLoggerData"
+```
 
-Start with the notebooks, in this order:
+The same setting can be applied to one command with `--data-dir` before the command name:
 
-1. **`data_view/00_look_at_one_hole.ipynb`** — point it at a downloaded `.zip` and it shows you
-   the tables and every column. Run this before anything else.
-2. **`data_view/01_explore_the_data.ipynb`** — the full reference: what each dataset is, the
-   traps, and the open questions for the client.
+```powershell
+hylogger --data-dir D:\HyLoggerData status
+```
 
-You will need a hole to look at. Grab any `.zip` from the
-[NVCL THREDDS catalog](https://thredds.nci.org.au/thredds/catalog/rs07/WA/catalog.html) and drop
-it in `data/`.
+## Command quick start
 
-## Traps that will cost you a day if you do not know them
+### 1. Build the combined catalog
 
-- **`-3.402823e+38` means "missing"** in TSG files, not `NaN`. Unhandled, every average you compute
-  is wrong and looks plausible.
-- **Only 63% of readings have a mineral.** 28.6% are masked because the scanner was looking at the
-  tray or a wooden depth block — not rock. Another 8% is real rock the software could not identify.
-- **`INVALID` and `Aspectral` are not minerals.** They mean "don't know", and they rank among the
-  most common results.
-- **Depth is not sorted.** Core is scanned in parallel rows per tray, so depth steps backwards
-  ~1,500 times per hole. Sort by depth before any window or join.
-- **NIR and TIR disagree 94% of the time — correctly.** They see different mineral families. SWIR
-  is blind to quartz; TIR reports it as the most abundant mineral in the hole.
-- **Hole `YGD4` reports a length of −115,224 m.** Corrupt at source. Flagged, not dropped.
+```powershell
+hylogger catalog refresh
+hylogger catalog search --raw --processed --limit 20
+hylogger catalog search --operator "BHP" --raw
+hylogger catalog show 05GJD001
+```
 
-## Key libraries
+`catalog refresh` combines the live NVCL borehole list with the NCI THREDDS raw-package catalog. It writes Parquet and CSV snapshots under `data/catalog/`.
 
-Both are GSWA's own, recommended by the client:
+### 2. Preview processed TSG data
 
-- [`pytsg`](https://github.com/Geological-Survey-of-Western-Australia/pytsg) — reads `.tsg`/`.bip`
-  spectral files
-- [`nvcl-kit`](https://pypi.org/project/nvcl-kit/) — queries the live NVCL services (coordinates for
-  all 1,897 holes in about a second, no download)
+```powershell
+hylogger processed preview 05GJD001
+hylogger processed preview 05GJD001 --contains "Min1"
+```
 
-## Architecture
+Preview does not download raw spectra. It lists datasets, log names, spectral regions, and inferred TSG processing levels:
 
-The design rule everything follows: **the API only reads precomputed tables.** No model runs at
-request time, no call to GSWA at request time. Batch jobs do the expensive work and write results
-to Postgres; every request is then an indexed query.
+- `L1-system`: system-generated `s*` products.
+- `L2-user`: user-refined `u*` products.
+- `L3-domain`: domain-refined `d*` products.
+- `unspecified`: logs without one of these naming markers.
 
-Full reasoning, the phased plan and the six workstreams live in the team's `Architectural Proposal`
-note.
+### 3. Create a shared pilot selection
+
+```powershell
+hylogger selection create pilot --holes 05GJD001 --description "Initial cross-version pilot"
+hylogger selection add pilot 05KCD001 05AMD001
+hylogger selection show pilot
+```
+
+Commit `configs/selections/pilot.yaml`. Do not commit downloaded data.
+
+### 4. Download processed logs
+
+```powershell
+hylogger processed fetch --selection pilot
+hylogger processed fetch 05GJD001 --profile minerals
+hylogger processed fetch 05GJD001 --all-logs
+hylogger processed fetch 05GJD001 --log "Min1 uTSAS" --log "Wt1 uTSAS"
+```
+
+The default `clustering` profile is defined in `configs/project.toml`. Raw API responses are preserved as CSV and normalised copies are written as Parquet.
+
+### 5. Check a raw download before starting it
+
+```powershell
+hylogger raw probe 05GJD001
+hylogger raw fetch 05GJD001 --components spectra --dry-run
+hylogger raw fetch --selection pilot --components spectra --dry-run
+```
+
+Always use `--dry-run` for a large selection before downloading.
+
+### 6. Download or resume raw packages
+
+```powershell
+hylogger raw fetch 05GJD001 --components spectra
+hylogger raw fetch --selection pilot --components spectra
+hylogger raw fetch 05GJD001 --components spectra,images,cras
+```
+
+Available components are `spectra`, `images`, `cras`, `lidar`, `docs`, `all`, and `none`. The archive itself is always downloaded in full. If interrupted, run the same command again; the `.part` file is resumed when the server supports HTTP Range.
+
+To register the existing team copy without duplicating it:
+
+```powershell
+hylogger raw import "..\data\05GJD001.zip" --mode reference --components spectra
+```
+
+Use `--mode copy` only when you intentionally want another full copy under `HYLOGGER_DATA_DIR`.
+If the package is already extracted, register that directory without duplicating its contents:
+
+```powershell
+hylogger raw import "..\data\05GJD001.zip" --mode reference `
+  --package-dir "..\data\05GJD001"
+```
+
+### 7. Inspect a hole
+
+```powershell
+hylogger inspect 05GJD001
+hylogger inspect 05GJD001 --report
+hylogger inspect 05GJD001 --report --open
+```
+
+The inspector works with processed data only, raw data only, or both. HTML reports are written to `reports/inspections/`.
+
+### 8. Prepare clustering inputs
+
+```powershell
+hylogger prepare 05GJD001
+hylogger prepare --selection pilot
+hylogger status --selection pilot
+```
+
+Preparation writes:
+
+- cleaned, depth-sorted sample tables to `data/prepared/samples/`;
+- compressed NIR/TIR/MIR matrices to `data/prepared/spectra/` when raw data exists;
+- one feature row per hole to `data/prepared/features/`;
+- a combined `selection_<name>.parquet` feature matrix for a selection.
+
+Start with `notebooks/30_clustering/01_baseline_clustering.ipynb` after preparing a pilot selection.
+
+## Data safety and provenance
+
+- Raw ZIP archives are immutable inputs and are never deleted automatically.
+- Partial downloads use `.part` files and remain available after interruption.
+- Completed raw downloads receive a SHA-256 checksum.
+- Download state, source URL, response metadata, paths, and errors are stored in `data/manifests/downloads.sqlite`.
+- TSG missing-value sentinels below `-1e38` are converted to missing values during preparation.
+- Sample tables are sorted by depth before windowing or clustering.
+- NIR/SWIR and TIR remain distinct spectral regions.
+
+## Recommended team workflow
+
+1. Agree on and commit one small selection YAML.
+2. Preview processed logs before downloading raw packages.
+3. Run raw downloads with `--dry-run` and check available disk space.
+4. Run `inspect` and resolve quality warnings before feature engineering.
+5. Put reusable logic in `src/hylogger/`, not in notebook cells.
+6. Keep notebooks focused on questions, plots, and decisions.
+7. Record model settings and random seeds under `configs/experiments/`.
+8. Never commit client data, generated features, or model outputs.
+
+Read [docs/TEAM_WORKFLOW.md](docs/TEAM_WORKFLOW.md) before opening the first data or modelling pull request.
+
+## Known provider behaviour
+
+The borehole catalogue and processed-log services are separate endpoints. One may remain available while the other is temporarily returning an error. Catalog snapshots and completed downloads are retained so the same command can be retried safely.
+
+The authoritative libraries used by this project are:
+
+- [AuScope nvcl-kit](https://github.com/AuScope/nvcl_kit)
+- [GSWA pytsg](https://github.com/Geological-Survey-of-Western-Australia/pytsg)
+- [NCI WA THREDDS catalog](https://thredds.nci.org.au/thredds/catalog/rs07/WA/catalog.html)
+
+## Tests and code quality
+
+```powershell
+pytest
+ruff check .
+```
+
+Network-dependent operations are not required for unit tests. Small fixtures simulate catalogs, scalar logs, and ZIP extraction.

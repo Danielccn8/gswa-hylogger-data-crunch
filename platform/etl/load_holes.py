@@ -2,30 +2,38 @@
 
     python etl/load_holes.py
 
-Reads ../data_view/outputs/wa_holes.csv (produced by build_hole_index.py) and
-upserts it into the `hole` table. Safe to run repeatedly.
+Reads data/catalog/catalog.csv (produced by `hylogger catalog refresh`) and
+upserts NVCL holes into the `hole` table. Safe to run repeatedly.
 
 This is the ETL layer. It is the ONLY place that talks to the outside world.
 The API never calls GSWA — it only reads what this script wrote.
 """
+
 import os
 import sys
 from pathlib import Path
 
 import pandas as pd
 import psycopg
-from psycopg import sql
 
 DATABASE_URL = os.environ.get(
     "DATABASE_URL", "postgresql://hylogger:hylogger@localhost:5433/hylogger"
 )
 
 HERE = Path(__file__).resolve().parent
-DEFAULT_CSV = HERE.parent.parent / "data_view" / "outputs" / "wa_holes.csv"
+REPO_ROOT = HERE.parent.parent
+DATA_ROOT = Path(os.environ.get("HYLOGGER_DATA_DIR", REPO_ROOT / "data"))
+DEFAULT_CSV = DATA_ROOT / "catalog" / "catalog.csv"
 
 
 def load_csv(path: Path) -> pd.DataFrame:
     df = pd.read_csv(path)
+
+    # The combined catalog includes raw-only packages. The platform map needs
+    # coordinates, so retain the NVCL side of the outer join here.
+    if "nvcl_available" in df:
+        available = df["nvcl_available"].astype(str).str.lower().isin({"true", "1", "yes"})
+        df = df[available].copy()
 
     required = {"hole_id", "lat", "lon"}
     missing = required - set(df.columns)
@@ -58,11 +66,16 @@ def load_csv(path: Path) -> pd.DataFrame:
 def upsert(df: pd.DataFrame, conn) -> None:
     rows = [
         (
-            r.hole_id, float(r.lat), float(r.lon),
+            r.hole_id,
+            float(r.lat),
+            float(r.lon),
             None if pd.isna(r.length_m) else float(r.length_m),
             bool(r.length_is_valid),
-            _clean(r.drilling_method), _clean(r.operator),
-            _clean(r.project), _clean(r.tenement), _clean(r.drillStartDate),
+            _clean(r.drilling_method),
+            _clean(r.operator),
+            _clean(r.project),
+            _clean(r.tenement),
+            _clean(r.drillStartDate),
         )
         for r in df.itertuples()
     ]
@@ -106,10 +119,7 @@ def _clean(value):
 def main() -> None:
     csv_path = Path(sys.argv[1]) if len(sys.argv) > 1 else DEFAULT_CSV
     if not csv_path.exists():
-        raise SystemExit(
-            f"{csv_path} not found.\n"
-            "Run this first:  python ../data_view/build_hole_index.py"
-        )
+        raise SystemExit(f"{csv_path} not found.\nRun this first:  hylogger catalog refresh")
 
     print(f"Reading {csv_path}")
     df = load_csv(csv_path)

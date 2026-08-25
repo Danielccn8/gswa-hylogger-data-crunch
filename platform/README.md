@@ -11,8 +11,10 @@ PostGIS + FastAPI + Leaflet.
 
 You need **Docker Desktop** (running) and **Python 3.11+**.
 
+From the repository root:
+
 ```bash
-pip install -r requirements.txt
+python -m pip install -e ".[platform]"
 ```
 
 ```bash
@@ -20,7 +22,7 @@ docker compose up -d
 ```
 
 ```bash
-python ../data_view/build_hole_index.py
+hylogger catalog refresh
 ```
 
 ```bash
@@ -40,10 +42,10 @@ To stop the database: `docker compose down` (add `-v` to also delete the data).
 ## How it fits together
 
 ```
-GSWA NVCL API  ──►  build_hole_index.py  ──►  wa_holes.csv
-                                                   │
-                                                   ▼
-                                            etl/load_holes.py
+NVCL API + THREDDS  ──►  hylogger catalog refresh  ──►  data/catalog/catalog.csv
+                                                               │
+                                                               ▼
+                                                        etl/load_holes.py
                                                    │
                                                    ▼
                             PostgreSQL + PostGIS  (hole, hole_interval, hole_feature)
@@ -67,7 +69,7 @@ a demo cannot fail because the venue wifi died.
 |---|---|
 | `docker-compose.yml` | PostGIS 16-3.4 on host port **5433** |
 | `db/schema.sql` | Tables, indexes, comments. Applied automatically on first start. |
-| `etl/load_holes.py` | `wa_holes.csv` → `hole` table. Idempotent (upsert). |
+| `etl/load_holes.py` | Combined local catalog → `hole` table. Idempotent (upsert). |
 | `backend/main.py` | FastAPI. GeoJSON endpoints + the map page. |
 | `frontend/index.html` | Leaflet map, marker clustering, filters. No build step. |
 
