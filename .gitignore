@@ -4,7 +4,11 @@
 # GSWA drill-core packages. ~940 MB and growing, and it is the client's data.
 # Anyone can regenerate it: download a zip from the NVCL THREDDS catalog.
 data/
+!data/
+data/*
+!data/README.md
 *.zip
+*.zip.part
 
 # Raw HyLogger / spectral formats
 *.tsg
@@ -25,6 +29,12 @@ RE_ GSWA HyLogger Capstone*/
 # Rebuild with:  python data_view/build_hole_index.py
 data_view/outputs/
 *.csv
+!tests/fixtures/*.csv
+
+# Generated local reports and model runs
+reports/inspections/*.html
+experiments/*/
+!experiments/README.md
 
 # ---------------------------------------------------------------------------
 # Python
@@ -36,6 +46,9 @@ venv/
 env/
 .ipynb_checkpoints/
 .pytest_cache/
+.ruff_cache/
+.coverage
+htmlcov/
 
 # ---------------------------------------------------------------------------
 # Local config & editors

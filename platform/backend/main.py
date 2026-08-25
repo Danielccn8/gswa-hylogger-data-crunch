@@ -14,6 +14,7 @@ The rule this file exists to enforce: the API only READS precomputed tables.
 No model runs here, no call to GSWA. That is what keeps responses in
 milliseconds and demos safe when the venue wifi dies.
 """
+
 import os
 from contextlib import contextmanager
 from pathlib import Path
@@ -50,7 +51,7 @@ def health():
             cur.execute("SELECT count(*) AS n FROM hole")
             return {"status": "ok", "holes": cur.fetchone()["n"]}
     except Exception as exc:
-        raise HTTPException(503, f"database unavailable: {exc}")
+        raise HTTPException(503, f"database unavailable: {exc}") from exc
 
 
 @app.get("/api/stats")
@@ -81,8 +82,7 @@ def filters():
     """
     with db() as conn, conn.cursor() as cur:
         cur.execute(
-            "SELECT drilling_method AS value, count(*) AS n FROM hole "
-            "GROUP BY 1 ORDER BY n DESC"
+            "SELECT drilling_method AS value, count(*) AS n FROM hole GROUP BY 1 ORDER BY n DESC"
         )
         methods = cur.fetchall()
 
@@ -99,8 +99,7 @@ def filters():
         operators = cur.fetchall()
 
         cur.execute(
-            "SELECT min(length_m) AS min, max(length_m) AS max FROM hole "
-            "WHERE length_is_valid"
+            "SELECT min(length_m) AS min, max(length_m) AS max FROM hole WHERE length_is_valid"
         )
         length = cur.fetchone()
 
@@ -162,9 +161,7 @@ def holes(
 
     if near_lat is not None and near_lon is not None and radius_km:
         # Indexed spatial query — this is what PostGIS is here for.
-        where.append(
-            "ST_DWithin(geom, ST_SetSRID(ST_MakePoint(%s, %s), 4326)::geography, %s)"
-        )
+        where.append("ST_DWithin(geom, ST_SetSRID(ST_MakePoint(%s, %s), 4326)::geography, %s)")
         params.extend([near_lon, near_lat, radius_km * 1000])
 
     params.append(limit)
@@ -175,7 +172,7 @@ def holes(
             SELECT hole_id, lat, lon, length_m, length_is_valid,
                    drilling_method, operator, project
             FROM hole
-            WHERE {' AND '.join(where)}
+            WHERE {" AND ".join(where)}
             ORDER BY hole_id
             LIMIT %s
             """,

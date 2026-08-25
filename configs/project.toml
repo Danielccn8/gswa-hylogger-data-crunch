@@ -1,0 +1,36 @@
+[project]
+name = "GSWA HyLogger Data Crunch"
+default_data_dir = "data"
+
+[services]
+nvcl_provider = "wa"
+raw_catalog_url = "https://thredds.nci.org.au/thredds/catalog/rs07/WA/catalog.xml"
+raw_file_base_url = "https://thredds.nci.org.au/thredds/fileServer/"
+request_timeout_seconds = 120
+retries = 4
+
+[processed.profiles.clustering]
+description = "Mineralogy, weights, masks, errors, and diagnostic logs used by the clustering workflow."
+patterns = [
+  "Min* *TSA*",
+  "Grp* *TSA*",
+  "Wt* *TSA*",
+  "Error *TSA*",
+  "SNR *TSA*",
+  "Final Mask",
+  "HyLogDiag",
+  "Albedo",
+  "Bound_Water *TSA*",
+  "Unbound_Water *TSA*",
+  "w2200",
+  "w2250",
+]
+
+[processed.profiles.minerals]
+description = "Compact mineral, group, weight, and error logs for rapid review."
+patterns = ["Min* *TSA*", "Grp* *TSA*", "Wt* *TSA*", "Error *TSA*"]
+
+[raw]
+default_components = ["spectra"]
+chunk_size_bytes = 8388608
+minimum_free_space_bytes = 2147483648
