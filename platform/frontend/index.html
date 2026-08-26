@@ -57,10 +57,25 @@
                  border: 1px solid var(--line); }
   .leaflet-popup-content-wrapper { background: var(--panel); color: var(--text); }
   .leaflet-popup-tip { background: var(--panel); }
-  .pop b { color: var(--accent); }
-  .pop table { border-collapse: collapse; margin-top: 6px; }
+  .pop { min-width: 210px; }
+  .pop table { border-collapse: collapse; margin-top: 8px; }
   .pop td { padding: 1px 9px 1px 0; font-size: 12px; }
   .pop td:first-child { color: var(--muted); }
+
+  /* The hole ID is the key every other tool in the toolkit takes, so it is
+     labelled and copyable rather than a bare heading you retype by eye. */
+  .pop-id-label { font-size: 10px; color: var(--muted); text-transform: uppercase;
+                  letter-spacing: .05em; }
+  .pop-id-row { display: flex; align-items: center; gap: 8px; margin-top: 3px; }
+  .pop-id-row code { font: 600 14px ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+                     color: var(--accent); background: #0d1117;
+                     border: 1px solid var(--line); border-radius: 5px;
+                     padding: 3px 7px; user-select: all; }
+  .copy-id { width: auto; flex: none; margin: 0; padding: 4px 9px;
+             font: 600 11px system-ui; background: transparent; color: var(--muted);
+             border: 1px solid var(--line); border-radius: 5px; cursor: pointer; }
+  .copy-id:hover { color: var(--text); border-color: var(--accent); }
+  .copy-id.done { color: #6cc48b; border-color: #6cc48b; }
 </style>
 </head>
 <body>
@@ -161,9 +176,20 @@ async function loadStats() {
   }
 }
 
+// hole_id can carry spaces, and is injected into an attribute below.
+const esc = s => String(s ?? '').replace(/[&<>"']/g,
+  c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+
 function popup(p) {
   const bad = !p.length_is_valid;
-  return `<div class="pop"><b>${p.hole_id}</b><table>
+  const id = esc(p.hole_id);
+  return `<div class="pop">
+    <span class="pop-id-label">Hole ID</span>
+    <div class="pop-id-row">
+      <code>${id}</code>
+      <button class="copy-id" data-id="${id}" title="Copy hole ID">Copy</button>
+    </div>
+    <table>
     <tr><td>Length</td><td>${bad
         ? `<span style="color:var(--warn)">${fmt(p.length_m)} m — invalid</span>`
         : fmt(p.length_m) + ' m'}</td></tr>
@@ -196,6 +222,31 @@ async function loadHoles() {
   cluster.addLayers(markers);
   $('s-shown').textContent = fmt(geo.count);
 }
+
+// Delegated: Leaflet builds popup markup on open, so there is no button to
+// bind to up front. Copies the ID exactly as stored — it is a database key.
+document.addEventListener('click', async ev => {
+  const btn = ev.target.closest('.copy-id');
+  if (!btn) return;
+  const id = btn.dataset.id;
+  let ok = true;
+  try {
+    await navigator.clipboard.writeText(id);
+  } catch {
+    // navigator.clipboard needs a secure context; localhost qualifies, but a
+    // plain-http deployment would not. Fall back rather than fail silently.
+    const ta = document.createElement('textarea');
+    ta.value = id;
+    ta.style.cssText = 'position:fixed;opacity:0';
+    document.body.appendChild(ta);
+    ta.select();
+    try { ok = document.execCommand('copy'); } catch { ok = false; }
+    ta.remove();
+  }
+  btn.textContent = ok ? 'Copied' : 'Ctrl+C';
+  btn.classList.toggle('done', ok);
+  setTimeout(() => { btn.textContent = 'Copy'; btn.classList.remove('done'); }, 1400);
+});
 
 $('apply').onclick = loadHoles;
 $('reset').onclick = () => {

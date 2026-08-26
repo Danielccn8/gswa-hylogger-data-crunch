@@ -72,11 +72,11 @@ def describe_log(log: object) -> dict[str, Any]:
 
 
 def processing_level(log_name: str) -> str:
-    if re.search(r"(?:^|\s)s[A-Z]", log_name):
+    if re.search(r"(?:^|\s)s(?:[A-Z]|jCLST\b)", log_name):
         return "L1-system"
-    if re.search(r"(?:^|\s)u[A-Z]", log_name):
+    if re.search(r"(?:^|\s)u(?:[A-Z]|jCLST\b)", log_name):
         return "L2-user"
-    if re.search(r"(?:^|\s)d[A-Z]", log_name):
+    if re.search(r"(?:^|\s)d(?:[A-Z]|jCLST\b)", log_name):
         return "L3-domain"
     return "unspecified"
 
@@ -87,7 +87,7 @@ def spectral_region(log_name: str) -> str:
         return "SWIR"
     if "TSAV" in upper or "VNIR" in upper:
         return "VNIR"
-    if "TSAT" in upper or "TIR" in upper:
+    if "TSAT" in upper or "JCLST" in upper or "TIR" in upper:
         return "TIR"
     if "MIR" in upper:
         return "MIR"

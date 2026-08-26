@@ -1,9 +1,35 @@
 from pathlib import Path
+from types import SimpleNamespace
 
 import pandas as pd
 
 from hylogger.manifest import Manifest
-from hylogger.processed import fetch_processed_hole, normalise_scalar_csv, select_logs
+from hylogger.processed import (
+    describe_log,
+    fetch_processed_hole,
+    normalise_scalar_csv,
+    processing_level,
+    select_logs,
+    spectral_region,
+)
+
+
+def test_jclst_logs_are_recognised_as_tir() -> None:
+    assert spectral_region("Min1 ujCLST") == "TIR"
+    assert spectral_region("Wt1 sjCLST") == "TIR"
+
+
+def test_jclst_processing_levels_are_recognised() -> None:
+    assert processing_level("Min1 sjCLST") == "L1-system"
+    assert processing_level("Min1 ujCLST") == "L2-user"
+    assert processing_level("Min1 djCLST") == "L3-domain"
+
+
+def test_describe_log_classifies_user_jclst_log() -> None:
+    result = describe_log(SimpleNamespace(log_name="Min1 ujCLST", log_type="1"))
+
+    assert result["spectral_region"] == "TIR"
+    assert result["processing_level"] == "L2-user"
 
 
 def test_normalise_scalar_csv_replaces_tsg_sentinel() -> None:

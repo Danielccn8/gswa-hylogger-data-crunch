@@ -56,7 +56,7 @@ def load_csv(path: Path) -> pd.DataFrame:
     if bad:
         print(f"  {bad} holes have a missing or invalid length — loaded and flagged")
 
-    for col in ("drilling_method", "operator", "project", "tenement", "drillStartDate"):
+    for col in ("drilling_method", "operator", "project", "tenement", "drill_start_date"):
         if col not in df:
             df[col] = None
 
@@ -75,7 +75,7 @@ def upsert(df: pd.DataFrame, conn) -> None:
             _clean(r.operator),
             _clean(r.project),
             _clean(r.tenement),
-            _clean(r.drillStartDate),
+            _clean(r.drill_start_date),
         )
         for r in df.itertuples()
     ]
@@ -109,6 +109,33 @@ def upsert(df: pd.DataFrame, conn) -> None:
     conn.commit()
 
 
+def prune(df: pd.DataFrame, conn) -> None:
+    """Delete holes that are no longer in the catalog.
+
+    Without this the table only ever grows: a hole withdrawn from the catalog
+    stays behind and inflates every count the map reports. Deletes cascade to
+    hole_interval and hole_feature, so say what is going before it goes.
+    """
+    ids = df["hole_id"].astype(str).tolist()
+
+    with conn.cursor() as cur:
+        cur.execute("SELECT hole_id FROM hole WHERE NOT (hole_id = ANY(%s))", (ids,))
+        stale = [row[0] for row in cur.fetchall()]
+        if not stale:
+            return
+
+        cur.execute("SELECT count(*) FROM hole_feature WHERE hole_id = ANY(%s)", (stale,))
+        (with_features,) = cur.fetchone()
+        if with_features:
+            print(f"  WARNING: {with_features} of them carry computed features that will be lost")
+
+        cur.execute("DELETE FROM hole WHERE hole_id = ANY(%s)", (stale,))
+        preview = ", ".join(stale[:5]) + (" ..." if len(stale) > 5 else "")
+        print(f"  removed {len(stale)} holes no longer in the catalog ({preview})")
+
+    conn.commit()
+
+
 def _clean(value):
     if value is None or (isinstance(value, float) and pd.isna(value)):
         return None
@@ -117,7 +144,11 @@ def _clean(value):
 
 
 def main() -> None:
-    csv_path = Path(sys.argv[1]) if len(sys.argv) > 1 else DEFAULT_CSV
+    # Keeping the DB in step with the catalog is the default; --no-prune opts out.
+    do_prune = "--no-prune" not in sys.argv
+    args = [a for a in sys.argv[1:] if a != "--no-prune"]
+
+    csv_path = Path(args[0]) if args else DEFAULT_CSV
     if not csv_path.exists():
         raise SystemExit(f"{csv_path} not found.\nRun this first:  hylogger catalog refresh")
 
@@ -128,6 +159,8 @@ def main() -> None:
     print(f"Connecting to {DATABASE_URL.rsplit('@', 1)[-1]}")
     with psycopg.connect(DATABASE_URL) as conn:
         upsert(df, conn)
+        if do_prune:
+            prune(df, conn)
         with conn.cursor() as cur:
             cur.execute("SELECT count(*), count(*) FILTER (WHERE length_is_valid) FROM hole")
             total, valid = cur.fetchone()

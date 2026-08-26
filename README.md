@@ -93,6 +93,8 @@ hylogger --data-dir D:\HyLoggerData status  # Use this data folder for this comm
 
 ### 1. Build the combined catalog
 
+**How can we identify useful holes before downloading?**
+
 ```powershell
 hylogger catalog refresh  # Rebuild the combined processed/raw hole catalog from live sources
 hylogger catalog search --raw --processed --limit 20  # Show up to 20 holes available from both sources
