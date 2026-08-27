@@ -30,6 +30,10 @@ patterns = [
 description = "Compact mineral, group, weight, and error logs for rapid review."
 patterns = ["Min* *TSA*", "Grp* *TSA*", "Wt* *TSA*", "Error *TSA*"]
 
+[processed.profiles.tsg_swir]
+description = "User-level SWIR interpretation logs only, for the first processed TSG baseline."
+patterns = ["* uTSAS"]
+
 [raw]
 default_components = ["spectra"]
 chunk_size_bytes = 8388608

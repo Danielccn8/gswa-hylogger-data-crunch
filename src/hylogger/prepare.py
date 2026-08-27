@@ -11,20 +11,34 @@ from .config import AppConfig
 from .errors import HyLoggerError
 from .manifest import Manifest
 from .raw import find_package_dir
-from .util import atomic_write_frame, atomic_write_json, unique_snake_columns, utc_now
+from .util import (
+    atomic_write_frame,
+    atomic_write_json,
+    sha256_file,
+    unique_snake_columns,
+    utc_now,
+)
 
 
-def prepare_hole(config: AppConfig, hole_id: str) -> dict[str, Any]:
+def prepare_hole(config: AppConfig, hole_id: str, *, source: str = "auto") -> dict[str, Any]:
+    """Prepare exactly the requested source; auto retains the legacy raw-first rule."""
+    if source not in {"auto", "processed", "raw"}:
+        raise HyLoggerError("source must be auto, processed, or raw.")
     hole_id = hole_id.upper()
     config.ensure_layout()
-    package_dir = find_package_dir(config, hole_id)
+    package_dir = find_package_dir(config, hole_id) if source != "processed" else None
+    if source == "raw" and package_dir is None:
+        raise HyLoggerError(
+            f"No extracted raw package is available for {hole_id}. "
+            f"Run: hylogger raw fetch {hole_id} --components spectra"
+        )
     if package_dir:
         result = _prepare_raw_package(config, hole_id, package_dir)
     else:
         result = _prepare_processed(config, hole_id)
 
     Manifest(config.manifest_path).record(
-        artifact_key=f"prepared:{hole_id}",
+        artifact_key=f"prepared:{result['source']}:{hole_id}",
         hole_id=hole_id,
         kind="prepared",
         status="complete",
@@ -68,9 +82,9 @@ def _prepare_raw_package(config: AppConfig, hole_id: str, package_dir: Path) -> 
     temporary.replace(spectra_path)
 
     features = _feature_row(hole_id, frames)
-    feature_path = config.data_dir / "prepared" / "features" / f"{hole_id}.parquet"
+    feature_path = feature_file(config, hole_id, source="raw")
     atomic_write_frame(pd.DataFrame([features]), feature_path)
-    qc_path = config.data_dir / "prepared" / "samples" / f"{hole_id}_qc.json"
+    qc_path = config.data_dir / "prepared" / "samples" / f"{hole_id}_raw_qc.json"
     atomic_write_json(qc_path, qc)
     return {
         "hole_id": hole_id,
@@ -88,22 +102,33 @@ def _prepare_processed(config: AppConfig, hole_id: str) -> dict[str, Any]:
     paths = sorted(root.glob("*/scalar_logs.parquet"))
     if not paths:
         raise HyLoggerError(
-            f"No raw package or processed logs are available for {hole_id}. "
+            f"No downloaded processed logs are available for {hole_id}. "
             f"Run: hylogger processed fetch {hole_id}"
+        )
+    # Different dataset versions can overlap in depth. Do not silently count
+    # the same hole twice; a dataset-selection policy is needed before pooling.
+    if len(paths) != 1:
+        raise HyLoggerError(
+            f"{hole_id} has {len(paths)} downloaded processed datasets. "
+            "Choose a single reviewed dataset before preparing a hole-level baseline; "
+            "automatic concatenation could double-count overlapping depths."
         )
     frame = pd.concat([pd.read_parquet(path) for path in paths], ignore_index=True)
     frame = _clean_and_sort(frame)
     sample_path = config.data_dir / "prepared" / "samples" / f"{hole_id}_processed.parquet"
     atomic_write_frame(frame, sample_path)
     features = _feature_row(hole_id, {"processed": frame})
-    feature_path = config.data_dir / "prepared" / "features" / f"{hole_id}.parquet"
+    feature_path = feature_file(config, hole_id, source="processed")
     atomic_write_frame(pd.DataFrame([features]), feature_path)
     qc = {
         "hole_id": hole_id,
         "source": "processed",
+        "input_paths": [str(path) for path in paths],
+        "dataset_ids": [path.parent.name for path in paths],
+        "category_logs": _category_qc(frame),
         "sections": {"processed": _frame_qc(frame)},
     }
-    qc_path = config.data_dir / "prepared" / "samples" / f"{hole_id}_qc.json"
+    qc_path = config.data_dir / "prepared" / "samples" / f"{hole_id}_processed_qc.json"
     atomic_write_json(qc_path, qc)
     return {
         "hole_id": hole_id,
@@ -114,28 +139,56 @@ def _prepare_processed(config: AppConfig, hole_id: str) -> dict[str, Any]:
     }
 
 
-def combine_feature_matrix(config: AppConfig, holes: list[str], name: str) -> Path:
+def feature_file(config: AppConfig, name: str, *, source: str) -> Path:
+    if source not in {"processed", "raw"}:
+        raise HyLoggerError("Choose an explicit processed or raw feature source.")
+    return config.data_dir / "prepared" / "features" / source / f"{name}.parquet"
+
+
+def combine_feature_matrix(config: AppConfig, holes: list[str], name: str, *, source: str) -> Path:
+    holes = [hole.upper() for hole in holes]
+    if not holes or len(set(holes)) != len(holes):
+        raise HyLoggerError("A feature selection must contain distinct hole IDs and not be empty.")
     frames = []
     missing = []
+    input_hashes = {}
     for hole_id in holes:
-        path = config.data_dir / "prepared" / "features" / f"{hole_id.upper()}.parquet"
+        path = feature_file(config, hole_id.upper(), source=source)
         if path.exists():
-            frames.append(pd.read_parquet(path))
+            frame = pd.read_parquet(path)
+            if (
+                len(frame) != 1
+                or frame["hole_id"].tolist() != [hole_id.upper()]
+                or "feature_source" not in frame
+                or not frame["feature_source"].eq(source).all()
+            ):
+                raise HyLoggerError(
+                    f"Inconsistent source or hole provenance in {path}. Re-prepare."
+                )
+            frames.append(frame)
+            input_hashes[hole_id.upper()] = sha256_file(path)
         else:
             missing.append(hole_id)
-    if not frames:
-        raise HyLoggerError("No prepared feature files were found for the selection.")
-    matrix = pd.concat(frames, ignore_index=True).fillna(0)
-    output = config.data_dir / "prepared" / "features" / f"selection_{name}.parquet"
+    if missing:
+        raise HyLoggerError(f"Missing {source} features for: {', '.join(missing)}. Re-prepare.")
+    # NaN remains unknown here. The baseline may fill an unobserved category
+    # with zero only after checking that its parent log has valid observations.
+    matrix = pd.concat(frames, ignore_index=True)
+    output = feature_file(config, f"selection_{name}", source=source)
     atomic_write_frame(matrix, output)
     metadata = {
         "selection": name,
+        "source": source,
+        "hole_ids": [hole.upper() for hole in holes],
+        "input_sha256": input_hashes,
+        "matrix_sha256": sha256_file(output),
         "holes_requested": len(holes),
         "holes_in_matrix": len(matrix),
         "missing": missing,
         "created_at": utc_now(),
     }
     atomic_write_json(output.with_suffix(".json"), metadata)
+    atomic_write_json(output.with_suffix(".status.json"), {"status": "complete"})
     return output
 
 
@@ -203,14 +256,15 @@ def _frame_qc(frame: pd.DataFrame, spectra_shape: list[int] | None = None) -> di
 
 
 def _feature_row(hole_id: str, frames: dict[str, pd.DataFrame]) -> dict[str, Any]:
-    output: dict[str, Any] = {"hole_id": hole_id}
+    output: dict[str, Any] = {
+        "hole_id": hole_id,
+        "feature_source": "processed" if set(frames) == {"processed"} else "raw",
+    }
     for region, frame in frames.items():
-        category_columns = [
-            column for column in frame.columns if re.match(r"^(grp|group|min|mineral)_?1", column)
-        ]
-        for column in category_columns:
-            values = frame[column].dropna().astype(str).str.strip()
-            values = values[~values.str.upper().isin({"", "INVALID", "ASPECTRAL", "NOTAROK"})]
+        for column, counts in _category_qc(frame).items():
+            for key, count in counts.items():
+                output[f"qc__{region}__{column}__{key}"] = count
+            values = _valid_categories(frame[column])
             if values.empty:
                 continue
             proportions = values.value_counts(normalize=True)
@@ -219,6 +273,32 @@ def _feature_row(hole_id: str, frames: dict[str, pd.DataFrame]) -> dict[str, Any
                 output[f"{region}__{column}__{safe}"] = float(proportion)
     output["prepared_at"] = utc_now()
     return output
+
+
+def _valid_categories(series: pd.Series) -> pd.Series:
+    values = series.dropna().astype(str).str.strip().str.upper()
+    invalid = values.str.replace(r"[^A-Z0-9]", "", regex=True).isin(
+        {"", "INVALID", "ASPECTRAL", "NOTAROK", "NOTAROCK", "NULL"}
+    )
+    # Match the output names before counting, so spelling/punctuation variants
+    # cannot overwrite each other's proportions.
+    return values[~invalid].str.lower().str.replace(r"[^a-z0-9]+", "_", regex=True).str.strip("_")
+
+
+def _category_qc(frame: pd.DataFrame) -> dict[str, dict[str, int]]:
+    result = {}
+    for column in frame.columns:
+        if not re.match(r"^(grp|group|min|mineral)_?1(?:_|$)", column):
+            continue
+        missing = int(frame[column].isna().sum())
+        valid = len(_valid_categories(frame[column]))
+        result[column] = {
+            "total_rows": len(frame),
+            "valid_rows": valid,
+            "missing_rows": missing,
+            "invalid_rows": len(frame) - missing - valid,
+        }
+    return result
 
 
 def _depth_column(frame: pd.DataFrame) -> str | None:

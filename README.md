@@ -185,8 +185,9 @@ The inspector works with processed data only, raw data only, or both. HTML repor
 ### 8. Prepare clustering inputs
 
 ```powershell
-hylogger prepare 05GJD001  # Clean and build prepared tables/features for one hole
-hylogger prepare --selection pilot  # Prepare every hole and combine the pilot feature matrix
+hylogger prepare 05GJD001 --source processed  # Prepare downloaded API logs, even when a raw package exists
+hylogger prepare 05GJD001 --source raw  # Prepare only an extracted raw package; no processed fallback
+hylogger prepare --selection tsg_pilot --source processed  # Combine the five-hole processed test cohort
 hylogger status --selection pilot  # Show download and preparation status for the pilot cohort
 ```
 
@@ -194,10 +195,22 @@ Preparation writes:
 
 - cleaned, depth-sorted sample tables to `data/prepared/samples/`;
 - compressed NIR/TIR/MIR matrices to `data/prepared/spectra/` when raw data exists;
-- one feature row per hole to `data/prepared/features/`;
-- a combined `selection_<name>.parquet` feature matrix for a selection.
+- one feature row per hole to `data/prepared/features/processed/` or `data/prepared/features/raw/`;
+- a combined `selection_<name>.parquet` feature matrix in the matching source folder;
+- source-specific QC files including valid, missing and invalid category-label counts.
 
-Start with `notebooks/30_clustering/01_baseline_clustering.ipynb` after preparing a pilot selection.
+Omitting `--source` retains the legacy `auto` rule (raw first, otherwise processed).
+Use an explicit source for experiments. A mixed-source selection or failed hole stops
+matrix generation. Missing logs remain unknown; only unobserved categories in a
+verified populated log can be filled with zero. Multiple processed datasets for one
+hole are rejected pending an explicit dataset-selection policy.
+
+Older prepared files are left in place but are not read by the updated baseline.
+Re-run preparation to generate the source-specific files.
+
+For the first small processed TSG test, follow [the step-by-step guide](docs/TSG_BASELINE_FIRST_TEST.md)
+and open `notebooks/30_clustering/01_baseline_clustering.ipynb`. It clusters whole-hole
+group-label proportions, not raw spectra or individual depths.
 
 ## Data safety and provenance
 

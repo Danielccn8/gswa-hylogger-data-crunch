@@ -38,6 +38,13 @@ def inspect_hole(config: AppConfig, hole_id: str) -> dict[str, Any]:
     prepared_qc = None
     if prepared_qc_path.exists():
         prepared_qc = json.loads(prepared_qc_path.read_text(encoding="utf-8"))
+    prepared_sources = {}
+    for source in ("processed", "raw"):
+        path = config.data_dir / "prepared" / "samples" / f"{hole_id}_{source}_qc.json"
+        if path.exists():
+            prepared_sources[source] = json.loads(path.read_text(encoding="utf-8"))
+    if prepared_sources:
+        prepared_qc = next(iter(prepared_sources.values()))
 
     manifest = Manifest(config.manifest_path).find(hole_id=hole_id)
     next_commands = []
@@ -56,6 +63,7 @@ def inspect_hole(config: AppConfig, hole_id: str) -> dict[str, Any]:
         "processed": processed_summary,
         "raw": raw_summary,
         "prepared": prepared_qc,
+        "prepared_sources": prepared_sources,
         "manifest": manifest,
         "next_commands": next_commands,
     }
@@ -94,7 +102,8 @@ def print_inspection(summary: dict[str, Any]) -> None:
         print("Raw package: not downloaded")
 
     if summary.get("prepared"):
-        print("Prepared for analysis: yes")
+        sources = ", ".join(summary.get("prepared_sources", {})) or "legacy output"
+        print(f"Prepared for analysis: yes ({sources})")
     else:
         print("Prepared for analysis: no")
     if summary["next_commands"]:

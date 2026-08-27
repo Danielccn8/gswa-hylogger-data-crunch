@@ -15,7 +15,7 @@ from .config import AppConfig
 from .errors import HyLoggerError
 from .inspect import inspect_hole, print_inspection, write_html_report
 from .manifest import Manifest
-from .prepare import combine_feature_matrix, prepare_hole
+from .prepare import combine_feature_matrix, feature_file, prepare_hole
 from .processed import fetch_processed_hole, inventory_hole
 from .raw import (
     download_raw_hole,
@@ -31,7 +31,7 @@ from .selections import (
     remove_holes,
     resolve_holes,
 )
-from .util import human_bytes, print_table
+from .util import atomic_write_json, human_bytes, print_table
 
 
 def build_parser() -> argparse.ArgumentParser:
@@ -160,6 +160,12 @@ def build_parser() -> argparse.ArgumentParser:
     )
     prepare_parser.add_argument("hole_id", nargs="?")
     prepare_parser.add_argument("--selection")
+    prepare_parser.add_argument(
+        "--source",
+        choices=("auto", "processed", "raw"),
+        default="auto",
+        help="Use only this source. auto prefers extracted raw data (legacy behaviour).",
+    )
     prepare_parser.set_defaults(handler=_prepare)
 
     status = commands.add_parser("status", help="Show local acquisition and preparation state.")
@@ -450,24 +456,39 @@ def _inspect(config: AppConfig, args: argparse.Namespace) -> int:
 
 def _prepare(config: AppConfig, args: argparse.Namespace) -> int:
     holes = resolve_holes(config, args.hole_id, args.selection)
+    if not holes:
+        raise HyLoggerError("The selection is empty. Add holes before preparing it.")
+    if args.selection:
+        args.selection = args.selection.lower()
+        for source in ("processed", "raw") if args.source == "auto" else (args.source,):
+            path = feature_file(config, f"selection_{args.selection}", source=source)
+            atomic_write_json(path.with_suffix(".status.json"), {"status": "preparing"})
     failures = []
+    sources = set()
     for index, hole_id in enumerate(holes, 1):
         print(f"[{index}/{len(holes)}] Preparing {hole_id}")
         try:
-            result = prepare_hole(config, hole_id)
+            result = prepare_hole(config, hole_id, source=args.source)
+            sources.add(result["source"])
             print(f"  source: {result['source']}")
             print(f"  features: {result['feature_path']}")
         except Exception as exc:
             failures.append((hole_id, str(exc)))
             print(f"  FAILED: {exc}")
-    if args.selection and len(holes) > len(failures):
-        path = combine_feature_matrix(config, holes, args.selection)
-        print(f"Selection feature matrix: {path}")
     if failures:
         raise HyLoggerError(
             f"Preparation failed for {len(failures)} of {len(holes)} holes. "
-            "Successful outputs were kept."
+            "Successful outputs were kept; no selection matrix was updated. "
+            "Do not use an older matrix until this command succeeds."
         )
+    if args.selection:
+        if len(sources) != 1:
+            raise HyLoggerError(
+                "auto selected a mixture of raw and processed data. No selection matrix "
+                "was updated. Re-run with --source processed or --source raw."
+            )
+        path = combine_feature_matrix(config, holes, args.selection, source=sources.pop())
+        print(f"Selection feature matrix: {path}")
     return 0
 
 

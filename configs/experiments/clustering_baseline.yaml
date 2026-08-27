@@ -1,12 +1,17 @@
 name: clustering_baseline
-selection: pilot
-feature_source: data/prepared/features/selection_pilot.parquet
+selection: tsg_pilot
+source: processed
+feature_source: data/prepared/features/processed/selection_tsg_pilot.parquet
+unit_of_clustering: hole
+feature_log: grp1_u_tsas
 algorithm: kmeans
 parameters:
-  n_clusters: 5
+  n_clusters: 2
   random_state: 42
   n_init: 20
 preprocessing:
-  missing_values: median
+  missing_values: reject_unavailable_log_then_zero_unobserved_categories
   scaling: standard
-outputs: experiments/clustering_baseline
+  pca_variance: null  # No PCA by default; 0.95 enables PCA before K-Means.
+outputs: experiments/tsg_baseline
+# Reference settings; the notebook's first settings cell controls each run.

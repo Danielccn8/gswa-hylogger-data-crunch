@@ -1,0 +1,11 @@
+name: tsg_pilot
+description: >-
+  Five-hole processed SWIR smoke test using Grp1 uTSAS. This is a convenience
+  cohort for learning the workflow, not a representative geological or gold-targeting sample.
+created_at: '2026-08-27'
+holes:
+  - 05GJD001
+  - 05KCD001
+  - 07THD003
+  - 09RTD001
+  - MPWD10
