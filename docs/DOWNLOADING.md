@@ -13,6 +13,19 @@ Profiles are transparent glob lists in `configs/project.toml`. Use repeated `--l
 
 ## Raw packages
 
+Not every hole has one. A hole can have processed TSG logs in the NVCL API and no raw ZIP on THREDDS,
+so check a whole cohort before planning around it:
+
+```powershell
+hylogger raw check 05GJD001 05KCD001 05AMD001
+hylogger raw check --selection pilot --probe --csv reports/raw_availability.csv
+```
+
+`available` means the catalog snapshot lists a package, `missing` means the hole is catalogued without
+one, and `unknown` means the hole is not in the snapshot at all. `--probe` requests every URL and lets
+the server settle the question, which is the check to trust when a snapshot may be stale or when a hole
+ID does not match the ZIP name.
+
 Raw packages can be hundreds of megabytes or several gigabytes. Probe first:
 
 ```powershell

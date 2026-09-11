@@ -9,7 +9,7 @@ from urllib.parse import urljoin
 
 import requests
 
-from .catalog import http_session, raw_record
+from .catalog import http_session, load_catalog, raw_record
 from .config import AppConfig
 from .errors import HyLoggerError, RemoteDataError
 from .manifest import Manifest
@@ -52,6 +52,96 @@ def probe_raw(config: AppConfig, hole_id: str) -> dict[str, Any]:
         "last_modified": response.headers.get("Last-Modified"),
         "content_type": response.headers.get("Content-Type"),
     }
+
+
+def check_raw_availability(
+    config: AppConfig,
+    hole_ids: list[str],
+    *,
+    probe: bool = False,
+) -> list[dict[str, Any]]:
+    """Report whether each hole has a downloadable raw ZIP package.
+
+    The catalog snapshot answers the question offline. ``probe`` additionally requests
+    every resolved URL, which is the only way to separate a genuinely absent package
+    from a hole that is simply missing from a stale snapshot.
+    """
+    catalog = load_catalog(config)
+    records = {
+        str(record.get("hole_id", "")).upper(): record for record in catalog.to_dict("records")
+    }
+    session = http_session(config.retries) if probe else None
+    rows: list[dict[str, Any]] = []
+    for requested in hole_ids:
+        hole_id = requested.upper()
+        record = records.get(hole_id)
+        catalog_url = _clean_text(record.get("raw_url")) if record else None
+        listed = bool(record.get("raw_available")) if record else False
+        listed = listed and catalog_url is not None
+        row: dict[str, Any] = {
+            "hole_id": hole_id,
+            "in_catalog": record is not None,
+            "processed_available": bool(record.get("nvcl_available")) if record else False,
+            "listed_in_catalog": listed,
+            "raw_size_bytes": _clean_size(record.get("raw_size_bytes")) if record else None,
+            "raw_url": catalog_url,
+            "http_status": None,
+            "probe_error": None,
+        }
+        if session is not None:
+            row["raw_url"] = catalog_url or resolve_raw_url(config, hole_id)[0]
+            result = _head_probe(session, row["raw_url"], config.request_timeout_seconds)
+            row["http_status"] = result["http_status"]
+            row["probe_error"] = result["probe_error"]
+            row["raw_size_bytes"] = row["raw_size_bytes"] or result["probe_size_bytes"]
+        row["status"] = _availability(row)
+        row["raw_available"] = row["status"] == "available"
+        rows.append(row)
+    return rows
+
+
+def _availability(row: dict[str, Any]) -> str:
+    if row["http_status"] in (200, 206):
+        return "available"
+    if row["http_status"] is not None:
+        return "missing"
+    if row["listed_in_catalog"]:
+        return "available"
+    return "missing" if row["in_catalog"] else "unknown"
+
+
+def _head_probe(session: requests.Session, url: str, timeout: int) -> dict[str, Any]:
+    try:
+        response = session.head(url, allow_redirects=True, timeout=timeout)
+        if response.status_code == 405:
+            response = session.get(
+                url, headers={"Range": "bytes=0-0"}, stream=True, timeout=timeout
+            )
+            response.close()
+    except requests.RequestException as exc:
+        return {"http_status": None, "probe_error": str(exc), "probe_size_bytes": None}
+    size = response.headers.get("Content-Length")
+    return {
+        "http_status": response.status_code,
+        "probe_error": None,
+        "probe_size_bytes": int(size) if size and response.status_code == 200 else None,
+    }
+
+
+def _clean_text(value: Any) -> str | None:
+    if value is None or (isinstance(value, float) and value != value):
+        return None
+    text = str(value).strip()
+    return text or None
+
+
+def _clean_size(value: Any) -> int | None:
+    if value is None or (isinstance(value, float) and value != value):
+        return None
+    try:
+        return int(value)
+    except (TypeError, ValueError):
+        return None
 
 
 def download_raw_hole(

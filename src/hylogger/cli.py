@@ -18,6 +18,7 @@ from .manifest import Manifest
 from .prepare import combine_feature_matrix, feature_file, prepare_hole
 from .processed import fetch_processed_hole, inventory_hole
 from .raw import (
+    check_raw_availability,
     download_raw_hole,
     import_raw_archive,
     parse_components,
@@ -29,9 +30,10 @@ from .selections import (
     list_selections,
     load_selection,
     remove_holes,
+    resolve_hole_list,
     resolve_holes,
 )
-from .util import atomic_write_json, human_bytes, print_table
+from .util import atomic_write_frame, atomic_write_json, human_bytes, print_table
 
 
 def build_parser() -> argparse.ArgumentParser:
@@ -123,6 +125,18 @@ def build_parser() -> argparse.ArgumentParser:
     raw_probe = raw_commands.add_parser("probe", help="Show raw URL, size, and resume support.")
     raw_probe.add_argument("hole_id")
     raw_probe.set_defaults(handler=_raw_probe)
+    raw_check = raw_commands.add_parser(
+        "check", help="Check raw package availability for several holes at once."
+    )
+    raw_check.add_argument("holes", nargs="*", help="Hole IDs to check.")
+    raw_check.add_argument("--selection", help="Check every hole in a saved selection instead.")
+    raw_check.add_argument(
+        "--probe",
+        action="store_true",
+        help="Also request each URL, which confirms availability against a stale catalog.",
+    )
+    raw_check.add_argument("--csv", type=Path, help="Also write the result table to this CSV file.")
+    raw_check.set_defaults(handler=_raw_check)
     raw_fetch = raw_commands.add_parser(
         "fetch", help="Download and optionally extract raw packages."
     )
@@ -387,6 +401,43 @@ def _raw_probe(config: AppConfig, args: argparse.Namespace) -> int:
             value = f"{value:,} ({human_bytes(value)})" if value else "unknown"
         print(f"{key}: {value}")
     return 0
+
+
+def _raw_check(config: AppConfig, args: argparse.Namespace) -> int:
+    holes = resolve_hole_list(config, args.holes, args.selection)
+    rows = check_raw_availability(config, holes, probe=args.probe)
+    table = pd.DataFrame(rows)
+    for row in rows:
+        row["size"] = human_bytes(row["raw_size_bytes"]) if row["raw_size_bytes"] else "-"
+        row["http"] = row["http_status"] or row["probe_error"] or "-"
+    columns = [
+        ("hole_id", "Hole ID"),
+        ("processed_available", "Processed"),
+        ("status", "Raw"),
+        ("size", "Raw size"),
+    ]
+    if args.probe:
+        columns.append(("http", "HTTP"))
+    print_table(rows, columns)
+
+    available = [row for row in rows if row["status"] == "available"]
+    missing = [row["hole_id"] for row in rows if row["status"] == "missing"]
+    unknown = [row["hole_id"] for row in rows if row["status"] == "unknown"]
+    print(f"\nRaw packages available: {len(available)} of {len(rows)}")
+    if missing:
+        print(f"No raw package: {', '.join(missing)}")
+    if unknown:
+        print(f"Not in the catalog snapshot: {', '.join(unknown)}")
+        print("Run 'hylogger catalog refresh', then repeat this command with --probe.")
+    if available:
+        width = max(len(row["hole_id"]) for row in available)
+        print("\nDownload URLs:")
+        for row in available:
+            print(f"  {row['hole_id'].ljust(width)}  {row['raw_url'] or '-'}")
+    if args.csv:
+        atomic_write_frame(table, args.csv)
+        print(f"Wrote {args.csv}")
+    return 1 if missing or unknown else 0
 
 
 def _raw_fetch(config: AppConfig, args: argparse.Namespace) -> int:

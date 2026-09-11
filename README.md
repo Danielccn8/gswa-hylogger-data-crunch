@@ -142,10 +142,23 @@ The default `clustering` profile is defined in `configs/project.toml`. Raw API r
 ### 5. Check a raw download before starting it
 
 ```powershell
+hylogger raw check 05GJD001 05KCD001 05AMD001  # Check several holes for a raw package in one pass
+hylogger raw check --selection pilot --probe  # Confirm every pilot hole against the live server
+hylogger raw check --selection pilot --csv reports/raw_availability.csv  # Share the result with the team
 hylogger raw probe 05GJD001  # Check the raw package URL, size, and resume support
 hylogger raw fetch 05GJD001 --components spectra --dry-run  # Estimate one spectral download without starting it
 hylogger raw fetch --selection pilot --components spectra --dry-run  # Estimate spectral downloads for every pilot hole
 ```
+
+`raw check` reports one of three states per hole. `available` means the catalog lists a ZIP package,
+`missing` means the hole is in the catalog without one, and `unknown` means the hole is absent from the
+local snapshot, usually a stale snapshot or a hole ID that differs from the ZIP name. Add `--probe` to
+request each URL; the server response then decides, which resolves both `unknown` results and a snapshot
+that has fallen behind. The command exits with status 1 when any hole is not `available`.
+
+Many holes have processed TSG logs in the NVCL API without a raw package on THREDDS, so confirm a cohort
+with `raw check` before agreeing on it. Use `catalog search --raw --processed` to assemble one that needs
+no exceptions.
 
 Always use `--dry-run` for a large selection before downloading.
 

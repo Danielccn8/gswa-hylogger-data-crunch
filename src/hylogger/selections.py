@@ -96,6 +96,16 @@ def resolve_holes(config: AppConfig, hole: str | None, selection: str | None) ->
     return [hole.upper()] if hole else list(load_selection(config, selection or "")["holes"])
 
 
+def resolve_hole_list(
+    config: AppConfig, holes: list[str] | None, selection: str | None
+) -> list[str]:
+    if bool(holes) == bool(selection):
+        raise SelectionError("Provide one or more HOLE_ID values, or --selection NAME.")
+    if holes:
+        return _normalise_holes(list(holes))
+    return list(load_selection(config, selection or "")["holes"])
+
+
 def _normalise_holes(holes: list[object]) -> list[str]:
     return sorted({str(hole).strip().upper() for hole in holes if str(hole).strip()})
 

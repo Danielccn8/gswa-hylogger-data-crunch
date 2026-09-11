@@ -8,7 +8,8 @@ from pathlib import Path
 import pytest
 
 from hylogger.errors import HyLoggerError
-from hylogger.raw import download_raw_hole, extract_archive
+from hylogger.raw import check_raw_availability, download_raw_hole, extract_archive
+from hylogger.util import atomic_write_frame
 
 
 def test_extract_archive_selects_components(app_config, tmp_path: Path) -> None:
@@ -82,6 +83,84 @@ def test_raw_download_resumes_part_file(app_config) -> None:
 
         assert result["resumed"] is True
         assert Path(result["archive"]).read_bytes() == content
+    finally:
+        server.shutdown()
+        thread.join(timeout=2)
+
+
+def _write_catalog(app_config, records: list[dict]) -> None:
+    import pandas as pd
+
+    from hylogger.catalog import CATALOG_COLUMNS
+
+    frame = pd.DataFrame(records)
+    for column in CATALOG_COLUMNS:
+        if column not in frame:
+            frame[column] = None
+    atomic_write_frame(frame[CATALOG_COLUMNS], app_config.data_dir / "catalog" / "catalog.parquet")
+
+
+def test_check_raw_availability_reads_the_catalog(app_config) -> None:
+    _write_catalog(
+        app_config,
+        [
+            {
+                "hole_id": "WITHRAW",
+                "nvcl_available": True,
+                "raw_available": True,
+                "raw_size_bytes": 1024,
+                "raw_url": "https://example.invalid/files/rs07/WA/WITHRAW.zip",
+            },
+            {"hole_id": "NORAW", "nvcl_available": True, "raw_available": False},
+        ],
+    )
+
+    rows = check_raw_availability(app_config, ["withraw", "NORAW", "NEVERSEEN"])
+
+    assert [row["status"] for row in rows] == ["available", "missing", "unknown"]
+    assert rows[0]["raw_url"].endswith("WITHRAW.zip")
+    assert rows[0]["raw_size_bytes"] == 1024
+    assert rows[1]["processed_available"] is True
+    assert rows[2]["in_catalog"] is False
+
+
+def test_check_raw_availability_probe_overrides_a_stale_catalog(app_config) -> None:
+    class Handler(BaseHTTPRequestHandler):
+        def do_HEAD(self):
+            present = self.path.endswith("PRESENT.zip")
+            self.send_response(200 if present else 404)
+            if present:
+                self.send_header("Content-Length", "4096")
+            self.end_headers()
+
+        def log_message(self, *_args):
+            return
+
+    server = ThreadingHTTPServer(("127.0.0.1", 0), Handler)
+    thread = threading.Thread(target=server.serve_forever, daemon=True)
+    thread.start()
+    try:
+        base = f"http://127.0.0.1:{server.server_port}/files/"
+        _write_catalog(
+            app_config,
+            [
+                {
+                    "hole_id": "GONE",
+                    "nvcl_available": True,
+                    "raw_available": True,
+                    "raw_url": f"{base}rs07/WA/GONE.zip",
+                },
+                {"hole_id": "PRESENT", "nvcl_available": True, "raw_available": False},
+            ],
+        )
+        local_config = type(app_config)(**{**app_config.__dict__, "raw_file_base_url": base})
+
+        rows = check_raw_availability(local_config, ["GONE", "PRESENT"], probe=True)
+
+        assert rows[0]["status"] == "missing"
+        assert rows[0]["http_status"] == 404
+        assert rows[1]["status"] == "available"
+        assert rows[1]["raw_size_bytes"] == 4096
     finally:
         server.shutdown()
         thread.join(timeout=2)
