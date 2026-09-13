@@ -51,7 +51,7 @@ The standard-library `venv` setup below remains fully supported when uv is unava
 ### Windows PowerShell
 
 ```powershell
-python -m venv .venv  # Create an isolated Python environment in .venv
+python -3.11 -m venv .venv  # Create an isolated Python environment in .venv
 .\.venv\Scripts\python.exe -m pip install --upgrade pip  # Upgrade pip inside the environment
 .\.venv\Scripts\python.exe -m pip install -e ".[analysis,dev]"  # Install this project and its analysis/development tools
 .\.venv\Scripts\hylogger.exe init  # Create the local project data and configuration folders

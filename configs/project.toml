@@ -10,12 +10,20 @@ request_timeout_seconds = 120
 retries = 4
 
 [processed.profiles.clustering]
-description = "Mineralogy, weights, masks, errors, and diagnostic logs used by the clustering workflow."
+# SWIR is named uTSAS/sTSAS and TIR is named ujCLST/sjCLST, so a "*TSA*" pattern
+# alone matches SWIR (and uTSAT-style TIR) but silently drops every ujCLST log.
+# The clustering workflow treats SWIR and TIR as separate populations, so both
+# naming families must be listed here.
+description = "Mineralogy, weights, masks, errors, and diagnostic logs, SWIR and TIR, used by the clustering workflow."
 patterns = [
   "Min* *TSA*",
+  "Min* *jCLST",
   "Grp* *TSA*",
+  "Grp* *jCLST",
   "Wt* *TSA*",
+  "Wt* *jCLST",
   "Error *TSA*",
+  "Error *jCLST",
   "SNR *TSA*",
   "Final Mask",
   "HyLogDiag",
@@ -27,8 +35,17 @@ patterns = [
 ]
 
 [processed.profiles.minerals]
-description = "Compact mineral, group, weight, and error logs for rapid review."
-patterns = ["Min* *TSA*", "Grp* *TSA*", "Wt* *TSA*", "Error *TSA*"]
+description = "Compact mineral, group, weight, and error logs, SWIR and TIR, for rapid review."
+patterns = [
+  "Min* *TSA*",
+  "Min* *jCLST",
+  "Grp* *TSA*",
+  "Grp* *jCLST",
+  "Wt* *TSA*",
+  "Wt* *jCLST",
+  "Error *TSA*",
+  "Error *jCLST",
+]
 
 [processed.profiles.tsg_swir]
 description = "User-level SWIR interpretation logs only, for the first processed TSG baseline."

@@ -1,0 +1,5702 @@
+[
+  {
+    "hole_id": "KEDD002",
+    "nvcl_inventory": {
+      "dataset_id": "6f1cc295-e73c-49c7-949c-1c3136173cb",
+      "dataset_name": "KEDD002",
+      "borehole_uri": "https://geossdi.dmp.wa.gov.au/resource/feature/gswa/borehole/KEDD002",
+      "tray_id": "5ef60ef9-71af-482b-b87d-0c3ffc80159",
+      "section_id": "8331798e-a08a-4ce5-a85a-97dfc1a7aeb",
+      "domain_id": "b61ebd79-b8a1-41d9-8224-8a5f5040ec7",
+      "description": "<?xml version=\"1.0\" encoding=\"utf-8\"?><TSGDrillHoleMiscMeta xmlns=\"\"><DrillHoleName>KEDD002</DrillHoleName><InstrumentName>HyLogger 3-2</InstrumentName><Project></Project><Owner>GSWA</Owner><DrillDate></DrillDate><ExecSumm>Georgina Gordon removed nontronite and rubellite from the SWIR.</ExecSumm><Datum></Datum><Latitude>-30.565960</Latitude><Longitude>121.681070</Longitude><Azimuth>0.000000</Azimuth><Inclination>0.000000</Inclination><RL>0.000000</RL></TSGDrillHoleMiscMeta>",
+      "modified_date": "2026-03-05 00:00:00+08:00",
+      "created_date": "2025-04-10 00:00:00+08:00",
+      "logs": [
+        {
+          "log_id": "00933ae7-2023-48e8-bd9e-d797613291c",
+          "log_name": "Wt3 uTSAS",
+          "is_public": "true",
+          "log_type": "2",
+          "algorithm_id": "110",
+          "mask_log_id": "",
+          "processing_level": "L2-user",
+          "spectral_region": "SWIR"
+        },
+        {
+          "log_id": "239b2a5b-2c20-4a2a-98be-f2581a3767c",
+          "log_name": "Wt1 uTSAV",
+          "is_public": "true",
+          "log_type": "2",
+          "algorithm_id": "98",
+          "mask_log_id": "",
+          "processing_level": "L2-user",
+          "spectral_region": "VNIR"
+        },
+        {
+          "log_id": "29455ed2-5b3a-4516-8d25-b9b9f273ecd",
+          "log_name": "Error ujCLST",
+          "is_public": "true",
+          "log_type": "2",
+          "algorithm_id": "145",
+          "mask_log_id": "",
+          "processing_level": "L2-user",
+          "spectral_region": "TIR"
+        },
+        {
+          "log_id": "2ea1d239-15e0-4f1a-8373-d5b2b407a50",
+          "log_name": "Min1 uTSAS",
+          "is_public": "true",
+          "log_type": "1",
+          "algorithm_id": "108",
+          "mask_log_id": "",
+          "processing_level": "L2-user",
+          "spectral_region": "SWIR"
+        },
+        {
+          "log_id": "38a41d5f-e1ae-447b-9f27-1739bcd28a0",
+          "log_name": "Wt2 uTSAS",
+          "is_public": "true",
+          "log_type": "2",
+          "algorithm_id": "110",
+          "mask_log_id": "",
+          "processing_level": "L2-user",
+          "spectral_region": "SWIR"
+        },
+        {
+          "log_id": "3b606ccc-2e8f-4a29-87fd-1c0a663e28d",
+          "log_name": "Grp1 uTSAV",
+          "is_public": "true",
+          "log_type": "1",
+          "algorithm_id": "97",
+          "mask_log_id": "",
+          "processing_level": "L2-user",
+          "spectral_region": "VNIR"
+        },
+        {
+          "log_id": "3f783e83-c411-4172-a767-49213c24f67",
+          "log_name": "Grp2 ujCLST",
+          "is_public": "true",
+          "log_type": "1",
+          "algorithm_id": "143",
+          "mask_log_id": "",
+          "processing_level": "L2-user",
+          "spectral_region": "TIR"
+        },
+        {
+          "log_id": "421771a6-b3cd-479f-8433-17a428392a3",
+          "log_name": "Min1 ujCLST",
+          "is_public": "true",
+          "log_type": "1",
+          "algorithm_id": "142",
+          "mask_log_id": "",
+          "processing_level": "L2-user",
+          "spectral_region": "TIR"
+        },
+        {
+          "log_id": "46c6c3d9-bd5f-44a7-927b-6d51bede8ba",
+          "log_name": "Grp1 uTSAS",
+          "is_public": "true",
+          "log_type": "1",
+          "algorithm_id": "109",
+          "mask_log_id": "",
+          "processing_level": "L2-user",
+          "spectral_region": "SWIR"
+        },
+        {
+          "log_id": "533ddf78-ebbe-4864-b567-5d0d388614c",
+          "log_name": "Min1 uTSAV",
+          "is_public": "true",
+          "log_type": "1",
+          "algorithm_id": "96",
+          "mask_log_id": "",
+          "processing_level": "L2-user",
+          "spectral_region": "VNIR"
+        },
+        {
+          "log_id": "62e2f1f8-8576-4496-9382-e9cc8bf0912",
+          "log_name": "Min2 uTSAS",
+          "is_public": "true",
+          "log_type": "1",
+          "algorithm_id": "108",
+          "mask_log_id": "",
+          "processing_level": "L2-user",
+          "spectral_region": "SWIR"
+        },
+        {
+          "log_id": "75524d4f-edf9-471f-8595-32a504be794",
+          "log_name": "Min2 uTSAV",
+          "is_public": "true",
+          "log_type": "1",
+          "algorithm_id": "96",
+          "mask_log_id": "",
+          "processing_level": "L2-user",
+          "spectral_region": "VNIR"
+        },
+        {
+          "log_id": "809ef2d9-b0fc-4830-9b0c-d60b9eac283",
+          "log_name": "Min3 ujCLST",
+          "is_public": "true",
+          "log_type": "1",
+          "algorithm_id": "142",
+          "mask_log_id": "",
+          "processing_level": "L2-user",
+          "spectral_region": "TIR"
+        },
+        {
+          "log_id": "8282382a-9c21-4689-a96d-7f5c6f7fbed",
+          "log_name": "Wt1 uTSAS",
+          "is_public": "true",
+          "log_type": "2",
+          "algorithm_id": "110",
+          "mask_log_id": "",
+          "processing_level": "L2-user",
+          "spectral_region": "SWIR"
+        },
+        {
+          "log_id": "8fdc8760-c523-4d0a-8df4-a6f75d8e287",
+          "log_name": "Wt2 ujCLST",
+          "is_public": "true",
+          "log_type": "2",
+          "algorithm_id": "144",
+          "mask_log_id": "",
+          "processing_level": "L2-user",
+          "spectral_region": "TIR"
+        },
+        {
+          "log_id": "980eef15-75ec-45ab-9fa0-ddc2e4abe0f",
+          "log_name": "Grp2 uTSAV",
+          "is_public": "true",
+          "log_type": "1",
+          "algorithm_id": "97",
+          "mask_log_id": "",
+          "processing_level": "L2-user",
+          "spectral_region": "VNIR"
+        },
+        {
+          "log_id": "981862db-ca82-411f-a611-feda37f2d4f",
+          "log_name": "Wt3 ujCLST",
+          "is_public": "true",
+          "log_type": "2",
+          "algorithm_id": "144",
+          "mask_log_id": "",
+          "processing_level": "L2-user",
+          "spectral_region": "TIR"
+        },
+        {
+          "log_id": "ab7b9a1a-8be6-4614-80ef-37cd8ec274b",
+          "log_name": "Wt2 uTSAV",
+          "is_public": "true",
+          "log_type": "2",
+          "algorithm_id": "98",
+          "mask_log_id": "",
+          "processing_level": "L2-user",
+          "spectral_region": "VNIR"
+        },
+        {
+          "log_id": "afc670dd-c077-47ae-97d3-494d2f2a2d5",
+          "log_name": "Grp3 ujCLST",
+          "is_public": "true",
+          "log_type": "1",
+          "algorithm_id": "143",
+          "mask_log_id": "",
+          "processing_level": "L2-user",
+          "spectral_region": "TIR"
+        },
+        {
+          "log_id": "beafbb34-ab0a-475b-9550-678ff3c7f34",
+          "log_name": "Error uTSAS",
+          "is_public": "true",
+          "log_type": "2",
+          "algorithm_id": "111",
+          "mask_log_id": "",
+          "processing_level": "L2-user",
+          "spectral_region": "SWIR"
+        },
+        {
+          "log_id": "cbe8b60f-11bb-441b-9b5f-6942991c283",
+          "log_name": "Wt1 ujCLST",
+          "is_public": "true",
+          "log_type": "2",
+          "algorithm_id": "144",
+          "mask_log_id": "",
+          "processing_level": "L2-user",
+          "spectral_region": "TIR"
+        },
+        {
+          "log_id": "cc7188dc-2dcc-41b5-99eb-982fa5e719b",
+          "log_name": "Min3 uTSAS",
+          "is_public": "true",
+          "log_type": "1",
+          "algorithm_id": "108",
+          "mask_log_id": "",
+          "processing_level": "L2-user",
+          "spectral_region": "SWIR"
+        },
+        {
+          "log_id": "cd7d6cd0-07b3-4959-a4a7-6121dfdb33f",
+          "log_name": "Error uTSAV",
+          "is_public": "true",
+          "log_type": "2",
+          "algorithm_id": "99",
+          "mask_log_id": "",
+          "processing_level": "L2-user",
+          "spectral_region": "VNIR"
+        },
+        {
+          "log_id": "cebd51d0-46ca-4994-aac0-add3bea19c3",
+          "log_name": "Grp2 uTSAS",
+          "is_public": "true",
+          "log_type": "1",
+          "algorithm_id": "109",
+          "mask_log_id": "",
+          "processing_level": "L2-user",
+          "spectral_region": "SWIR"
+        },
+        {
+          "log_id": "d1a25c10-2606-4d45-a7ee-ae59ee2c3a0",
+          "log_name": "Grp1 ujCLST",
+          "is_public": "true",
+          "log_type": "1",
+          "algorithm_id": "143",
+          "mask_log_id": "",
+          "processing_level": "L2-user",
+          "spectral_region": "TIR"
+        },
+        {
+          "log_id": "d7b99fde-3d12-4d6c-91e6-da6c54c0d65",
+          "log_name": "Min2 ujCLST",
+          "is_public": "true",
+          "log_type": "1",
+          "algorithm_id": "142",
+          "mask_log_id": "",
+          "processing_level": "L2-user",
+          "spectral_region": "TIR"
+        },
+        {
+          "log_id": "f3ba370e-43cf-4dc9-8a1f-b08ad60d0b3",
+          "log_name": "Grp3 uTSAS",
+          "is_public": "true",
+          "log_type": "1",
+          "algorithm_id": "109",
+          "mask_log_id": "",
+          "processing_level": "L2-user",
+          "spectral_region": "SWIR"
+        }
+      ],
+      "log_count": 27
+    },
+    "zip_evidence": {
+      "hole_id": "KEDD002",
+      "url": "https://thredds.nci.org.au/thredds/fileServer/rs07/WA/KEDD002.zip",
+      "checked_utc": "2026-09-11T04:05:38Z",
+      "zip_size": 4444176234,
+      "members": 221,
+      "spectral_members": [
+        {
+          "name": "6f1cc295-e73c-49c7-949c-1c3136173cb/KEDD002_tsg.bip",
+          "size": 573637176,
+          "compressed_size": 303191699,
+          "crc": 2612175254
+        },
+        {
+          "name": "6f1cc295-e73c-49c7-949c-1c3136173cb/KEDD002_tsg.tsg",
+          "size": 10358613,
+          "compressed_size": 2018691,
+          "crc": 157336382
+        },
+        {
+          "name": "6f1cc295-e73c-49c7-949c-1c3136173cb/KEDD002_tsg_cras.bip",
+          "size": 2174484602,
+          "compressed_size": 2167102346,
+          "crc": 3323213504
+        },
+        {
+          "name": "6f1cc295-e73c-49c7-949c-1c3136173cb/KEDD002_tsg_tir.bip",
+          "size": 368380936,
+          "compressed_size": 181061624,
+          "crc": 1143170165
+        },
+        {
+          "name": "6f1cc295-e73c-49c7-949c-1c3136173cb/KEDD002_tsg_tir.tsg",
+          "size": 10330847,
+          "compressed_size": 2074462,
+          "crc": 1367922639
+        }
+      ],
+      "bytes_fetched": 21823,
+      "status": "zip_directory_verified"
+    }
+  },
+  {
+    "hole_id": "LD82625W1",
+    "nvcl_inventory": {
+      "dataset_id": "66334a6a-293e-42ac-a12b-7013b71194f",
+      "dataset_name": "LD82625W1",
+      "borehole_uri": "https://geossdi.dmp.wa.gov.au/resource/feature/gswa/borehole/LD82625W1",
+      "tray_id": "dd1f5583-a429-4640-b370-7dd13c61eb8",
+      "section_id": "5df4b6c8-014c-4a36-9ec6-ccc3d963347",
+      "domain_id": "efc03753-8409-41f6-8b90-78d0e5ca27c",
+      "description": "<?xml version=\"1.0\" encoding=\"utf-8\"?><TSGDrillHoleMiscMeta xmlns=\"\"><DrillHoleName>LD82625W1</DrillHoleName><InstrumentName>HyLogger 3-2</InstrumentName><Project>St Ives</Project><Owner>GSWA</Owner><DrillDate>2017-01-01 08:00:15</DrillDate><ExecSumm>GSWA UWI: M0002745|WAMEX Report ID: A117838|Tectonic Unit: Eastern Goldfields|250K Map Sheet: Widgiemooltha SH51-14|100K Map Sheet:  Lake Lefroy 3235|Archive Location: Kalgoorlie Core Library|EIS Round: 15</ExecSumm><Datum>GDA94</Datum><Latitude>-31.297501</Latitude><Longitude>121.676611</Longitude><Azimuth>52.970000</Azimuth><Inclination>-60.880000</Inclination><RL>0.000000</RL></TSGDrillHoleMiscMeta>",
+      "modified_date": "2022-07-07 00:00:00+08:00",
+      "created_date": "2020-04-04 00:00:00+08:00",
+      "logs": [
+        {
+          "log_id": "35834d3b-ac85-4207-9abc-ee0ddedfb04",
+          "log_name": "Grp3 ujCLST",
+          "is_public": "true",
+          "log_type": "1",
+          "algorithm_id": "143",
+          "mask_log_id": "",
+          "processing_level": "L2-user",
+          "spectral_region": "TIR"
+        },
+        {
+          "log_id": "3de55d7e-fe94-453d-9cd2-0c1c9d2f41a",
+          "log_name": "Wt1 uTSAS",
+          "is_public": "true",
+          "log_type": "2",
+          "algorithm_id": "110",
+          "mask_log_id": "",
+          "processing_level": "L2-user",
+          "spectral_region": "SWIR"
+        },
+        {
+          "log_id": "4997ce07-b1bf-4af8-8a9d-6529202fbd5",
+          "log_name": "Wt3 ujCLST",
+          "is_public": "true",
+          "log_type": "2",
+          "algorithm_id": "144",
+          "mask_log_id": "",
+          "processing_level": "L2-user",
+          "spectral_region": "TIR"
+        },
+        {
+          "log_id": "4d8718d7-ac8c-4766-9b37-1a3f9839d31",
+          "log_name": "Wt3 uTSAS",
+          "is_public": "true",
+          "log_type": "2",
+          "algorithm_id": "110",
+          "mask_log_id": "",
+          "processing_level": "L2-user",
+          "spectral_region": "SWIR"
+        },
+        {
+          "log_id": "75fbc49c-4ce4-493a-8575-d0a0bc1f302",
+          "log_name": "Min2 uTSAS",
+          "is_public": "true",
+          "log_type": "1",
+          "algorithm_id": "108",
+          "mask_log_id": "",
+          "processing_level": "L2-user",
+          "spectral_region": "SWIR"
+        },
+        {
+          "log_id": "777887e3-4b40-4dd1-8d11-110684ffabd",
+          "log_name": "Min3 ujCLST",
+          "is_public": "true",
+          "log_type": "1",
+          "algorithm_id": "142",
+          "mask_log_id": "",
+          "processing_level": "L2-user",
+          "spectral_region": "TIR"
+        },
+        {
+          "log_id": "79b8a668-9001-4010-a971-ae3fc8a8e63",
+          "log_name": "Grp2 uTSAS",
+          "is_public": "true",
+          "log_type": "1",
+          "algorithm_id": "109",
+          "mask_log_id": "",
+          "processing_level": "L2-user",
+          "spectral_region": "SWIR"
+        },
+        {
+          "log_id": "7b15ce23-7de8-4888-bc99-fec557849fb",
+          "log_name": "Min1 ujCLST",
+          "is_public": "true",
+          "log_type": "1",
+          "algorithm_id": "142",
+          "mask_log_id": "",
+          "processing_level": "L2-user",
+          "spectral_region": "TIR"
+        },
+        {
+          "log_id": "7e4a9ce2-88ce-4df6-8e59-4ba58aee50b",
+          "log_name": "Min3 uTSAS",
+          "is_public": "true",
+          "log_type": "1",
+          "algorithm_id": "108",
+          "mask_log_id": "",
+          "processing_level": "L2-user",
+          "spectral_region": "SWIR"
+        },
+        {
+          "log_id": "86cf3bbb-0b55-4138-83a1-42e1f2fe2a4",
+          "log_name": "Wt1 ujCLST",
+          "is_public": "true",
+          "log_type": "2",
+          "algorithm_id": "144",
+          "mask_log_id": "",
+          "processing_level": "L2-user",
+          "spectral_region": "TIR"
+        },
+        {
+          "log_id": "8bb701de-7b7f-43cc-a7d8-fcf9cb3998d",
+          "log_name": "Error uTSAS",
+          "is_public": "true",
+          "log_type": "2",
+          "algorithm_id": "111",
+          "mask_log_id": "",
+          "processing_level": "L2-user",
+          "spectral_region": "SWIR"
+        },
+        {
+          "log_id": "8f130853-1791-41f6-827a-2659949e466",
+          "log_name": "Grp1 uTSAS",
+          "is_public": "true",
+          "log_type": "1",
+          "algorithm_id": "109",
+          "mask_log_id": "",
+          "processing_level": "L2-user",
+          "spectral_region": "SWIR"
+        },
+        {
+          "log_id": "9bb8378f-4cb8-458e-b631-72cb1732a17",
+          "log_name": "Min1 uTSAS",
+          "is_public": "true",
+          "log_type": "1",
+          "algorithm_id": "108",
+          "mask_log_id": "",
+          "processing_level": "L2-user",
+          "spectral_region": "SWIR"
+        },
+        {
+          "log_id": "ad8b3105-1653-442d-95f9-be366d9d1b5",
+          "log_name": "Grp1 ujCLST",
+          "is_public": "true",
+          "log_type": "1",
+          "algorithm_id": "143",
+          "mask_log_id": "",
+          "processing_level": "L2-user",
+          "spectral_region": "TIR"
+        },
+        {
+          "log_id": "b31df7e7-7d2f-47ff-a40e-eb199820863",
+          "log_name": "Grp2 ujCLST",
+          "is_public": "true",
+          "log_type": "1",
+          "algorithm_id": "143",
+          "mask_log_id": "",
+          "processing_level": "L2-user",
+          "spectral_region": "TIR"
+        },
+        {
+          "log_id": "c6921bfa-93ba-43b4-93df-0efb40cbe33",
+          "log_name": "Wt2 ujCLST",
+          "is_public": "true",
+          "log_type": "2",
+          "algorithm_id": "144",
+          "mask_log_id": "",
+          "processing_level": "L2-user",
+          "spectral_region": "TIR"
+        },
+        {
+          "log_id": "c70920c1-d5e3-46a3-873c-0da1e017313",
+          "log_name": "Wt2 uTSAS",
+          "is_public": "true",
+          "log_type": "2",
+          "algorithm_id": "110",
+          "mask_log_id": "",
+          "processing_level": "L2-user",
+          "spectral_region": "SWIR"
+        },
+        {
+          "log_id": "de6cdb2d-7235-4d14-8ced-378a859ba73",
+          "log_name": "Error ujCLST",
+          "is_public": "true",
+          "log_type": "2",
+          "algorithm_id": "145",
+          "mask_log_id": "",
+          "processing_level": "L2-user",
+          "spectral_region": "TIR"
+        },
+        {
+          "log_id": "ed6b972c-1619-4080-a346-6d1a86ac639",
+          "log_name": "Min2 ujCLST",
+          "is_public": "true",
+          "log_type": "1",
+          "algorithm_id": "142",
+          "mask_log_id": "",
+          "processing_level": "L2-user",
+          "spectral_region": "TIR"
+        },
+        {
+          "log_id": "f39d5e40-71de-4653-afc2-ae686a1d833",
+          "log_name": "Grp3 uTSAS",
+          "is_public": "true",
+          "log_type": "1",
+          "algorithm_id": "109",
+          "mask_log_id": "",
+          "processing_level": "L2-user",
+          "spectral_region": "SWIR"
+        }
+      ],
+      "log_count": 20
+    },
+    "zip_evidence": {
+      "hole_id": "LD82625W1",
+      "url": "https://thredds.nci.org.au/thredds/fileServer/rs07/WA/LD82625W1.zip",
+      "checked_utc": "2026-09-11T04:06:59Z",
+      "zip_size": 2562429818,
+      "members": 154,
+      "spectral_members": [
+        {
+          "name": "66334a6a-293e-42ac-a12b-7013b71194f/LD82625W1_tsg.bip",
+          "size": 410186880,
+          "compressed_size": 205606094,
+          "crc": 3924750320
+        },
+        {
+          "name": "66334a6a-293e-42ac-a12b-7013b71194f/LD82625W1_tsg.tsg",
+          "size": 7747629,
+          "compressed_size": 1466948,
+          "crc": 2232906761
+        },
+        {
+          "name": "66334a6a-293e-42ac-a12b-7013b71194f/LD82625W1_tsg_cras.bip",
+          "size": 1453402446,
+          "compressed_size": 1447449844,
+          "crc": 719543295
+        },
+        {
+          "name": "66334a6a-293e-42ac-a12b-7013b71194f/LD82625W1_tsg_tir.bip",
+          "size": 263415680,
+          "compressed_size": 125629529,
+          "crc": 766938703
+        },
+        {
+          "name": "66334a6a-293e-42ac-a12b-7013b71194f/LD82625W1_tsg_tir.tsg",
+          "size": 7789610,
+          "compressed_size": 1468536,
+          "crc": 2125346868
+        }
+      ],
+      "bytes_fetched": 15467,
+      "status": "zip_directory_verified"
+    }
+  },
+  {
+    "hole_id": "WKDD15001",
+    "nvcl_inventory": {
+      "dataset_id": "72165489-8433-46df-957e-454b9ad19ff",
+      "dataset_name": "WKDD15001",
+      "borehole_uri": "https://geossdi.dmp.wa.gov.au/resource/feature/gswa/borehole/WKDD15001",
+      "tray_id": "e126c197-22bd-4a2e-b14d-89fb148689a",
+      "section_id": "f59e01ce-72d9-495a-be30-5e3a9bc63ba",
+      "domain_id": "697d4e41-233e-4d54-9277-751afd5ef95",
+      "description": "<?xml version=\"1.0\" encoding=\"utf-8\"?><TSGDrillHoleMiscMeta xmlns=\"\"><DrillHoleName>WKDD15001</DrillHoleName><InstrumentName>HyLogger 3-2</InstrumentName><Project>West Kundana EM Anomaly</Project><Owner>GSWA</Owner><DrillDate>2015-11-08 08:32:10</DrillDate><ExecSumm>GSWA UWI: M0002629|WAMEX Report ID: A112192|Tectonic Unit: Eastern Goldfields|250K Map Sheet: Kalgoorlie SH51-09|100K Map Sheet:  Kalgoorlie 3136|Archive Location: Kalgoorlie Core Library|EIS Round: 11||Trays 1-17 missing, trays were not submitted with the rest of the drillhole.</ExecSumm><Datum>GDA94</Datum><Latitude>-30.726603</Latitude><Longitude>121.206995</Longitude><Azimuth>52.000000</Azimuth><Inclination>-60.000000</Inclination><RL>340.000000</RL></TSGDrillHoleMiscMeta>",
+      "modified_date": "2022-07-17 00:00:00+08:00",
+      "created_date": "2020-04-15 00:00:00+08:00",
+      "logs": [
+        {
+          "log_id": "1964bc7c-3fee-46a5-83ee-cce1dc9b4bb",
+          "log_name": "Grp1 ujCLST",
+          "is_public": "true",
+          "log_type": "1",
+          "algorithm_id": "143",
+          "mask_log_id": "",
+          "processing_level": "L2-user",
+          "spectral_region": "TIR"
+        },
+        {
+          "log_id": "19e48825-b551-4202-b8cc-1a826e23cd9",
+          "log_name": "Min1 uTSAS",
+          "is_public": "true",
+          "log_type": "1",
+          "algorithm_id": "108",
+          "mask_log_id": "",
+          "processing_level": "L2-user",
+          "spectral_region": "SWIR"
+        },
+        {
+          "log_id": "1f5a10e8-1a43-4ed2-937b-c52f458a4fe",
+          "log_name": "Grp3 uTSAS",
+          "is_public": "true",
+          "log_type": "1",
+          "algorithm_id": "109",
+          "mask_log_id": "",
+          "processing_level": "L2-user",
+          "spectral_region": "SWIR"
+        },
+        {
+          "log_id": "20b33a15-c2a5-4743-831c-ce7fd9f6305",
+          "log_name": "Grp3 ujCLST",
+          "is_public": "true",
+          "log_type": "1",
+          "algorithm_id": "143",
+          "mask_log_id": "",
+          "processing_level": "L2-user",
+          "spectral_region": "TIR"
+        },
+        {
+          "log_id": "2e6f380e-9674-4812-8fe8-077eb5907ed",
+          "log_name": "Min3 uTSAS",
+          "is_public": "true",
+          "log_type": "1",
+          "algorithm_id": "108",
+          "mask_log_id": "",
+          "processing_level": "L2-user",
+          "spectral_region": "SWIR"
+        },
+        {
+          "log_id": "4fd5070a-10ea-4be2-96a9-ffc7064d7db",
+          "log_name": "Wt1 ujCLST",
+          "is_public": "true",
+          "log_type": "2",
+          "algorithm_id": "144",
+          "mask_log_id": "",
+          "processing_level": "L2-user",
+          "spectral_region": "TIR"
+        },
+        {
+          "log_id": "6e7d30df-e6fe-488a-81d5-80b3d0b4f0c",
+          "log_name": "Min2 uTSAS",
+          "is_public": "true",
+          "log_type": "1",
+          "algorithm_id": "108",
+          "mask_log_id": "",
+          "processing_level": "L2-user",
+          "spectral_region": "SWIR"
+        },
+        {
+          "log_id": "6e8ddea9-98c8-450b-9f1f-da1d2b72c4f",
+          "log_name": "Grp2 ujCLST",
+          "is_public": "true",
+          "log_type": "1",
+          "algorithm_id": "143",
+          "mask_log_id": "",
+          "processing_level": "L2-user",
+          "spectral_region": "TIR"
+        },
+        {
+          "log_id": "716f7ff3-bf70-43e8-8326-fa8c046fe63",
+          "log_name": "Error ujCLST",
+          "is_public": "true",
+          "log_type": "2",
+          "algorithm_id": "145",
+          "mask_log_id": "",
+          "processing_level": "L2-user",
+          "spectral_region": "TIR"
+        },
+        {
+          "log_id": "84941678-77f5-4414-988f-85ca253f324",
+          "log_name": "Wt3 ujCLST",
+          "is_public": "true",
+          "log_type": "2",
+          "algorithm_id": "144",
+          "mask_log_id": "",
+          "processing_level": "L2-user",
+          "spectral_region": "TIR"
+        },
+        {
+          "log_id": "86f943d7-51a6-4e1e-993f-3a3d4c5e8f7",
+          "log_name": "Min2 ujCLST",
+          "is_public": "true",
+          "log_type": "1",
+          "algorithm_id": "142",
+          "mask_log_id": "",
+          "processing_level": "L2-user",
+          "spectral_region": "TIR"
+        },
+        {
+          "log_id": "87b19c7f-07d6-4725-a621-8a033e8c8cf",
+          "log_name": "Min1 ujCLST",
+          "is_public": "true",
+          "log_type": "1",
+          "algorithm_id": "142",
+          "mask_log_id": "",
+          "processing_level": "L2-user",
+          "spectral_region": "TIR"
+        },
+        {
+          "log_id": "8bc05770-df23-4ee8-a551-0b92891caa1",
+          "log_name": "Wt1 uTSAS",
+          "is_public": "true",
+          "log_type": "2",
+          "algorithm_id": "110",
+          "mask_log_id": "",
+          "processing_level": "L2-user",
+          "spectral_region": "SWIR"
+        },
+        {
+          "log_id": "8bf69aee-bde3-41dd-8502-71e1b8e50b0",
+          "log_name": "Grp1 uTSAS",
+          "is_public": "true",
+          "log_type": "1",
+          "algorithm_id": "109",
+          "mask_log_id": "",
+          "processing_level": "L2-user",
+          "spectral_region": "SWIR"
+        },
+        {
+          "log_id": "8c47a2d5-3b4e-4f77-a4f8-946c1a2f897",
+          "log_name": "Wt2 ujCLST",
+          "is_public": "true",
+          "log_type": "2",
+          "algorithm_id": "144",
+          "mask_log_id": "",
+          "processing_level": "L2-user",
+          "spectral_region": "TIR"
+        },
+        {
+          "log_id": "c7852e48-edae-432a-87ba-7807eac0477",
+          "log_name": "Wt2 uTSAS",
+          "is_public": "true",
+          "log_type": "2",
+          "algorithm_id": "110",
+          "mask_log_id": "",
+          "processing_level": "L2-user",
+          "spectral_region": "SWIR"
+        },
+        {
+          "log_id": "caa798df-156f-42bc-a2e8-96d5e83693b",
+          "log_name": "Error uTSAS",
+          "is_public": "true",
+          "log_type": "2",
+          "algorithm_id": "111",
+          "mask_log_id": "",
+          "processing_level": "L2-user",
+          "spectral_region": "SWIR"
+        },
+        {
+          "log_id": "caed648f-c4a3-4fe1-9c06-a07e778c128",
+          "log_name": "Min3 ujCLST",
+          "is_public": "true",
+          "log_type": "1",
+          "algorithm_id": "142",
+          "mask_log_id": "",
+          "processing_level": "L2-user",
+          "spectral_region": "TIR"
+        },
+        {
+          "log_id": "d2052f90-9631-4d7e-bf8c-b12be5a1beb",
+          "log_name": "Wt3 uTSAS",
+          "is_public": "true",
+          "log_type": "2",
+          "algorithm_id": "110",
+          "mask_log_id": "",
+          "processing_level": "L2-user",
+          "spectral_region": "SWIR"
+        },
+        {
+          "log_id": "ff6f7c1c-d736-4900-9c98-170047d2a31",
+          "log_name": "Grp2 uTSAS",
+          "is_public": "true",
+          "log_type": "1",
+          "algorithm_id": "109",
+          "mask_log_id": "",
+          "processing_level": "L2-user",
+          "spectral_region": "SWIR"
+        }
+      ],
+      "log_count": 20
+    },
+    "zip_evidence": {
+      "hole_id": "WKDD15001",
+      "url": "https://thredds.nci.org.au/thredds/fileServer/rs07/WA/WKDD15001.zip",
+      "checked_utc": "2026-09-11T04:06:59Z",
+      "zip_size": 2100801271,
+      "members": 77,
+      "spectral_members": [
+        {
+          "name": "72165489-8433-46df-957e-454b9ad19ff/WKDD15001_tsg.bip",
+          "size": 197837856,
+          "compressed_size": 98308710,
+          "crc": 4252772314
+        },
+        {
+          "name": "72165489-8433-46df-957e-454b9ad19ff/WKDD15001_tsg.tsg",
+          "size": 3736454,
+          "compressed_size": 719079,
+          "crc": 3974495311
+        },
+        {
+          "name": "72165489-8433-46df-957e-454b9ad19ff/WKDD15001_tsg_cras.bip",
+          "size": 1422236150,
+          "compressed_size": 1420033180,
+          "crc": 133267360
+        },
+        {
+          "name": "72165489-8433-46df-957e-454b9ad19ff/WKDD15001_tsg_tir.bip",
+          "size": 127048416,
+          "compressed_size": 60508193,
+          "crc": 2357902619
+        },
+        {
+          "name": "72165489-8433-46df-957e-454b9ad19ff/WKDD15001_tsg_tir.tsg",
+          "size": 3772294,
+          "compressed_size": 720176,
+          "crc": 1147248819
+        }
+      ],
+      "bytes_fetched": 7767,
+      "status": "zip_directory_verified"
+    }
+  },
+  {
+    "hole_id": "FDH002",
+    "nvcl_inventory": {
+      "dataset_id": "4876d300-ce4a-418c-af16-100ed5b2e6c",
+      "dataset_name": "FDH002",
+      "borehole_uri": "https://geossdi.dmp.wa.gov.au/resource/feature/gswa/borehole/FDH002",
+      "tray_id": "df25d7d5-33d7-406b-bba5-ecfe20b03b3",
+      "section_id": "ac70482a-ab47-48d3-98e5-856c9ddda1e",
+      "domain_id": "256f37c1-6b0c-4e55-b66c-029aa88c548",
+      "description": "<?xml version=\"1.0\" encoding=\"utf-8\"?><TSGDrillHoleMiscMeta xmlns=\"\"><DrillHoleName>FDH002</DrillHoleName><InstrumentName>HyLogger 3-2</InstrumentName><Project>Feysville</Project><Owner>GSWA</Owner><DrillDate>2017-11-20 11:50:56</DrillDate><ExecSumm>GSWA UWI: M0002732|WAMEX Report ID: A116624|Tectonic Unit: Eastern Goldfields|250K Map Sheet: Kurnalpi SH51-10|100K Map Sheet:  Kanowna 3236|Archive Location: Kalgoorlie Core Library|EIS Round: 14</ExecSumm><Datum>GDA94</Datum><Latitude>-30.940503</Latitude><Longitude>121.616305</Longitude><Azimuth>50.000000</Azimuth><Inclination>-60.000000</Inclination><RL>0.000000</RL></TSGDrillHoleMiscMeta>",
+      "modified_date": "2022-07-04 00:00:00+08:00",
+      "created_date": "2020-04-23 00:00:00+08:00",
+      "logs": [
+        {
+          "log_id": "07a566af-3531-47d1-afa9-2b866ebef92",
+          "log_name": "Error uTSAS",
+          "is_public": "true",
+          "log_type": "2",
+          "algorithm_id": "111",
+          "mask_log_id": "",
+          "processing_level": "L2-user",
+          "spectral_region": "SWIR"
+        },
+        {
+          "log_id": "14509942-f234-470f-aaf8-1b0aabb597f",
+          "log_name": "Grp3 ujCLST",
+          "is_public": "true",
+          "log_type": "1",
+          "algorithm_id": "143",
+          "mask_log_id": "",
+          "processing_level": "L2-user",
+          "spectral_region": "TIR"
+        },
+        {
+          "log_id": "19fc6599-8078-40d5-8260-a94a3f2c8b6",
+          "log_name": "Wt3 uTSAS",
+          "is_public": "true",
+          "log_type": "2",
+          "algorithm_id": "110",
+          "mask_log_id": "",
+          "processing_level": "L2-user",
+          "spectral_region": "SWIR"
+        },
+        {
+          "log_id": "1e1643cc-02b0-404b-8dc8-189db559acf",
+          "log_name": "Min2 ujCLST",
+          "is_public": "true",
+          "log_type": "1",
+          "algorithm_id": "142",
+          "mask_log_id": "",
+          "processing_level": "L2-user",
+          "spectral_region": "TIR"
+        },
+        {
+          "log_id": "284dd594-4621-45db-bfeb-7c26912637e",
+          "log_name": "Min2 uTSAS",
+          "is_public": "true",
+          "log_type": "1",
+          "algorithm_id": "108",
+          "mask_log_id": "",
+          "processing_level": "L2-user",
+          "spectral_region": "SWIR"
+        },
+        {
+          "log_id": "33759577-6dfa-402a-b5ee-b54189dc2cf",
+          "log_name": "Grp3 uTSAS",
+          "is_public": "true",
+          "log_type": "1",
+          "algorithm_id": "109",
+          "mask_log_id": "",
+          "processing_level": "L2-user",
+          "spectral_region": "SWIR"
+        },
+        {
+          "log_id": "3df80038-2488-4517-af12-161d059663b",
+          "log_name": "Grp2 ujCLST",
+          "is_public": "true",
+          "log_type": "1",
+          "algorithm_id": "143",
+          "mask_log_id": "",
+          "processing_level": "L2-user",
+          "spectral_region": "TIR"
+        },
+        {
+          "log_id": "55d12274-7a18-42a8-ad33-7192866d165",
+          "log_name": "Min1 uTSAS",
+          "is_public": "true",
+          "log_type": "1",
+          "algorithm_id": "108",
+          "mask_log_id": "",
+          "processing_level": "L2-user",
+          "spectral_region": "SWIR"
+        },
+        {
+          "log_id": "65f99724-3912-4a34-8cc1-4a9911b290e",
+          "log_name": "Min1 ujCLST",
+          "is_public": "true",
+          "log_type": "1",
+          "algorithm_id": "142",
+          "mask_log_id": "",
+          "processing_level": "L2-user",
+          "spectral_region": "TIR"
+        },
+        {
+          "log_id": "86ed6ba6-cd9e-4c39-936a-a03f3935485",
+          "log_name": "Wt1 ujCLST",
+          "is_public": "true",
+          "log_type": "2",
+          "algorithm_id": "144",
+          "mask_log_id": "",
+          "processing_level": "L2-user",
+          "spectral_region": "TIR"
+        },
+        {
+          "log_id": "8a806e89-8aff-449d-98a1-f50d4978060",
+          "log_name": "Wt2 uTSAS",
+          "is_public": "true",
+          "log_type": "2",
+          "algorithm_id": "110",
+          "mask_log_id": "",
+          "processing_level": "L2-user",
+          "spectral_region": "SWIR"
+        },
+        {
+          "log_id": "8bb0226e-26ce-4919-8a30-9f0a670bb9d",
+          "log_name": "Wt1 uTSAS",
+          "is_public": "true",
+          "log_type": "2",
+          "algorithm_id": "110",
+          "mask_log_id": "",
+          "processing_level": "L2-user",
+          "spectral_region": "SWIR"
+        },
+        {
+          "log_id": "8faaf234-79d4-46bd-9d38-bb9de4d9e98",
+          "log_name": "Grp1 uTSAS",
+          "is_public": "true",
+          "log_type": "1",
+          "algorithm_id": "109",
+          "mask_log_id": "",
+          "processing_level": "L2-user",
+          "spectral_region": "SWIR"
+        },
+        {
+          "log_id": "b13daff9-9079-4e1f-a450-ecd238198fb",
+          "log_name": "Wt2 ujCLST",
+          "is_public": "true",
+          "log_type": "2",
+          "algorithm_id": "144",
+          "mask_log_id": "",
+          "processing_level": "L2-user",
+          "spectral_region": "TIR"
+        },
+        {
+          "log_id": "d074e3c9-70bf-4e29-8704-93edc999aa6",
+          "log_name": "Wt3 ujCLST",
+          "is_public": "true",
+          "log_type": "2",
+          "algorithm_id": "144",
+          "mask_log_id": "",
+          "processing_level": "L2-user",
+          "spectral_region": "TIR"
+        },
+        {
+          "log_id": "d0892ce6-a165-4422-9fd8-0be9c411b1c",
+          "log_name": "Grp1 ujCLST",
+          "is_public": "true",
+          "log_type": "1",
+          "algorithm_id": "143",
+          "mask_log_id": "",
+          "processing_level": "L2-user",
+          "spectral_region": "TIR"
+        },
+        {
+          "log_id": "d2193a18-af29-4bb7-82f4-b541fa2282d",
+          "log_name": "Min3 uTSAS",
+          "is_public": "true",
+          "log_type": "1",
+          "algorithm_id": "108",
+          "mask_log_id": "",
+          "processing_level": "L2-user",
+          "spectral_region": "SWIR"
+        },
+        {
+          "log_id": "d40816cb-9eb9-462a-932b-792a7bf4772",
+          "log_name": "Error ujCLST",
+          "is_public": "true",
+          "log_type": "2",
+          "algorithm_id": "145",
+          "mask_log_id": "",
+          "processing_level": "L2-user",
+          "spectral_region": "TIR"
+        },
+        {
+          "log_id": "e713ec9d-cdbf-428c-b913-4fd57ea30cb",
+          "log_name": "Min3 ujCLST",
+          "is_public": "true",
+          "log_type": "1",
+          "algorithm_id": "142",
+          "mask_log_id": "",
+          "processing_level": "L2-user",
+          "spectral_region": "TIR"
+        },
+        {
+          "log_id": "fe76ecd3-30f1-4399-8c18-f885b1d58be",
+          "log_name": "Grp2 uTSAS",
+          "is_public": "true",
+          "log_type": "1",
+          "algorithm_id": "109",
+          "mask_log_id": "",
+          "processing_level": "L2-user",
+          "spectral_region": "SWIR"
+        }
+      ],
+      "log_count": 20
+    },
+    "zip_evidence": {
+      "hole_id": "FDH002",
+      "url": "https://thredds.nci.org.au/thredds/fileServer/rs07/WA/FDH002.zip",
+      "checked_utc": "2026-09-11T04:08:12Z",
+      "zip_size": 1259896075,
+      "members": 78,
+      "spectral_members": [
+        {
+          "name": "4876d300-ce4a-418c-af16-100ed5b2e6c/FDH002_tsg.bip",
+          "size": 182409120,
+          "compressed_size": 90782838,
+          "crc": 795028817
+        },
+        {
+          "name": "4876d300-ce4a-418c-af16-100ed5b2e6c/FDH002_tsg.tsg",
+          "size": 3184335,
+          "compressed_size": 642833,
+          "crc": 1730945016
+        },
+        {
+          "name": "4876d300-ce4a-418c-af16-100ed5b2e6c/FDH002_tsg_cras.bip",
+          "size": 763332328,
+          "compressed_size": 760679032,
+          "crc": 1566357909
+        },
+        {
+          "name": "4876d300-ce4a-418c-af16-100ed5b2e6c/FDH002_tsg_tir.bip",
+          "size": 117140320,
+          "compressed_size": 55743401,
+          "crc": 1982744320
+        },
+        {
+          "name": "4876d300-ce4a-418c-af16-100ed5b2e6c/FDH002_tsg_tir.tsg",
+          "size": 3219372,
+          "compressed_size": 644109,
+          "crc": 4166592478
+        }
+      ],
+      "bytes_fetched": 7634,
+      "status": "zip_directory_verified"
+    }
+  },
+  {
+    "hole_id": "SPBD0364",
+    "nvcl_inventory": {
+      "dataset_id": "39ea327b-7113-4e18-b0b5-801e715f2f1",
+      "dataset_name": "SPBD0364",
+      "borehole_uri": "https://geossdi.dmp.wa.gov.au/resource/feature/gswa/borehole/SPBD0364",
+      "tray_id": "4d732a75-4146-44ed-a087-0210dd6c515",
+      "section_id": "a1ed7fd4-e505-43f8-9fd7-e623ba321ae",
+      "domain_id": "a15c45f0-6146-4b29-a891-129f73690fe",
+      "description": "<?xml version=\"1.0\" encoding=\"utf-8\"?><TSGDrillHoleMiscMeta xmlns=\"\"><DrillHoleName>SPBD0364</DrillHoleName><InstrumentName>HyLogger 3-2</InstrumentName><Project></Project><Owner>GSWA</Owner><DrillDate></DrillDate><ExecSumm>Georgina Gordon removed nontronite, tremolite, paragonite, topaz, riebeckite and rubellite from the SWIR.</ExecSumm><Datum></Datum><Latitude>-31.878800</Latitude><Longitude>121.825100</Longitude><Azimuth>0.000000</Azimuth><Inclination>0.000000</Inclination><RL>0.000000</RL></TSGDrillHoleMiscMeta>",
+      "modified_date": "2026-03-05 00:00:00+08:00",
+      "created_date": "2025-04-10 00:00:00+08:00",
+      "logs": [
+        {
+          "log_id": "022eb610-18a3-458f-b299-6e5702fa116",
+          "log_name": "TIR-CLS1_CLS_min_1",
+          "is_public": "true",
+          "log_type": "1",
+          "algorithm_id": "0",
+          "mask_log_id": "",
+          "processing_level": "unspecified",
+          "spectral_region": "TIR"
+        },
+        {
+          "log_id": "024ab07e-a2c2-4bfe-a825-f99da0af2e6",
+          "log_name": "TIR-CLS1_CLS_wt_3",
+          "is_public": "true",
+          "log_type": "2",
+          "algorithm_id": "0",
+          "mask_log_id": "",
+          "processing_level": "unspecified",
+          "spectral_region": "TIR"
+        },
+        {
+          "log_id": "0b370023-5de3-4f00-b8dc-72f0e7d8414",
+          "log_name": "Wt3 ujCLST",
+          "is_public": "true",
+          "log_type": "2",
+          "algorithm_id": "144",
+          "mask_log_id": "",
+          "processing_level": "L2-user",
+          "spectral_region": "TIR"
+        },
+        {
+          "log_id": "11f8cd50-c9af-4f15-a65e-39f344bab12",
+          "log_name": "Grp2 ujCLST",
+          "is_public": "true",
+          "log_type": "1",
+          "algorithm_id": "143",
+          "mask_log_id": "",
+          "processing_level": "L2-user",
+          "spectral_region": "TIR"
+        },
+        {
+          "log_id": "215f0fa6-ea50-49a0-aa20-f7e9c9c7291",
+          "log_name": "Grp1 uTSAS",
+          "is_public": "true",
+          "log_type": "1",
+          "algorithm_id": "109",
+          "mask_log_id": "",
+          "processing_level": "L2-user",
+          "spectral_region": "SWIR"
+        },
+        {
+          "log_id": "284b5183-b4fe-4a20-af16-6945177efdb",
+          "log_name": "Error uTSAV",
+          "is_public": "true",
+          "log_type": "2",
+          "algorithm_id": "99",
+          "mask_log_id": "",
+          "processing_level": "L2-user",
+          "spectral_region": "VNIR"
+        },
+        {
+          "log_id": "34d9ce87-4356-451a-beb6-4d96f747a80",
+          "log_name": "TIR-CLS1_CLS_min_4",
+          "is_public": "true",
+          "log_type": "1",
+          "algorithm_id": "0",
+          "mask_log_id": "",
+          "processing_level": "unspecified",
+          "spectral_region": "TIR"
+        },
+        {
+          "log_id": "37de660f-e818-42e6-bec8-f11f933df7b",
+          "log_name": "TIR-CLS1_CLS_min_6",
+          "is_public": "true",
+          "log_type": "1",
+          "algorithm_id": "0",
+          "mask_log_id": "",
+          "processing_level": "unspecified",
+          "spectral_region": "TIR"
+        },
+        {
+          "log_id": "382bc0b2-d624-4b40-b076-6975b92d75b",
+          "log_name": "TIR-CLS1_CLS_wt_5",
+          "is_public": "true",
+          "log_type": "2",
+          "algorithm_id": "0",
+          "mask_log_id": "",
+          "processing_level": "unspecified",
+          "spectral_region": "TIR"
+        },
+        {
+          "log_id": "3cba8892-8df9-49d8-830b-f63e261332c",
+          "log_name": "Min1 ujCLST",
+          "is_public": "true",
+          "log_type": "1",
+          "algorithm_id": "142",
+          "mask_log_id": "",
+          "processing_level": "L2-user",
+          "spectral_region": "TIR"
+        },
+        {
+          "log_id": "497e3002-3584-4a8c-8944-9e46401b406",
+          "log_name": "Min1 uTSAS",
+          "is_public": "true",
+          "log_type": "1",
+          "algorithm_id": "108",
+          "mask_log_id": "",
+          "processing_level": "L2-user",
+          "spectral_region": "SWIR"
+        },
+        {
+          "log_id": "5076ed2d-ba8a-4c60-aef8-5d2fdef63bc",
+          "log_name": "TIR-CLS1_CLS_grp_2",
+          "is_public": "true",
+          "log_type": "1",
+          "algorithm_id": "0",
+          "mask_log_id": "",
+          "processing_level": "unspecified",
+          "spectral_region": "TIR"
+        },
+        {
+          "log_id": "51811168-a99e-4c2b-9af5-3c10a712654",
+          "log_name": "Grp2 uTSAS",
+          "is_public": "true",
+          "log_type": "1",
+          "algorithm_id": "109",
+          "mask_log_id": "",
+          "processing_level": "L2-user",
+          "spectral_region": "SWIR"
+        },
+        {
+          "log_id": "5bb133a8-7c02-4cf8-912a-46eaa4cd409",
+          "log_name": "TIR-CLS1_CLS_wt_1",
+          "is_public": "true",
+          "log_type": "2",
+          "algorithm_id": "0",
+          "mask_log_id": "",
+          "processing_level": "unspecified",
+          "spectral_region": "TIR"
+        },
+        {
+          "log_id": "5f295ddd-174c-4610-a9e4-5b47b2bd83c",
+          "log_name": "Wt1 uTSAV",
+          "is_public": "true",
+          "log_type": "2",
+          "algorithm_id": "98",
+          "mask_log_id": "",
+          "processing_level": "L2-user",
+          "spectral_region": "VNIR"
+        },
+        {
+          "log_id": "60be4ffc-d465-4698-a8d2-2ad6500ceba",
+          "log_name": "TIR-CLS1_CLS_grp_3",
+          "is_public": "true",
+          "log_type": "1",
+          "algorithm_id": "0",
+          "mask_log_id": "",
+          "processing_level": "unspecified",
+          "spectral_region": "TIR"
+        },
+        {
+          "log_id": "69a14c2b-e07d-4f33-83a1-c0ba6b31591",
+          "log_name": "Error ujCLST",
+          "is_public": "true",
+          "log_type": "2",
+          "algorithm_id": "145",
+          "mask_log_id": "",
+          "processing_level": "L2-user",
+          "spectral_region": "TIR"
+        },
+        {
+          "log_id": "6df74529-a658-4059-9dac-431e9905bdb",
+          "log_name": "TIR-CLS1_CLS_wt_6",
+          "is_public": "true",
+          "log_type": "2",
+          "algorithm_id": "0",
+          "mask_log_id": "",
+          "processing_level": "unspecified",
+          "spectral_region": "TIR"
+        },
+        {
+          "log_id": "7474e653-74e5-4212-a8b5-dde22cba6cd",
+          "log_name": "TIR-CLS1_CLS_min_2",
+          "is_public": "true",
+          "log_type": "1",
+          "algorithm_id": "0",
+          "mask_log_id": "",
+          "processing_level": "unspecified",
+          "spectral_region": "TIR"
+        },
+        {
+          "log_id": "8005cf44-4c38-40ec-a422-f4fc057def0",
+          "log_name": "Grp1 uTSAV",
+          "is_public": "true",
+          "log_type": "1",
+          "algorithm_id": "97",
+          "mask_log_id": "",
+          "processing_level": "L2-user",
+          "spectral_region": "VNIR"
+        },
+        {
+          "log_id": "86675f66-e428-4df6-a1d8-0d4c5c3d018",
+          "log_name": "Grp1 ujCLST",
+          "is_public": "true",
+          "log_type": "1",
+          "algorithm_id": "143",
+          "mask_log_id": "",
+          "processing_level": "L2-user",
+          "spectral_region": "TIR"
+        },
+        {
+          "log_id": "8ad7c3c0-ea28-49ae-a1ec-8fbe4a51148",
+          "log_name": "TIR-CLS1_CLS_min_5",
+          "is_public": "true",
+          "log_type": "1",
+          "algorithm_id": "0",
+          "mask_log_id": "",
+          "processing_level": "unspecified",
+          "spectral_region": "TIR"
+        },
+        {
+          "log_id": "8b996b2b-2041-49f5-9c5f-e418b2ba3ed",
+          "log_name": "Min2 ujCLST",
+          "is_public": "true",
+          "log_type": "1",
+          "algorithm_id": "142",
+          "mask_log_id": "",
+          "processing_level": "L2-user",
+          "spectral_region": "TIR"
+        },
+        {
+          "log_id": "919d619d-f0f0-412e-bacc-916d80b201e",
+          "log_name": "Grp2 uTSAV",
+          "is_public": "true",
+          "log_type": "1",
+          "algorithm_id": "97",
+          "mask_log_id": "",
+          "processing_level": "L2-user",
+          "spectral_region": "VNIR"
+        },
+        {
+          "log_id": "989311e9-b317-4b61-96eb-a58af610805",
+          "log_name": "Wt1 uTSAS",
+          "is_public": "true",
+          "log_type": "2",
+          "algorithm_id": "110",
+          "mask_log_id": "",
+          "processing_level": "L2-user",
+          "spectral_region": "SWIR"
+        },
+        {
+          "log_id": "99270e83-865b-41ef-986f-be1e34f670e",
+          "log_name": "TIR-CLS1_CLS_grp_5",
+          "is_public": "true",
+          "log_type": "1",
+          "algorithm_id": "0",
+          "mask_log_id": "",
+          "processing_level": "unspecified",
+          "spectral_region": "TIR"
+        },
+        {
+          "log_id": "9b4b0024-ad71-4f17-ba3e-cdb21e1c7ae",
+          "log_name": "TIR-CLS1_CLS_min_3",
+          "is_public": "true",
+          "log_type": "1",
+          "algorithm_id": "0",
+          "mask_log_id": "",
+          "processing_level": "unspecified",
+          "spectral_region": "TIR"
+        },
+        {
+          "log_id": "a202ce09-62a1-4c67-8217-21545861cce",
+          "log_name": "Error uTSAS",
+          "is_public": "true",
+          "log_type": "2",
+          "algorithm_id": "111",
+          "mask_log_id": "",
+          "processing_level": "L2-user",
+          "spectral_region": "SWIR"
+        },
+        {
+          "log_id": "a287399e-aec4-486d-83c3-66b5c52ae29",
+          "log_name": "Min1 uTSAV",
+          "is_public": "true",
+          "log_type": "1",
+          "algorithm_id": "96",
+          "mask_log_id": "",
+          "processing_level": "L2-user",
+          "spectral_region": "VNIR"
+        },
+        {
+          "log_id": "aea7c7e3-a56a-4832-8851-0ef343821b7",
+          "log_name": "Grp3 uTSAS",
+          "is_public": "true",
+          "log_type": "1",
+          "algorithm_id": "109",
+          "mask_log_id": "",
+          "processing_level": "L2-user",
+          "spectral_region": "SWIR"
+        },
+        {
+          "log_id": "af53ff07-efed-4aae-9769-e20b6c00b32",
+          "log_name": "Min3 ujCLST",
+          "is_public": "true",
+          "log_type": "1",
+          "algorithm_id": "142",
+          "mask_log_id": "",
+          "processing_level": "L2-user",
+          "spectral_region": "TIR"
+        },
+        {
+          "log_id": "b308e8a3-0b5c-4b62-8249-4933e7c7424",
+          "log_name": "Min2 uTSAS",
+          "is_public": "true",
+          "log_type": "1",
+          "algorithm_id": "108",
+          "mask_log_id": "",
+          "processing_level": "L2-user",
+          "spectral_region": "SWIR"
+        },
+        {
+          "log_id": "bd0d20a3-5275-4b79-a415-637ba7b676b",
+          "log_name": "Wt2 ujCLST",
+          "is_public": "true",
+          "log_type": "2",
+          "algorithm_id": "144",
+          "mask_log_id": "",
+          "processing_level": "L2-user",
+          "spectral_region": "TIR"
+        },
+        {
+          "log_id": "bd649451-946f-494d-8093-30084396c48",
+          "log_name": "Wt1 ujCLST",
+          "is_public": "true",
+          "log_type": "2",
+          "algorithm_id": "144",
+          "mask_log_id": "",
+          "processing_level": "L2-user",
+          "spectral_region": "TIR"
+        },
+        {
+          "log_id": "bde8bbd1-d4e3-4827-976f-1783d16791d",
+          "log_name": "Wt3 uTSAS",
+          "is_public": "true",
+          "log_type": "2",
+          "algorithm_id": "110",
+          "mask_log_id": "",
+          "processing_level": "L2-user",
+          "spectral_region": "SWIR"
+        },
+        {
+          "log_id": "c7024fa3-28e5-43dc-9b1b-29843425ee0",
+          "log_name": "TIR-CLS1_CLS_wt_2",
+          "is_public": "true",
+          "log_type": "2",
+          "algorithm_id": "0",
+          "mask_log_id": "",
+          "processing_level": "unspecified",
+          "spectral_region": "TIR"
+        },
+        {
+          "log_id": "cc0ce3ac-4ee4-4c2d-972b-61f8c8b59ba",
+          "log_name": "Min2 uTSAV",
+          "is_public": "true",
+          "log_type": "1",
+          "algorithm_id": "96",
+          "mask_log_id": "",
+          "processing_level": "L2-user",
+          "spectral_region": "VNIR"
+        },
+        {
+          "log_id": "d03a6805-1878-49a8-ad4c-1dc5eff7f1e",
+          "log_name": "Grp3 ujCLST",
+          "is_public": "true",
+          "log_type": "1",
+          "algorithm_id": "143",
+          "mask_log_id": "",
+          "processing_level": "L2-user",
+          "spectral_region": "TIR"
+        },
+        {
+          "log_id": "d3408038-d1b6-4d1b-a8c1-b4e5e9e1452",
+          "log_name": "TIR-CLS1_CLS_grp_6",
+          "is_public": "true",
+          "log_type": "1",
+          "algorithm_id": "0",
+          "mask_log_id": "",
+          "processing_level": "unspecified",
+          "spectral_region": "TIR"
+        },
+        {
+          "log_id": "d5780d41-f055-4129-99e2-2e72447aec1",
+          "log_name": "Min3 uTSAS",
+          "is_public": "true",
+          "log_type": "1",
+          "algorithm_id": "108",
+          "mask_log_id": "",
+          "processing_level": "L2-user",
+          "spectral_region": "SWIR"
+        },
+        {
+          "log_id": "d79517eb-c32c-4450-bc16-71d488cc5e8",
+          "log_name": "TIR-CLS1_CLS_wt_4",
+          "is_public": "true",
+          "log_type": "2",
+          "algorithm_id": "0",
+          "mask_log_id": "",
+          "processing_level": "unspecified",
+          "spectral_region": "TIR"
+        },
+        {
+          "log_id": "e464d407-7d6d-4c48-8a6e-f2579973db4",
+          "log_name": "TIR-CLS1_CLS_grp_4",
+          "is_public": "true",
+          "log_type": "1",
+          "algorithm_id": "0",
+          "mask_log_id": "",
+          "processing_level": "unspecified",
+          "spectral_region": "TIR"
+        },
+        {
+          "log_id": "e6e3e860-7553-4a32-9ece-14e6dcdbfdf",
+          "log_name": "TIR-CLS1_CLS_RMSErr",
+          "is_public": "true",
+          "log_type": "2",
+          "algorithm_id": "0",
+          "mask_log_id": "",
+          "processing_level": "unspecified",
+          "spectral_region": "TIR"
+        },
+        {
+          "log_id": "f123cfad-6ca7-4b84-b5e8-630acea994a",
+          "log_name": "Wt2 uTSAV",
+          "is_public": "true",
+          "log_type": "2",
+          "algorithm_id": "98",
+          "mask_log_id": "",
+          "processing_level": "L2-user",
+          "spectral_region": "VNIR"
+        },
+        {
+          "log_id": "f9e84222-147b-4bca-8826-561cbfc58f0",
+          "log_name": "TIR-CLS1_CLS_grp_1",
+          "is_public": "true",
+          "log_type": "1",
+          "algorithm_id": "0",
+          "mask_log_id": "",
+          "processing_level": "unspecified",
+          "spectral_region": "TIR"
+        },
+        {
+          "log_id": "fdf16187-7da0-4698-8b59-5b28345ab0e",
+          "log_name": "Wt2 uTSAS",
+          "is_public": "true",
+          "log_type": "2",
+          "algorithm_id": "110",
+          "mask_log_id": "",
+          "processing_level": "L2-user",
+          "spectral_region": "SWIR"
+        }
+      ],
+      "log_count": 46
+    },
+    "zip_evidence": {
+      "hole_id": "SPBD0364",
+      "url": "https://thredds.nci.org.au/thredds/fileServer/rs07/WA/SPBD0364.zip",
+      "checked_utc": "2026-09-11T04:10:48Z",
+      "zip_size": 1997682028,
+      "members": 109,
+      "spectral_members": [
+        {
+          "name": "39ea327b-7113-4e18-b0b5-801e715f2f1/SPBD0364_tsg.bip",
+          "size": 270410688,
+          "compressed_size": 148590987,
+          "crc": 1258730150
+        },
+        {
+          "name": "39ea327b-7113-4e18-b0b5-801e715f2f1/SPBD0364_tsg.tsg",
+          "size": 5034919,
+          "compressed_size": 978467,
+          "crc": 144762922
+        },
+        {
+          "name": "39ea327b-7113-4e18-b0b5-801e715f2f1/SPBD0364_tsg_cras.bip",
+          "size": 1099092421,
+          "compressed_size": 1095445746,
+          "crc": 2080722639
+        },
+        {
+          "name": "39ea327b-7113-4e18-b0b5-801e715f2f1/SPBD0364_tsg_tir.bip",
+          "size": 173653568,
+          "compressed_size": 89958564,
+          "crc": 1145117879
+        },
+        {
+          "name": "39ea327b-7113-4e18-b0b5-801e715f2f1/SPBD0364_tsg_tir.tsg",
+          "size": 5034668,
+          "compressed_size": 971526,
+          "crc": 540452193
+        }
+      ],
+      "bytes_fetched": 10864,
+      "status": "zip_directory_verified"
+    }
+  },
+  {
+    "hole_id": "FDH007",
+    "nvcl_inventory": {
+      "dataset_id": "2598ebfe-b17f-4e8a-9a45-9c0460e5363",
+      "dataset_name": "FDH007",
+      "borehole_uri": "https://geossdi.dmp.wa.gov.au/resource/feature/gswa/borehole/FDH007",
+      "tray_id": "6ec18d0a-e8bb-47d2-abf9-baa5380a0f9",
+      "section_id": "0b38c83a-70e2-49b3-88a5-a09aae1adc0",
+      "domain_id": "c24b1082-55e1-4417-b092-b19e8b0b779",
+      "description": "<?xml version=\"1.0\" encoding=\"utf-8\"?><TSGDrillHoleMiscMeta xmlns=\"\"><DrillHoleName>FDH007</DrillHoleName><InstrumentName>HyLogger 3-2</InstrumentName><Project>Feysville</Project><Owner>GSWA</Owner><DrillDate>2017-11-23 07:57:18</DrillDate><ExecSumm>GSWA UWI: M0002733|WAMEX Report ID: A116624|Tectonic Unit: Eastern Goldfields|250K Map Sheet: Kurnalpi SH51-10|100K Map Sheet:  Kanowna 3236|Archive Location: Kalgoorlie Core Library|EIS Round: 14</ExecSumm><Datum>GDA94</Datum><Latitude>-30.924839</Latitude><Longitude>121.607708</Longitude><Azimuth>230.000000</Azimuth><Inclination>-60.000000</Inclination><RL>0.000000</RL></TSGDrillHoleMiscMeta>",
+      "modified_date": "2022-07-04 00:00:00+08:00",
+      "created_date": "2020-04-23 00:00:00+08:00",
+      "logs": [
+        {
+          "log_id": "0fcc6848-3673-4968-abfb-19777c7c6bd",
+          "log_name": "Wt2 ujCLST",
+          "is_public": "true",
+          "log_type": "2",
+          "algorithm_id": "144",
+          "mask_log_id": "",
+          "processing_level": "L2-user",
+          "spectral_region": "TIR"
+        },
+        {
+          "log_id": "12969f5e-8812-49ea-907a-6703e9c2ff2",
+          "log_name": "Grp3 uTSAS",
+          "is_public": "true",
+          "log_type": "1",
+          "algorithm_id": "109",
+          "mask_log_id": "",
+          "processing_level": "L2-user",
+          "spectral_region": "SWIR"
+        },
+        {
+          "log_id": "28b9a5b7-dd18-4434-bc9e-2a70b335248",
+          "log_name": "Error uTSAS",
+          "is_public": "true",
+          "log_type": "2",
+          "algorithm_id": "111",
+          "mask_log_id": "",
+          "processing_level": "L2-user",
+          "spectral_region": "SWIR"
+        },
+        {
+          "log_id": "340aefe4-5ea7-4b53-8706-d72ed859d13",
+          "log_name": "Min1 uTSAS",
+          "is_public": "true",
+          "log_type": "1",
+          "algorithm_id": "108",
+          "mask_log_id": "",
+          "processing_level": "L2-user",
+          "spectral_region": "SWIR"
+        },
+        {
+          "log_id": "42cf4a66-0a78-497c-ada1-1adcf92ef50",
+          "log_name": "Min2 uTSAS",
+          "is_public": "true",
+          "log_type": "1",
+          "algorithm_id": "108",
+          "mask_log_id": "",
+          "processing_level": "L2-user",
+          "spectral_region": "SWIR"
+        },
+        {
+          "log_id": "49893d48-d375-4f03-8ed9-edeefa0496f",
+          "log_name": "Grp1 uTSAS",
+          "is_public": "true",
+          "log_type": "1",
+          "algorithm_id": "109",
+          "mask_log_id": "",
+          "processing_level": "L2-user",
+          "spectral_region": "SWIR"
+        },
+        {
+          "log_id": "5918573d-1f9c-4147-a2b8-50033b1ac49",
+          "log_name": "Wt3 ujCLST",
+          "is_public": "true",
+          "log_type": "2",
+          "algorithm_id": "144",
+          "mask_log_id": "",
+          "processing_level": "L2-user",
+          "spectral_region": "TIR"
+        },
+        {
+          "log_id": "64ad34b5-5a3f-4b96-abf0-16561ae3989",
+          "log_name": "Wt2 uTSAS",
+          "is_public": "true",
+          "log_type": "2",
+          "algorithm_id": "110",
+          "mask_log_id": "",
+          "processing_level": "L2-user",
+          "spectral_region": "SWIR"
+        },
+        {
+          "log_id": "64f42cca-52ac-4016-a8e1-e8299876a6a",
+          "log_name": "Wt1 uTSAS",
+          "is_public": "true",
+          "log_type": "2",
+          "algorithm_id": "110",
+          "mask_log_id": "",
+          "processing_level": "L2-user",
+          "spectral_region": "SWIR"
+        },
+        {
+          "log_id": "6750d4fe-e4e8-48b1-8098-af44f3c4500",
+          "log_name": "Wt3 uTSAS",
+          "is_public": "true",
+          "log_type": "2",
+          "algorithm_id": "110",
+          "mask_log_id": "",
+          "processing_level": "L2-user",
+          "spectral_region": "SWIR"
+        },
+        {
+          "log_id": "753c80fe-cefd-4db8-af2b-c5e5f156e6a",
+          "log_name": "Error ujCLST",
+          "is_public": "true",
+          "log_type": "2",
+          "algorithm_id": "145",
+          "mask_log_id": "",
+          "processing_level": "L2-user",
+          "spectral_region": "TIR"
+        },
+        {
+          "log_id": "823963d9-b3df-40ed-a2a5-21c180b646c",
+          "log_name": "Grp3 ujCLST",
+          "is_public": "true",
+          "log_type": "1",
+          "algorithm_id": "143",
+          "mask_log_id": "",
+          "processing_level": "L2-user",
+          "spectral_region": "TIR"
+        },
+        {
+          "log_id": "96653aa2-3c1a-46c2-a6c5-efe7a3f2f6f",
+          "log_name": "Min1 ujCLST",
+          "is_public": "true",
+          "log_type": "1",
+          "algorithm_id": "142",
+          "mask_log_id": "",
+          "processing_level": "L2-user",
+          "spectral_region": "TIR"
+        },
+        {
+          "log_id": "a1a6d1a3-1b20-4d6b-862d-979957c8944",
+          "log_name": "Grp1 ujCLST",
+          "is_public": "true",
+          "log_type": "1",
+          "algorithm_id": "143",
+          "mask_log_id": "",
+          "processing_level": "L2-user",
+          "spectral_region": "TIR"
+        },
+        {
+          "log_id": "a5385d4f-9233-4ea8-b14f-33e33c378f3",
+          "log_name": "Min3 uTSAS",
+          "is_public": "true",
+          "log_type": "1",
+          "algorithm_id": "108",
+          "mask_log_id": "",
+          "processing_level": "L2-user",
+          "spectral_region": "SWIR"
+        },
+        {
+          "log_id": "d308a5f5-f9fb-4c65-a26a-9bf552c25e7",
+          "log_name": "Wt1 ujCLST",
+          "is_public": "true",
+          "log_type": "2",
+          "algorithm_id": "144",
+          "mask_log_id": "",
+          "processing_level": "L2-user",
+          "spectral_region": "TIR"
+        },
+        {
+          "log_id": "e485939d-b293-4b2a-9292-0831613097e",
+          "log_name": "Min3 ujCLST",
+          "is_public": "true",
+          "log_type": "1",
+          "algorithm_id": "142",
+          "mask_log_id": "",
+          "processing_level": "L2-user",
+          "spectral_region": "TIR"
+        },
+        {
+          "log_id": "e685f840-ab01-4fed-b4ef-e2a752a9ca1",
+          "log_name": "Min2 ujCLST",
+          "is_public": "true",
+          "log_type": "1",
+          "algorithm_id": "142",
+          "mask_log_id": "",
+          "processing_level": "L2-user",
+          "spectral_region": "TIR"
+        },
+        {
+          "log_id": "f0aebc7f-8fb2-4db6-8b4b-8952a2d43d6",
+          "log_name": "Grp2 ujCLST",
+          "is_public": "true",
+          "log_type": "1",
+          "algorithm_id": "143",
+          "mask_log_id": "",
+          "processing_level": "L2-user",
+          "spectral_region": "TIR"
+        },
+        {
+          "log_id": "fdf0a142-50e2-49ec-b808-23c77bb5bbb",
+          "log_name": "Grp2 uTSAS",
+          "is_public": "true",
+          "log_type": "1",
+          "algorithm_id": "109",
+          "mask_log_id": "",
+          "processing_level": "L2-user",
+          "spectral_region": "SWIR"
+        }
+      ],
+      "log_count": 20
+    },
+    "zip_evidence": {
+      "hole_id": "FDH007",
+      "url": "https://thredds.nci.org.au/thredds/fileServer/rs07/WA/FDH007.zip",
+      "checked_utc": "2026-09-11T04:11:36Z",
+      "zip_size": 1108365705,
+      "members": 67,
+      "spectral_members": [
+        {
+          "name": "2598ebfe-b17f-4e8a-9a45-9c0460e5363/FDH007_tsg.bip",
+          "size": 152928000,
+          "compressed_size": 75626638,
+          "crc": 3190153127
+        },
+        {
+          "name": "2598ebfe-b17f-4e8a-9a45-9c0460e5363/FDH007_tsg.tsg",
+          "size": 2670085,
+          "compressed_size": 535339,
+          "crc": 2146676880
+        },
+        {
+          "name": "2598ebfe-b17f-4e8a-9a45-9c0460e5363/FDH007_tsg_cras.bip",
+          "size": 669997172,
+          "compressed_size": 668023560,
+          "crc": 2535795406
+        },
+        {
+          "name": "2598ebfe-b17f-4e8a-9a45-9c0460e5363/FDH007_tsg_tir.bip",
+          "size": 98208000,
+          "compressed_size": 46804951,
+          "crc": 243087274
+        },
+        {
+          "name": "2598ebfe-b17f-4e8a-9a45-9c0460e5363/FDH007_tsg_tir.tsg",
+          "size": 2705971,
+          "compressed_size": 536599,
+          "crc": 2078090664
+        }
+      ],
+      "bytes_fetched": 6566,
+      "status": "zip_directory_verified"
+    }
+  },
+  {
+    "hole_id": "NBDH035",
+    "nvcl_inventory": {
+      "dataset_id": "2be8f215-cd93-44d6-b41c-d6fac5bc8cc",
+      "dataset_name": "NBDH035",
+      "borehole_uri": "https://geossdi.dmp.wa.gov.au/resource/feature/gswa/borehole/nbdh035",
+      "tray_id": "9e891642-4b74-4438-89ec-b58b1594279",
+      "section_id": "74fbd43b-a2e9-42da-8211-9881ae4a31f",
+      "domain_id": "996dafff-4874-49bc-8082-5d07bfbd1e9",
+      "description": "<?xml version=\"1.0\" encoding=\"utf-8\"?><TSGDrillHoleMiscMeta xmlns=\"\"><DrillHoleName>nbdh035</DrillHoleName><InstrumentName>HyLogger 3-2</InstrumentName><Project>Nimbus</Project><Owner>Macphersons Resources</Owner><DrillDate>2014-04-17 08:08:05</DrillDate><ExecSumm>GSWA UWI: M0002241|WAMEX Report ID: A108477|Tectonic Unit: Eastern Goldfields|250K Map Sheet: Kurnalpi SH51-10|100K Map Sheet:  Kanowna 3236|Archive Location: Returned to company</ExecSumm><Datum>GDA94</Datum><Latitude>-30.787707</Latitude><Longitude>121.649045</Longitude><Azimuth>215.000000</Azimuth><Inclination>-60.000000</Inclination><RL>0.000000</RL></TSGDrillHoleMiscMeta>",
+      "modified_date": "2022-07-10 00:00:00+08:00",
+      "created_date": "2021-07-19 00:00:00+08:00",
+      "logs": [
+        {
+          "log_id": "03d5809a-cbbf-4b70-8c80-4d0a4b9cce6",
+          "log_name": "Grp3 uTSAS",
+          "is_public": "true",
+          "log_type": "1",
+          "algorithm_id": "109",
+          "mask_log_id": "",
+          "processing_level": "L2-user",
+          "spectral_region": "SWIR"
+        },
+        {
+          "log_id": "04c46dec-358c-4349-b3fb-73ef2bba2fb",
+          "log_name": "Min3 ujCLST",
+          "is_public": "true",
+          "log_type": "1",
+          "algorithm_id": "142",
+          "mask_log_id": "",
+          "processing_level": "L2-user",
+          "spectral_region": "TIR"
+        },
+        {
+          "log_id": "13dd9ad7-789c-48dd-9f48-0d4cb39262c",
+          "log_name": "Wt3 uTSAS",
+          "is_public": "true",
+          "log_type": "2",
+          "algorithm_id": "110",
+          "mask_log_id": "",
+          "processing_level": "L2-user",
+          "spectral_region": "SWIR"
+        },
+        {
+          "log_id": "22b9a703-c218-488a-88cd-521388feaed",
+          "log_name": "Min1 ujCLST",
+          "is_public": "true",
+          "log_type": "1",
+          "algorithm_id": "142",
+          "mask_log_id": "",
+          "processing_level": "L2-user",
+          "spectral_region": "TIR"
+        },
+        {
+          "log_id": "2d1486c8-20ae-4d0a-8773-1f295699370",
+          "log_name": "Wt1 ujCLST",
+          "is_public": "true",
+          "log_type": "2",
+          "algorithm_id": "144",
+          "mask_log_id": "",
+          "processing_level": "L2-user",
+          "spectral_region": "TIR"
+        },
+        {
+          "log_id": "2dbba830-c696-4c3b-945a-bd4b8af6a75",
+          "log_name": "Grp1 uTSAS",
+          "is_public": "true",
+          "log_type": "1",
+          "algorithm_id": "109",
+          "mask_log_id": "",
+          "processing_level": "L2-user",
+          "spectral_region": "SWIR"
+        },
+        {
+          "log_id": "631ce9b0-0052-4511-a388-59fa621da67",
+          "log_name": "Grp3 ujCLST",
+          "is_public": "true",
+          "log_type": "1",
+          "algorithm_id": "143",
+          "mask_log_id": "",
+          "processing_level": "L2-user",
+          "spectral_region": "TIR"
+        },
+        {
+          "log_id": "72373d57-bf53-4af2-9d9e-a84903c685f",
+          "log_name": "Grp2 uTSAS",
+          "is_public": "true",
+          "log_type": "1",
+          "algorithm_id": "109",
+          "mask_log_id": "",
+          "processing_level": "L2-user",
+          "spectral_region": "SWIR"
+        },
+        {
+          "log_id": "8e318931-6922-43c3-8b45-5fc3deb88e7",
+          "log_name": "Min2 uTSAS",
+          "is_public": "true",
+          "log_type": "1",
+          "algorithm_id": "108",
+          "mask_log_id": "",
+          "processing_level": "L2-user",
+          "spectral_region": "SWIR"
+        },
+        {
+          "log_id": "9c18142d-a0f1-4387-b5d9-ec68626ebd4",
+          "log_name": "Wt2 ujCLST",
+          "is_public": "true",
+          "log_type": "2",
+          "algorithm_id": "144",
+          "mask_log_id": "",
+          "processing_level": "L2-user",
+          "spectral_region": "TIR"
+        },
+        {
+          "log_id": "a8222d03-b0bd-4f62-b136-00e778364ea",
+          "log_name": "Grp2 ujCLST",
+          "is_public": "true",
+          "log_type": "1",
+          "algorithm_id": "143",
+          "mask_log_id": "",
+          "processing_level": "L2-user",
+          "spectral_region": "TIR"
+        },
+        {
+          "log_id": "b0ed718e-8244-4189-922f-8677bd50adb",
+          "log_name": "Min2 ujCLST",
+          "is_public": "true",
+          "log_type": "1",
+          "algorithm_id": "142",
+          "mask_log_id": "",
+          "processing_level": "L2-user",
+          "spectral_region": "TIR"
+        },
+        {
+          "log_id": "b3d13a6d-cb7d-4364-b485-582ecceebd4",
+          "log_name": "Min3 uTSAS",
+          "is_public": "true",
+          "log_type": "1",
+          "algorithm_id": "108",
+          "mask_log_id": "",
+          "processing_level": "L2-user",
+          "spectral_region": "SWIR"
+        },
+        {
+          "log_id": "c4237256-05ee-4c3b-a930-a74ea1eaf06",
+          "log_name": "Wt1 uTSAS",
+          "is_public": "true",
+          "log_type": "2",
+          "algorithm_id": "110",
+          "mask_log_id": "",
+          "processing_level": "L2-user",
+          "spectral_region": "SWIR"
+        },
+        {
+          "log_id": "ccc9b9a4-7daf-44e3-92a0-b36832729b7",
+          "log_name": "Min1 uTSAS",
+          "is_public": "true",
+          "log_type": "1",
+          "algorithm_id": "108",
+          "mask_log_id": "",
+          "processing_level": "L2-user",
+          "spectral_region": "SWIR"
+        },
+        {
+          "log_id": "d6295aa4-e19d-42c3-8c38-32ab4e4bc52",
+          "log_name": "Grp1 ujCLST",
+          "is_public": "true",
+          "log_type": "1",
+          "algorithm_id": "143",
+          "mask_log_id": "",
+          "processing_level": "L2-user",
+          "spectral_region": "TIR"
+        },
+        {
+          "log_id": "d9aa1fff-fe8a-4d45-941a-c8dc1891617",
+          "log_name": "Error ujCLST",
+          "is_public": "true",
+          "log_type": "2",
+          "algorithm_id": "145",
+          "mask_log_id": "",
+          "processing_level": "L2-user",
+          "spectral_region": "TIR"
+        },
+        {
+          "log_id": "da94fcb5-c545-4f59-a0cd-a4b01888d2b",
+          "log_name": "Wt3 ujCLST",
+          "is_public": "true",
+          "log_type": "2",
+          "algorithm_id": "144",
+          "mask_log_id": "",
+          "processing_level": "L2-user",
+          "spectral_region": "TIR"
+        },
+        {
+          "log_id": "e7dae4f6-ea0a-416f-912c-bd721dc5d05",
+          "log_name": "Error uTSAS",
+          "is_public": "true",
+          "log_type": "2",
+          "algorithm_id": "111",
+          "mask_log_id": "",
+          "processing_level": "L2-user",
+          "spectral_region": "SWIR"
+        },
+        {
+          "log_id": "f385b79a-1622-473b-b772-6c5833cbbcf",
+          "log_name": "Wt2 uTSAS",
+          "is_public": "true",
+          "log_type": "2",
+          "algorithm_id": "110",
+          "mask_log_id": "",
+          "processing_level": "L2-user",
+          "spectral_region": "SWIR"
+        }
+      ],
+      "log_count": 20
+    },
+    "zip_evidence": {
+      "hole_id": "NBDH035",
+      "url": "https://thredds.nci.org.au/thredds/fileServer/rs07/WA/NBDH035.zip",
+      "checked_utc": "2026-09-11T04:11:41Z",
+      "zip_size": 3111631100,
+      "members": 187,
+      "spectral_members": [
+        {
+          "name": "2be8f215-cd93-44d6-b41c-d6fac5bc8cc/NBDH035_tsg.bip",
+          "size": 755124480,
+          "compressed_size": 373387015,
+          "crc": 3032544269
+        },
+        {
+          "name": "2be8f215-cd93-44d6-b41c-d6fac5bc8cc/NBDH035_tsg.tsg",
+          "size": 13623165,
+          "compressed_size": 2630288,
+          "crc": 3090938814
+        },
+        {
+          "name": "2be8f215-cd93-44d6-b41c-d6fac5bc8cc/NBDH035_tsg_cras.bip",
+          "size": 1459771262,
+          "compressed_size": 1453268072,
+          "crc": 856372462
+        },
+        {
+          "name": "2be8f215-cd93-44d6-b41c-d6fac5bc8cc/NBDH035_tsg_tir.bip",
+          "size": 484929280,
+          "compressed_size": 235273254,
+          "crc": 404657987
+        },
+        {
+          "name": "2be8f215-cd93-44d6-b41c-d6fac5bc8cc/NBDH035_tsg_tir.tsg",
+          "size": 13627505,
+          "compressed_size": 2629747,
+          "crc": 937804847
+        }
+      ],
+      "bytes_fetched": 18392,
+      "status": "zip_directory_verified"
+    }
+  },
+  {
+    "hole_id": "MWEX10270",
+    "nvcl_inventory": {
+      "dataset_id": "2ce5c539-52c3-4c20-9230-697574dc780",
+      "dataset_name": "MWEX10270",
+      "borehole_uri": "https://geossdi.dmp.wa.gov.au/resource/feature/gswa/borehole/MWEX10270",
+      "tray_id": "4068a2a2-493f-4a48-a7cd-d8e1ee6e5a8",
+      "section_id": "618cd098-89c0-4bcc-8129-7be6aad3a4a",
+      "domain_id": "c9af2bca-21b6-496d-832f-365b0b98037",
+      "description": "<?xml version=\"1.0\" encoding=\"utf-8\"?><TSGDrillHoleMiscMeta xmlns=\"\"><DrillHoleName>MWEX10270</DrillHoleName><InstrumentName>HyLogger 3-2</InstrumentName><Project>Mt Weld carbonatite</Project><Owner>GSWA</Owner><DrillDate>2021-06-07 13:19:41</DrillDate><ExecSumm>GSWA UWI: M003192|WAMEX Report ID: |Tectonic Unit: Eastern Goldfields|250K Map Sheet: Laverton SH51-02|100K Map Sheet:  Burtville 3440|Archive Location: Perth Core Library|EIS Round: 22</ExecSumm><Datum>GDA94</Datum><Latitude>-28.862942</Latitude><Longitude>122.547062</Longitude><Azimuth>270.000000</Azimuth><Inclination>-55.000000</Inclination><RL>0.000000</RL></TSGDrillHoleMiscMeta>",
+      "modified_date": "2022-07-10 00:00:00+08:00",
+      "created_date": "2022-03-02 00:00:00+08:00",
+      "logs": [
+        {
+          "log_id": "07289b2c-beb5-40fe-b216-38a7e37b71e",
+          "log_name": "Grp1 uTSAS",
+          "is_public": "true",
+          "log_type": "1",
+          "algorithm_id": "109",
+          "mask_log_id": "",
+          "processing_level": "L2-user",
+          "spectral_region": "SWIR"
+        },
+        {
+          "log_id": "0bb3ba5d-1e63-476a-8603-64d4be78907",
+          "log_name": "Wt1 ujCLST",
+          "is_public": "true",
+          "log_type": "2",
+          "algorithm_id": "144",
+          "mask_log_id": "",
+          "processing_level": "L2-user",
+          "spectral_region": "TIR"
+        },
+        {
+          "log_id": "112c7a8b-a5db-48cc-b228-468829657c6",
+          "log_name": "Wt2 ujCLST",
+          "is_public": "true",
+          "log_type": "2",
+          "algorithm_id": "144",
+          "mask_log_id": "",
+          "processing_level": "L2-user",
+          "spectral_region": "TIR"
+        },
+        {
+          "log_id": "19cbfaa3-3bb5-404b-b87a-057316d7022",
+          "log_name": "Grp3 ujCLST",
+          "is_public": "true",
+          "log_type": "1",
+          "algorithm_id": "143",
+          "mask_log_id": "",
+          "processing_level": "L2-user",
+          "spectral_region": "TIR"
+        },
+        {
+          "log_id": "65d0543b-6009-4082-852f-9edf88b6333",
+          "log_name": "Min1 ujCLST",
+          "is_public": "true",
+          "log_type": "1",
+          "algorithm_id": "142",
+          "mask_log_id": "",
+          "processing_level": "L2-user",
+          "spectral_region": "TIR"
+        },
+        {
+          "log_id": "661d495e-7efb-4538-ba72-ff2544518df",
+          "log_name": "Min1 uTSAS",
+          "is_public": "true",
+          "log_type": "1",
+          "algorithm_id": "108",
+          "mask_log_id": "",
+          "processing_level": "L2-user",
+          "spectral_region": "SWIR"
+        },
+        {
+          "log_id": "7051a0aa-ace4-4bf3-ae2f-350ddddec77",
+          "log_name": "Min2 uTSAS",
+          "is_public": "true",
+          "log_type": "1",
+          "algorithm_id": "108",
+          "mask_log_id": "",
+          "processing_level": "L2-user",
+          "spectral_region": "SWIR"
+        },
+        {
+          "log_id": "77d46fd1-6004-4dd3-8648-7769c4b217a",
+          "log_name": "Grp3 uTSAS",
+          "is_public": "true",
+          "log_type": "1",
+          "algorithm_id": "109",
+          "mask_log_id": "",
+          "processing_level": "L2-user",
+          "spectral_region": "SWIR"
+        },
+        {
+          "log_id": "846ddc55-bed0-40e6-bf2a-d186d99c0d1",
+          "log_name": "Grp2 ujCLST",
+          "is_public": "true",
+          "log_type": "1",
+          "algorithm_id": "143",
+          "mask_log_id": "",
+          "processing_level": "L2-user",
+          "spectral_region": "TIR"
+        },
+        {
+          "log_id": "8d16b3a5-b02f-4a3f-860d-b3c65ff9536",
+          "log_name": "Grp2 uTSAS",
+          "is_public": "true",
+          "log_type": "1",
+          "algorithm_id": "109",
+          "mask_log_id": "",
+          "processing_level": "L2-user",
+          "spectral_region": "SWIR"
+        },
+        {
+          "log_id": "975ad1f3-eaac-422e-84ba-1a171ec519f",
+          "log_name": "Wt1 uTSAS",
+          "is_public": "true",
+          "log_type": "2",
+          "algorithm_id": "110",
+          "mask_log_id": "",
+          "processing_level": "L2-user",
+          "spectral_region": "SWIR"
+        },
+        {
+          "log_id": "97ee5198-806e-4612-aeb1-0c5d5042587",
+          "log_name": "Min3 uTSAS",
+          "is_public": "true",
+          "log_type": "1",
+          "algorithm_id": "108",
+          "mask_log_id": "",
+          "processing_level": "L2-user",
+          "spectral_region": "SWIR"
+        },
+        {
+          "log_id": "a0b67ecc-7fc7-4aec-9155-b6b929cbbda",
+          "log_name": "Grp1 ujCLST",
+          "is_public": "true",
+          "log_type": "1",
+          "algorithm_id": "143",
+          "mask_log_id": "",
+          "processing_level": "L2-user",
+          "spectral_region": "TIR"
+        },
+        {
+          "log_id": "ad535bf3-abdc-4b58-81fe-1bf635737f3",
+          "log_name": "Wt2 uTSAS",
+          "is_public": "true",
+          "log_type": "2",
+          "algorithm_id": "110",
+          "mask_log_id": "",
+          "processing_level": "L2-user",
+          "spectral_region": "SWIR"
+        },
+        {
+          "log_id": "bdbf921b-ece8-48cf-bf68-31e488744c2",
+          "log_name": "Error ujCLST",
+          "is_public": "true",
+          "log_type": "2",
+          "algorithm_id": "145",
+          "mask_log_id": "",
+          "processing_level": "L2-user",
+          "spectral_region": "TIR"
+        },
+        {
+          "log_id": "dcd28ebe-f207-4cce-9ab9-cc0895b2ea6",
+          "log_name": "Error uTSAS",
+          "is_public": "true",
+          "log_type": "2",
+          "algorithm_id": "111",
+          "mask_log_id": "",
+          "processing_level": "L2-user",
+          "spectral_region": "SWIR"
+        },
+        {
+          "log_id": "e3ae886e-665d-4d66-ae62-0c8dd37fe51",
+          "log_name": "Wt3 uTSAS",
+          "is_public": "true",
+          "log_type": "2",
+          "algorithm_id": "110",
+          "mask_log_id": "",
+          "processing_level": "L2-user",
+          "spectral_region": "SWIR"
+        },
+        {
+          "log_id": "f3231038-d09b-4f56-8c5c-4b0f7a224bd",
+          "log_name": "Min3 ujCLST",
+          "is_public": "true",
+          "log_type": "1",
+          "algorithm_id": "142",
+          "mask_log_id": "",
+          "processing_level": "L2-user",
+          "spectral_region": "TIR"
+        },
+        {
+          "log_id": "f81537dd-395b-42a3-8563-9f0fcafabbc",
+          "log_name": "Wt3 ujCLST",
+          "is_public": "true",
+          "log_type": "2",
+          "algorithm_id": "144",
+          "mask_log_id": "",
+          "processing_level": "L2-user",
+          "spectral_region": "TIR"
+        },
+        {
+          "log_id": "fedcb562-6c1b-48e1-81fa-2f3e9f72fb0",
+          "log_name": "Min2 ujCLST",
+          "is_public": "true",
+          "log_type": "1",
+          "algorithm_id": "142",
+          "mask_log_id": "",
+          "processing_level": "L2-user",
+          "spectral_region": "TIR"
+        }
+      ],
+      "log_count": 20
+    },
+    "zip_evidence": {
+      "hole_id": "MWEX10270",
+      "url": "https://thredds.nci.org.au/thredds/fileServer/rs07/WA/MWEX10270.zip",
+      "checked_utc": "2026-09-11T04:05:38Z",
+      "zip_size": 5074723787,
+      "members": 241,
+      "spectral_members": [
+        {
+          "name": "2ce5c539-52c3-4c20-9230-697574dc780/MWEX10270_tsg.bip",
+          "size": 616032216,
+          "compressed_size": 318453199,
+          "crc": 3751487631
+        },
+        {
+          "name": "2ce5c539-52c3-4c20-9230-697574dc780/MWEX10270_tsg.tsg",
+          "size": 11736273,
+          "compressed_size": 2217078,
+          "crc": 2136466115
+        },
+        {
+          "name": "2ce5c539-52c3-4c20-9230-697574dc780/MWEX10270_tsg_cras.bip",
+          "size": 2920877039,
+          "compressed_size": 2913988456,
+          "crc": 1528463305
+        },
+        {
+          "name": "2ce5c539-52c3-4c20-9230-697574dc780/MWEX10270_tsg_tir.bip",
+          "size": 395606376,
+          "compressed_size": 197528495,
+          "crc": 1087783238
+        },
+        {
+          "name": "2ce5c539-52c3-4c20-9230-697574dc780/MWEX10270_tsg_tir.tsg",
+          "size": 11704634,
+          "compressed_size": 2205285,
+          "crc": 2793089379
+        }
+      ],
+      "bytes_fetched": 24331,
+      "status": "zip_directory_verified"
+    }
+  },
+  {
+    "hole_id": "22USDH0207",
+    "nvcl_inventory": {
+      "dataset_id": "357d4cb4-d559-43bb-aeca-8a93c9895d7",
+      "dataset_name": "22USDH0207",
+      "borehole_uri": "https://geossdi.dmp.wa.gov.au/resource/feature/gswa/borehole/22USDH0207",
+      "tray_id": "f851c932-9d4f-4cfb-9e6e-fbf8a6ed1bf",
+      "section_id": "383c066c-a561-4f9a-bd6e-c2d4dd82553",
+      "domain_id": "7608f7a7-01f6-453f-a4da-4a967241295",
+      "description": "<?xml version=\"1.0\" encoding=\"utf-8\"?><TSGDrillHoleMiscMeta xmlns=\"\"><DrillHoleName>22USDH0207</DrillHoleName><InstrumentName>HyLogger 3-2</InstrumentName><Project></Project><Owner>GSWA</Owner><DrillDate></DrillDate><ExecSumm>Georgina Gordon removed nacrite, nontronite, tremolite, zoisite, magnesite, alunite, actinolite, gibbsite, riebeckite and rubellite from the SWIR.</ExecSumm><Datum></Datum><Latitude>-29.193020</Latitude><Longitude>121.377610</Longitude><Azimuth>0.000000</Azimuth><Inclination>0.000000</Inclination><RL>0.000000</RL></TSGDrillHoleMiscMeta>",
+      "modified_date": "2026-03-03 00:00:00+08:00",
+      "created_date": "2025-04-09 00:00:00+08:00",
+      "logs": [
+        {
+          "log_id": "07803af2-cd30-4350-baf4-6a346fb18f9",
+          "log_name": "Min1 uTSAV",
+          "is_public": "true",
+          "log_type": "1",
+          "algorithm_id": "96",
+          "mask_log_id": "",
+          "processing_level": "L2-user",
+          "spectral_region": "VNIR"
+        },
+        {
+          "log_id": "0fae33a1-3b5c-4a78-8032-124a8551ce6",
+          "log_name": "Grp3 ujCLST",
+          "is_public": "true",
+          "log_type": "1",
+          "algorithm_id": "143",
+          "mask_log_id": "",
+          "processing_level": "L2-user",
+          "spectral_region": "TIR"
+        },
+        {
+          "log_id": "207f5a12-11dc-421a-b87e-02702e3cbd3",
+          "log_name": "Wt1 uTSAV",
+          "is_public": "true",
+          "log_type": "2",
+          "algorithm_id": "98",
+          "mask_log_id": "",
+          "processing_level": "L2-user",
+          "spectral_region": "VNIR"
+        },
+        {
+          "log_id": "284b2f41-d755-48a3-ba46-55abb9304fb",
+          "log_name": "Grp1 ujCLST",
+          "is_public": "true",
+          "log_type": "1",
+          "algorithm_id": "143",
+          "mask_log_id": "",
+          "processing_level": "L2-user",
+          "spectral_region": "TIR"
+        },
+        {
+          "log_id": "34d56fd7-9304-4c9a-8a32-52cd8be7b59",
+          "log_name": "Wt2 uTSAS",
+          "is_public": "true",
+          "log_type": "2",
+          "algorithm_id": "110",
+          "mask_log_id": "",
+          "processing_level": "L2-user",
+          "spectral_region": "SWIR"
+        },
+        {
+          "log_id": "43c560f7-6117-4381-8fe9-ab22c71581f",
+          "log_name": "Min3 ujCLST",
+          "is_public": "true",
+          "log_type": "1",
+          "algorithm_id": "142",
+          "mask_log_id": "",
+          "processing_level": "L2-user",
+          "spectral_region": "TIR"
+        },
+        {
+          "log_id": "4bd72938-7d20-4bba-a249-61338dbb006",
+          "log_name": "Grp2 ujCLST",
+          "is_public": "true",
+          "log_type": "1",
+          "algorithm_id": "143",
+          "mask_log_id": "",
+          "processing_level": "L2-user",
+          "spectral_region": "TIR"
+        },
+        {
+          "log_id": "4d2a9a06-e69c-49d1-9145-851039c3134",
+          "log_name": "Error ujCLST",
+          "is_public": "true",
+          "log_type": "2",
+          "algorithm_id": "145",
+          "mask_log_id": "",
+          "processing_level": "L2-user",
+          "spectral_region": "TIR"
+        },
+        {
+          "log_id": "564d5f1a-7df5-489a-a13f-e28ccd2ee9f",
+          "log_name": "Wt2 ujCLST",
+          "is_public": "true",
+          "log_type": "2",
+          "algorithm_id": "144",
+          "mask_log_id": "",
+          "processing_level": "L2-user",
+          "spectral_region": "TIR"
+        },
+        {
+          "log_id": "5ad4f1c8-e4e5-41a1-8034-5b75b0a7d11",
+          "log_name": "Min3 uTSAS",
+          "is_public": "true",
+          "log_type": "1",
+          "algorithm_id": "108",
+          "mask_log_id": "",
+          "processing_level": "L2-user",
+          "spectral_region": "SWIR"
+        },
+        {
+          "log_id": "62998790-a0e9-4ca6-b4e8-157a878df3f",
+          "log_name": "Min2 ujCLST",
+          "is_public": "true",
+          "log_type": "1",
+          "algorithm_id": "142",
+          "mask_log_id": "",
+          "processing_level": "L2-user",
+          "spectral_region": "TIR"
+        },
+        {
+          "log_id": "6984c381-52ab-494b-be42-5f242306245",
+          "log_name": "Grp2 uTSAV",
+          "is_public": "true",
+          "log_type": "1",
+          "algorithm_id": "97",
+          "mask_log_id": "",
+          "processing_level": "L2-user",
+          "spectral_region": "VNIR"
+        },
+        {
+          "log_id": "78088873-9910-46b9-8397-5cb872b206a",
+          "log_name": "Min2 uTSAS",
+          "is_public": "true",
+          "log_type": "1",
+          "algorithm_id": "108",
+          "mask_log_id": "",
+          "processing_level": "L2-user",
+          "spectral_region": "SWIR"
+        },
+        {
+          "log_id": "7a5868ec-ec20-496a-befd-8c2c16eaf41",
+          "log_name": "Grp1 uTSAS",
+          "is_public": "true",
+          "log_type": "1",
+          "algorithm_id": "109",
+          "mask_log_id": "",
+          "processing_level": "L2-user",
+          "spectral_region": "SWIR"
+        },
+        {
+          "log_id": "7cb20c49-c8e8-4681-ad0d-3c1f8385fee",
+          "log_name": "Wt1 uTSAS",
+          "is_public": "true",
+          "log_type": "2",
+          "algorithm_id": "110",
+          "mask_log_id": "",
+          "processing_level": "L2-user",
+          "spectral_region": "SWIR"
+        },
+        {
+          "log_id": "95361245-9393-432c-a26f-aeeb0c15e74",
+          "log_name": "Min1 ujCLST",
+          "is_public": "true",
+          "log_type": "1",
+          "algorithm_id": "142",
+          "mask_log_id": "",
+          "processing_level": "L2-user",
+          "spectral_region": "TIR"
+        },
+        {
+          "log_id": "9931fb79-7ed2-4c4e-8b91-434935b856c",
+          "log_name": "Min1 uTSAS",
+          "is_public": "true",
+          "log_type": "1",
+          "algorithm_id": "108",
+          "mask_log_id": "",
+          "processing_level": "L2-user",
+          "spectral_region": "SWIR"
+        },
+        {
+          "log_id": "b249388f-a426-4be8-b1c7-46c41764b10",
+          "log_name": "Grp3 uTSAS",
+          "is_public": "true",
+          "log_type": "1",
+          "algorithm_id": "109",
+          "mask_log_id": "",
+          "processing_level": "L2-user",
+          "spectral_region": "SWIR"
+        },
+        {
+          "log_id": "d6797349-7fd9-4e79-bb6b-91ac406ca0a",
+          "log_name": "Wt2 uTSAV",
+          "is_public": "true",
+          "log_type": "2",
+          "algorithm_id": "98",
+          "mask_log_id": "",
+          "processing_level": "L2-user",
+          "spectral_region": "VNIR"
+        },
+        {
+          "log_id": "d76a8474-174f-4fed-8bf6-97b312cbcf0",
+          "log_name": "Error uTSAS",
+          "is_public": "true",
+          "log_type": "2",
+          "algorithm_id": "111",
+          "mask_log_id": "",
+          "processing_level": "L2-user",
+          "spectral_region": "SWIR"
+        },
+        {
+          "log_id": "d9f519a5-0553-4787-8c54-8f05cde7075",
+          "log_name": "Grp2 uTSAS",
+          "is_public": "true",
+          "log_type": "1",
+          "algorithm_id": "109",
+          "mask_log_id": "",
+          "processing_level": "L2-user",
+          "spectral_region": "SWIR"
+        },
+        {
+          "log_id": "e1abc245-9aba-4027-8546-5aafba3fc47",
+          "log_name": "Wt3 ujCLST",
+          "is_public": "true",
+          "log_type": "2",
+          "algorithm_id": "144",
+          "mask_log_id": "",
+          "processing_level": "L2-user",
+          "spectral_region": "TIR"
+        },
+        {
+          "log_id": "e43d9faa-50ea-49c7-b53d-a569b5a6abb",
+          "log_name": "Wt1 ujCLST",
+          "is_public": "true",
+          "log_type": "2",
+          "algorithm_id": "144",
+          "mask_log_id": "",
+          "processing_level": "L2-user",
+          "spectral_region": "TIR"
+        },
+        {
+          "log_id": "e601c1d5-0bec-40aa-b44a-f9041e51629",
+          "log_name": "Grp1 uTSAV",
+          "is_public": "true",
+          "log_type": "1",
+          "algorithm_id": "97",
+          "mask_log_id": "",
+          "processing_level": "L2-user",
+          "spectral_region": "VNIR"
+        },
+        {
+          "log_id": "e6d914b7-1784-41ac-a7b0-1ccb5394a32",
+          "log_name": "Min2 uTSAV",
+          "is_public": "true",
+          "log_type": "1",
+          "algorithm_id": "96",
+          "mask_log_id": "",
+          "processing_level": "L2-user",
+          "spectral_region": "VNIR"
+        },
+        {
+          "log_id": "f743ec80-bb1d-4331-829a-57be7c86617",
+          "log_name": "Wt3 uTSAS",
+          "is_public": "true",
+          "log_type": "2",
+          "algorithm_id": "110",
+          "mask_log_id": "",
+          "processing_level": "L2-user",
+          "spectral_region": "SWIR"
+        },
+        {
+          "log_id": "f80de0bc-cbb2-47b2-8b80-49aa49d4203",
+          "log_name": "Error uTSAV",
+          "is_public": "true",
+          "log_type": "2",
+          "algorithm_id": "99",
+          "mask_log_id": "",
+          "processing_level": "L2-user",
+          "spectral_region": "VNIR"
+        }
+      ],
+      "log_count": 27
+    },
+    "zip_evidence": {
+      "hole_id": "22USDH0207",
+      "url": "https://thredds.nci.org.au/thredds/fileServer/rs07/WA/22USDH0207.zip",
+      "checked_utc": "2026-09-11T04:06:59Z",
+      "zip_size": 2714130304,
+      "members": 153,
+      "spectral_members": [
+        {
+          "name": "357d4cb4-d559-43bb-aeca-8a93c9895d7/22USDH0207_tsg.bip",
+          "size": 369877608,
+          "compressed_size": 200688546,
+          "crc": 602923282
+        },
+        {
+          "name": "357d4cb4-d559-43bb-aeca-8a93c9895d7/22USDH0207_tsg.tsg",
+          "size": 7193206,
+          "compressed_size": 1389204,
+          "crc": 140337938
+        },
+        {
+          "name": "357d4cb4-d559-43bb-aeca-8a93c9895d7/22USDH0207_tsg_cras.bip",
+          "size": 1499716852,
+          "compressed_size": 1494225304,
+          "crc": 3473689933
+        },
+        {
+          "name": "357d4cb4-d559-43bb-aeca-8a93c9895d7/22USDH0207_tsg_tir.bip",
+          "size": 237529688,
+          "compressed_size": 119305280,
+          "crc": 831254726
+        },
+        {
+          "name": "357d4cb4-d559-43bb-aeca-8a93c9895d7/22USDH0207_tsg_tir.tsg",
+          "size": 7164752,
+          "compressed_size": 1389445,
+          "crc": 761759969
+        }
+      ],
+      "bytes_fetched": 15526,
+      "status": "zip_directory_verified"
+    }
+  },
+  {
+    "hole_id": "15RCDVZ001",
+    "nvcl_inventory": {
+      "dataset_id": "115c6bdc-24e9-45ac-a3b5-4c822ae1012",
+      "dataset_name": "15RCDVZ001",
+      "borehole_uri": "https://geossdi.dmp.wa.gov.au/resource/feature/gswa/borehole/15rcdvz001",
+      "tray_id": "7d666399-68b3-4bc8-9062-764433f5585",
+      "section_id": "0cc2caf8-fc63-43f4-b3d5-4cb4824df03",
+      "domain_id": "4fb2c432-1ff4-48c6-83a8-14ebd126a76",
+      "description": "<?xml version=\"1.0\" encoding=\"utf-8\"?><TSGDrillHoleMiscMeta xmlns=\"\"><DrillHoleName>15rcdvz001</DrillHoleName><InstrumentName>HyLogger 3-2</InstrumentName><Project>Vapdez project</Project><Owner>GSWA</Owner><DrillDate></DrillDate><ExecSumm></ExecSumm><Datum>GDA94</Datum><Latitude>-28.071233</Latitude><Longitude>120.975878</Longitude><Azimuth>90.000000</Azimuth><Inclination>-60.000000</Inclination><RL>490.000000</RL></TSGDrillHoleMiscMeta>",
+      "modified_date": "2022-07-19 00:00:00+08:00",
+      "created_date": "2020-04-02 00:00:00+08:00",
+      "logs": [
+        {
+          "log_id": "016cd432-deee-489a-a4a6-241e408ad20",
+          "log_name": "Min2 ujCLST",
+          "is_public": "true",
+          "log_type": "1",
+          "algorithm_id": "142",
+          "mask_log_id": "",
+          "processing_level": "L2-user",
+          "spectral_region": "TIR"
+        },
+        {
+          "log_id": "054d54d7-9b81-4bba-b3bf-a25dd8d702d",
+          "log_name": "Min3 uTSAS",
+          "is_public": "true",
+          "log_type": "1",
+          "algorithm_id": "108",
+          "mask_log_id": "",
+          "processing_level": "L2-user",
+          "spectral_region": "SWIR"
+        },
+        {
+          "log_id": "17754a47-9510-4080-a516-0a65d5d87b9",
+          "log_name": "Wt3 ujCLST",
+          "is_public": "true",
+          "log_type": "2",
+          "algorithm_id": "144",
+          "mask_log_id": "",
+          "processing_level": "L2-user",
+          "spectral_region": "TIR"
+        },
+        {
+          "log_id": "448520d1-2ad7-4ca1-9882-8acb1e96111",
+          "log_name": "Wt1 ujCLST",
+          "is_public": "true",
+          "log_type": "2",
+          "algorithm_id": "144",
+          "mask_log_id": "",
+          "processing_level": "L2-user",
+          "spectral_region": "TIR"
+        },
+        {
+          "log_id": "57f6dafa-22ac-46f9-b3ae-b29432d660d",
+          "log_name": "Grp3 uTSAS",
+          "is_public": "true",
+          "log_type": "1",
+          "algorithm_id": "109",
+          "mask_log_id": "",
+          "processing_level": "L2-user",
+          "spectral_region": "SWIR"
+        },
+        {
+          "log_id": "77e01349-d780-4707-b7b3-62a5d9f742a",
+          "log_name": "Wt3 uTSAS",
+          "is_public": "true",
+          "log_type": "2",
+          "algorithm_id": "110",
+          "mask_log_id": "",
+          "processing_level": "L2-user",
+          "spectral_region": "SWIR"
+        },
+        {
+          "log_id": "847dcbcd-7af0-4dc8-bcc3-81ebd8f00b6",
+          "log_name": "Min1 uTSAS",
+          "is_public": "true",
+          "log_type": "1",
+          "algorithm_id": "108",
+          "mask_log_id": "",
+          "processing_level": "L2-user",
+          "spectral_region": "SWIR"
+        },
+        {
+          "log_id": "89c30970-6d37-47dd-b8f4-53e438eb240",
+          "log_name": "Min1 ujCLST",
+          "is_public": "true",
+          "log_type": "1",
+          "algorithm_id": "142",
+          "mask_log_id": "",
+          "processing_level": "L2-user",
+          "spectral_region": "TIR"
+        },
+        {
+          "log_id": "92090d2b-787b-4c56-ba64-87807622055",
+          "log_name": "Wt1 uTSAS",
+          "is_public": "true",
+          "log_type": "2",
+          "algorithm_id": "110",
+          "mask_log_id": "",
+          "processing_level": "L2-user",
+          "spectral_region": "SWIR"
+        },
+        {
+          "log_id": "93f447bc-1770-4d1c-8b34-1aac007782d",
+          "log_name": "Error ujCLST",
+          "is_public": "true",
+          "log_type": "2",
+          "algorithm_id": "145",
+          "mask_log_id": "",
+          "processing_level": "L2-user",
+          "spectral_region": "TIR"
+        },
+        {
+          "log_id": "958128a8-d9ca-4891-8f04-7d1bc95c4ed",
+          "log_name": "Grp2 ujCLST",
+          "is_public": "true",
+          "log_type": "1",
+          "algorithm_id": "143",
+          "mask_log_id": "",
+          "processing_level": "L2-user",
+          "spectral_region": "TIR"
+        },
+        {
+          "log_id": "9c7afa01-fe2e-4e6c-9a12-80ac00ffa40",
+          "log_name": "Min3 ujCLST",
+          "is_public": "true",
+          "log_type": "1",
+          "algorithm_id": "142",
+          "mask_log_id": "",
+          "processing_level": "L2-user",
+          "spectral_region": "TIR"
+        },
+        {
+          "log_id": "be1a9141-c20c-4122-844f-de6cbad4b30",
+          "log_name": "Error uTSAS",
+          "is_public": "true",
+          "log_type": "2",
+          "algorithm_id": "111",
+          "mask_log_id": "",
+          "processing_level": "L2-user",
+          "spectral_region": "SWIR"
+        },
+        {
+          "log_id": "bf42d862-a2b7-4e56-89a2-e62eace00a9",
+          "log_name": "Wt2 ujCLST",
+          "is_public": "true",
+          "log_type": "2",
+          "algorithm_id": "144",
+          "mask_log_id": "",
+          "processing_level": "L2-user",
+          "spectral_region": "TIR"
+        },
+        {
+          "log_id": "bf9c4a2e-4dc2-4dc6-b8fe-1fcecf943f4",
+          "log_name": "Grp1 uTSAS",
+          "is_public": "true",
+          "log_type": "1",
+          "algorithm_id": "109",
+          "mask_log_id": "",
+          "processing_level": "L2-user",
+          "spectral_region": "SWIR"
+        },
+        {
+          "log_id": "cb53f0b7-4a91-4343-a230-2f5e715e0f3",
+          "log_name": "Grp2 uTSAS",
+          "is_public": "true",
+          "log_type": "1",
+          "algorithm_id": "109",
+          "mask_log_id": "",
+          "processing_level": "L2-user",
+          "spectral_region": "SWIR"
+        },
+        {
+          "log_id": "da1f83fd-025d-412b-8084-416368ed4db",
+          "log_name": "Min2 uTSAS",
+          "is_public": "true",
+          "log_type": "1",
+          "algorithm_id": "108",
+          "mask_log_id": "",
+          "processing_level": "L2-user",
+          "spectral_region": "SWIR"
+        },
+        {
+          "log_id": "dc9074b1-a114-4091-aa15-b8b601abd9a",
+          "log_name": "Grp3 ujCLST",
+          "is_public": "true",
+          "log_type": "1",
+          "algorithm_id": "143",
+          "mask_log_id": "",
+          "processing_level": "L2-user",
+          "spectral_region": "TIR"
+        },
+        {
+          "log_id": "fcf36a7e-8418-47e6-b562-7714594e4ad",
+          "log_name": "Wt2 uTSAS",
+          "is_public": "true",
+          "log_type": "2",
+          "algorithm_id": "110",
+          "mask_log_id": "",
+          "processing_level": "L2-user",
+          "spectral_region": "SWIR"
+        },
+        {
+          "log_id": "fd0f674b-cdba-434e-bc7a-0d225e5741e",
+          "log_name": "Grp1 ujCLST",
+          "is_public": "true",
+          "log_type": "1",
+          "algorithm_id": "143",
+          "mask_log_id": "",
+          "processing_level": "L2-user",
+          "spectral_region": "TIR"
+        }
+      ],
+      "log_count": 20
+    },
+    "zip_evidence": {
+      "hole_id": "15RCDVZ001",
+      "url": "https://thredds.nci.org.au/thredds/fileServer/rs07/WA/15RCDVZ001.zip",
+      "checked_utc": "2026-09-11T04:08:28Z",
+      "zip_size": 1719372756,
+      "members": 114,
+      "spectral_members": [
+        {
+          "name": "115c6bdc-24e9-45ac-a3b5-4c822ae1012/15RCDVZ001_tsg.bip",
+          "size": 262870488,
+          "compressed_size": 135765998,
+          "crc": 3586708506
+        },
+        {
+          "name": "115c6bdc-24e9-45ac-a3b5-4c822ae1012/15RCDVZ001_tsg.tsg",
+          "size": 5154681,
+          "compressed_size": 973541,
+          "crc": 60994968
+        },
+        {
+          "name": "115c6bdc-24e9-45ac-a3b5-4c822ae1012/15RCDVZ001_tsg_cras.bip",
+          "size": 985727687,
+          "compressed_size": 979128166,
+          "crc": 1559878282
+        },
+        {
+          "name": "115c6bdc-24e9-45ac-a3b5-4c822ae1012/15RCDVZ001_tsg_tir.bip",
+          "size": 168811368,
+          "compressed_size": 82794580,
+          "crc": 1667741352
+        },
+        {
+          "name": "115c6bdc-24e9-45ac-a3b5-4c822ae1012/15RCDVZ001_tsg_tir.tsg",
+          "size": 5287907,
+          "compressed_size": 972691,
+          "crc": 1426065131
+        }
+      ],
+      "bytes_fetched": 11598,
+      "status": "zip_directory_verified"
+    }
+  },
+  {
+    "hole_id": "16CADD002",
+    "nvcl_inventory": {
+      "dataset_id": "04c3638b-f0c9-41ef-94f6-ac3dfe74042",
+      "dataset_name": "16CADD002",
+      "borehole_uri": "https://geossdi.dmp.wa.gov.au/resource/feature/gswa/borehole/16cadd002",
+      "tray_id": "38e00aa6-88c0-4455-87b9-239b74a2765",
+      "section_id": "0014d71d-f185-439d-971e-aee21db5ae2",
+      "domain_id": "7e92bea3-d17b-426a-ad7e-c0449683edd",
+      "description": "<?xml version=\"1.0\" encoding=\"utf-8\"?><TSGDrillHoleMiscMeta xmlns=\"\"><DrillHoleName>16cadd002</DrillHoleName><InstrumentName>HyLogger 3-2</InstrumentName><Project>Dacian Gold</Project><Owner>GSWA</Owner><DrillDate></DrillDate><ExecSumm>GSWA UWI: M0002590|WAMEX Report ID: A112434|Tectonic Unit: Eastern Goldfields|250K Map Sheet: Laverton SH51-02|100K Map Sheet:  Laverton 3340|Archive Location: Kalgoorlie Core Library|EIS Round: 13</ExecSumm><Datum>GDA94</Datum><Latitude>-28.872481</Latitude><Longitude>122.234344</Longitude><Azimuth>270.000000</Azimuth><Inclination>-60.000000</Inclination><RL>397.000000</RL></TSGDrillHoleMiscMeta>",
+      "modified_date": "2022-07-19 00:00:00+08:00",
+      "created_date": "2020-04-14 00:00:00+08:00",
+      "logs": [
+        {
+          "log_id": "236c3ec2-6c5c-4344-b1dd-dcdc20f27d8",
+          "log_name": "Grp1 uTSAS",
+          "is_public": "true",
+          "log_type": "1",
+          "algorithm_id": "109",
+          "mask_log_id": "",
+          "processing_level": "L2-user",
+          "spectral_region": "SWIR"
+        },
+        {
+          "log_id": "40336b18-e76e-428d-a4f5-61ae69c8e92",
+          "log_name": "Grp3 ujCLST",
+          "is_public": "true",
+          "log_type": "1",
+          "algorithm_id": "143",
+          "mask_log_id": "",
+          "processing_level": "L2-user",
+          "spectral_region": "TIR"
+        },
+        {
+          "log_id": "440e03c7-b141-4c0d-840e-6858b4d145a",
+          "log_name": "Min3 uTSAS",
+          "is_public": "true",
+          "log_type": "1",
+          "algorithm_id": "108",
+          "mask_log_id": "",
+          "processing_level": "L2-user",
+          "spectral_region": "SWIR"
+        },
+        {
+          "log_id": "49ffaeb2-afc2-4ca1-a4c1-020d95f693d",
+          "log_name": "Wt1 uTSAS",
+          "is_public": "true",
+          "log_type": "2",
+          "algorithm_id": "110",
+          "mask_log_id": "",
+          "processing_level": "L2-user",
+          "spectral_region": "SWIR"
+        },
+        {
+          "log_id": "4b9f6a2d-8b55-452d-b094-8b3c60e5fa8",
+          "log_name": "Wt1 ujCLST",
+          "is_public": "true",
+          "log_type": "2",
+          "algorithm_id": "144",
+          "mask_log_id": "",
+          "processing_level": "L2-user",
+          "spectral_region": "TIR"
+        },
+        {
+          "log_id": "545730da-eabd-46d2-ada7-9908fb4db76",
+          "log_name": "Wt2 uTSAS",
+          "is_public": "true",
+          "log_type": "2",
+          "algorithm_id": "110",
+          "mask_log_id": "",
+          "processing_level": "L2-user",
+          "spectral_region": "SWIR"
+        },
+        {
+          "log_id": "5e71b730-3968-4a00-8a59-13676ce5d56",
+          "log_name": "Grp3 uTSAS",
+          "is_public": "true",
+          "log_type": "1",
+          "algorithm_id": "109",
+          "mask_log_id": "",
+          "processing_level": "L2-user",
+          "spectral_region": "SWIR"
+        },
+        {
+          "log_id": "6dd89a67-bf26-4e56-b4cd-b3470074a76",
+          "log_name": "Grp2 ujCLST",
+          "is_public": "true",
+          "log_type": "1",
+          "algorithm_id": "143",
+          "mask_log_id": "",
+          "processing_level": "L2-user",
+          "spectral_region": "TIR"
+        },
+        {
+          "log_id": "6e597072-84cf-4e81-bf4a-4b9278bea8c",
+          "log_name": "Grp2 uTSAS",
+          "is_public": "true",
+          "log_type": "1",
+          "algorithm_id": "109",
+          "mask_log_id": "",
+          "processing_level": "L2-user",
+          "spectral_region": "SWIR"
+        },
+        {
+          "log_id": "7c0d0d05-3995-45c7-b446-98a281e872a",
+          "log_name": "Min1 uTSAS",
+          "is_public": "true",
+          "log_type": "1",
+          "algorithm_id": "108",
+          "mask_log_id": "",
+          "processing_level": "L2-user",
+          "spectral_region": "SWIR"
+        },
+        {
+          "log_id": "7ca9dc62-2a50-439f-9ad1-c32a033cba2",
+          "log_name": "Min3 ujCLST",
+          "is_public": "true",
+          "log_type": "1",
+          "algorithm_id": "142",
+          "mask_log_id": "",
+          "processing_level": "L2-user",
+          "spectral_region": "TIR"
+        },
+        {
+          "log_id": "8667dc3a-260f-4378-87fe-d1a1d2273a2",
+          "log_name": "Min2 uTSAS",
+          "is_public": "true",
+          "log_type": "1",
+          "algorithm_id": "108",
+          "mask_log_id": "",
+          "processing_level": "L2-user",
+          "spectral_region": "SWIR"
+        },
+        {
+          "log_id": "94dc0517-9d45-4b0f-b50f-2507bf15df1",
+          "log_name": "Min2 ujCLST",
+          "is_public": "true",
+          "log_type": "1",
+          "algorithm_id": "142",
+          "mask_log_id": "",
+          "processing_level": "L2-user",
+          "spectral_region": "TIR"
+        },
+        {
+          "log_id": "b010c9fa-996e-4b0e-9e8a-a058d0b4207",
+          "log_name": "Wt3 ujCLST",
+          "is_public": "true",
+          "log_type": "2",
+          "algorithm_id": "144",
+          "mask_log_id": "",
+          "processing_level": "L2-user",
+          "spectral_region": "TIR"
+        },
+        {
+          "log_id": "b9e7902b-70c7-4307-a1e8-a0011feb101",
+          "log_name": "Error uTSAS",
+          "is_public": "true",
+          "log_type": "2",
+          "algorithm_id": "111",
+          "mask_log_id": "",
+          "processing_level": "L2-user",
+          "spectral_region": "SWIR"
+        },
+        {
+          "log_id": "beaba3de-2f4d-4180-94ff-bc56bd65812",
+          "log_name": "Wt2 ujCLST",
+          "is_public": "true",
+          "log_type": "2",
+          "algorithm_id": "144",
+          "mask_log_id": "",
+          "processing_level": "L2-user",
+          "spectral_region": "TIR"
+        },
+        {
+          "log_id": "c7c5aefe-7a42-470e-bd10-7d76abc8e49",
+          "log_name": "Min1 ujCLST",
+          "is_public": "true",
+          "log_type": "1",
+          "algorithm_id": "142",
+          "mask_log_id": "",
+          "processing_level": "L2-user",
+          "spectral_region": "TIR"
+        },
+        {
+          "log_id": "d9649bdd-ec85-4602-bc6d-7db45d8c30f",
+          "log_name": "Error ujCLST",
+          "is_public": "true",
+          "log_type": "2",
+          "algorithm_id": "145",
+          "mask_log_id": "",
+          "processing_level": "L2-user",
+          "spectral_region": "TIR"
+        },
+        {
+          "log_id": "eeb19445-ab11-4172-acab-efea6ae5e9a",
+          "log_name": "Grp1 ujCLST",
+          "is_public": "true",
+          "log_type": "1",
+          "algorithm_id": "143",
+          "mask_log_id": "",
+          "processing_level": "L2-user",
+          "spectral_region": "TIR"
+        },
+        {
+          "log_id": "f4240dd5-7c7b-4b36-a842-8e009c40701",
+          "log_name": "Wt3 uTSAS",
+          "is_public": "true",
+          "log_type": "2",
+          "algorithm_id": "110",
+          "mask_log_id": "",
+          "processing_level": "L2-user",
+          "spectral_region": "SWIR"
+        }
+      ],
+      "log_count": 20
+    },
+    "zip_evidence": {
+      "hole_id": "16CADD002",
+      "url": "https://thredds.nci.org.au/thredds/fileServer/rs07/WA/16CADD002.zip",
+      "checked_utc": "2026-09-11T04:08:35Z",
+      "zip_size": 3698680111,
+      "members": 225,
+      "spectral_members": [
+        {
+          "name": "04c3638b-f0c9-41ef-94f6-ac3dfe74042/16CADD002_tsg.bip",
+          "size": 572647392,
+          "compressed_size": 296994509,
+          "crc": 3252461616
+        },
+        {
+          "name": "04c3638b-f0c9-41ef-94f6-ac3dfe74042/16CADD002_tsg.tsg",
+          "size": 10909244,
+          "compressed_size": 2046479,
+          "crc": 3349641423
+        },
+        {
+          "name": "04c3638b-f0c9-41ef-94f6-ac3dfe74042/16CADD002_tsg_cras.bip",
+          "size": 2177375841,
+          "compressed_size": 2165241943,
+          "crc": 1594543197
+        },
+        {
+          "name": "04c3638b-f0c9-41ef-94f6-ac3dfe74042/16CADD002_tsg_tir.bip",
+          "size": 367745312,
+          "compressed_size": 183954070,
+          "crc": 2400427616
+        },
+        {
+          "name": "04c3638b-f0c9-41ef-94f6-ac3dfe74042/16CADD002_tsg_tir.tsg",
+          "size": 11435206,
+          "compressed_size": 2059294,
+          "crc": 2751625892
+        }
+      ],
+      "bytes_fetched": 22585,
+      "status": "zip_directory_verified"
+    }
+  },
+  {
+    "hole_id": "13TRDD012",
+    "nvcl_inventory": {
+      "dataset_id": "533fbd17-554b-4ec8-918c-467e13e9e64",
+      "dataset_name": "13TRDD012",
+      "borehole_uri": "https://geossdi.dmp.wa.gov.au/resource/feature/gswa/borehole/13TRDD012",
+      "tray_id": "da22b3d2-41be-4d22-861d-d525a4f9149",
+      "section_id": "052c1342-6854-4812-8448-6a8dc90c53f",
+      "domain_id": "fa331f9b-f9d1-4b3f-bbde-d4177a3d058",
+      "description": "<?xml version=\"1.0\" encoding=\"utf-8\"?><TSGDrillHoleMiscMeta xmlns=\"\"><DrillHoleName>13TRDD012</DrillHoleName><InstrumentName>HyLogger 3-2</InstrumentName><Project>Jaguar</Project><Owner>GSWA</Owner><DrillDate>2013-10-11 13:05:04</DrillDate><ExecSumm>GSWA UWI: M0001655|WAMEX Report ID: A101357|EIS round 7</ExecSumm><Datum>GDA94</Datum><Latitude>-28.367623</Latitude><Longitude>121.112904</Longitude><Azimuth>61.500000</Azimuth><Inclination>-62.000000</Inclination><RL>0.000000</RL></TSGDrillHoleMiscMeta>",
+      "modified_date": "2022-06-24 00:00:00+08:00",
+      "created_date": "2018-11-21 00:00:00+08:00",
+      "logs": [
+        {
+          "log_id": "0f2ce8d4-263d-486f-8979-f223479f6c2",
+          "log_name": "Grp3 uTSAS",
+          "is_public": "true",
+          "log_type": "1",
+          "algorithm_id": "109",
+          "mask_log_id": "",
+          "processing_level": "L2-user",
+          "spectral_region": "SWIR"
+        },
+        {
+          "log_id": "17a50a23-3db4-4466-8006-5b42ca56aa1",
+          "log_name": "Wt2 uTSAS",
+          "is_public": "true",
+          "log_type": "2",
+          "algorithm_id": "110",
+          "mask_log_id": "",
+          "processing_level": "L2-user",
+          "spectral_region": "SWIR"
+        },
+        {
+          "log_id": "25b4dbe5-8ce0-4df8-ad67-5207f90987e",
+          "log_name": "Wt1 ujCLST",
+          "is_public": "true",
+          "log_type": "2",
+          "algorithm_id": "144",
+          "mask_log_id": "",
+          "processing_level": "L2-user",
+          "spectral_region": "TIR"
+        },
+        {
+          "log_id": "269ffd9e-b281-4389-a9ff-37ecabd533f",
+          "log_name": "Wt2 ujCLST",
+          "is_public": "true",
+          "log_type": "2",
+          "algorithm_id": "144",
+          "mask_log_id": "",
+          "processing_level": "L2-user",
+          "spectral_region": "TIR"
+        },
+        {
+          "log_id": "2e209261-25dd-4733-aeef-db372a3c54c",
+          "log_name": "Grp3 ujCLST",
+          "is_public": "true",
+          "log_type": "1",
+          "algorithm_id": "143",
+          "mask_log_id": "",
+          "processing_level": "L2-user",
+          "spectral_region": "TIR"
+        },
+        {
+          "log_id": "3194c101-6423-40b0-b0ab-77c2dc49e55",
+          "log_name": "Grp1 ujCLST",
+          "is_public": "true",
+          "log_type": "1",
+          "algorithm_id": "143",
+          "mask_log_id": "",
+          "processing_level": "L2-user",
+          "spectral_region": "TIR"
+        },
+        {
+          "log_id": "35742731-4a33-43f4-9a73-a1b585138d9",
+          "log_name": "Grp2 ujCLST",
+          "is_public": "true",
+          "log_type": "1",
+          "algorithm_id": "143",
+          "mask_log_id": "",
+          "processing_level": "L2-user",
+          "spectral_region": "TIR"
+        },
+        {
+          "log_id": "3d983983-162d-451b-ab14-935f76c1138",
+          "log_name": "Min3 uTSAS",
+          "is_public": "true",
+          "log_type": "1",
+          "algorithm_id": "108",
+          "mask_log_id": "",
+          "processing_level": "L2-user",
+          "spectral_region": "SWIR"
+        },
+        {
+          "log_id": "4be0898e-32e5-4c0d-8c80-e9d89e16d0a",
+          "log_name": "Wt1 uTSAS",
+          "is_public": "true",
+          "log_type": "2",
+          "algorithm_id": "110",
+          "mask_log_id": "",
+          "processing_level": "L2-user",
+          "spectral_region": "SWIR"
+        },
+        {
+          "log_id": "5377d280-d442-4f46-8a74-8618a788f3d",
+          "log_name": "Error ujCLST",
+          "is_public": "true",
+          "log_type": "2",
+          "algorithm_id": "145",
+          "mask_log_id": "",
+          "processing_level": "L2-user",
+          "spectral_region": "TIR"
+        },
+        {
+          "log_id": "5fe31c6e-d736-4ba9-80af-7b304b10281",
+          "log_name": "Grp1 uTSAS",
+          "is_public": "true",
+          "log_type": "1",
+          "algorithm_id": "109",
+          "mask_log_id": "",
+          "processing_level": "L2-user",
+          "spectral_region": "SWIR"
+        },
+        {
+          "log_id": "607fcbd5-0334-45a5-890a-08b98f0e477",
+          "log_name": "Wt3 uTSAS",
+          "is_public": "true",
+          "log_type": "2",
+          "algorithm_id": "110",
+          "mask_log_id": "",
+          "processing_level": "L2-user",
+          "spectral_region": "SWIR"
+        },
+        {
+          "log_id": "6a608917-cf7d-4664-8267-be10b4068e3",
+          "log_name": "Grp2 uTSAS",
+          "is_public": "true",
+          "log_type": "1",
+          "algorithm_id": "109",
+          "mask_log_id": "",
+          "processing_level": "L2-user",
+          "spectral_region": "SWIR"
+        },
+        {
+          "log_id": "8b3b0f45-826d-4f2a-860c-24efe3c5186",
+          "log_name": "Min3 ujCLST",
+          "is_public": "true",
+          "log_type": "1",
+          "algorithm_id": "142",
+          "mask_log_id": "",
+          "processing_level": "L2-user",
+          "spectral_region": "TIR"
+        },
+        {
+          "log_id": "9b10f77b-293b-4e81-8187-e9d0873a1c5",
+          "log_name": "Min1 uTSAS",
+          "is_public": "true",
+          "log_type": "1",
+          "algorithm_id": "108",
+          "mask_log_id": "",
+          "processing_level": "L2-user",
+          "spectral_region": "SWIR"
+        },
+        {
+          "log_id": "9ef32f15-a5ea-4ed0-be22-4bf09e8cfa6",
+          "log_name": "Min2 uTSAS",
+          "is_public": "true",
+          "log_type": "1",
+          "algorithm_id": "108",
+          "mask_log_id": "",
+          "processing_level": "L2-user",
+          "spectral_region": "SWIR"
+        },
+        {
+          "log_id": "bcb4caac-7879-4afd-ae87-68279a496f7",
+          "log_name": "Min2 ujCLST",
+          "is_public": "true",
+          "log_type": "1",
+          "algorithm_id": "142",
+          "mask_log_id": "",
+          "processing_level": "L2-user",
+          "spectral_region": "TIR"
+        },
+        {
+          "log_id": "de012235-0d69-4e0f-bfca-0c456fd00eb",
+          "log_name": "Error uTSAS",
+          "is_public": "true",
+          "log_type": "2",
+          "algorithm_id": "111",
+          "mask_log_id": "",
+          "processing_level": "L2-user",
+          "spectral_region": "SWIR"
+        },
+        {
+          "log_id": "e5f395ac-facc-4293-a7ef-68b7fe3c3bc",
+          "log_name": "Wt3 ujCLST",
+          "is_public": "true",
+          "log_type": "2",
+          "algorithm_id": "144",
+          "mask_log_id": "",
+          "processing_level": "L2-user",
+          "spectral_region": "TIR"
+        },
+        {
+          "log_id": "f8b34b83-82f8-42fc-9345-d1cedd2e756",
+          "log_name": "Min1 ujCLST",
+          "is_public": "true",
+          "log_type": "1",
+          "algorithm_id": "142",
+          "mask_log_id": "",
+          "processing_level": "L2-user",
+          "spectral_region": "TIR"
+        }
+      ],
+      "log_count": 20
+    },
+    "zip_evidence": {
+      "hole_id": "13TRDD012",
+      "url": "https://thredds.nci.org.au/thredds/fileServer/rs07/WA/13TRDD012.zip",
+      "checked_utc": "2026-09-11T04:11:48Z",
+      "zip_size": 3744780066,
+      "members": 206,
+      "spectral_members": [
+        {
+          "name": "533fbd17-554b-4ec8-918c-467e13e9e64/13TRDD012_tsg.bip",
+          "size": 508324176,
+          "compressed_size": 251434736,
+          "crc": 2795642419
+        },
+        {
+          "name": "533fbd17-554b-4ec8-918c-467e13e9e64/13TRDD012_tsg.tsg",
+          "size": 9611743,
+          "compressed_size": 1807338,
+          "crc": 1109258132
+        },
+        {
+          "name": "533fbd17-554b-4ec8-918c-467e13e9e64/13TRDD012_tsg_cras.bip",
+          "size": 2220630903,
+          "compressed_size": 2213816672,
+          "crc": 2358125376
+        },
+        {
+          "name": "533fbd17-554b-4ec8-918c-467e13e9e64/13TRDD012_tsg_tir.bip",
+          "size": 326437936,
+          "compressed_size": 154768767,
+          "crc": 771133418
+        },
+        {
+          "name": "533fbd17-554b-4ec8-918c-467e13e9e64/13TRDD012_tsg_tir.tsg",
+          "size": 9697186,
+          "compressed_size": 1809509,
+          "crc": 2031107316
+        }
+      ],
+      "bytes_fetched": 20667,
+      "status": "zip_directory_verified"
+    }
+  },
+  {
+    "hole_id": "13TRDD013",
+    "nvcl_inventory": {
+      "dataset_id": "27c5b310-d509-44e0-9b8c-2e1603f55c7",
+      "dataset_name": "13TRDD013",
+      "borehole_uri": "https://geossdi.dmp.wa.gov.au/resource/feature/gswa/borehole/13TRDD013",
+      "tray_id": "bdcff096-1f87-48a9-a10e-16fc52402f4",
+      "section_id": "aed38b9b-2acc-461b-b20e-3a212a22ec0",
+      "domain_id": "1b62c13e-2a16-4f62-a07f-5c90c0d9193",
+      "description": "<?xml version=\"1.0\" encoding=\"utf-8\"?><TSGDrillHoleMiscMeta xmlns=\"\"><DrillHoleName>13TRDD013</DrillHoleName><InstrumentName>HyLogger 3-2</InstrumentName><Project>Jaguar</Project><Owner>GSWA</Owner><DrillDate>2013-10-15 14:14:21</DrillDate><ExecSumm>GSWA UWI: M0001656|WAMEX Report ID: A101357|EIS Round 7|Commodity: Cu, Zn, Ag, Au</ExecSumm><Datum>GDA94</Datum><Latitude>-28.365991</Latitude><Longitude>121.116750</Longitude><Azimuth>62.000000</Azimuth><Inclination>-62.000000</Inclination><RL>0.000000</RL></TSGDrillHoleMiscMeta>",
+      "modified_date": "2022-07-19 00:00:00+08:00",
+      "created_date": "2020-04-01 00:00:00+08:00",
+      "logs": [
+        {
+          "log_id": "03b8ea19-4a0b-4be0-918d-d8420918cf4",
+          "log_name": "Wt2 uTSAS",
+          "is_public": "true",
+          "log_type": "2",
+          "algorithm_id": "110",
+          "mask_log_id": "",
+          "processing_level": "L2-user",
+          "spectral_region": "SWIR"
+        },
+        {
+          "log_id": "148e3ab6-7948-4dc7-a2d0-04d77398a0e",
+          "log_name": "Min3 ujCLST",
+          "is_public": "true",
+          "log_type": "1",
+          "algorithm_id": "142",
+          "mask_log_id": "",
+          "processing_level": "L2-user",
+          "spectral_region": "TIR"
+        },
+        {
+          "log_id": "18fe5c52-6b23-4903-b4dc-16ef3d51766",
+          "log_name": "Error ujCLST",
+          "is_public": "true",
+          "log_type": "2",
+          "algorithm_id": "145",
+          "mask_log_id": "",
+          "processing_level": "L2-user",
+          "spectral_region": "TIR"
+        },
+        {
+          "log_id": "1eecf563-050b-449d-ba4f-91fb9578cde",
+          "log_name": "Wt3 uTSAS",
+          "is_public": "true",
+          "log_type": "2",
+          "algorithm_id": "110",
+          "mask_log_id": "",
+          "processing_level": "L2-user",
+          "spectral_region": "SWIR"
+        },
+        {
+          "log_id": "407f2194-ee75-443c-ac20-152a1f71e6e",
+          "log_name": "Grp1 uTSAS",
+          "is_public": "true",
+          "log_type": "1",
+          "algorithm_id": "109",
+          "mask_log_id": "",
+          "processing_level": "L2-user",
+          "spectral_region": "SWIR"
+        },
+        {
+          "log_id": "47c4dc69-bbbc-4b85-841f-d8990484066",
+          "log_name": "Wt2 ujCLST",
+          "is_public": "true",
+          "log_type": "2",
+          "algorithm_id": "144",
+          "mask_log_id": "",
+          "processing_level": "L2-user",
+          "spectral_region": "TIR"
+        },
+        {
+          "log_id": "55ae1753-8956-4caf-ac38-2fd04372725",
+          "log_name": "Grp3 ujCLST",
+          "is_public": "true",
+          "log_type": "1",
+          "algorithm_id": "143",
+          "mask_log_id": "",
+          "processing_level": "L2-user",
+          "spectral_region": "TIR"
+        },
+        {
+          "log_id": "6180169e-e1fa-44d7-9a6b-96b0b398b07",
+          "log_name": "Min2 uTSAS",
+          "is_public": "true",
+          "log_type": "1",
+          "algorithm_id": "108",
+          "mask_log_id": "",
+          "processing_level": "L2-user",
+          "spectral_region": "SWIR"
+        },
+        {
+          "log_id": "64935548-982e-45f8-958a-b936e5a9ffa",
+          "log_name": "Grp2 uTSAS",
+          "is_public": "true",
+          "log_type": "1",
+          "algorithm_id": "109",
+          "mask_log_id": "",
+          "processing_level": "L2-user",
+          "spectral_region": "SWIR"
+        },
+        {
+          "log_id": "68f66503-7dd8-42ef-8bd8-939485528f4",
+          "log_name": "Grp1 ujCLST",
+          "is_public": "true",
+          "log_type": "1",
+          "algorithm_id": "143",
+          "mask_log_id": "",
+          "processing_level": "L2-user",
+          "spectral_region": "TIR"
+        },
+        {
+          "log_id": "6dbce684-970b-4d43-a388-98945254d06",
+          "log_name": "Wt1 ujCLST",
+          "is_public": "true",
+          "log_type": "2",
+          "algorithm_id": "144",
+          "mask_log_id": "",
+          "processing_level": "L2-user",
+          "spectral_region": "TIR"
+        },
+        {
+          "log_id": "717d056f-a6d0-4d47-8734-bc087c9e8bb",
+          "log_name": "Min3 uTSAS",
+          "is_public": "true",
+          "log_type": "1",
+          "algorithm_id": "108",
+          "mask_log_id": "",
+          "processing_level": "L2-user",
+          "spectral_region": "SWIR"
+        },
+        {
+          "log_id": "84f9c7fc-9c06-4ae6-adde-fc41ecea416",
+          "log_name": "Wt3 ujCLST",
+          "is_public": "true",
+          "log_type": "2",
+          "algorithm_id": "144",
+          "mask_log_id": "",
+          "processing_level": "L2-user",
+          "spectral_region": "TIR"
+        },
+        {
+          "log_id": "90fe7ae5-321c-47ea-8ad6-e50d7ea421a",
+          "log_name": "Grp2 ujCLST",
+          "is_public": "true",
+          "log_type": "1",
+          "algorithm_id": "143",
+          "mask_log_id": "",
+          "processing_level": "L2-user",
+          "spectral_region": "TIR"
+        },
+        {
+          "log_id": "93326d77-8070-4bea-8de3-5f5bf2ac39b",
+          "log_name": "Min1 ujCLST",
+          "is_public": "true",
+          "log_type": "1",
+          "algorithm_id": "142",
+          "mask_log_id": "",
+          "processing_level": "L2-user",
+          "spectral_region": "TIR"
+        },
+        {
+          "log_id": "baf58c03-36c1-4410-9b9f-3b5a36b1191",
+          "log_name": "Error uTSAS",
+          "is_public": "true",
+          "log_type": "2",
+          "algorithm_id": "111",
+          "mask_log_id": "",
+          "processing_level": "L2-user",
+          "spectral_region": "SWIR"
+        },
+        {
+          "log_id": "bfda7f83-15c6-4f58-9658-ff5afceec8c",
+          "log_name": "Min2 ujCLST",
+          "is_public": "true",
+          "log_type": "1",
+          "algorithm_id": "142",
+          "mask_log_id": "",
+          "processing_level": "L2-user",
+          "spectral_region": "TIR"
+        },
+        {
+          "log_id": "c018a21b-638e-4bfb-ba16-3f611ddc482",
+          "log_name": "Wt1 uTSAS",
+          "is_public": "true",
+          "log_type": "2",
+          "algorithm_id": "110",
+          "mask_log_id": "",
+          "processing_level": "L2-user",
+          "spectral_region": "SWIR"
+        },
+        {
+          "log_id": "ccf725d2-557b-400a-9662-7b3a3234d5f",
+          "log_name": "Min1 uTSAS",
+          "is_public": "true",
+          "log_type": "1",
+          "algorithm_id": "108",
+          "mask_log_id": "",
+          "processing_level": "L2-user",
+          "spectral_region": "SWIR"
+        },
+        {
+          "log_id": "d5376f5b-79c0-46c9-8d69-caf4608f21d",
+          "log_name": "Grp3 uTSAS",
+          "is_public": "true",
+          "log_type": "1",
+          "algorithm_id": "109",
+          "mask_log_id": "",
+          "processing_level": "L2-user",
+          "spectral_region": "SWIR"
+        }
+      ],
+      "log_count": 20
+    },
+    "zip_evidence": {
+      "hole_id": "13TRDD013",
+      "url": "https://thredds.nci.org.au/thredds/fileServer/rs07/WA/13TRDD013.zip",
+      "checked_utc": "2026-09-11T04:12:06Z",
+      "zip_size": 1435572389,
+      "members": 87,
+      "spectral_members": [
+        {
+          "name": "27c5b310-d509-44e0-9b8c-2e1603f55c7/13TRDD013_tsg.bip",
+          "size": 202646592,
+          "compressed_size": 100614295,
+          "crc": 2819709507
+        },
+        {
+          "name": "27c5b310-d509-44e0-9b8c-2e1603f55c7/13TRDD013_tsg.tsg",
+          "size": 3834715,
+          "compressed_size": 730950,
+          "crc": 1291316028
+        },
+        {
+          "name": "27c5b310-d509-44e0-9b8c-2e1603f55c7/13TRDD013_tsg_cras.bip",
+          "size": 852225064,
+          "compressed_size": 849136964,
+          "crc": 83309125
+        },
+        {
+          "name": "27c5b310-d509-44e0-9b8c-2e1603f55c7/13TRDD013_tsg_tir.bip",
+          "size": 130136512,
+          "compressed_size": 62169344,
+          "crc": 841537408
+        },
+        {
+          "name": "27c5b310-d509-44e0-9b8c-2e1603f55c7/13TRDD013_tsg_tir.tsg",
+          "size": 3893978,
+          "compressed_size": 732531,
+          "crc": 3185993673
+        }
+      ],
+      "bytes_fetched": 8767,
+      "status": "zip_directory_verified"
+    }
+  },
+  {
+    "hole_id": "RRLGDDD093",
+    "nvcl_inventory": {
+      "dataset_id": "9d92792d-0e01-4d2b-8c30-746bbf751d0",
+      "dataset_name": "RRLGDDD093",
+      "borehole_uri": "https://geossdi.dmp.wa.gov.au/resource/feature/gswa/borehole/RRLGDDD093",
+      "tray_id": "cb548d55-1152-41cc-9401-ee3768c2c8e",
+      "section_id": "89a6df0b-c752-4c3a-a360-567bff6fd56",
+      "domain_id": "4e75d608-9733-484a-9051-78b3adabe58",
+      "description": "<?xml version=\"1.0\" encoding=\"utf-8\"?><TSGDrillHoleMiscMeta xmlns=\"\"><DrillHoleName>RRLGDDD093</DrillHoleName><InstrumentName>HyLogger 3-2</InstrumentName><Project>Garden Well</Project><Owner>Regis Resources</Owner><DrillDate>2013-02-17 08:55:35</DrillDate><ExecSumm></ExecSumm><Datum>GDA94</Datum><Latitude>-27.911505</Latitude><Longitude>122.362702</Longitude><Azimuth>270.000000</Azimuth><Inclination>-60.000000</Inclination><RL>490.029000</RL></TSGDrillHoleMiscMeta>",
+      "modified_date": "2024-03-28 00:00:00+08:00",
+      "created_date": "2024-03-28 00:00:00+08:00",
+      "logs": [
+        {
+          "log_id": "089a3705-ac3a-412c-83b7-2b9e8a3963a",
+          "log_name": "Wt1 ujCLST",
+          "is_public": "true",
+          "log_type": "2",
+          "algorithm_id": "144",
+          "mask_log_id": "",
+          "processing_level": "L2-user",
+          "spectral_region": "TIR"
+        },
+        {
+          "log_id": "0b0134d9-1663-45f9-938c-289529699cc",
+          "log_name": "Error ujCLST",
+          "is_public": "true",
+          "log_type": "2",
+          "algorithm_id": "145",
+          "mask_log_id": "",
+          "processing_level": "L2-user",
+          "spectral_region": "TIR"
+        },
+        {
+          "log_id": "13593b25-0ea4-4b92-a11a-dba3794e543",
+          "log_name": "Wt3 ujCLST",
+          "is_public": "true",
+          "log_type": "2",
+          "algorithm_id": "144",
+          "mask_log_id": "",
+          "processing_level": "L2-user",
+          "spectral_region": "TIR"
+        },
+        {
+          "log_id": "4bc5a62a-caab-48ac-9c0e-79c96c31ec7",
+          "log_name": "Grp2 uTSAS",
+          "is_public": "true",
+          "log_type": "1",
+          "algorithm_id": "109",
+          "mask_log_id": "",
+          "processing_level": "L2-user",
+          "spectral_region": "SWIR"
+        },
+        {
+          "log_id": "4de9c691-bcef-47ee-8f9f-cfc07787c64",
+          "log_name": "Wt2 ujCLST",
+          "is_public": "true",
+          "log_type": "2",
+          "algorithm_id": "144",
+          "mask_log_id": "",
+          "processing_level": "L2-user",
+          "spectral_region": "TIR"
+        },
+        {
+          "log_id": "640a32be-d2d3-4406-b326-b058025d852",
+          "log_name": "Min1 uTSAS",
+          "is_public": "true",
+          "log_type": "1",
+          "algorithm_id": "108",
+          "mask_log_id": "",
+          "processing_level": "L2-user",
+          "spectral_region": "SWIR"
+        },
+        {
+          "log_id": "6bead9a5-fdf5-44c6-89ee-8d74669a739",
+          "log_name": "Grp1 uTSAS",
+          "is_public": "true",
+          "log_type": "1",
+          "algorithm_id": "109",
+          "mask_log_id": "",
+          "processing_level": "L2-user",
+          "spectral_region": "SWIR"
+        },
+        {
+          "log_id": "6e989cfb-5955-4d1c-9725-d39b2fae0a9",
+          "log_name": "Min3 ujCLST",
+          "is_public": "true",
+          "log_type": "1",
+          "algorithm_id": "142",
+          "mask_log_id": "",
+          "processing_level": "L2-user",
+          "spectral_region": "TIR"
+        },
+        {
+          "log_id": "750f2666-31ae-405f-b037-dec2e3dbac5",
+          "log_name": "Grp2 ujCLST",
+          "is_public": "true",
+          "log_type": "1",
+          "algorithm_id": "143",
+          "mask_log_id": "",
+          "processing_level": "L2-user",
+          "spectral_region": "TIR"
+        },
+        {
+          "log_id": "8e77c1a2-6d54-4077-97f6-9ccd82c7efa",
+          "log_name": "Wt3 uTSAS",
+          "is_public": "true",
+          "log_type": "2",
+          "algorithm_id": "110",
+          "mask_log_id": "",
+          "processing_level": "L2-user",
+          "spectral_region": "SWIR"
+        },
+        {
+          "log_id": "92060784-b77a-4312-b151-c4941d3c38a",
+          "log_name": "Grp1 ujCLST",
+          "is_public": "true",
+          "log_type": "1",
+          "algorithm_id": "143",
+          "mask_log_id": "",
+          "processing_level": "L2-user",
+          "spectral_region": "TIR"
+        },
+        {
+          "log_id": "942b30c3-729f-49e9-877a-16b9bb117bc",
+          "log_name": "Wt1 uTSAS",
+          "is_public": "true",
+          "log_type": "2",
+          "algorithm_id": "110",
+          "mask_log_id": "",
+          "processing_level": "L2-user",
+          "spectral_region": "SWIR"
+        },
+        {
+          "log_id": "b5afb030-21ee-4698-806b-2bab114315d",
+          "log_name": "Error uTSAS",
+          "is_public": "true",
+          "log_type": "2",
+          "algorithm_id": "111",
+          "mask_log_id": "",
+          "processing_level": "L2-user",
+          "spectral_region": "SWIR"
+        },
+        {
+          "log_id": "c2dfd2c9-4397-4bfb-a008-ee95ed85fd2",
+          "log_name": "Min1 ujCLST",
+          "is_public": "true",
+          "log_type": "1",
+          "algorithm_id": "142",
+          "mask_log_id": "",
+          "processing_level": "L2-user",
+          "spectral_region": "TIR"
+        },
+        {
+          "log_id": "c6c88962-42ff-47a6-9979-0170f7a9d9d",
+          "log_name": "Grp3 uTSAS",
+          "is_public": "true",
+          "log_type": "1",
+          "algorithm_id": "109",
+          "mask_log_id": "",
+          "processing_level": "L2-user",
+          "spectral_region": "SWIR"
+        },
+        {
+          "log_id": "c80e99c4-7087-4d6b-aba3-8b7a5d644aa",
+          "log_name": "Wt2 uTSAS",
+          "is_public": "true",
+          "log_type": "2",
+          "algorithm_id": "110",
+          "mask_log_id": "",
+          "processing_level": "L2-user",
+          "spectral_region": "SWIR"
+        },
+        {
+          "log_id": "cfe2c751-6106-4bc2-bb03-feb951a9e72",
+          "log_name": "Grp3 ujCLST",
+          "is_public": "true",
+          "log_type": "1",
+          "algorithm_id": "143",
+          "mask_log_id": "",
+          "processing_level": "L2-user",
+          "spectral_region": "TIR"
+        },
+        {
+          "log_id": "d3177c69-34d7-40bb-82f3-6d40eb5a022",
+          "log_name": "Min2 ujCLST",
+          "is_public": "true",
+          "log_type": "1",
+          "algorithm_id": "142",
+          "mask_log_id": "",
+          "processing_level": "L2-user",
+          "spectral_region": "TIR"
+        },
+        {
+          "log_id": "e55b7f19-f127-4beb-9d32-bf55eb68ae1",
+          "log_name": "Min3 uTSAS",
+          "is_public": "true",
+          "log_type": "1",
+          "algorithm_id": "108",
+          "mask_log_id": "",
+          "processing_level": "L2-user",
+          "spectral_region": "SWIR"
+        },
+        {
+          "log_id": "feac8299-3113-44e6-8a50-af796ae5ed4",
+          "log_name": "Min2 uTSAS",
+          "is_public": "true",
+          "log_type": "1",
+          "algorithm_id": "108",
+          "mask_log_id": "",
+          "processing_level": "L2-user",
+          "spectral_region": "SWIR"
+        }
+      ],
+      "log_count": 20
+    },
+    "zip_evidence": {
+      "hole_id": "RRLGDDD093",
+      "url": "https://thredds.nci.org.au/thredds/fileServer/rs07/WA/RRLGDDD093.zip",
+      "checked_utc": "2026-09-11T04:12:43Z",
+      "zip_size": 2194427400,
+      "members": 120,
+      "spectral_members": [
+        {
+          "name": "9d92792d-0e01-4d2b-8c30-746bbf751d0/RRLGDDD093_tsg.bip",
+          "size": 258282648,
+          "compressed_size": 130234278,
+          "crc": 387910459
+        },
+        {
+          "name": "9d92792d-0e01-4d2b-8c30-746bbf751d0/RRLGDDD093_tsg.tsg",
+          "size": 4993075,
+          "compressed_size": 954508,
+          "crc": 2185750399
+        },
+        {
+          "name": "9d92792d-0e01-4d2b-8c30-746bbf751d0/RRLGDDD093_tsg_cras.bip",
+          "size": 1387515525,
+          "compressed_size": 1382356719,
+          "crc": 2452595805
+        },
+        {
+          "name": "9d92792d-0e01-4d2b-8c30-746bbf751d0/RRLGDDD093_tsg_tir.bip",
+          "size": 165865128,
+          "compressed_size": 80326622,
+          "crc": 3475518259
+        },
+        {
+          "name": "9d92792d-0e01-4d2b-8c30-746bbf751d0/RRLGDDD093_tsg_tir.tsg",
+          "size": 5078615,
+          "compressed_size": 956936,
+          "crc": 1206005668
+        }
+      ],
+      "bytes_fetched": 12189,
+      "status": "zip_directory_verified"
+    }
+  },
+  {
+    "hole_id": "PND003",
+    "nvcl_inventory": {
+      "dataset_id": "28f12e96-dbc4-4446-917c-0068bd6988c",
+      "dataset_name": "PND003",
+      "borehole_uri": "https://geossdi.dmp.wa.gov.au/resource/feature/gswa/borehole/PND003",
+      "tray_id": "b422013f-113c-49be-94ee-0bcfc7c05da",
+      "section_id": "7e9dd60e-e3ab-43f5-ba9c-f9cd8b79cf5",
+      "domain_id": "453c30ca-eec9-487e-af86-041e5031be6",
+      "description": "<?xml version=\"1.0\" encoding=\"utf-8\"?><TSGDrillHoleMiscMeta xmlns=\"\"><DrillHoleName>PND003</DrillHoleName><InstrumentName>HyLogger 3-2</InstrumentName><Project>Paterson North</Project><Owner>Sipa Resources</Owner><DrillDate>2017-09-23 08:07:54</DrillDate><ExecSumm>GSWA UWI: NA|WAMEX Report ID: A115331|Tectonic Unit: Paterson Orogen, Yeneena Basin|250K Map Sheet: Anketell SF51-02|100K Map Sheet:  Weenoo 3256|Archive Location: Private core</ExecSumm><Datum>GDA94</Datum><Latitude>-20.627715</Latitude><Longitude>121.972334</Longitude><Azimuth>55.000000</Azimuth><Inclination>-55.000000</Inclination><RL>237.000000</RL></TSGDrillHoleMiscMeta>",
+      "modified_date": "2022-07-12 00:00:00+08:00",
+      "created_date": "2020-05-11 00:00:00+08:00",
+      "logs": [
+        {
+          "log_id": "0512f75f-fc7b-42bd-9ae0-83fe1cdc711",
+          "log_name": "Min2 uTSAS",
+          "is_public": "true",
+          "log_type": "1",
+          "algorithm_id": "108",
+          "mask_log_id": "",
+          "processing_level": "L2-user",
+          "spectral_region": "SWIR"
+        },
+        {
+          "log_id": "19b1d2bd-ab2a-4a5e-ad42-aceca9f724a",
+          "log_name": "Error uTSAS",
+          "is_public": "true",
+          "log_type": "2",
+          "algorithm_id": "111",
+          "mask_log_id": "",
+          "processing_level": "L2-user",
+          "spectral_region": "SWIR"
+        },
+        {
+          "log_id": "22fdf7a2-42f4-45e9-9bfc-3119189aa61",
+          "log_name": "Wt3 ujCLST",
+          "is_public": "true",
+          "log_type": "2",
+          "algorithm_id": "144",
+          "mask_log_id": "",
+          "processing_level": "L2-user",
+          "spectral_region": "TIR"
+        },
+        {
+          "log_id": "29d29192-c4cd-43f7-9431-9d635afe690",
+          "log_name": "Error uTSAV",
+          "is_public": "true",
+          "log_type": "2",
+          "algorithm_id": "99",
+          "mask_log_id": "",
+          "processing_level": "L2-user",
+          "spectral_region": "VNIR"
+        },
+        {
+          "log_id": "3235a6a4-e8d9-4470-a938-af76440fe76",
+          "log_name": "Wt1 uTSAS",
+          "is_public": "true",
+          "log_type": "2",
+          "algorithm_id": "110",
+          "mask_log_id": "",
+          "processing_level": "L2-user",
+          "spectral_region": "SWIR"
+        },
+        {
+          "log_id": "361975db-e82a-44be-8573-d3020bd36cc",
+          "log_name": "Grp2 ujCLST",
+          "is_public": "true",
+          "log_type": "1",
+          "algorithm_id": "143",
+          "mask_log_id": "",
+          "processing_level": "L2-user",
+          "spectral_region": "TIR"
+        },
+        {
+          "log_id": "471d5067-23c5-42ab-aafd-f52fe575779",
+          "log_name": "Min1 uTSAV",
+          "is_public": "true",
+          "log_type": "1",
+          "algorithm_id": "96",
+          "mask_log_id": "",
+          "processing_level": "L2-user",
+          "spectral_region": "VNIR"
+        },
+        {
+          "log_id": "49efb9a3-4f14-491e-a5b3-1af5da8e4d4",
+          "log_name": "Grp3 uTSAS",
+          "is_public": "true",
+          "log_type": "1",
+          "algorithm_id": "109",
+          "mask_log_id": "",
+          "processing_level": "L2-user",
+          "spectral_region": "SWIR"
+        },
+        {
+          "log_id": "53fb63de-13b6-4c06-9ebe-2e97a7a7d7c",
+          "log_name": "Error ujCLST",
+          "is_public": "true",
+          "log_type": "2",
+          "algorithm_id": "145",
+          "mask_log_id": "",
+          "processing_level": "L2-user",
+          "spectral_region": "TIR"
+        },
+        {
+          "log_id": "5972a5b7-c500-4902-b93a-5c9f0ccee64",
+          "log_name": "Wt2 uTSAS",
+          "is_public": "true",
+          "log_type": "2",
+          "algorithm_id": "110",
+          "mask_log_id": "",
+          "processing_level": "L2-user",
+          "spectral_region": "SWIR"
+        },
+        {
+          "log_id": "5c7272b9-9db8-4356-aa17-8167f9b31f5",
+          "log_name": "Wt3 uTSAS",
+          "is_public": "true",
+          "log_type": "2",
+          "algorithm_id": "110",
+          "mask_log_id": "",
+          "processing_level": "L2-user",
+          "spectral_region": "SWIR"
+        },
+        {
+          "log_id": "66f2178e-d565-4cf0-a4bb-469379838da",
+          "log_name": "Grp2 uTSAV",
+          "is_public": "true",
+          "log_type": "1",
+          "algorithm_id": "97",
+          "mask_log_id": "",
+          "processing_level": "L2-user",
+          "spectral_region": "VNIR"
+        },
+        {
+          "log_id": "68702ce4-77a2-4fd5-81f7-a79c648c1e6",
+          "log_name": "Min2 uTSAV",
+          "is_public": "true",
+          "log_type": "1",
+          "algorithm_id": "96",
+          "mask_log_id": "",
+          "processing_level": "L2-user",
+          "spectral_region": "VNIR"
+        },
+        {
+          "log_id": "71508875-00be-4cae-89d9-4d5e3e5559b",
+          "log_name": "Grp1 uTSAV",
+          "is_public": "true",
+          "log_type": "1",
+          "algorithm_id": "97",
+          "mask_log_id": "",
+          "processing_level": "L2-user",
+          "spectral_region": "VNIR"
+        },
+        {
+          "log_id": "772fde37-7b02-4173-b8ef-2a3aafc9890",
+          "log_name": "Grp2 uTSAS",
+          "is_public": "true",
+          "log_type": "1",
+          "algorithm_id": "109",
+          "mask_log_id": "",
+          "processing_level": "L2-user",
+          "spectral_region": "SWIR"
+        },
+        {
+          "log_id": "776c6550-4898-4a9f-bebc-a499911b377",
+          "log_name": "Wt1 uTSAV",
+          "is_public": "true",
+          "log_type": "2",
+          "algorithm_id": "98",
+          "mask_log_id": "",
+          "processing_level": "L2-user",
+          "spectral_region": "VNIR"
+        },
+        {
+          "log_id": "82d8bf85-f1b4-4aaa-8cfe-4be33f802fe",
+          "log_name": "Grp3 ujCLST",
+          "is_public": "true",
+          "log_type": "1",
+          "algorithm_id": "143",
+          "mask_log_id": "",
+          "processing_level": "L2-user",
+          "spectral_region": "TIR"
+        },
+        {
+          "log_id": "83bb5b3e-e7e1-4caa-ab6b-d9d3069cb48",
+          "log_name": "Min2 ujCLST",
+          "is_public": "true",
+          "log_type": "1",
+          "algorithm_id": "142",
+          "mask_log_id": "",
+          "processing_level": "L2-user",
+          "spectral_region": "TIR"
+        },
+        {
+          "log_id": "90a4762e-b162-46f3-b9a9-0fc5d088c29",
+          "log_name": "Wt2 ujCLST",
+          "is_public": "true",
+          "log_type": "2",
+          "algorithm_id": "144",
+          "mask_log_id": "",
+          "processing_level": "L2-user",
+          "spectral_region": "TIR"
+        },
+        {
+          "log_id": "a0e95d0f-adfc-41ab-a4b3-7ca6c2fcbaf",
+          "log_name": "Min1 ujCLST",
+          "is_public": "true",
+          "log_type": "1",
+          "algorithm_id": "142",
+          "mask_log_id": "",
+          "processing_level": "L2-user",
+          "spectral_region": "TIR"
+        },
+        {
+          "log_id": "a77e3210-3a76-4b32-8c38-891751b25e7",
+          "log_name": "Wt2 uTSAV",
+          "is_public": "true",
+          "log_type": "2",
+          "algorithm_id": "98",
+          "mask_log_id": "",
+          "processing_level": "L2-user",
+          "spectral_region": "VNIR"
+        },
+        {
+          "log_id": "a7e06db6-8ac7-405a-a71c-36b59da500a",
+          "log_name": "Min1 uTSAS",
+          "is_public": "true",
+          "log_type": "1",
+          "algorithm_id": "108",
+          "mask_log_id": "",
+          "processing_level": "L2-user",
+          "spectral_region": "SWIR"
+        },
+        {
+          "log_id": "ad941694-de3e-493e-871a-cc0e9b32da4",
+          "log_name": "Min3 ujCLST",
+          "is_public": "true",
+          "log_type": "1",
+          "algorithm_id": "142",
+          "mask_log_id": "",
+          "processing_level": "L2-user",
+          "spectral_region": "TIR"
+        },
+        {
+          "log_id": "d30e67fa-34dc-4bbf-aee7-5f4b6033415",
+          "log_name": "Min3 uTSAS",
+          "is_public": "true",
+          "log_type": "1",
+          "algorithm_id": "108",
+          "mask_log_id": "",
+          "processing_level": "L2-user",
+          "spectral_region": "SWIR"
+        },
+        {
+          "log_id": "e89c05e3-2536-4093-a56e-2df8c2bd7c5",
+          "log_name": "Grp1 uTSAS",
+          "is_public": "true",
+          "log_type": "1",
+          "algorithm_id": "109",
+          "mask_log_id": "",
+          "processing_level": "L2-user",
+          "spectral_region": "SWIR"
+        },
+        {
+          "log_id": "f4daa33e-fbc0-431e-b947-be8e464a1a1",
+          "log_name": "Wt1 ujCLST",
+          "is_public": "true",
+          "log_type": "2",
+          "algorithm_id": "144",
+          "mask_log_id": "",
+          "processing_level": "L2-user",
+          "spectral_region": "TIR"
+        },
+        {
+          "log_id": "fc7ef9ff-b7ee-4537-a9a6-9a7e13bebbf",
+          "log_name": "Grp1 ujCLST",
+          "is_public": "true",
+          "log_type": "1",
+          "algorithm_id": "143",
+          "mask_log_id": "",
+          "processing_level": "L2-user",
+          "spectral_region": "TIR"
+        }
+      ],
+      "log_count": 27
+    },
+    "zip_evidence": {
+      "hole_id": "PND003",
+      "url": "https://thredds.nci.org.au/thredds/fileServer/rs07/WA/PND003.zip",
+      "checked_utc": "2026-09-11T04:08:45Z",
+      "zip_size": 1020251391,
+      "members": 51,
+      "spectral_members": [
+        {
+          "name": "28f12e96-dbc4-4446-917c-0068bd6988c/PND003_tsg.bip",
+          "size": 121399344,
+          "compressed_size": 61801349,
+          "crc": 3700707804
+        },
+        {
+          "name": "28f12e96-dbc4-4446-917c-0068bd6988c/PND003_tsg.tsg",
+          "size": 2149947,
+          "compressed_size": 452083,
+          "crc": 3484899292
+        },
+        {
+          "name": "28f12e96-dbc4-4446-917c-0068bd6988c/PND003_tsg_cras.bip",
+          "size": 561436250,
+          "compressed_size": 560138017,
+          "crc": 3706666809
+        },
+        {
+          "name": "28f12e96-dbc4-4446-917c-0068bd6988c/PND003_tsg_tir.bip",
+          "size": 77960784,
+          "compressed_size": 37936687,
+          "crc": 658739012
+        },
+        {
+          "name": "28f12e96-dbc4-4446-917c-0068bd6988c/PND003_tsg_tir.tsg",
+          "size": 2163737,
+          "compressed_size": 449629,
+          "crc": 4099306268
+        }
+      ],
+      "bytes_fetched": 5015,
+      "status": "zip_directory_verified"
+    }
+  },
+  {
+    "hole_id": "PND005",
+    "nvcl_inventory": {
+      "dataset_id": "66bb058b-5285-45d9-a751-6b9a868bc3c",
+      "dataset_name": "PND005",
+      "borehole_uri": "https://geossdi.dmp.wa.gov.au/resource/feature/gswa/borehole/pnd005",
+      "tray_id": "b53ed736-30f7-4dc4-a63b-ead469c1f64",
+      "section_id": "49fd0bb0-ef2a-4430-a5a2-a5eaf28a706",
+      "domain_id": "71eaabb4-f16e-4064-a433-166bf2f261f",
+      "description": "<?xml version=\"1.0\" encoding=\"utf-8\"?><TSGDrillHoleMiscMeta xmlns=\"\"><DrillHoleName>pnd005</DrillHoleName><InstrumentName>HyLogger 3-2</InstrumentName><Project>Paterson North</Project><Owner>GSWA</Owner><DrillDate>2018-10-14 12:05:01</DrillDate><ExecSumm>GSWA UWI: M0002849|WAMEX Report ID: A119418|Tectonic Unit: Paterson Orogen, Yeneena Basin|250K Map Sheet: Anketell SF51-02|100K Map Sheet:  Weenoo 3256|Archive Location: Perth Core Library|EIS Round: 17</ExecSumm><Datum>GDA94</Datum><Latitude>-20.622370</Latitude><Longitude>121.968407</Longitude><Azimuth>58.100000</Azimuth><Inclination>-60.000000</Inclination><RL>0.000000</RL></TSGDrillHoleMiscMeta>",
+      "modified_date": "2022-07-12 00:00:00+08:00",
+      "created_date": "2020-04-25 00:00:00+08:00",
+      "logs": [
+        {
+          "log_id": "0a495dd1-3a7c-49c2-9aea-4dca67c6e9c",
+          "log_name": "Wt1 uTSAS",
+          "is_public": "true",
+          "log_type": "2",
+          "algorithm_id": "110",
+          "mask_log_id": "",
+          "processing_level": "L2-user",
+          "spectral_region": "SWIR"
+        },
+        {
+          "log_id": "0f84c436-5b8a-4435-b1c8-d1e4e2bd0a9",
+          "log_name": "Min3 ujCLST",
+          "is_public": "true",
+          "log_type": "1",
+          "algorithm_id": "142",
+          "mask_log_id": "",
+          "processing_level": "L2-user",
+          "spectral_region": "TIR"
+        },
+        {
+          "log_id": "13632411-1801-4d5c-adc1-b2988a073c9",
+          "log_name": "Min1 ujCLST",
+          "is_public": "true",
+          "log_type": "1",
+          "algorithm_id": "142",
+          "mask_log_id": "",
+          "processing_level": "L2-user",
+          "spectral_region": "TIR"
+        },
+        {
+          "log_id": "16b1105d-927f-4b21-9cec-23c4cdcad64",
+          "log_name": "Grp2 uTSAV",
+          "is_public": "true",
+          "log_type": "1",
+          "algorithm_id": "97",
+          "mask_log_id": "",
+          "processing_level": "L2-user",
+          "spectral_region": "VNIR"
+        },
+        {
+          "log_id": "27b69b6f-efdb-43d1-beca-9623c401075",
+          "log_name": "Min1 uTSAV",
+          "is_public": "true",
+          "log_type": "1",
+          "algorithm_id": "96",
+          "mask_log_id": "",
+          "processing_level": "L2-user",
+          "spectral_region": "VNIR"
+        },
+        {
+          "log_id": "28a2922c-9abf-46b1-9289-592ce904773",
+          "log_name": "Min1 uTSAS",
+          "is_public": "true",
+          "log_type": "1",
+          "algorithm_id": "108",
+          "mask_log_id": "",
+          "processing_level": "L2-user",
+          "spectral_region": "SWIR"
+        },
+        {
+          "log_id": "292ca69a-a395-48e4-8388-d36c2112bd7",
+          "log_name": "Error ujCLST",
+          "is_public": "true",
+          "log_type": "2",
+          "algorithm_id": "145",
+          "mask_log_id": "",
+          "processing_level": "L2-user",
+          "spectral_region": "TIR"
+        },
+        {
+          "log_id": "2be9e612-5044-4a40-b59e-baa63895ce4",
+          "log_name": "Grp3 uTSAS",
+          "is_public": "true",
+          "log_type": "1",
+          "algorithm_id": "109",
+          "mask_log_id": "",
+          "processing_level": "L2-user",
+          "spectral_region": "SWIR"
+        },
+        {
+          "log_id": "41d5a515-15a4-4933-8cbe-53703aefa12",
+          "log_name": "Min2 uTSAS",
+          "is_public": "true",
+          "log_type": "1",
+          "algorithm_id": "108",
+          "mask_log_id": "",
+          "processing_level": "L2-user",
+          "spectral_region": "SWIR"
+        },
+        {
+          "log_id": "42ce21a8-03e7-46f0-a427-a50b81e0db3",
+          "log_name": "Grp1 ujCLST",
+          "is_public": "true",
+          "log_type": "1",
+          "algorithm_id": "143",
+          "mask_log_id": "",
+          "processing_level": "L2-user",
+          "spectral_region": "TIR"
+        },
+        {
+          "log_id": "46691c2f-d655-469d-ab2b-606ff8c1c38",
+          "log_name": "Grp2 ujCLST",
+          "is_public": "true",
+          "log_type": "1",
+          "algorithm_id": "143",
+          "mask_log_id": "",
+          "processing_level": "L2-user",
+          "spectral_region": "TIR"
+        },
+        {
+          "log_id": "54c5c805-70ba-47f4-8415-924835903d5",
+          "log_name": "Grp1 uTSAS",
+          "is_public": "true",
+          "log_type": "1",
+          "algorithm_id": "109",
+          "mask_log_id": "",
+          "processing_level": "L2-user",
+          "spectral_region": "SWIR"
+        },
+        {
+          "log_id": "61f4c12e-14fa-407b-b2f5-1f57e4e5d34",
+          "log_name": "Grp2 uTSAS",
+          "is_public": "true",
+          "log_type": "1",
+          "algorithm_id": "109",
+          "mask_log_id": "",
+          "processing_level": "L2-user",
+          "spectral_region": "SWIR"
+        },
+        {
+          "log_id": "6b157770-cc4f-4e26-900f-c81929ccb3b",
+          "log_name": "Wt2 uTSAS",
+          "is_public": "true",
+          "log_type": "2",
+          "algorithm_id": "110",
+          "mask_log_id": "",
+          "processing_level": "L2-user",
+          "spectral_region": "SWIR"
+        },
+        {
+          "log_id": "6ee75344-07dc-4e8e-bb8e-bcc4e782fb9",
+          "log_name": "Min2 ujCLST",
+          "is_public": "true",
+          "log_type": "1",
+          "algorithm_id": "142",
+          "mask_log_id": "",
+          "processing_level": "L2-user",
+          "spectral_region": "TIR"
+        },
+        {
+          "log_id": "793bc9a7-6602-42b1-a975-47f02ee65ed",
+          "log_name": "Wt2 ujCLST",
+          "is_public": "true",
+          "log_type": "2",
+          "algorithm_id": "144",
+          "mask_log_id": "",
+          "processing_level": "L2-user",
+          "spectral_region": "TIR"
+        },
+        {
+          "log_id": "834fba04-d1f5-4644-8ccd-14b0934f110",
+          "log_name": "Wt1 ujCLST",
+          "is_public": "true",
+          "log_type": "2",
+          "algorithm_id": "144",
+          "mask_log_id": "",
+          "processing_level": "L2-user",
+          "spectral_region": "TIR"
+        },
+        {
+          "log_id": "8ffc75b1-c0e2-463c-a981-5e6ecb8c8fb",
+          "log_name": "Grp3 ujCLST",
+          "is_public": "true",
+          "log_type": "1",
+          "algorithm_id": "143",
+          "mask_log_id": "",
+          "processing_level": "L2-user",
+          "spectral_region": "TIR"
+        },
+        {
+          "log_id": "9bc86b40-ed6a-4431-a866-cdeb04c5c50",
+          "log_name": "Wt3 uTSAS",
+          "is_public": "true",
+          "log_type": "2",
+          "algorithm_id": "110",
+          "mask_log_id": "",
+          "processing_level": "L2-user",
+          "spectral_region": "SWIR"
+        },
+        {
+          "log_id": "c96f77f5-2601-4d15-a4a6-85c1f1f8dee",
+          "log_name": "Min2 uTSAV",
+          "is_public": "true",
+          "log_type": "1",
+          "algorithm_id": "96",
+          "mask_log_id": "",
+          "processing_level": "L2-user",
+          "spectral_region": "VNIR"
+        },
+        {
+          "log_id": "cc06cde1-2a6f-4a17-aa7f-004f74a7c7b",
+          "log_name": "Wt3 ujCLST",
+          "is_public": "true",
+          "log_type": "2",
+          "algorithm_id": "144",
+          "mask_log_id": "",
+          "processing_level": "L2-user",
+          "spectral_region": "TIR"
+        },
+        {
+          "log_id": "d0ee6dde-a3d0-435b-985d-787c7cc56a4",
+          "log_name": "Wt2 uTSAV",
+          "is_public": "true",
+          "log_type": "2",
+          "algorithm_id": "98",
+          "mask_log_id": "",
+          "processing_level": "L2-user",
+          "spectral_region": "VNIR"
+        },
+        {
+          "log_id": "dd7f2509-9bc7-4c87-8abe-d30f6aa5598",
+          "log_name": "Error uTSAS",
+          "is_public": "true",
+          "log_type": "2",
+          "algorithm_id": "111",
+          "mask_log_id": "",
+          "processing_level": "L2-user",
+          "spectral_region": "SWIR"
+        },
+        {
+          "log_id": "e092c305-3505-472a-a7d3-00afa09baf8",
+          "log_name": "Wt1 uTSAV",
+          "is_public": "true",
+          "log_type": "2",
+          "algorithm_id": "98",
+          "mask_log_id": "",
+          "processing_level": "L2-user",
+          "spectral_region": "VNIR"
+        },
+        {
+          "log_id": "e510c9d4-1226-41f4-ad91-44e2508aaf9",
+          "log_name": "Grp1 uTSAV",
+          "is_public": "true",
+          "log_type": "1",
+          "algorithm_id": "97",
+          "mask_log_id": "",
+          "processing_level": "L2-user",
+          "spectral_region": "VNIR"
+        },
+        {
+          "log_id": "eba6c6c5-8486-4f3f-8f15-38f792a1555",
+          "log_name": "Error uTSAV",
+          "is_public": "true",
+          "log_type": "2",
+          "algorithm_id": "99",
+          "mask_log_id": "",
+          "processing_level": "L2-user",
+          "spectral_region": "VNIR"
+        },
+        {
+          "log_id": "fcbc2d50-c440-40c1-9d5f-8509fa7521c",
+          "log_name": "Min3 uTSAS",
+          "is_public": "true",
+          "log_type": "1",
+          "algorithm_id": "108",
+          "mask_log_id": "",
+          "processing_level": "L2-user",
+          "spectral_region": "SWIR"
+        }
+      ],
+      "log_count": 27
+    },
+    "zip_evidence": {
+      "hole_id": "PND005",
+      "url": "https://thredds.nci.org.au/thredds/fileServer/rs07/WA/PND005.zip",
+      "checked_utc": "2026-09-11T04:09:15Z",
+      "zip_size": 1828297034,
+      "members": 108,
+      "spectral_members": [
+        {
+          "name": "66bb058b-5285-45d9-a751-6b9a868bc3c/PND005_tsg.bip",
+          "size": 258868872,
+          "compressed_size": 130973195,
+          "crc": 453244953
+        },
+        {
+          "name": "66bb058b-5285-45d9-a751-6b9a868bc3c/PND005_tsg.tsg",
+          "size": 4546743,
+          "compressed_size": 923210,
+          "crc": 1705956974
+        },
+        {
+          "name": "66bb058b-5285-45d9-a751-6b9a868bc3c/PND005_tsg_cras.bip",
+          "size": 1041870881,
+          "compressed_size": 1037621468,
+          "crc": 4237576397
+        },
+        {
+          "name": "66bb058b-5285-45d9-a751-6b9a868bc3c/PND005_tsg_tir.bip",
+          "size": 166241592,
+          "compressed_size": 80279337,
+          "crc": 126416961
+        },
+        {
+          "name": "66bb058b-5285-45d9-a751-6b9a868bc3c/PND005_tsg_tir.tsg",
+          "size": 4588074,
+          "compressed_size": 921841,
+          "crc": 2889723427
+        }
+      ],
+      "bytes_fetched": 10543,
+      "status": "zip_directory_verified"
+    }
+  },
+  {
+    "hole_id": "16MYD0047",
+    "nvcl_inventory": {
+      "dataset_id": "51afa092-b66b-44f2-960c-86f9ae1a31c",
+      "dataset_name": "16MYD0047",
+      "borehole_uri": "https://geossdi.dmp.wa.gov.au/resource/feature/gswa/borehole/16MYD0047",
+      "tray_id": "b2bbdf11-6dd4-4669-a3b6-09b125e9746",
+      "section_id": "1ed03f7a-3e75-48f7-bff6-ff2b88a36e8",
+      "domain_id": "8582f952-f8c7-4f7e-adf8-f0903d6d0f8",
+      "description": "<?xml version=\"1.0\" encoding=\"utf-8\"?><TSGDrillHoleMiscMeta xmlns=\"\"><DrillHoleName>16MYD0047</DrillHoleName><InstrumentName>HyLogger 3-2</InstrumentName><Project>Telfer</Project><Owner>GSWA</Owner><DrillDate>2016-11-07 08:42:18</DrillDate><ExecSumm>GSWA UWI: M0002839|WAMEX Report ID: A112014|Tectonic Unit: Paterson Orogen, Yeneena Basin|250K Map Sheet: Paterson Range SF51-06|100K Map Sheet:  Coolyu 3355|Archive Location: Perth Core Library</ExecSumm><Datum>GDA94</Datum><Latitude>-21.382665</Latitude><Longitude>122.255391</Longitude><Azimuth>60.200000</Azimuth><Inclination>-62.000000</Inclination><RL>257.000000</RL></TSGDrillHoleMiscMeta>",
+      "modified_date": "2022-07-19 00:00:00+08:00",
+      "created_date": "2020-09-25 00:00:00+08:00",
+      "logs": [
+        {
+          "log_id": "1cb85445-6813-4660-8c14-091f8f40991",
+          "log_name": "Grp3 ujCLST",
+          "is_public": "true",
+          "log_type": "1",
+          "algorithm_id": "143",
+          "mask_log_id": "",
+          "processing_level": "L2-user",
+          "spectral_region": "TIR"
+        },
+        {
+          "log_id": "1f018c21-4833-4027-aa61-3cc28f8ff76",
+          "log_name": "Min2 ujCLST",
+          "is_public": "true",
+          "log_type": "1",
+          "algorithm_id": "142",
+          "mask_log_id": "",
+          "processing_level": "L2-user",
+          "spectral_region": "TIR"
+        },
+        {
+          "log_id": "227601de-3506-49ba-9bc8-fc31370ceff",
+          "log_name": "Grp2 ujCLST",
+          "is_public": "true",
+          "log_type": "1",
+          "algorithm_id": "143",
+          "mask_log_id": "",
+          "processing_level": "L2-user",
+          "spectral_region": "TIR"
+        },
+        {
+          "log_id": "29670a19-cd99-483a-a438-47612bd8a34",
+          "log_name": "Min3 uTSAS",
+          "is_public": "true",
+          "log_type": "1",
+          "algorithm_id": "108",
+          "mask_log_id": "",
+          "processing_level": "L2-user",
+          "spectral_region": "SWIR"
+        },
+        {
+          "log_id": "38feb2a9-a720-44db-9dda-22abf2949d6",
+          "log_name": "Grp3 uTSAS",
+          "is_public": "true",
+          "log_type": "1",
+          "algorithm_id": "109",
+          "mask_log_id": "",
+          "processing_level": "L2-user",
+          "spectral_region": "SWIR"
+        },
+        {
+          "log_id": "3da722da-1ca2-4ed7-b538-3a6239a2433",
+          "log_name": "Grp1 uTSAS",
+          "is_public": "true",
+          "log_type": "1",
+          "algorithm_id": "109",
+          "mask_log_id": "",
+          "processing_level": "L2-user",
+          "spectral_region": "SWIR"
+        },
+        {
+          "log_id": "41fb2489-d9e7-4f1e-b3bd-addad0e1dd1",
+          "log_name": "Wt3 ujCLST",
+          "is_public": "true",
+          "log_type": "2",
+          "algorithm_id": "144",
+          "mask_log_id": "",
+          "processing_level": "L2-user",
+          "spectral_region": "TIR"
+        },
+        {
+          "log_id": "451ffe91-f08d-492e-9dfe-f167e20dfdb",
+          "log_name": "Min1 uTSAS",
+          "is_public": "true",
+          "log_type": "1",
+          "algorithm_id": "108",
+          "mask_log_id": "",
+          "processing_level": "L2-user",
+          "spectral_region": "SWIR"
+        },
+        {
+          "log_id": "5cfa4804-2277-49f9-ad39-4ab5473d6af",
+          "log_name": "Wt1 ujCLST",
+          "is_public": "true",
+          "log_type": "2",
+          "algorithm_id": "144",
+          "mask_log_id": "",
+          "processing_level": "L2-user",
+          "spectral_region": "TIR"
+        },
+        {
+          "log_id": "656f14a1-5db0-4bd5-bcfa-b8e7dba9fce",
+          "log_name": "Error uTSAS",
+          "is_public": "true",
+          "log_type": "2",
+          "algorithm_id": "111",
+          "mask_log_id": "",
+          "processing_level": "L2-user",
+          "spectral_region": "SWIR"
+        },
+        {
+          "log_id": "6c92f706-ffd3-46af-9554-e9de512165a",
+          "log_name": "Grp1 ujCLST",
+          "is_public": "true",
+          "log_type": "1",
+          "algorithm_id": "143",
+          "mask_log_id": "",
+          "processing_level": "L2-user",
+          "spectral_region": "TIR"
+        },
+        {
+          "log_id": "7d0c20df-01e3-4012-aee4-1fad3534c57",
+          "log_name": "Min2 uTSAS",
+          "is_public": "true",
+          "log_type": "1",
+          "algorithm_id": "108",
+          "mask_log_id": "",
+          "processing_level": "L2-user",
+          "spectral_region": "SWIR"
+        },
+        {
+          "log_id": "86acce98-be97-4644-9fd0-e918dca1563",
+          "log_name": "Wt2 ujCLST",
+          "is_public": "true",
+          "log_type": "2",
+          "algorithm_id": "144",
+          "mask_log_id": "",
+          "processing_level": "L2-user",
+          "spectral_region": "TIR"
+        },
+        {
+          "log_id": "8dca9156-c7c7-4740-826c-7a49338b0a4",
+          "log_name": "Wt2 uTSAS",
+          "is_public": "true",
+          "log_type": "2",
+          "algorithm_id": "110",
+          "mask_log_id": "",
+          "processing_level": "L2-user",
+          "spectral_region": "SWIR"
+        },
+        {
+          "log_id": "a035f79c-43df-4383-9a6e-e8ee9105c5a",
+          "log_name": "Min3 ujCLST",
+          "is_public": "true",
+          "log_type": "1",
+          "algorithm_id": "142",
+          "mask_log_id": "",
+          "processing_level": "L2-user",
+          "spectral_region": "TIR"
+        },
+        {
+          "log_id": "b7d8123b-47f2-4b3c-a600-e318f10d36f",
+          "log_name": "Grp2 uTSAS",
+          "is_public": "true",
+          "log_type": "1",
+          "algorithm_id": "109",
+          "mask_log_id": "",
+          "processing_level": "L2-user",
+          "spectral_region": "SWIR"
+        },
+        {
+          "log_id": "ed3d33c1-8c27-4256-be89-d4fe2435a87",
+          "log_name": "Error ujCLST",
+          "is_public": "true",
+          "log_type": "2",
+          "algorithm_id": "145",
+          "mask_log_id": "",
+          "processing_level": "L2-user",
+          "spectral_region": "TIR"
+        },
+        {
+          "log_id": "ee85f326-1984-48eb-a441-1a32c2efd9b",
+          "log_name": "Wt1 uTSAS",
+          "is_public": "true",
+          "log_type": "2",
+          "algorithm_id": "110",
+          "mask_log_id": "",
+          "processing_level": "L2-user",
+          "spectral_region": "SWIR"
+        },
+        {
+          "log_id": "f03b34f6-c952-4208-92d5-03ccbe18507",
+          "log_name": "Wt3 uTSAS",
+          "is_public": "true",
+          "log_type": "2",
+          "algorithm_id": "110",
+          "mask_log_id": "",
+          "processing_level": "L2-user",
+          "spectral_region": "SWIR"
+        },
+        {
+          "log_id": "feafe75c-37a1-4b75-946e-d2c3b5a8a51",
+          "log_name": "Min1 ujCLST",
+          "is_public": "true",
+          "log_type": "1",
+          "algorithm_id": "142",
+          "mask_log_id": "",
+          "processing_level": "L2-user",
+          "spectral_region": "TIR"
+        }
+      ],
+      "log_count": 20
+    },
+    "zip_evidence": {
+      "hole_id": "16MYD0047",
+      "url": "https://thredds.nci.org.au/thredds/fileServer/rs07/WA/16MYD0047.zip",
+      "checked_utc": "2026-09-11T04:09:21Z",
+      "zip_size": 2440041857,
+      "members": 138,
+      "spectral_members": [
+        {
+          "name": "51afa092-b66b-44f2-960c-86f9ae1a31c/16MYD0047_tsg.bip",
+          "size": 358616160,
+          "compressed_size": 180915223,
+          "crc": 2412333033
+        },
+        {
+          "name": "51afa092-b66b-44f2-960c-86f9ae1a31c/16MYD0047_tsg.tsg",
+          "size": 6788464,
+          "compressed_size": 1291245,
+          "crc": 907635538
+        },
+        {
+          "name": "51afa092-b66b-44f2-960c-86f9ae1a31c/16MYD0047_tsg_cras.bip",
+          "size": 1289043036,
+          "compressed_size": 1283529956,
+          "crc": 4028282901
+        },
+        {
+          "name": "51afa092-b66b-44f2-960c-86f9ae1a31c/16MYD0047_tsg_tir.bip",
+          "size": 230297760,
+          "compressed_size": 111789659,
+          "crc": 3054251923
+        },
+        {
+          "name": "51afa092-b66b-44f2-960c-86f9ae1a31c/16MYD0047_tsg_tir.tsg",
+          "size": 6841857,
+          "compressed_size": 1292942,
+          "crc": 1082582703
+        }
+      ],
+      "bytes_fetched": 13867,
+      "status": "zip_directory_verified"
+    }
+  },
+  {
+    "hole_id": "EPT2276",
+    "nvcl_inventory": {
+      "dataset_id": "1e6ca17c-e533-418d-a42b-9c8453f01b2",
+      "dataset_name": "EPT2276",
+      "borehole_uri": "https://geossdi.dmp.wa.gov.au/resource/feature/gswa/borehole/EPT2276",
+      "tray_id": "5639b234-0878-40d1-87b3-e54f54d19e4",
+      "section_id": "7a661c20-000a-4723-81bc-de488d3eb9b",
+      "domain_id": "7532bcb2-91c3-4191-bea8-98765f92b8c",
+      "description": "<?xml version=\"1.0\" encoding=\"utf-8\"?><TSGDrillHoleMiscMeta xmlns=\"\"><DrillHoleName>EPT2276</DrillHoleName><InstrumentName>HyLogger 3-2</InstrumentName><Project>Aria Prospect</Project><Owner>GSWA</Owner><DrillDate>2016-11-10 07:53:23</DrillDate><ExecSumm>GSWA UWI: M0002625|WAMEX Report ID: A114039|Tectonic Unit: Paterson Orogen, Yeneena Basin|250K Map Sheet: Paterson Range SF 51-06|100K Map Sheet:  Lamil 3254|Archive Location: Kalgoorlie Core Library|EIS Round: 12</ExecSumm><Datum>GDA94</Datum><Latitude>-21.953333</Latitude><Longitude>121.560555</Longitude><Azimuth>0.000000</Azimuth><Inclination>-80.000000</Inclination><RL>0.000000</RL></TSGDrillHoleMiscMeta>",
+      "modified_date": "2022-07-01 00:00:00+08:00",
+      "created_date": "2018-12-14 00:00:00+08:00",
+      "logs": [
+        {
+          "log_id": "0c396cef-52b9-4d78-8c72-53f9d3ee8c1",
+          "log_name": "Error ujCLST",
+          "is_public": "true",
+          "log_type": "2",
+          "algorithm_id": "145",
+          "mask_log_id": "",
+          "processing_level": "L2-user",
+          "spectral_region": "TIR"
+        },
+        {
+          "log_id": "2abfbbaa-6a03-40cd-9664-7197deee2fe",
+          "log_name": "Min3 ujCLST",
+          "is_public": "true",
+          "log_type": "1",
+          "algorithm_id": "142",
+          "mask_log_id": "",
+          "processing_level": "L2-user",
+          "spectral_region": "TIR"
+        },
+        {
+          "log_id": "2b1106d4-5110-421b-b8ea-bbcc8a7bf17",
+          "log_name": "Grp1 uTSAS",
+          "is_public": "true",
+          "log_type": "1",
+          "algorithm_id": "109",
+          "mask_log_id": "",
+          "processing_level": "L2-user",
+          "spectral_region": "SWIR"
+        },
+        {
+          "log_id": "2e9ee0df-fdde-4981-b3c9-ef1b2997660",
+          "log_name": "Wt2 ujCLST",
+          "is_public": "true",
+          "log_type": "2",
+          "algorithm_id": "144",
+          "mask_log_id": "",
+          "processing_level": "L2-user",
+          "spectral_region": "TIR"
+        },
+        {
+          "log_id": "381cb760-2ed7-40fe-afb9-9a61dbd7f78",
+          "log_name": "Grp2 ujCLST",
+          "is_public": "true",
+          "log_type": "1",
+          "algorithm_id": "143",
+          "mask_log_id": "",
+          "processing_level": "L2-user",
+          "spectral_region": "TIR"
+        },
+        {
+          "log_id": "385367a2-ced8-4fbb-9080-d2b3eb56f3d",
+          "log_name": "Min2 ujCLST",
+          "is_public": "true",
+          "log_type": "1",
+          "algorithm_id": "142",
+          "mask_log_id": "",
+          "processing_level": "L2-user",
+          "spectral_region": "TIR"
+        },
+        {
+          "log_id": "52e8af7c-3790-4a97-9edd-f2cd84d1b83",
+          "log_name": "Grp1 ujCLST",
+          "is_public": "true",
+          "log_type": "1",
+          "algorithm_id": "143",
+          "mask_log_id": "",
+          "processing_level": "L2-user",
+          "spectral_region": "TIR"
+        },
+        {
+          "log_id": "52fe54e5-06ae-4655-9a5c-641296cc127",
+          "log_name": "Grp3 uTSAS",
+          "is_public": "true",
+          "log_type": "1",
+          "algorithm_id": "109",
+          "mask_log_id": "",
+          "processing_level": "L2-user",
+          "spectral_region": "SWIR"
+        },
+        {
+          "log_id": "5302e172-f171-4822-a732-55f02062aaa",
+          "log_name": "Grp3 ujCLST",
+          "is_public": "true",
+          "log_type": "1",
+          "algorithm_id": "143",
+          "mask_log_id": "",
+          "processing_level": "L2-user",
+          "spectral_region": "TIR"
+        },
+        {
+          "log_id": "571f637a-866d-48ea-a9f3-1b8bef071bb",
+          "log_name": "Error uTSAS",
+          "is_public": "true",
+          "log_type": "2",
+          "algorithm_id": "111",
+          "mask_log_id": "",
+          "processing_level": "L2-user",
+          "spectral_region": "SWIR"
+        },
+        {
+          "log_id": "5b0c9d54-7166-4ce7-be59-daaf1d57610",
+          "log_name": "Min2 uTSAS",
+          "is_public": "true",
+          "log_type": "1",
+          "algorithm_id": "108",
+          "mask_log_id": "",
+          "processing_level": "L2-user",
+          "spectral_region": "SWIR"
+        },
+        {
+          "log_id": "6e23e1ed-4f67-4b51-8636-1b852c46f45",
+          "log_name": "Min1 ujCLST",
+          "is_public": "true",
+          "log_type": "1",
+          "algorithm_id": "142",
+          "mask_log_id": "",
+          "processing_level": "L2-user",
+          "spectral_region": "TIR"
+        },
+        {
+          "log_id": "75ebe14b-c7a9-4b3b-82ca-97de609ae9b",
+          "log_name": "Grp2 uTSAS",
+          "is_public": "true",
+          "log_type": "1",
+          "algorithm_id": "109",
+          "mask_log_id": "",
+          "processing_level": "L2-user",
+          "spectral_region": "SWIR"
+        },
+        {
+          "log_id": "7836ade5-bb67-4512-8520-a84d597073a",
+          "log_name": "Wt2 uTSAS",
+          "is_public": "true",
+          "log_type": "2",
+          "algorithm_id": "110",
+          "mask_log_id": "",
+          "processing_level": "L2-user",
+          "spectral_region": "SWIR"
+        },
+        {
+          "log_id": "88a0223c-c1b5-46e6-b97d-5ac3258f9f5",
+          "log_name": "Wt3 ujCLST",
+          "is_public": "true",
+          "log_type": "2",
+          "algorithm_id": "144",
+          "mask_log_id": "",
+          "processing_level": "L2-user",
+          "spectral_region": "TIR"
+        },
+        {
+          "log_id": "8ac263a5-eb2a-4b3c-b834-d92d990331f",
+          "log_name": "Wt1 ujCLST",
+          "is_public": "true",
+          "log_type": "2",
+          "algorithm_id": "144",
+          "mask_log_id": "",
+          "processing_level": "L2-user",
+          "spectral_region": "TIR"
+        },
+        {
+          "log_id": "9a596712-4634-4798-8440-34ca0ac0615",
+          "log_name": "Min1 uTSAS",
+          "is_public": "true",
+          "log_type": "1",
+          "algorithm_id": "108",
+          "mask_log_id": "",
+          "processing_level": "L2-user",
+          "spectral_region": "SWIR"
+        },
+        {
+          "log_id": "9cf00c66-344a-44d2-aea4-ba5da9c8d2c",
+          "log_name": "Wt1 uTSAS",
+          "is_public": "true",
+          "log_type": "2",
+          "algorithm_id": "110",
+          "mask_log_id": "",
+          "processing_level": "L2-user",
+          "spectral_region": "SWIR"
+        },
+        {
+          "log_id": "c5dceca2-e2bb-4e86-9cac-dba855bf149",
+          "log_name": "Min3 uTSAS",
+          "is_public": "true",
+          "log_type": "1",
+          "algorithm_id": "108",
+          "mask_log_id": "",
+          "processing_level": "L2-user",
+          "spectral_region": "SWIR"
+        },
+        {
+          "log_id": "e80351b9-c5f0-4753-9576-447589ab2ae",
+          "log_name": "Wt3 uTSAS",
+          "is_public": "true",
+          "log_type": "2",
+          "algorithm_id": "110",
+          "mask_log_id": "",
+          "processing_level": "L2-user",
+          "spectral_region": "SWIR"
+        }
+      ],
+      "log_count": 20
+    },
+    "zip_evidence": {
+      "hole_id": "EPT2276",
+      "url": "https://thredds.nci.org.au/thredds/fileServer/rs07/WA/EPT2276.zip",
+      "checked_utc": "2026-09-11T04:10:22Z",
+      "zip_size": 1653014081,
+      "members": 100,
+      "spectral_members": [
+        {
+          "name": "1e6ca17c-e533-418d-a42b-9c8453f01b2/EPT2276_tsg.bip",
+          "size": 254200320,
+          "compressed_size": 128474055,
+          "crc": 3289315687
+        },
+        {
+          "name": "1e6ca17c-e533-418d-a42b-9c8453f01b2/EPT2276_tsg.tsg",
+          "size": 4572484,
+          "compressed_size": 904642,
+          "crc": 2699946905
+        },
+        {
+          "name": "1e6ca17c-e533-418d-a42b-9c8453f01b2/EPT2276_tsg_cras.bip",
+          "size": 916375455,
+          "compressed_size": 913252336,
+          "crc": 4111779731
+        },
+        {
+          "name": "1e6ca17c-e533-418d-a42b-9c8453f01b2/EPT2276_tsg_tir.bip",
+          "size": 163243520,
+          "compressed_size": 77635574,
+          "crc": 1103492230
+        },
+        {
+          "name": "1e6ca17c-e533-418d-a42b-9c8453f01b2/EPT2276_tsg_tir.tsg",
+          "size": 4621574,
+          "compressed_size": 905142,
+          "crc": 2266390989
+        }
+      ],
+      "bytes_fetched": 9867,
+      "status": "zip_directory_verified"
+    }
+  },
+  {
+    "hole_id": "16MYD0052",
+    "nvcl_inventory": {
+      "dataset_id": "66c7d43c-ccd4-4c7c-8d4a-e83a54b15ed",
+      "dataset_name": "16MYD0052",
+      "borehole_uri": "https://geossdi.dmp.wa.gov.au/resource/feature/gswa/borehole/16MYD0052",
+      "tray_id": "93cf8591-47e1-4ec1-b46a-949a243822d",
+      "section_id": "22a46fb8-5212-42c4-8cb3-37e0792f042",
+      "domain_id": "451ed706-d3e7-47c7-9b2b-cdda88396f1",
+      "description": "<?xml version=\"1.0\" encoding=\"utf-8\"?><TSGDrillHoleMiscMeta xmlns=\"\"><DrillHoleName>16MYD0052</DrillHoleName><InstrumentName>HyLogger 3-2</InstrumentName><Project>Telfer</Project><Owner>GSWA</Owner><DrillDate>2016-11-21 08:36:29</DrillDate><ExecSumm>GSWA UWI: M0002840|WAMEX Report ID: A112014|Tectonic Unit: Paterson Orogen, Yeneena Basin|250K Map Sheet: Paterson Range SF51-06|100K Map Sheet:  Coolyu 3355|Archive Location: Perth Core Library</ExecSumm><Datum>GDA94</Datum><Latitude>-21.382665</Latitude><Longitude>122.255907</Longitude><Azimuth>60.000000</Azimuth><Inclination>-64.000000</Inclination><RL>257.000000</RL></TSGDrillHoleMiscMeta>",
+      "modified_date": "2022-07-19 00:00:00+08:00",
+      "created_date": "2020-09-25 00:00:00+08:00",
+      "logs": [
+        {
+          "log_id": "00ac14c2-bc79-4f2b-bebb-fa0550bd621",
+          "log_name": "Wt1 ujCLST",
+          "is_public": "true",
+          "log_type": "2",
+          "algorithm_id": "144",
+          "mask_log_id": "",
+          "processing_level": "L2-user",
+          "spectral_region": "TIR"
+        },
+        {
+          "log_id": "00af2e42-56a3-49d5-923d-78bf5b25740",
+          "log_name": "Wt3 uTSAS",
+          "is_public": "true",
+          "log_type": "2",
+          "algorithm_id": "110",
+          "mask_log_id": "",
+          "processing_level": "L2-user",
+          "spectral_region": "SWIR"
+        },
+        {
+          "log_id": "2b40a369-9010-4b49-b270-29e947bae88",
+          "log_name": "Wt2 uTSAS",
+          "is_public": "true",
+          "log_type": "2",
+          "algorithm_id": "110",
+          "mask_log_id": "",
+          "processing_level": "L2-user",
+          "spectral_region": "SWIR"
+        },
+        {
+          "log_id": "352fc124-8345-4dba-a401-0509e94c2bc",
+          "log_name": "Grp3 uTSAS",
+          "is_public": "true",
+          "log_type": "1",
+          "algorithm_id": "109",
+          "mask_log_id": "",
+          "processing_level": "L2-user",
+          "spectral_region": "SWIR"
+        },
+        {
+          "log_id": "37429e78-6921-48d2-a8cb-19f4f9b27b0",
+          "log_name": "Error ujCLST",
+          "is_public": "true",
+          "log_type": "2",
+          "algorithm_id": "145",
+          "mask_log_id": "",
+          "processing_level": "L2-user",
+          "spectral_region": "TIR"
+        },
+        {
+          "log_id": "5edc490c-ebd3-44af-99b2-5948a17e1f0",
+          "log_name": "Min3 ujCLST",
+          "is_public": "true",
+          "log_type": "1",
+          "algorithm_id": "142",
+          "mask_log_id": "",
+          "processing_level": "L2-user",
+          "spectral_region": "TIR"
+        },
+        {
+          "log_id": "5fd705c0-8189-448b-be39-0f4c0f7f70b",
+          "log_name": "Min1 uTSAS",
+          "is_public": "true",
+          "log_type": "1",
+          "algorithm_id": "108",
+          "mask_log_id": "",
+          "processing_level": "L2-user",
+          "spectral_region": "SWIR"
+        },
+        {
+          "log_id": "6a46ecbc-8ec0-4f29-b551-c8979e68348",
+          "log_name": "Wt2 ujCLST",
+          "is_public": "true",
+          "log_type": "2",
+          "algorithm_id": "144",
+          "mask_log_id": "",
+          "processing_level": "L2-user",
+          "spectral_region": "TIR"
+        },
+        {
+          "log_id": "6af61e8c-3021-47e7-a9eb-af1d6860a4c",
+          "log_name": "Min2 uTSAS",
+          "is_public": "true",
+          "log_type": "1",
+          "algorithm_id": "108",
+          "mask_log_id": "",
+          "processing_level": "L2-user",
+          "spectral_region": "SWIR"
+        },
+        {
+          "log_id": "6e99afff-5729-4027-88ad-210eaa24758",
+          "log_name": "Grp1 ujCLST",
+          "is_public": "true",
+          "log_type": "1",
+          "algorithm_id": "143",
+          "mask_log_id": "",
+          "processing_level": "L2-user",
+          "spectral_region": "TIR"
+        },
+        {
+          "log_id": "9a1d04df-e715-4590-985e-81a435000d9",
+          "log_name": "Wt1 uTSAS",
+          "is_public": "true",
+          "log_type": "2",
+          "algorithm_id": "110",
+          "mask_log_id": "",
+          "processing_level": "L2-user",
+          "spectral_region": "SWIR"
+        },
+        {
+          "log_id": "a251e9de-45a5-4c34-b7df-a3e03ce51d6",
+          "log_name": "Error uTSAS",
+          "is_public": "true",
+          "log_type": "2",
+          "algorithm_id": "111",
+          "mask_log_id": "",
+          "processing_level": "L2-user",
+          "spectral_region": "SWIR"
+        },
+        {
+          "log_id": "adaf8708-17ac-4837-81b1-2e4c722ff44",
+          "log_name": "Grp2 uTSAS",
+          "is_public": "true",
+          "log_type": "1",
+          "algorithm_id": "109",
+          "mask_log_id": "",
+          "processing_level": "L2-user",
+          "spectral_region": "SWIR"
+        },
+        {
+          "log_id": "ae42ca06-ab5a-4c47-912b-c1516ffe521",
+          "log_name": "Grp1 uTSAS",
+          "is_public": "true",
+          "log_type": "1",
+          "algorithm_id": "109",
+          "mask_log_id": "",
+          "processing_level": "L2-user",
+          "spectral_region": "SWIR"
+        },
+        {
+          "log_id": "b0b81147-31b8-46f2-8dc7-255d30003d3",
+          "log_name": "Wt3 ujCLST",
+          "is_public": "true",
+          "log_type": "2",
+          "algorithm_id": "144",
+          "mask_log_id": "",
+          "processing_level": "L2-user",
+          "spectral_region": "TIR"
+        },
+        {
+          "log_id": "c81f6a60-c959-4e63-9d06-64e03a74f26",
+          "log_name": "Min2 ujCLST",
+          "is_public": "true",
+          "log_type": "1",
+          "algorithm_id": "142",
+          "mask_log_id": "",
+          "processing_level": "L2-user",
+          "spectral_region": "TIR"
+        },
+        {
+          "log_id": "caee6346-4ab2-439d-abda-c2161197642",
+          "log_name": "Grp3 ujCLST",
+          "is_public": "true",
+          "log_type": "1",
+          "algorithm_id": "143",
+          "mask_log_id": "",
+          "processing_level": "L2-user",
+          "spectral_region": "TIR"
+        },
+        {
+          "log_id": "dc304b2d-92b1-4ce8-a693-587a39f3ce9",
+          "log_name": "Min3 uTSAS",
+          "is_public": "true",
+          "log_type": "1",
+          "algorithm_id": "108",
+          "mask_log_id": "",
+          "processing_level": "L2-user",
+          "spectral_region": "SWIR"
+        },
+        {
+          "log_id": "e7ce16f1-cf3f-419d-a29e-1c0952669d1",
+          "log_name": "Min1 ujCLST",
+          "is_public": "true",
+          "log_type": "1",
+          "algorithm_id": "142",
+          "mask_log_id": "",
+          "processing_level": "L2-user",
+          "spectral_region": "TIR"
+        },
+        {
+          "log_id": "f82e5d20-ca53-4792-bbd9-5c9a94536ce",
+          "log_name": "Grp2 ujCLST",
+          "is_public": "true",
+          "log_type": "1",
+          "algorithm_id": "143",
+          "mask_log_id": "",
+          "processing_level": "L2-user",
+          "spectral_region": "TIR"
+        }
+      ],
+      "log_count": 20
+    },
+    "zip_evidence": {
+      "hole_id": "16MYD0052",
+      "url": "https://thredds.nci.org.au/thredds/fileServer/rs07/WA/16MYD0052.zip",
+      "checked_utc": "2026-09-11T04:10:29Z",
+      "zip_size": 1854709998,
+      "members": 101,
+      "spectral_members": [
+        {
+          "name": "66c7d43c-ccd4-4c7c-8d4a-e83a54b15ed/16MYD0052_tsg.bip",
+          "size": 252135792,
+          "compressed_size": 128040564,
+          "crc": 162520855
+        },
+        {
+          "name": "66c7d43c-ccd4-4c7c-8d4a-e83a54b15ed/16MYD0052_tsg.tsg",
+          "size": 4797300,
+          "compressed_size": 914424,
+          "crc": 2028143980
+        },
+        {
+          "name": "66c7d43c-ccd4-4c7c-8d4a-e83a54b15ed/16MYD0052_tsg_cras.bip",
+          "size": 1061888217,
+          "compressed_size": 1057164844,
+          "crc": 3243219318
+        },
+        {
+          "name": "66c7d43c-ccd4-4c7c-8d4a-e83a54b15ed/16MYD0052_tsg_tir.bip",
+          "size": 161917712,
+          "compressed_size": 78478491,
+          "crc": 2532709747
+        },
+        {
+          "name": "66c7d43c-ccd4-4c7c-8d4a-e83a54b15ed/16MYD0052_tsg_tir.tsg",
+          "size": 4814876,
+          "compressed_size": 911217,
+          "crc": 1234642158
+        }
+      ],
+      "bytes_fetched": 10167,
+      "status": "zip_directory_verified"
+    }
+  },
+  {
+    "hole_id": "PND004",
+    "nvcl_inventory": {
+      "dataset_id": "19d56ad4-7aa8-4fc5-b664-b25f26e985f",
+      "dataset_name": "PND004",
+      "borehole_uri": "https://geossdi.dmp.wa.gov.au/resource/feature/gswa/borehole/pnd004",
+      "tray_id": "7ee5a600-c0e5-4105-b3cb-593ee80c058",
+      "section_id": "b8d908b7-34aa-460d-98a6-ff5cf3d76ef",
+      "domain_id": "4cb7c87f-b95b-4b97-9966-25663e6e232",
+      "description": "<?xml version=\"1.0\" encoding=\"utf-8\"?><TSGDrillHoleMiscMeta xmlns=\"\"><DrillHoleName>pnd004</DrillHoleName><InstrumentName>HyLogger 3-2</InstrumentName><Project>Paterson North</Project><Owner>Sipa Resources</Owner><DrillDate>2017-09-28 08:13:44</DrillDate><ExecSumm>GSWA UWI: NA|WAMEX Report ID: A115331|Tectonic Unit: Paterson Orogen, Yeneena Basin|250K Map Sheet: Anketell SF51-02|100K Map Sheet:  Weenoo 3256|Archive Location: Private core</ExecSumm><Datum>GDA94</Datum><Latitude>-20.626395</Latitude><Longitude>121.970789</Longitude><Azimuth>55.000000</Azimuth><Inclination>-60.000000</Inclination><RL>235.000000</RL></TSGDrillHoleMiscMeta>",
+      "modified_date": "2022-07-12 00:00:00+08:00",
+      "created_date": "2020-05-11 00:00:00+08:00",
+      "logs": [
+        {
+          "log_id": "1291e794-ab3f-4be7-b1bd-9037b3ef725",
+          "log_name": "Min3 uTSAS",
+          "is_public": "true",
+          "log_type": "1",
+          "algorithm_id": "108",
+          "mask_log_id": "",
+          "processing_level": "L2-user",
+          "spectral_region": "SWIR"
+        },
+        {
+          "log_id": "1ce6670a-7c1b-4d1b-9b88-8ba736fb5c2",
+          "log_name": "Grp3 uTSAS",
+          "is_public": "true",
+          "log_type": "1",
+          "algorithm_id": "109",
+          "mask_log_id": "",
+          "processing_level": "L2-user",
+          "spectral_region": "SWIR"
+        },
+        {
+          "log_id": "2e024c94-5099-473f-ae97-57495586a3d",
+          "log_name": "Wt3 uTSAS",
+          "is_public": "true",
+          "log_type": "2",
+          "algorithm_id": "110",
+          "mask_log_id": "",
+          "processing_level": "L2-user",
+          "spectral_region": "SWIR"
+        },
+        {
+          "log_id": "3c79cbef-17df-41f8-a36a-d5d33a72a5c",
+          "log_name": "Wt3 ujCLST",
+          "is_public": "true",
+          "log_type": "2",
+          "algorithm_id": "144",
+          "mask_log_id": "",
+          "processing_level": "L2-user",
+          "spectral_region": "TIR"
+        },
+        {
+          "log_id": "47cf5480-9a2b-47fe-a833-0066ba997bd",
+          "log_name": "Min2 uTSAS",
+          "is_public": "true",
+          "log_type": "1",
+          "algorithm_id": "108",
+          "mask_log_id": "",
+          "processing_level": "L2-user",
+          "spectral_region": "SWIR"
+        },
+        {
+          "log_id": "5bec1e31-98a4-49a6-96e4-f47650427fb",
+          "log_name": "Min3 ujCLST",
+          "is_public": "true",
+          "log_type": "1",
+          "algorithm_id": "142",
+          "mask_log_id": "",
+          "processing_level": "L2-user",
+          "spectral_region": "TIR"
+        },
+        {
+          "log_id": "5fba080b-fcf0-42aa-be67-9d749db82e9",
+          "log_name": "Min1 ujCLST",
+          "is_public": "true",
+          "log_type": "1",
+          "algorithm_id": "142",
+          "mask_log_id": "",
+          "processing_level": "L2-user",
+          "spectral_region": "TIR"
+        },
+        {
+          "log_id": "7bb634fc-feaa-4d7a-ba53-01b92f1349a",
+          "log_name": "Grp3 ujCLST",
+          "is_public": "true",
+          "log_type": "1",
+          "algorithm_id": "143",
+          "mask_log_id": "",
+          "processing_level": "L2-user",
+          "spectral_region": "TIR"
+        },
+        {
+          "log_id": "85aa3847-6257-4a73-95b3-55a0ba3adfb",
+          "log_name": "Min2 ujCLST",
+          "is_public": "true",
+          "log_type": "1",
+          "algorithm_id": "142",
+          "mask_log_id": "",
+          "processing_level": "L2-user",
+          "spectral_region": "TIR"
+        },
+        {
+          "log_id": "8b28fee4-355f-4c64-a6a9-fcc9b48258d",
+          "log_name": "Error ujCLST",
+          "is_public": "true",
+          "log_type": "2",
+          "algorithm_id": "145",
+          "mask_log_id": "",
+          "processing_level": "L2-user",
+          "spectral_region": "TIR"
+        },
+        {
+          "log_id": "8bfc177b-362f-448c-b409-1e74fb18828",
+          "log_name": "Wt1 uTSAS",
+          "is_public": "true",
+          "log_type": "2",
+          "algorithm_id": "110",
+          "mask_log_id": "",
+          "processing_level": "L2-user",
+          "spectral_region": "SWIR"
+        },
+        {
+          "log_id": "a0409634-b5fc-499d-95fb-9d9783ee1cb",
+          "log_name": "Grp1 ujCLST",
+          "is_public": "true",
+          "log_type": "1",
+          "algorithm_id": "143",
+          "mask_log_id": "",
+          "processing_level": "L2-user",
+          "spectral_region": "TIR"
+        },
+        {
+          "log_id": "b27482de-368a-418e-a655-aa8d1e7ffa6",
+          "log_name": "Grp1 uTSAS",
+          "is_public": "true",
+          "log_type": "1",
+          "algorithm_id": "109",
+          "mask_log_id": "",
+          "processing_level": "L2-user",
+          "spectral_region": "SWIR"
+        },
+        {
+          "log_id": "b2bb6c6d-d5b9-41b0-9ec0-329c80e1c29",
+          "log_name": "Min1 uTSAS",
+          "is_public": "true",
+          "log_type": "1",
+          "algorithm_id": "108",
+          "mask_log_id": "",
+          "processing_level": "L2-user",
+          "spectral_region": "SWIR"
+        },
+        {
+          "log_id": "c6ad071d-fe6f-4016-99a6-8ae51244d60",
+          "log_name": "Wt1 ujCLST",
+          "is_public": "true",
+          "log_type": "2",
+          "algorithm_id": "144",
+          "mask_log_id": "",
+          "processing_level": "L2-user",
+          "spectral_region": "TIR"
+        },
+        {
+          "log_id": "c9045303-36e6-41dd-93bc-e6df0187f1e",
+          "log_name": "Grp2 uTSAS",
+          "is_public": "true",
+          "log_type": "1",
+          "algorithm_id": "109",
+          "mask_log_id": "",
+          "processing_level": "L2-user",
+          "spectral_region": "SWIR"
+        },
+        {
+          "log_id": "caceeb2a-6071-4b58-b46f-601be870dec",
+          "log_name": "Error uTSAS",
+          "is_public": "true",
+          "log_type": "2",
+          "algorithm_id": "111",
+          "mask_log_id": "",
+          "processing_level": "L2-user",
+          "spectral_region": "SWIR"
+        },
+        {
+          "log_id": "cd6e2cbf-6583-4d03-9bb4-1a2edee2da8",
+          "log_name": "Wt2 uTSAS",
+          "is_public": "true",
+          "log_type": "2",
+          "algorithm_id": "110",
+          "mask_log_id": "",
+          "processing_level": "L2-user",
+          "spectral_region": "SWIR"
+        },
+        {
+          "log_id": "d593c72d-2647-4a68-87a5-224bde60d1b",
+          "log_name": "Wt2 ujCLST",
+          "is_public": "true",
+          "log_type": "2",
+          "algorithm_id": "144",
+          "mask_log_id": "",
+          "processing_level": "L2-user",
+          "spectral_region": "TIR"
+        },
+        {
+          "log_id": "e9fdaa2d-26f5-491d-96f2-272b540de6a",
+          "log_name": "Grp2 ujCLST",
+          "is_public": "true",
+          "log_type": "1",
+          "algorithm_id": "143",
+          "mask_log_id": "",
+          "processing_level": "L2-user",
+          "spectral_region": "TIR"
+        }
+      ],
+      "log_count": 20
+    },
+    "zip_evidence": {
+      "hole_id": "PND004",
+      "url": "https://thredds.nci.org.au/thredds/fileServer/rs07/WA/PND004.zip",
+      "checked_utc": "2026-09-11T04:05:38Z",
+      "zip_size": 971172823,
+      "members": 60,
+      "spectral_members": [
+        {
+          "name": "19d56ad4-7aa8-4fc5-b664-b25f26e985f/PND004_tsg.bip",
+          "size": 133599600,
+          "compressed_size": 67743333,
+          "crc": 2104891209
+        },
+        {
+          "name": "19d56ad4-7aa8-4fc5-b664-b25f26e985f/PND004_tsg.tsg",
+          "size": 2361914,
+          "compressed_size": 486470,
+          "crc": 3202168791
+        },
+        {
+          "name": "19d56ad4-7aa8-4fc5-b664-b25f26e985f/PND004_tsg_cras.bip",
+          "size": 543586748,
+          "compressed_size": 541438217,
+          "crc": 2296685971
+        },
+        {
+          "name": "19d56ad4-7aa8-4fc5-b664-b25f26e985f/PND004_tsg_tir.bip",
+          "size": 85795600,
+          "compressed_size": 41689783,
+          "crc": 2788024681
+        },
+        {
+          "name": "19d56ad4-7aa8-4fc5-b664-b25f26e985f/PND004_tsg_tir.tsg",
+          "size": 2384872,
+          "compressed_size": 484733,
+          "crc": 4090679540
+        }
+      ],
+      "bytes_fetched": 5887,
+      "status": "zip_directory_verified"
+    }
+  }
+]

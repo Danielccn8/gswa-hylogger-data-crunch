@@ -1,0 +1,27 @@
+name: team_raw_tsg_20
+description: '20-hole team cohort: 5 retained + 8 previous additions + 7 replacements.
+  Both spectral pairs verified in live NCI ZIP directories and uTSAS/ujCLST Min1/Grp1
+  downloaded, 2026-09-11. Full spectral QC remains pending.'
+created_at: '2026-09-11T04:14:23+00:00'
+updated_at: '2026-09-11T04:14:23+00:00'
+holes:
+- 13TRDD012
+- 13TRDD013
+- 15RCDVZ001
+- 16CADD002
+- 16MYD0047
+- 16MYD0052
+- 22USDH0207
+- EPT2276
+- FDH002
+- FDH007
+- KEDD002
+- LD82625W1
+- MWEX10270
+- NBDH035
+- PND003
+- PND004
+- PND005
+- RRLGDDD093
+- SPBD0364
+- WKDD15001
