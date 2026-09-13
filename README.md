@@ -51,7 +51,7 @@ The standard-library `venv` setup below remains fully supported when uv is unava
 ### Windows PowerShell
 
 ```powershell
-python -3.11 -m venv .venv  # Create an isolated Python environment in .venv
+python -m venv .venv  # Create an isolated Python environment in .venv
 .\.venv\Scripts\python.exe -m pip install --upgrade pip  # Upgrade pip inside the environment
 .\.venv\Scripts\python.exe -m pip install -e ".[analysis,dev]"  # Install this project and its analysis/development tools
 .\.venv\Scripts\hylogger.exe init  # Create the local project data and configuration folders
@@ -118,7 +118,7 @@ Preview does not download raw spectra. It lists datasets, log names, spectral re
 - `L3-domain`: domain-refined `d*` products.
 - `unspecified`: logs without one of these naming markers.
 
-### 3. Create a shared pilot selection
+### 3. Choose one or two holes, or create a reusable selection
 
 ```powershell
 hylogger selection create pilot --holes 05GJD001 --description "Initial cross-version pilot"  # Create a reusable pilot cohort
@@ -126,7 +126,33 @@ hylogger selection add pilot 05KCD001 05AMD001  # Add two holes to the pilot coh
 hylogger selection show pilot  # Display the pilot cohort and its hole IDs
 ```
 
-Commit `configs/selections/pilot.yaml`. Do not commit downloaded data.
+A selection is a named list of hole IDs, not a list of downloaded files. The commands above save it to `configs/selections/pilot.yaml`; creating a selection does not download data. Replace the example IDs with holes you found in the catalog and previewed in step 2. Choose a new name if `pilot` already exists.
+
+To start with one hole, skip selection creation and use its ID directly in step 4. For two holes without a selection, run the one-hole download command once for each ID.
+
+To create your own two-hole list instead:
+
+```powershell
+hylogger selection create my_demo --holes 05GJD001 05KCD001 --description "My first two-hole demonstration"
+hylogger selection show my_demo  # Check the saved list
+```
+
+To use an existing team list:
+
+```powershell
+hylogger selection list  # List available selections
+hylogger selection show tsg_pilot  # Inspect the existing five-hole baseline selection
+```
+
+Before downloading, check what is already stored locally:
+
+```powershell
+hylogger status --selection my_demo  # Check your selection; replace the name as needed
+```
+
+For a single hole without a selection, use `hylogger status` to view local download and preparation records.
+
+Selections can be shared through Git. Do not commit downloaded data.
 
 ### 4. Download processed logs
 
@@ -138,6 +164,31 @@ hylogger processed fetch 05GJD001 --log "Min1 uTSAS" --log "Wt1 uTSAS"  # One ho
 ```
 
 The default `clustering` profile is defined in `configs/project.toml`. Raw API responses are preserved as CSV and normalised copies are written as Parquet.
+
+For a first demonstration, choose one of these alternatives:
+
+```powershell
+hylogger processed fetch 05GJD001 --profile tsg_swir  # One hole: user-level SWIR interpretation logs
+```
+
+For two holes without a saved selection, run:
+
+```powershell
+hylogger processed fetch 05GJD001 --profile tsg_swir
+hylogger processed fetch 05KCD001 --profile tsg_swir
+```
+
+Or download your saved list with one command:
+
+```powershell
+hylogger processed fetch --selection my_demo --profile tsg_swir
+```
+
+These commands download processed TSG-derived logs from NVCL Data Services, not raw spectral ZIP packages. The `tsg_swir` profile selects logs matching `* uTSAS`, including the `Grp1 uTSAS` group labels used by the first baseline notebook. A successful download still needs inspection and preparation before clustering.
+
+**Existing downloads:** processed fetch replaces the local per-dataset table rather than merging additional columns into it. A narrow profile can therefore replace an earlier all-log table. Check local status before re-fetching and retain an existing broader download when it already contains the logs you need.
+
+For the provided five-hole clustering demonstration, use `tsg_pilot` in place of `my_demo` and follow the [first processed TSG baseline guide](docs/TSG_BASELINE_FIRST_TEST.md). One or two holes are useful for learning acquisition and inspection; use the five-hole selection for the first clustering run.
 
 ### 5. Check a raw download before starting it
 
@@ -211,6 +262,8 @@ Re-run preparation to generate the source-specific files.
 For the first small processed TSG test, follow [the step-by-step guide](docs/TSG_BASELINE_FIRST_TEST.md)
 and open `notebooks/30_clustering/01_baseline_clustering.ipynb`. It clusters whole-hole
 group-label proportions, not raw spectra or individual depths.
+
+For a minimal Python example before the full baseline, open [Load one hole: processed TSG or raw spectra](notebooks/00_getting_started/01_load_one_hole.ipynb). Change `HOLE_ID` and `SOURCE`, select the **HyLogger Data Crunch** kernel, and run the cells in order. The notebook prepares already-downloaded data, previews processed tables or raw spectral arrays, and shows the starting inputs for clustering. It does not download packages or fit a model.
 
 ## Data safety and provenance
 
