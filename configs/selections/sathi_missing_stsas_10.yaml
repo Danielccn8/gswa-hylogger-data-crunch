@@ -1,0 +1,13 @@
+name: sathi_missing_stsas_10
+description: Raw TSG packages needed to complete the 20-hole uTSAS versus sTSAS comparison.
+holes:
+- 13TRDD012
+- 13TRDD013
+- 16CADD002
+- 16MYD0047
+- 16MYD0052
+- EPT2276
+- PND003
+- PND004
+- PND005
+- RRLGDDD093

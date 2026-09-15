@@ -1,0 +1,681 @@
+<title>Sathi's sTSAS Cluster Findings</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans+Condensed:wght@500;600;700&family=IBM+Plex+Sans:wght@400;500;600&display=swap">
+<style>
+:root{
+  color-scheme: light;
+  --ground:#eceef0; --panel:#fcfcfb; --panel-2:#f4f5f6;
+  --ink:#0b0b0b; --ink-2:#52514e; --ink-3:#77766f;
+  --rule:#d8dadd; --rule-2:#e7e9eb;
+  --accent:#2a78d6; --accent-soft:#e6eefb;
+  --good:#1baf7a; --warn:#eda100; --crit:#e34948;
+  --s1:#2a78d6; --s2:#eb6834; --s3:#1baf7a; --s4:#eda100;
+  --s5:#e87ba4; --s6:#008300; --s7:#4a3aa7; --s8:#e34948;
+  --q1:#cde2fb; --q2:#9ec5f4; --q3:#6da7ec; --q4:#3987e5; --q5:#256abf; --q6:#184f95;
+  --shadow:0 1px 2px rgba(11,11,11,.06), 0 8px 24px -16px rgba(11,11,11,.22);
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    color-scheme: dark;
+    --ground:#121312; --panel:#1a1a19; --panel-2:#212120;
+    --ink:#ffffff; --ink-2:#c3c2b7; --ink-3:#8f8e85;
+    --rule:#33332f; --rule-2:#282826;
+    --accent:#3987e5; --accent-soft:#16233a;
+    --good:#199e70; --warn:#c98500; --crit:#e66767;
+    --s1:#3987e5; --s2:#d95926; --s3:#199e70; --s4:#c98500;
+    --s5:#d55181; --s6:#008300; --s7:#9085e9; --s8:#e66767;
+    --q1:#184f95; --q2:#1c5cab; --q3:#256abf; --q4:#2a78d6; --q5:#5598e7; --q6:#9ec5f4;
+    --shadow:0 1px 2px rgba(0,0,0,.5), 0 8px 24px -16px rgba(0,0,0,.8);
+  }
+}
+:root[data-theme="dark"]{
+  color-scheme: dark;
+  --ground:#121312; --panel:#1a1a19; --panel-2:#212120;
+  --ink:#ffffff; --ink-2:#c3c2b7; --ink-3:#8f8e85;
+  --rule:#33332f; --rule-2:#282826;
+  --accent:#3987e5; --accent-soft:#16233a;
+  --good:#199e70; --warn:#c98500; --crit:#e66767;
+  --s1:#3987e5; --s2:#d95926; --s3:#199e70; --s4:#c98500;
+  --s5:#d55181; --s6:#008300; --s7:#9085e9; --s8:#e66767;
+  --q1:#184f95; --q2:#1c5cab; --q3:#256abf; --q4:#2a78d6; --q5:#5598e7; --q6:#9ec5f4;
+  --shadow:0 1px 2px rgba(0,0,0,.5), 0 8px 24px -16px rgba(0,0,0,.8);
+}
+
+*{box-sizing:border-box}
+body{
+  margin:0; background:var(--ground); color:var(--ink);
+  font-family:"IBM Plex Sans","Segoe UI",system-ui,sans-serif;
+  font-size:16px; line-height:1.6; -webkit-font-smoothing:antialiased;
+}
+.wrap{max-width:1120px; margin:0 auto; padding-inline:20px; padding-block:0 72px}
+h1,h2,h3,.cond{font-family:"IBM Plex Sans Condensed","IBM Plex Sans",system-ui,sans-serif}
+.mono,.num{font-family:"IBM Plex Mono",ui-monospace,monospace; font-variant-numeric:tabular-nums}
+
+.mast{border-bottom:2px solid var(--ink); padding-block:30px 16px; margin-bottom:30px}
+.mast .kicker{font-family:"IBM Plex Mono",monospace; font-size:11px; letter-spacing:.16em;
+  text-transform:uppercase; color:var(--ink-3); margin-bottom:14px}
+.mast h1{font-size:clamp(30px,6vw,52px); font-weight:700; line-height:1.02; margin:0 0 14px;
+  letter-spacing:-.022em; text-wrap:balance}
+.mast .sub{font-size:18px; color:var(--ink-2); max-width:60ch; margin:0 0 20px; line-height:1.5}
+.stamp{display:flex; flex-wrap:wrap; gap:8px 26px; align-items:baseline;
+  font-family:"IBM Plex Mono",monospace; font-size:12px; color:var(--ink-3);
+  border-top:1px solid var(--rule); padding-top:13px}
+.stamp b{color:var(--ink); font-weight:500}
+.byline{display:inline-flex; align-items:center; gap:8px; color:var(--ink); font-weight:600}
+.byline::before{content:""; width:9px; height:9px; border-radius:50%; background:var(--accent)}
+
+/* headline answers */
+.answers{display:grid; gap:14px; margin-bottom:10px}
+@media(min-width:760px){ .answers{grid-template-columns:1fr 1fr} }
+.ans{background:var(--panel); border:1px solid var(--rule-2); border-radius:8px;
+  padding:20px 22px; box-shadow:var(--shadow); display:flex; flex-direction:column; gap:7px}
+.ans .q{font-family:"IBM Plex Mono",monospace; font-size:10.5px; letter-spacing:.14em;
+  text-transform:uppercase; color:var(--accent); font-weight:500}
+.ans .big{font-family:"IBM Plex Sans Condensed",sans-serif; font-size:30px; font-weight:700;
+  line-height:1.1; letter-spacing:-.015em}
+.ans p{margin:0; font-size:14.5px; color:var(--ink-2); line-height:1.5}
+
+.act{display:flex; align-items:baseline; gap:14px; margin:50px 0 8px}
+.act .n{font-family:"IBM Plex Mono",monospace; font-size:12px; font-weight:500;
+  color:var(--panel); background:var(--ink); border-radius:3px; padding:3px 8px;
+  letter-spacing:.06em; flex:none}
+.act h2{font-size:27px; font-weight:700; margin:0; letter-spacing:-.012em; text-wrap:balance}
+.act-note{color:var(--ink-2); margin:0 0 22px; max-width:68ch; font-size:16px}
+
+.panel{background:var(--panel); border:1px solid var(--rule-2); border-radius:8px;
+  padding:22px 24px; box-shadow:var(--shadow)}
+.panel h3{font-size:17px; font-weight:600; color:var(--ink); margin:0 0 6px;
+  font-family:"IBM Plex Sans Condensed",sans-serif}
+.panel .lede{color:var(--ink-2); font-size:14.5px; margin:0 0 18px; max-width:72ch}
+.grid{display:grid; gap:18px}
+@media(min-width:840px){ .g2{grid-template-columns:1fr 1fr} }
+
+/* plain-terms box */
+.plain{margin-top:18px; padding:14px 16px; background:var(--panel-2);
+  border-radius:6px; border:1px solid var(--rule-2)}
+.plain .lbl{font-family:"IBM Plex Mono",monospace; font-size:10.5px; letter-spacing:.13em;
+  text-transform:uppercase; color:var(--ink-3); display:block; margin-bottom:5px}
+.plain p{margin:0; font-size:14.5px; color:var(--ink-2); line-height:1.55; max-width:74ch}
+.plain b{color:var(--ink); font-weight:600}
+
+.funnel{display:flex; flex-direction:column; gap:3px}
+.fstage{display:grid; grid-template-columns:minmax(0,1fr); gap:5px}
+.fbar{height:38px; border-radius:4px; display:flex; align-items:center; padding-inline:12px; min-width:3px}
+.fmeta{display:flex; justify-content:space-between; gap:12px; font-size:13px; color:var(--ink-2)}
+.fbar .flabel{font-family:"IBM Plex Mono",monospace; font-size:13px; font-weight:500;
+  color:#fff; white-space:nowrap; text-shadow:0 1px 2px rgba(0,0,0,.35)}
+.fdrop{font-family:"IBM Plex Mono",monospace; font-size:11.5px; color:var(--ink-3);
+  padding-left:12px; border-left:2px solid var(--rule); margin-left:10px}
+
+.ba{width:100%; border-collapse:collapse}
+.ba th{text-align:left; font-size:11px; letter-spacing:.09em; text-transform:uppercase;
+  color:var(--ink-3); font-weight:600; padding:0 10px 9px 0; border-bottom:1px solid var(--rule)}
+.ba th.r,.ba td.r{text-align:right; padding-right:0}
+.ba td{padding:11px 10px 11px 0; border-bottom:1px solid var(--rule-2); font-size:14px}
+.ba tr:last-child td{border-bottom:none}
+.was{color:var(--ink-3); font-family:"IBM Plex Mono",monospace; font-size:13px}
+.now{color:var(--ink); font-family:"IBM Plex Mono",monospace; font-size:14px; font-weight:500}
+.tick{color:var(--good); font-weight:600}
+
+svg{display:block; max-width:100%; height:auto; overflow:visible}
+.gridline{stroke:var(--rule-2); stroke-width:1}
+.axis{stroke:var(--rule); stroke-width:1}
+.tick-t{fill:var(--ink-3); font-family:"IBM Plex Mono",monospace; font-size:11px}
+.axis-t{fill:var(--ink-2); font-family:"IBM Plex Sans",sans-serif; font-size:12.5px}
+
+.legend{display:flex; flex-wrap:wrap; gap:7px 16px; margin:0 0 16px; padding:0; list-style:none}
+.legend li{display:flex; align-items:center; gap:7px; font-size:13px; color:var(--ink-2)}
+.sw{width:11px; height:11px; border-radius:2.5px; flex:none; outline:1px solid rgba(128,128,128,.25)}
+
+.fp{display:flex; flex-direction:column; gap:4px}
+.fprow{display:grid; grid-template-columns:96px minmax(0,1fr) 62px; gap:10px; align-items:center}
+.fpname{font-family:"IBM Plex Mono",monospace; font-size:12px; color:var(--ink);
+  overflow:hidden; text-overflow:ellipsis; white-space:nowrap}
+.fpbar{display:flex; height:22px; border-radius:3px; overflow:hidden; background:var(--panel-2); gap:2px}
+.fpseg{min-width:0; cursor:pointer; transition:filter .12s}
+.fpseg:hover{filter:brightness(1.18)}
+.fpm{font-family:"IBM Plex Mono",monospace; font-size:11.5px; color:var(--ink-3); text-align:right}
+@media(max-width:560px){ .fprow{grid-template-columns:78px minmax(0,1fr)} .fpm{display:none} }
+
+.cl{display:flex; flex-direction:column; gap:0}
+.clrow{display:grid; grid-template-columns:28px minmax(0,1fr); gap:12px; padding:14px 0;
+  border-bottom:1px solid var(--rule-2)}
+.clrow:last-child{border-bottom:none}
+.clchip{width:26px; height:26px; border-radius:5px; display:grid; place-items:center;
+  font-family:"IBM Plex Mono",monospace; font-size:12px; font-weight:600; color:#fff;
+  text-shadow:0 1px 2px rgba(0,0,0,.4)}
+.clname{font-weight:600; font-size:16px; margin-bottom:3px; font-family:"IBM Plex Sans Condensed",sans-serif}
+.clstat{font-family:"IBM Plex Mono",monospace; font-size:11.5px; color:var(--ink-3); margin-bottom:8px}
+.mins{display:flex; flex-wrap:wrap; gap:5px}
+.min{font-family:"IBM Plex Mono",monospace; font-size:11px; padding:2px 7px; border-radius:3px;
+  background:var(--panel-2); border:1px solid var(--rule-2); color:var(--ink-2); white-space:nowrap}
+.min b{color:var(--ink); font-weight:500}
+
+.finding{background:var(--panel); border:1px solid var(--rule-2); border-left:3px solid var(--accent);
+  border-radius:8px; padding:20px 24px; box-shadow:var(--shadow)}
+.finding p{margin:0; font-size:16px; line-height:1.6; max-width:70ch}
+.finding .tag{font-family:"IBM Plex Mono",monospace; font-size:10.5px; letter-spacing:.14em;
+  text-transform:uppercase; color:var(--accent); display:block; margin-bottom:9px; font-weight:500}
+
+.mxscroll{overflow-x:auto; padding-bottom:6px}
+.mx{border-collapse:separate; border-spacing:2px; font-family:"IBM Plex Mono",monospace; font-size:10px}
+.mx th{font-weight:400; color:var(--ink-3); font-size:10px; padding:0}
+.mx th.col{height:78px; width:19px; vertical-align:bottom; padding-bottom:5px}
+.mx th.col span{writing-mode:vertical-rl; transform:rotate(180deg); white-space:nowrap}
+.mx th.row{text-align:right; padding-right:7px; white-space:nowrap; color:var(--ink-2)}
+.mx td{width:19px; height:19px; border-radius:2px; cursor:pointer}
+.mx td:hover{outline:2px solid var(--ink)}
+.mx td.diag{background:var(--panel-2)!important; cursor:default}
+.mx td.diag:hover{outline:none}
+.ramp{display:flex; align-items:center; gap:8px; font-family:"IBM Plex Mono",monospace;
+  font-size:11px; color:var(--ink-3); margin-top:12px; flex-wrap:wrap}
+.ramp .bar{display:flex; height:9px; border-radius:2px; overflow:hidden; width:150px}
+.ramp .bar i{flex:1}
+
+.tbl{width:100%; border-collapse:collapse; font-size:13.5px}
+.tbl th{text-align:left; font-size:11px; letter-spacing:.08em; text-transform:uppercase;
+  color:var(--ink-3); font-weight:600; padding:0 12px 9px 0; border-bottom:1px solid var(--rule);
+  white-space:nowrap}
+.tbl td{padding:9px 12px 9px 0; border-bottom:1px solid var(--rule-2); vertical-align:middle}
+.tbl tr:last-child td{border-bottom:none}
+.tbl .n{font-family:"IBM Plex Mono",monospace; font-variant-numeric:tabular-nums}
+.tbl .h{font-family:"IBM Plex Mono",monospace; font-weight:500}
+.pill{display:inline-block; font-size:10.5px; padding:2px 7px; border-radius:99px;
+  font-family:"IBM Plex Mono",monospace; border:1px solid}
+.pill.mutual{color:var(--good); border-color:var(--good)}
+.pill.solo{color:var(--ink-3); border-color:var(--rule)}
+details.tv{margin-top:18px; border-top:1px solid var(--rule); padding-top:14px}
+details.tv summary{cursor:pointer; font-size:13px; color:var(--ink-2)}
+details.tv summary:hover{color:var(--ink)}
+details.tv .inner{overflow-x:auto; margin-top:14px}
+
+.gloss{display:grid; gap:0}
+.gitem{padding:13px 0; border-bottom:1px solid var(--rule-2)}
+.gitem:last-child{border-bottom:none}
+.gitem dt{font-weight:600; font-size:15px; margin-bottom:3px; font-family:"IBM Plex Sans Condensed",sans-serif}
+.gitem dd{margin:0; color:var(--ink-2); font-size:14.5px; max-width:74ch}
+
+#tip{position:fixed; z-index:50; pointer-events:none; opacity:0; transition:opacity .1s;
+  background:var(--ink); color:var(--ground); padding:7px 10px; border-radius:5px;
+  font-family:"IBM Plex Mono",monospace; font-size:11.5px; line-height:1.45;
+  max-width:250px; box-shadow:0 6px 20px rgba(0,0,0,.3)}
+footer{margin-top:56px; padding-top:20px; border-top:1px solid var(--rule);
+  color:var(--ink-3); font-size:12.5px; display:flex; flex-wrap:wrap; gap:6px 22px;
+  font-family:"IBM Plex Mono",monospace}
+:focus-visible{outline:2px solid var(--accent); outline-offset:2px; border-radius:3px}
+@media(prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+
+<div class="wrap">
+
+<header class="mast">
+  <div class="kicker">GSWA HyLogger Capstone &nbsp;·&nbsp; Data Crunch &nbsp;·&nbsp; Project 1</div>
+  <h1>sTSAS Cluster Findings</h1>
+  <p class="sub">A scanner measured the minerals down 20 drill holes across Western Australia.
+     This page sorts that core into rock types, and shows which holes are made of similar rock —
+     without anyone labelling it by hand.</p>
+  <div class="stamp">
+    <span class="byline">Sathi</span>
+    <span>Reading <b>sTSAS</b></span>
+    <span>Core <b>9,602 m</b></span>
+    <span>Rock types found <b id="st-k">—</b></span>
+    <span>Holes <b>20</b></span>
+    <span>Run twice, same answer <b class="tick">✓</b></span>
+  </div>
+</header>
+
+<div class="answers" id="answers"></div>
+
+<!-- =============== 1 =============== -->
+<div class="act"><span class="n">01</span><h2>What kinds of rock are down there?</h2></div>
+<p class="act-note">The computer was given one row per metre of core, listing how much of each of
+   44 minerals it contained — and nothing else. No hole names, no depths, no locations. It sorted
+   those metres into groups of similar mineral mixtures. Each group below is named after whatever
+   it turned out to be made of.</p>
+
+<div class="panel">
+  <h3>The 8 rock types, and what each is made of</h3>
+  <p class="lede">The numbers are proportions of the mixture. Chlorite&nbsp;0.61 means that in an
+     average metre of this group, chlorite makes up 61% of the minerals present.</p>
+  <div class="cl" id="clusters"></div>
+  <div class="plain">
+    <span class="lbl">In plain terms</span>
+    <p>Seven of the eight groups are dominated by a single mineral, so they read like familiar rock
+       types — chlorite alteration, amphibolite, white micas, carbonate, ultramafic.
+       <b>Group 2 is different:</b> nothing dominates it. It is genuinely mixed rock, and it covers
+       2,082&nbsp;m — more than a fifth of all the core measured.</p>
+  </div>
+</div>
+
+<!-- =============== 2 =============== -->
+<div class="act"><span class="n">02</span><h2>Which drill holes are alike?</h2></div>
+<p class="act-note">Once every metre has a rock type, a hole can be described by its recipe: what
+   share of it is each type. A hole that is 70% chlorite and 10% carbonate has a different recipe
+   from one that is 80% dolomite — and recipes can be compared even when the holes are different
+   lengths.</p>
+
+<div class="panel">
+  <h3>Every hole's recipe</h3>
+  <p class="lede">Each bar is one drill hole, split by rock type. Hover any block to see the
+     rock type and how many metres it covers. Bars are ordered by how much chlorite they contain.</p>
+  <ul class="legend" id="legend"></ul>
+  <div class="fp" id="fp"></div>
+  <details class="tv">
+    <summary>Prefer numbers? Show the exact percentages for every hole and rock type</summary>
+    <div class="inner"><table class="tbl" id="fptable"></table></div>
+  </details>
+  <div class="plain">
+    <span class="lbl">In plain terms</span>
+    <p>Holes with similar-looking bars are made of similar rock. <b>MWEX10270</b> is almost all
+       carbonate and <b>FDH007</b> almost all phengite — they look like nothing else in the set.
+       Holes like <b>16CADD002</b> and <b>EPT2276</b> are nearly all chlorite, and their bars are
+       almost identical.</p>
+  </div>
+</div>
+
+<div class="panel" style="margin-top:18px">
+  <h3>Every hole compared with every other hole</h3>
+  <p class="lede">190 comparisons. Darker means the two holes are made of more similar rock.
+     Hover any square to see the pair and its score. The blank diagonal is each hole against itself.</p>
+  <div class="mxscroll"><table class="mx" id="mx"></table></div>
+  <div class="ramp">
+    <span>less alike</span>
+    <span class="bar"><i style="background:var(--q1)"></i><i style="background:var(--q2)"></i><i style="background:var(--q3)"></i><i style="background:var(--q4)"></i><i style="background:var(--q5)"></i><i style="background:var(--q6)"></i></span>
+    <span>more alike</span>
+    <span style="margin-left:6px">scores run 1.8% to 86.7%</span>
+  </div>
+  <div class="plain">
+    <span class="lbl">In plain terms</span>
+    <p>The score is just <b>how similar two recipes are</b>, from 0% (nothing in common) to 100%
+       (identical). Nothing about a hole's name, location, depth or length is used — only what it is
+       made of.</p>
+  </div>
+</div>
+
+<div class="finding" style="margin-top:18px">
+  <span class="tag">A check that it works</span>
+  <p><b>16MYD0047</b> and <b>16MYD0052</b> came out as the 2nd most similar pair of all 190, at
+     <b>84.1%</b>. Their names differ by one character — they are almost certainly from the same
+     drilling programme. The same happened with PND003, PND004 and PND005.
+     The method was never told any of this. It matched them purely on minerals, which is good
+     evidence it is finding real geology rather than noise.</p>
+</div>
+
+<div class="panel" style="margin-top:18px">
+  <h3>The closest match for each hole</h3>
+  <p class="lede">“Mutual” means the two holes each pick the other as their closest match —
+     a stronger result than a one-way match. Nine of the twenty pairs are mutual.</p>
+  <div style="overflow-x:auto"><table class="tbl" id="closest"></table></div>
+</div>
+
+<!-- =============== 3 =============== -->
+<div class="act"><span class="n">03</span><h2>Is the computer telling us anything we didn't know?</h2></div>
+<p class="act-note">There is a much simpler way to sort core: just label each metre by whichever
+   mineral there is most of. No computer needed. If the grouping is only repeating that, then the
+   work has produced nothing new — so it has to be checked, not assumed.</p>
+
+<div class="panel">
+  <h3>Grouping by mineral mixture vs. just taking the biggest mineral</h3>
+  <p class="lede">The bar shows how closely the two methods agree. A full bar would mean they give
+     identical answers, and the modelling adds nothing.</p>
+  <div id="ari"></div>
+  <div class="plain">
+    <span class="lbl">In plain terms</span>
+    <p>Where a metre of core is obviously “mostly chlorite”, the grouping agrees with the simple
+       shortcut almost completely — it adds little there. But across the
+       <b>2,990&nbsp;m of genuinely mixed rock</b>, where no single mineral stands out, the two
+       disagree a lot. <b>That mixed rock is where this work earns its place</b> — the shortcut
+       cannot describe it, and it is nearly a third of all the core.</p>
+  </div>
+</div>
+
+<!-- =============== 4 =============== -->
+<div class="act"><span class="n">04</span><h2>Why eight groups and not five, or twenty?</h2></div>
+<p class="act-note">Nobody chose eight. The computer has to be told how many groups to make, so it
+   was asked to try every number from 2 to 15, and each attempt was scored on how cleanly the groups
+   stood apart. A fixed rule then picked the winner — which means a new set of drill holes gets its
+   own answer without anyone deciding by hand.</p>
+
+<div class="panel">
+  <h3>How cleanly the groups separate, for each number of groups</h3>
+  <p class="lede" id="k-lede">—</p>
+  <div id="kchart"></div>
+  <div class="plain">
+    <span class="lbl">In plain terms</span>
+    <p>The line climbs steeply up to 8 groups — each extra group is finding something real. After
+       that it goes flat, so splitting further just cuts the same rock into smaller pieces.
+       The rule is <b>“take the simplest answer that is as good as the best one”</b>, which lands on
+       8. It also reports that 8, 11, 12 and 13 all score about the same, rather than pretending
+       8 is certain.</p>
+  </div>
+</div>
+
+<!-- =============== 5 =============== -->
+<div class="act"><span class="n">05</span><h2>How the raw scan data was prepared</h2></div>
+<p class="act-note">None of the above would have worked on the raw data. The scanner reads a spot
+   every 7&nbsp;mm — about 116 readings for every metre of core. A spot that small usually catches
+   just one or two minerals, so the raw rows describe individual grains, not rock.</p>
+
+<div class="grid g2">
+  <div class="panel">
+    <h3>What reached the model</h3>
+    <p class="lede">Rows removed at each stage, and why. Every exclusion is recorded in its own
+       file — nothing was dropped silently.</p>
+    <div class="funnel" id="funnel"></div>
+  </div>
+  <div class="panel">
+    <h3>Averaging each metre of core</h3>
+    <p class="lede">The 116 readings in each metre were averaged into one row. No measurement was
+       thrown away — all 1,018,271 readings still count towards the metre they fall in.</p>
+    <table class="ba">
+      <thead><tr><th>Measure</th><th class="r">raw 7 mm rows</th><th class="r">1 m rows</th></tr></thead>
+      <tbody id="ba"></tbody>
+    </table>
+  </div>
+</div>
+
+<div class="finding" style="margin-top:18px">
+  <span class="tag">Why this step mattered</span>
+  <p>In the raw data, <b>359,217 rows contained a single mineral and nothing else</b>, and
+     381,620 rows were exact copies of another row. A million rows sounded like a huge dataset, but
+     it was really the same rock measured over and over. The honest figure is
+     <b>about 9,600 metres of core</b> — and after averaging, a typical row describes a mixture of
+     roughly 8 minerals instead of 1 or 2.</p>
+</div>
+
+<!-- =============== glossary =============== -->
+<div class="act"><span class="n">06</span><h2>The three terms used above</h2></div>
+<div class="panel">
+  <dl class="gloss">
+    <div class="gitem"><dt>Separation score <span class="mono" style="color:var(--ink-3);font-weight:400">(silhouette)</span></dt>
+      <dd>How cleanly the groups stand apart, from 0 to 1. Around 0 means there are no real groups;
+        1 would mean perfectly separate ones. This work scores <b>0.41</b> — moderate, honest
+        structure, which is normal for natural geology and not something to dress up.</dd></div>
+    <div class="gitem"><dt>Agreement score <span class="mono" style="color:var(--ink-3);font-weight:400">(Adjusted Rand Index)</span></dt>
+      <dd>Whether two different methods put the same metres into the same groups, from 0 to 1.
+        It ignores what the groups are called, so it does not matter that one says “group 3” and the
+        other says “chlorite”.</dd></div>
+    <div class="gitem"><dt>Recipe <span class="mono" style="color:var(--ink-3);font-weight:400">(cluster fingerprint)</span></dt>
+      <dd>The share of a hole's core that falls in each rock type. Because every row covers exactly
+        one metre, the share of rows is also the share of metres — so a 978&nbsp;m hole and a
+        196&nbsp;m hole can be compared fairly.</dd></div>
+  </dl>
+</div>
+
+<footer>
+  <span>Sathi · Data Crunch</span>
+  <span>1,580,046 scanner rows → 9,602 metres of core</span>
+  <span>sTSAS SWIR · 44 minerals · 20 holes</span>
+  <span>k-means, seed 42 · scikit-learn</span>
+</footer>
+
+</div>
+<div id="tip" role="status" aria-live="polite"></div>
+
+<script>
+const DATA = {"k": [{"k_clusters": 2, "silhouette_score": 0.1847, "davies_bouldin_score": 1.6998, "smallest_cluster_percentage": 36.7215, "largest_cluster_percentage": 63.2785}, {"k_clusters": 3, "silhouette_score": 0.222, "davies_bouldin_score": 1.601, "smallest_cluster_percentage": 12.0496, "largest_cluster_percentage": 52.7911}, {"k_clusters": 4, "silhouette_score": 0.2734, "davies_bouldin_score": 1.4022, "smallest_cluster_percentage": 5.7592, "largest_cluster_percentage": 47.4172}, {"k_clusters": 5, "silhouette_score": 0.3213, "davies_bouldin_score": 1.3285, "smallest_cluster_percentage": 5.7488, "largest_cluster_percentage": 40.1062}, {"k_clusters": 6, "silhouette_score": 0.3545, "davies_bouldin_score": 1.282, "smallest_cluster_percentage": 5.7488, "largest_cluster_percentage": 34.5136}, {"k_clusters": 7, "silhouette_score": 0.3868, "davies_bouldin_score": 1.2997, "smallest_cluster_percentage": 5.7384, "largest_cluster_percentage": 33.2535}, {"k_clusters": 8, "silhouette_score": 0.4102, "davies_bouldin_score": 1.2544, "smallest_cluster_percentage": 5.6967, "largest_cluster_percentage": 32.5349}, {"k_clusters": 9, "silhouette_score": 0.3753, "davies_bouldin_score": 1.2608, "smallest_cluster_percentage": 5.6967, "largest_cluster_percentage": 28.5357}, {"k_clusters": 10, "silhouette_score": 0.3898, "davies_bouldin_score": 1.2573, "smallest_cluster_percentage": 3.2597, "largest_cluster_percentage": 28.4003}, {"k_clusters": 11, "silhouette_score": 0.4007, "davies_bouldin_score": 1.2202, "smallest_cluster_percentage": 3.2493, "largest_cluster_percentage": 28.1608}, {"k_clusters": 12, "silhouette_score": 0.4109, "davies_bouldin_score": 1.1575, "smallest_cluster_percentage": 1.5518, "largest_cluster_percentage": 27.838}, {"k_clusters": 13, "silhouette_score": 0.4195, "davies_bouldin_score": 1.1959, "smallest_cluster_percentage": 1.5622, "largest_cluster_percentage": 27.838}, {"k_clusters": 14, "silhouette_score": 0.3905, "davies_bouldin_score": 1.2086, "smallest_cluster_percentage": 1.708, "largest_cluster_percentage": 17.8192}, {"k_clusters": 15, "silhouette_score": 0.3983, "davies_bouldin_score": 1.1772, "smallest_cluster_percentage": 1.708, "largest_cluster_percentage": 17.6109}], "sel": {"chosen_k": 8, "chosen_by": "smallest_k_within_tolerance_of_best_silhouette", "chosen_silhouette": 0.4101637626537144, "chosen_davies_bouldin": 1.254385133518495, "chosen_smallest_cluster_percentage": 5.696729847948344, "highest_silhouette_k": 13, "highest_silhouette": 0.4194937177356099, "silhouette_given_up_vs_best": 0.0093299550818955, "tolerance": 0.02, "statistically_tied_k_values": "8, 11, 12, 13", "tied_k_count": 4, "minimum_cluster_share": 0.01, "small_cluster_guard_applied": true, "k_rejected_for_small_clusters": NaN, "k_values_tested": "2 to 15", "choice_is_marginal": true}, "clusters": [{"cluster_id": 1, "cluster_name": "Chlorite-FeMg-dominant", "intervals": 3124, "percentage_of_intervals": 32.5349, "estimated_metres": 3124.0, "top_1_mineral": "Chlorite-FeMg", "top_1_mean_abundance": 0.6134, "top_2_mineral": "Muscovite", "top_2_mean_abundance": 0.0801, "top_3_mineral": "Chlorite-Fe", "top_3_mean_abundance": 0.0627, "minerals_in_centre": 44}, {"cluster_id": 2, "cluster_name": "Mixed: Chlorite-Mg + Chlorite-FeMg + Calcite", "intervals": 2082, "percentage_of_intervals": 21.683, "estimated_metres": 2082.0, "top_1_mineral": "Chlorite-Mg", "top_1_mean_abundance": 0.1072, "top_2_mineral": "Chlorite-FeMg", "top_2_mean_abundance": 0.0954, "top_3_mineral": "Calcite", "top_3_mean_abundance": 0.0745, "minerals_in_centre": 44}, {"cluster_id": 3, "cluster_name": "Hornblende-dominant", "intervals": 1012, "percentage_of_intervals": 10.5395, "estimated_metres": 1012.0, "top_1_mineral": "Hornblende", "top_1_mean_abundance": 0.6376, "top_2_mineral": "Chlorite-FeMg", "top_2_mean_abundance": 0.1275, "top_3_mineral": "Actinolite", "top_3_mean_abundance": 0.0572, "minerals_in_centre": 44}, {"cluster_id": 4, "cluster_name": "Muscovite-dominant", "intervals": 824, "percentage_of_intervals": 8.5815, "estimated_metres": 824.0, "top_1_mineral": "Muscovite", "top_1_mean_abundance": 0.6255, "top_2_mineral": "Chlorite-FeMg", "top_2_mean_abundance": 0.1007, "top_3_mineral": "Biotite", "top_3_mean_abundance": 0.0433, "minerals_in_centre": 44}, {"cluster_id": 5, "cluster_name": "Dolomite-dominant", "intervals": 790, "percentage_of_intervals": 8.2275, "estimated_metres": 790.0, "top_1_mineral": "Dolomite", "top_1_mean_abundance": 0.5894, "top_2_mineral": "Ankerite", "top_2_mean_abundance": 0.2919, "top_3_mineral": "Hornblende", "top_3_mean_abundance": 0.0649, "minerals_in_centre": 40}, {"cluster_id": 6, "cluster_name": "Paragonite-dominant", "intervals": 659, "percentage_of_intervals": 6.8632, "estimated_metres": 659.0, "top_1_mineral": "Paragonite", "top_1_mean_abundance": 0.7408, "top_2_mineral": "Chlorite-Fe", "top_2_mean_abundance": 0.1102, "top_3_mineral": "Chlorite-FeMg", "top_3_mean_abundance": 0.0502, "minerals_in_centre": 40}, {"cluster_id": 7, "cluster_name": "Phengite-dominant", "intervals": 564, "percentage_of_intervals": 5.8738, "estimated_metres": 564.0, "top_1_mineral": "Phengite", "top_1_mean_abundance": 0.6505, "top_2_mineral": "Chlorite-FeMg", "top_2_mean_abundance": 0.1033, "top_3_mineral": "Muscovite", "top_3_mean_abundance": 0.0666, "minerals_in_centre": 38}, {"cluster_id": 8, "cluster_name": "Serpentine-dominant", "intervals": 547, "percentage_of_intervals": 5.6967, "estimated_metres": 547.0, "top_1_mineral": "Serpentine", "top_1_mean_abundance": 0.8263, "top_2_mineral": "Dolomite", "top_2_mean_abundance": 0.0347, "top_3_mineral": "Chlorite-Mg", "top_3_mean_abundance": 0.032, "minerals_in_centre": 41}], "baseline": {"intervals": 9602, "clusters": 8, "baseline_groups": 29, "baseline_rule": "group by the single largest mineral in the interval", "adjusted_rand_index": 0.7465, "normalised_mutual_information": 0.7576, "majority_share_threshold": 0.5, "intervals_with_majority_mineral": 6612, "intervals_without_majority_mineral": 2990, "adjusted_rand_index_majority_intervals": 0.9166, "adjusted_rand_index_mixed_intervals": 0.3772, "normalised_mutual_information_majority_intervals": 0.8896, "normalised_mutual_information_mixed_intervals": 0.521, "mean_within_cluster_dominant_mineral_agreement": 0.8236, "verdict": "clusters_mostly_follow_the_baseline_with_real_differences"}, "holes": [{"hole": "13TRDD012", "m": 768.0, "dom": 1, "domname": "Chlorite-FeMg-dominant", "dompct": 70.4, "top": 91.0, "bot": 859.0, "p": [70.44, 7.81, 0.0, 0.13, 0.0, 21.61, 0.0, 0.0]}, {"hole": "13TRDD013", "m": 310.0, "dom": 1, "domname": "Chlorite-FeMg-dominant", "dompct": 53.2, "top": 91.0, "bot": 407.0, "p": [53.23, 3.23, 0.0, 23.23, 0.0, 20.32, 0.0, 0.0]}, {"hole": "15RCDVZ001", "m": 391.0, "dom": 3, "domname": "Hornblende-dominant", "dompct": 45.5, "top": 60.0, "bot": 463.0, "p": [29.67, 18.41, 45.52, 6.39, 0.0, 0.0, 0.0, 0.0]}, {"hole": "16CADD002", "m": 880.0, "dom": 1, "domname": "Chlorite-FeMg-dominant", "dompct": 86.9, "top": 113.0, "bot": 996.0, "p": [86.93, 12.5, 0.0, 0.45, 0.0, 0.11, 0.0, 0.0]}, {"hole": "16MYD0047", "m": 544.0, "dom": 3, "domname": "Hornblende-dominant", "dompct": 53.5, "top": 63.0, "bot": 610.0, "p": [6.07, 39.89, 53.49, 0.55, 0.0, 0.0, 0.0, 0.0]}, {"hole": "16MYD0052", "m": 382.0, "dom": 2, "domname": "Mixed: Chlorite-Mg + Chlorite-FeMg + Calcite", "dompct": 55.5, "top": 123.0, "bot": 505.0, "p": [6.54, 55.5, 36.13, 1.31, 0.0, 0.0, 0.52, 0.0]}, {"hole": "22USDH0207", "m": 539.0, "dom": 1, "domname": "Chlorite-FeMg-dominant", "dompct": 47.5, "top": 0.0, "bot": 576.0, "p": [47.5, 24.68, 1.86, 2.41, 0.19, 0.0, 23.38, 0.0]}, {"hole": "EPT2276", "m": 384.0, "dom": 1, "domname": "Chlorite-FeMg-dominant", "dompct": 94.8, "top": 401.0, "bot": 785.0, "p": [94.79, 4.95, 0.0, 0.0, 0.0, 0.0, 0.26, 0.0]}, {"hole": "FDH002", "m": 283.0, "dom": 1, "domname": "Chlorite-FeMg-dominant", "dompct": 45.9, "top": 16.0, "bot": 301.0, "p": [45.94, 19.43, 15.19, 6.71, 0.0, 0.0, 12.72, 0.0]}, {"hole": "FDH007", "m": 221.0, "dom": 7, "domname": "Phengite-dominant", "dompct": 79.6, "top": 26.0, "bot": 250.0, "p": [14.93, 1.36, 0.0, 4.07, 0.0, 0.0, 79.64, 0.0]}, {"hole": "KEDD002", "m": 900.0, "dom": 8, "domname": "Serpentine-dominant", "dompct": 37.0, "top": 0.0, "bot": 969.0, "p": [25.56, 15.56, 0.11, 16.67, 0.11, 0.22, 4.78, 37.0]}, {"hole": "LD82625W1", "m": 639.0, "dom": 4, "domname": "Muscovite-dominant", "dompct": 54.1, "top": 148.0, "bot": 825.0, "p": [11.58, 8.45, 0.0, 54.15, 0.63, 0.0, 25.2, 0.0]}, {"hole": "MWEX10270", "m": 978.0, "dom": 5, "domname": "Dolomite-dominant", "dompct": 80.1, "top": 23.0, "bot": 1021.0, "p": [0.0, 19.84, 0.1, 0.0, 80.06, 0.0, 0.0, 0.0]}, {"hole": "NBDH035", "m": 521.0, "dom": 6, "domname": "Paragonite-dominant", "dompct": 76.4, "top": 0.0, "bot": 538.0, "p": [0.0, 18.23, 0.0, 5.37, 0.0, 76.39, 0.0, 0.0]}, {"hole": "PND003", "m": 196.0, "dom": 2, "domname": "Mixed: Chlorite-Mg + Chlorite-FeMg + Calcite", "dompct": 30.1, "top": 78.0, "bot": 279.0, "p": [28.57, 30.1, 23.47, 17.86, 0.0, 0.0, 0.0, 0.0]}, {"hole": "PND004", "m": 205.0, "dom": 2, "domname": "Mixed: Chlorite-Mg + Chlorite-FeMg + Calcite", "dompct": 40.0, "top": 92.0, "bot": 297.0, "p": [26.34, 40.0, 0.0, 31.71, 0.0, 0.49, 1.46, 0.0]}, {"hole": "PND005", "m": 413.0, "dom": 2, "domname": "Mixed: Chlorite-Mg + Chlorite-FeMg + Calcite", "dompct": 48.9, "top": 95.0, "bot": 511.0, "p": [6.3, 48.91, 29.54, 10.9, 0.0, 0.48, 3.87, 0.0]}, {"hole": "RRLGDDD093", "m": 324.0, "dom": 2, "domname": "Mixed: Chlorite-Mg + Chlorite-FeMg + Calcite", "dompct": 62.7, "top": 0.0, "bot": 466.0, "p": [28.09, 62.65, 0.0, 1.23, 0.0, 8.02, 0.0, 0.0]}, {"hole": "SPBD0364", "m": 406.0, "dom": 8, "domname": "Serpentine-dominant", "dompct": 52.7, "top": 83.0, "bot": 492.0, "p": [1.48, 38.67, 6.9, 0.0, 0.25, 0.0, 0.0, 52.71]}, {"hole": "WKDD15001", "m": 318.0, "dom": 1, "domname": "Chlorite-FeMg-dominant", "dompct": 50.0, "top": 87.0, "bot": 405.0, "p": [50.0, 1.57, 48.43, 0.0, 0.0, 0.0, 0.0, 0.0]}], "matrix": {"holes": ["13TRDD012", "13TRDD013", "15RCDVZ001", "16CADD002", "16MYD0047", "16MYD0052", "22USDH0207", "EPT2276", "FDH002", "FDH007", "KEDD002", "LD82625W1", "MWEX10270", "NBDH035", "PND003", "PND004", "PND005", "RRLGDDD093", "SPBD0364", "WKDD15001"], "v": [[100.0, 64.4, 33.6, 66.2, 16.9, 18.5, 45.8, 64.6, 43.9, 17.4, 30.9, 18.1, 6.1, 28.7, 34.7, 35.6, 18.9, 48.0, 10.8, 38.4], [64.4, 100.0, 34.2, 50.0, 13.0, 14.9, 39.4, 48.7, 43.1, 20.1, 38.7, 37.6, 3.4, 31.0, 41.8, 48.4, 22.7, 39.0, 6.8, 32.0], [33.6, 34.2, 100.0, 40.0, 66.3, 61.6, 43.1, 35.2, 63.4, 15.8, 32.8, 25.5, 10.4, 12.9, 76.2, 42.2, 61.3, 38.9, 25.8, 66.6], [66.2, 50.0, 40.0, 100.0, 20.9, 23.3, 56.4, 86.7, 53.6, 19.3, 36.0, 21.1, 8.1, 8.8, 42.3, 42.6, 22.9, 46.8, 13.9, 43.8], [16.9, 13.0, 66.3, 20.9, 100.0, 84.1, 30.4, 15.0, 43.6, 7.6, 20.8, 14.3, 15.1, 14.8, 57.6, 31.6, 69.7, 38.2, 34.8, 44.8], [18.5, 14.9, 61.6, 23.3, 84.1, 100.0, 36.0, 16.5, 46.9, 9.8, 25.0, 18.1, 17.4, 17.6, 60.6, 39.6, 78.1, 47.4, 38.7, 37.9], [45.8, 39.4, 43.1, 56.4, 30.4, 36.0, 100.0, 51.0, 74.4, 46.6, 43.8, 42.1, 12.4, 13.2, 48.7, 51.0, 41.3, 50.2, 21.8, 35.8], [64.6, 48.7, 35.2, 86.7, 15.0, 16.5, 51.0, 100.0, 48.9, 19.5, 32.0, 18.6, 4.6, 4.4, 35.5, 34.8, 16.1, 37.1, 8.7, 45.1], [43.9, 43.1, 63.4, 53.6, 43.6, 46.9, 74.4, 48.9, 100.0, 36.7, 44.3, 41.6, 10.6, 13.3, 66.5, 52.6, 54.1, 45.5, 23.4, 52.2], [17.4, 20.1, 15.8, 19.3, 7.6, 9.8, 46.6, 19.5, 36.7, 100.0, 24.7, 43.7, 1.8, 4.2, 17.4, 21.4, 17.2, 14.5, 4.0, 14.4], [30.9, 38.7, 32.8, 36.0, 20.8, 25.0, 43.8, 32.0, 44.3, 24.7, 100.0, 41.2, 9.6, 14.4, 41.6, 49.9, 33.4, 35.9, 47.1, 22.0], [18.1, 37.6, 25.5, 21.1, 14.3, 18.1, 42.1, 18.6, 41.6, 43.7, 41.2, 100.0, 7.9, 13.4, 37.6, 53.0, 33.0, 22.7, 10.4, 13.2], [6.1, 3.4, 10.4, 8.1, 15.1, 17.4, 12.4, 4.6, 10.6, 1.8, 9.6, 7.9, 100.0, 10.0, 13.2, 14.8, 16.5, 18.0, 15.5, 2.3], [28.7, 31.0, 12.9, 8.8, 14.8, 17.6, 13.2, 4.4, 13.3, 4.2, 14.4, 13.4, 10.0, 100.0, 17.6, 22.1, 21.2, 31.1, 13.8, 2.0], [34.7, 41.8, 76.2, 42.3, 57.6, 60.6, 48.7, 35.5, 66.5, 17.4, 41.6, 37.6, 13.2, 17.6, 100.0, 61.7, 68.0, 48.8, 29.3, 49.4], [35.6, 48.4, 42.2, 42.6, 31.6, 39.6, 51.0, 34.8, 52.6, 21.4, 49.9, 53.0, 14.8, 22.1, 61.7, 100.0, 50.9, 57.4, 24.8, 22.7], [18.9, 22.7, 61.3, 22.9, 69.7, 78.1, 41.3, 16.1, 54.1, 17.2, 33.4, 33.0, 16.5, 21.2, 68.0, 50.9, 100.0, 46.3, 35.8, 34.1], [48.0, 39.0, 38.9, 46.8, 38.2, 47.4, 50.2, 37.1, 45.5, 14.5, 35.9, 22.7, 18.0, 31.1, 48.8, 57.4, 46.3, 100.0, 31.3, 23.9], [10.8, 6.8, 25.8, 13.9, 34.8, 38.7, 21.8, 8.7, 23.4, 4.0, 47.1, 10.4, 15.5, 13.8, 29.3, 24.8, 35.8, 31.3, 100.0, 13.2], [38.4, 32.0, 66.6, 43.8, 44.8, 37.9, 35.8, 45.1, 52.2, 14.4, 22.0, 13.2, 2.3, 2.0, 49.4, 22.7, 34.1, 23.9, 13.2, 100.0]]}, "closest": [{"hole_id": "13TRDD012", "closest_hole_id": "16CADD002", "fingerprint_similarity_percentage": 66.18, "hole_dominant_cluster": "Chlorite-FeMg-dominant", "closest_hole_dominant_cluster": "Chlorite-FeMg-dominant", "same_dominant_cluster": true}, {"hole_id": "13TRDD013", "closest_hole_id": "13TRDD012", "fingerprint_similarity_percentage": 64.38, "hole_dominant_cluster": "Chlorite-FeMg-dominant", "closest_hole_dominant_cluster": "Chlorite-FeMg-dominant", "same_dominant_cluster": true}, {"hole_id": "15RCDVZ001", "closest_hole_id": "PND003", "fingerprint_similarity_percentage": 76.22, "hole_dominant_cluster": "Hornblende-dominant", "closest_hole_dominant_cluster": "Mixed: Chlorite-Mg + Chlorite-FeMg + Calcite", "same_dominant_cluster": false}, {"hole_id": "16CADD002", "closest_hole_id": "EPT2276", "fingerprint_similarity_percentage": 86.75, "hole_dominant_cluster": "Chlorite-FeMg-dominant", "closest_hole_dominant_cluster": "Chlorite-FeMg-dominant", "same_dominant_cluster": true}, {"hole_id": "16MYD0047", "closest_hole_id": "16MYD0052", "fingerprint_similarity_percentage": 84.1, "hole_dominant_cluster": "Hornblende-dominant", "closest_hole_dominant_cluster": "Mixed: Chlorite-Mg + Chlorite-FeMg + Calcite", "same_dominant_cluster": false}, {"hole_id": "16MYD0052", "closest_hole_id": "16MYD0047", "fingerprint_similarity_percentage": 84.1, "hole_dominant_cluster": "Mixed: Chlorite-Mg + Chlorite-FeMg + Calcite", "closest_hole_dominant_cluster": "Hornblende-dominant", "same_dominant_cluster": false}, {"hole_id": "22USDH0207", "closest_hole_id": "FDH002", "fingerprint_similarity_percentage": 74.44, "hole_dominant_cluster": "Chlorite-FeMg-dominant", "closest_hole_dominant_cluster": "Chlorite-FeMg-dominant", "same_dominant_cluster": true}, {"hole_id": "EPT2276", "closest_hole_id": "16CADD002", "fingerprint_similarity_percentage": 86.75, "hole_dominant_cluster": "Chlorite-FeMg-dominant", "closest_hole_dominant_cluster": "Chlorite-FeMg-dominant", "same_dominant_cluster": true}, {"hole_id": "FDH002", "closest_hole_id": "22USDH0207", "fingerprint_similarity_percentage": 74.44, "hole_dominant_cluster": "Chlorite-FeMg-dominant", "closest_hole_dominant_cluster": "Chlorite-FeMg-dominant", "same_dominant_cluster": true}, {"hole_id": "FDH007", "closest_hole_id": "22USDH0207", "fingerprint_similarity_percentage": 46.62, "hole_dominant_cluster": "Phengite-dominant", "closest_hole_dominant_cluster": "Chlorite-FeMg-dominant", "same_dominant_cluster": false}, {"hole_id": "KEDD002", "closest_hole_id": "PND004", "fingerprint_similarity_percentage": 49.95, "hole_dominant_cluster": "Serpentine-dominant", "closest_hole_dominant_cluster": "Mixed: Chlorite-Mg + Chlorite-FeMg + Calcite", "same_dominant_cluster": false}, {"hole_id": "LD82625W1", "closest_hole_id": "PND004", "fingerprint_similarity_percentage": 52.97, "hole_dominant_cluster": "Muscovite-dominant", "closest_hole_dominant_cluster": "Mixed: Chlorite-Mg + Chlorite-FeMg + Calcite", "same_dominant_cluster": false}, {"hole_id": "MWEX10270", "closest_hole_id": "RRLGDDD093", "fingerprint_similarity_percentage": 18.04, "hole_dominant_cluster": "Dolomite-dominant", "closest_hole_dominant_cluster": "Mixed: Chlorite-Mg + Chlorite-FeMg + Calcite", "same_dominant_cluster": false}, {"hole_id": "NBDH035", "closest_hole_id": "RRLGDDD093", "fingerprint_similarity_percentage": 31.12, "hole_dominant_cluster": "Paragonite-dominant", "closest_hole_dominant_cluster": "Mixed: Chlorite-Mg + Chlorite-FeMg + Calcite", "same_dominant_cluster": false}, {"hole_id": "PND003", "closest_hole_id": "15RCDVZ001", "fingerprint_similarity_percentage": 76.22, "hole_dominant_cluster": "Mixed: Chlorite-Mg + Chlorite-FeMg + Calcite", "closest_hole_dominant_cluster": "Hornblende-dominant", "same_dominant_cluster": false}, {"hole_id": "PND004", "closest_hole_id": "PND003", "fingerprint_similarity_percentage": 61.71, "hole_dominant_cluster": "Mixed: Chlorite-Mg + Chlorite-FeMg + Calcite", "closest_hole_dominant_cluster": "Mixed: Chlorite-Mg + Chlorite-FeMg + Calcite", "same_dominant_cluster": true}, {"hole_id": "PND005", "closest_hole_id": "16MYD0052", "fingerprint_similarity_percentage": 78.15, "hole_dominant_cluster": "Mixed: Chlorite-Mg + Chlorite-FeMg + Calcite", "closest_hole_dominant_cluster": "Mixed: Chlorite-Mg + Chlorite-FeMg + Calcite", "same_dominant_cluster": true}, {"hole_id": "RRLGDDD093", "closest_hole_id": "PND004", "fingerprint_similarity_percentage": 57.4, "hole_dominant_cluster": "Mixed: Chlorite-Mg + Chlorite-FeMg + Calcite", "closest_hole_dominant_cluster": "Mixed: Chlorite-Mg + Chlorite-FeMg + Calcite", "same_dominant_cluster": true}, {"hole_id": "SPBD0364", "closest_hole_id": "KEDD002", "fingerprint_similarity_percentage": 47.09, "hole_dominant_cluster": "Serpentine-dominant", "closest_hole_dominant_cluster": "Serpentine-dominant", "same_dominant_cluster": true}, {"hole_id": "WKDD15001", "closest_hole_id": "15RCDVZ001", "fingerprint_similarity_percentage": 66.62, "hole_dominant_cluster": "Chlorite-FeMg-dominant", "closest_hole_dominant_cluster": "Hornblende-dominant", "same_dominant_cluster": false}], "pairs": {"top": [{"hole_a": "16CADD002", "hole_b": "EPT2276", "fingerprint_similarity_percentage": 86.7, "same_dominant_cluster": true}, {"hole_a": "16MYD0047", "hole_b": "16MYD0052", "fingerprint_similarity_percentage": 84.1, "same_dominant_cluster": false}, {"hole_a": "16MYD0052", "hole_b": "PND005", "fingerprint_similarity_percentage": 78.1, "same_dominant_cluster": true}, {"hole_a": "15RCDVZ001", "hole_b": "PND003", "fingerprint_similarity_percentage": 76.2, "same_dominant_cluster": false}, {"hole_a": "22USDH0207", "hole_b": "FDH002", "fingerprint_similarity_percentage": 74.4, "same_dominant_cluster": true}, {"hole_a": "16MYD0047", "hole_b": "PND005", "fingerprint_similarity_percentage": 69.7, "same_dominant_cluster": false}, {"hole_a": "PND003", "hole_b": "PND005", "fingerprint_similarity_percentage": 68.0, "same_dominant_cluster": true}, {"hole_a": "15RCDVZ001", "hole_b": "WKDD15001", "fingerprint_similarity_percentage": 66.6, "same_dominant_cluster": false}], "bot": [{"hole_a": "FDH007", "hole_b": "SPBD0364", "fingerprint_similarity_percentage": 4.0}, {"hole_a": "13TRDD013", "hole_b": "MWEX10270", "fingerprint_similarity_percentage": 3.4}, {"hole_a": "MWEX10270", "hole_b": "WKDD15001", "fingerprint_similarity_percentage": 2.3}, {"hole_a": "NBDH035", "hole_b": "WKDD15001", "fingerprint_similarity_percentage": 2.0}, {"hole_a": "FDH007", "hole_b": "MWEX10270", "fingerprint_similarity_percentage": 1.8}], "all": [86.7, 84.1, 78.1, 76.2, 74.4, 69.7, 68.0, 66.6, 66.5, 66.3, 66.2, 64.6, 64.4, 63.4, 61.7, 61.6, 61.3, 60.6, 57.6, 57.4, 56.4, 54.1, 53.6, 53.0, 52.6, 52.2, 51.0, 51.0, 50.9, 50.2, 50.0, 49.9, 49.4, 48.9, 48.8, 48.7, 48.7, 48.4, 48.0, 47.4, 47.1, 46.9, 46.8, 46.6, 46.3, 45.8, 45.5, 45.1, 44.8, 44.3, 43.9, 43.8, 43.8, 43.7, 43.6, 43.1, 43.1, 42.6, 42.3, 42.2, 42.1, 41.8, 41.6, 41.6, 41.3, 41.2, 40.0, 39.6, 39.4, 39.0, 38.9, 38.7, 38.7, 38.4, 38.2, 37.9, 37.6, 37.6, 37.1, 36.7, 36.0, 36.0, 35.9, 35.8, 35.8, 35.6, 35.5, 35.2, 34.8, 34.8, 34.7, 34.2, 34.1, 33.6, 33.4, 33.0, 32.8, 32.0, 32.0, 31.6, 31.3, 31.1, 31.0, 30.9, 30.4, 29.3, 28.7, 25.8, 25.5, 25.0, 24.8, 24.7, 23.9, 23.4, 23.3, 22.9, 22.7, 22.7, 22.7, 22.1, 22.0, 21.8, 21.4, 21.2, 21.1, 20.9, 20.8, 20.1, 19.5, 19.3, 18.9, 18.6, 18.5, 18.1, 18.1, 18.0, 17.6, 17.6, 17.4, 17.4, 17.4, 17.2, 16.9, 16.5, 16.5, 16.1, 15.8, 15.5, 15.1, 15.0, 14.9, 14.8, 14.8, 14.5, 14.4, 14.4, 14.3, 13.9, 13.8, 13.4, 13.3, 13.2, 13.2, 13.2, 13.2, 13.0, 12.9, 12.4, 10.8, 10.6, 10.4, 10.4, 10.0, 9.8, 9.6, 8.8, 8.7, 8.1, 7.9, 7.6, 6.8, 6.1, 4.6, 4.4, 4.2, 4.0, 3.4, 2.3, 2.0, 1.8]}, "diag": {"src_rows": 1580046, "selected": 1018271, "intervals": 9759, "clustered": 9602, "held": 157, "excl": {"no_mineral": 397815, "non_rock": 98799, "aspectral": 65161}, "before": {"dup": 381620, "onehot": 359217, "zeros": 96.0, "minper": 1.75, "rows": 1018271}, "after": {"dup": 61, "onehot": 72, "zeros": 80.7, "minper": 8.5, "rows": 9759}}, "minerals": [{"mineral_name": "Chlorite-FeMg", "rows_present": 363141, "percentage_of_selected_rows": 35.6625, "holes_present": 20}, {"mineral_name": "Muscovite", "rows_present": 205823, "percentage_of_selected_rows": 20.213, "holes_present": 20}, {"mineral_name": "Hornblende", "rows_present": 163764, "percentage_of_selected_rows": 16.0826, "holes_present": 20}, {"mineral_name": "Paragonite", "rows_present": 156948, "percentage_of_selected_rows": 15.4132, "holes_present": 19}, {"mineral_name": "Ankerite", "rows_present": 114760, "percentage_of_selected_rows": 11.2701, "holes_present": 20}, {"mineral_name": "Phengite", "rows_present": 97356, "percentage_of_selected_rows": 9.5609, "holes_present": 20}, {"mineral_name": "Dolomite", "rows_present": 74292, "percentage_of_selected_rows": 7.2959, "holes_present": 19}, {"mineral_name": "Chlorite-Fe", "rows_present": 65753, "percentage_of_selected_rows": 6.4573, "holes_present": 20}, {"mineral_name": "Phlogopite", "rows_present": 63946, "percentage_of_selected_rows": 6.2799, "holes_present": 20}, {"mineral_name": "Siderite", "rows_present": 56363, "percentage_of_selected_rows": 5.5352, "holes_present": 20}, {"mineral_name": "Biotite", "rows_present": 51204, "percentage_of_selected_rows": 5.0285, "holes_present": 20}, {"mineral_name": "Epidote", "rows_present": 46129, "percentage_of_selected_rows": 4.5301, "holes_present": 20}, {"mineral_name": "Chlorite-Mg", "rows_present": 44278, "percentage_of_selected_rows": 4.3484, "holes_present": 20}, {"mineral_name": "Actinolite", "rows_present": 43285, "percentage_of_selected_rows": 4.2508, "holes_present": 18}, {"mineral_name": "Calcite", "rows_present": 42352, "percentage_of_selected_rows": 4.1592, "holes_present": 20}, {"mineral_name": "Serpentine", "rows_present": 40967, "percentage_of_selected_rows": 4.0232, "holes_present": 20}, {"mineral_name": "Kaolinite-PX", "rows_present": 22513, "percentage_of_selected_rows": 2.2109, "holes_present": 19}, {"mineral_name": "Kaolinite-WX", "rows_present": 19187, "percentage_of_selected_rows": 1.8843, "holes_present": 17}, {"mineral_name": "Talc", "rows_present": 16701, "percentage_of_selected_rows": 1.6401, "holes_present": 14}, {"mineral_name": "MuscoviticIllite", "rows_present": 14940, "percentage_of_selected_rows": 1.4672, "holes_present": 16}, {"mineral_name": "Tourmaline-Fe", "rows_present": 14871, "percentage_of_selected_rows": 1.4604, "holes_present": 20}, {"mineral_name": "Montmorillonite", "rows_present": 10634, "percentage_of_selected_rows": 1.0443, "holes_present": 20}, {"mineral_name": "Riebeckite", "rows_present": 7268, "percentage_of_selected_rows": 0.7138, "holes_present": 19}, {"mineral_name": "Magnesite", "rows_present": 7081, "percentage_of_selected_rows": 0.6954, "holes_present": 20}, {"mineral_name": "Gypsum", "rows_present": 5767, "percentage_of_selected_rows": 0.5664, "holes_present": 17}, {"mineral_name": "Prehnite", "rows_present": 5758, "percentage_of_selected_rows": 0.5655, "holes_present": 13}, {"mineral_name": "Alunite-NH", "rows_present": 4445, "percentage_of_selected_rows": 0.4365, "holes_present": 18}, {"mineral_name": "PhengiticIllite", "rows_present": 4441, "percentage_of_selected_rows": 0.4361, "holes_present": 16}, {"mineral_name": "Zoisite", "rows_present": 3216, "percentage_of_selected_rows": 0.3158, "holes_present": 19}, {"mineral_name": "Tremolite", "rows_present": 2895, "percentage_of_selected_rows": 0.2843, "holes_present": 14}, {"mineral_name": "Saponite", "rows_present": 2542, "percentage_of_selected_rows": 0.2496, "holes_present": 19}, {"mineral_name": "Alunite-K", "rows_present": 2458, "percentage_of_selected_rows": 0.2414, "holes_present": 8}, {"mineral_name": "Dickite", "rows_present": 2188, "percentage_of_selected_rows": 0.2149, "holes_present": 18}, {"mineral_name": "ParagoniticIllite", "rows_present": 1500, "percentage_of_selected_rows": 0.1473, "holes_present": 11}, {"mineral_name": "Pyrophyllite", "rows_present": 1079, "percentage_of_selected_rows": 0.106, "holes_present": 16}, {"mineral_name": "Diaspore", "rows_present": 985, "percentage_of_selected_rows": 0.0967, "holes_present": 18}, {"mineral_name": "Alunite-Na", "rows_present": 894, "percentage_of_selected_rows": 0.0878, "holes_present": 7}, {"mineral_name": "Nontronite", "rows_present": 688, "percentage_of_selected_rows": 0.0676, "holes_present": 12}, {"mineral_name": "Nacrite", "rows_present": 576, "percentage_of_selected_rows": 0.0566, "holes_present": 17}, {"mineral_name": "Jarosite", "rows_present": 330, "percentage_of_selected_rows": 0.0324, "holes_present": 15}, {"mineral_name": "Rubellite", "rows_present": 246, "percentage_of_selected_rows": 0.0242, "holes_present": 11}, {"mineral_name": "Gibbsite", "rows_present": 229, "percentage_of_selected_rows": 0.0225, "holes_present": 14}, {"mineral_name": "Topaz", "rows_present": 196, "percentage_of_selected_rows": 0.0192, "holes_present": 15}, {"mineral_name": "Tourmaline", "rows_present": 122, "percentage_of_selected_rows": 0.012, "holes_present": 18}]};
+const S = ['--s1','--s2','--s3','--s4','--s5','--s6','--s7','--s8'].map(v=>`var(${v})`);
+const Q = ['--q1','--q2','--q3','--q4','--q5','--q6'].map(v=>`var(${v})`);
+const fmt = n => n.toLocaleString('en-US');
+const el = (t,c,h)=>{const e=document.createElement(t); if(c)e.className=c; if(h!==undefined)e.innerHTML=h; return e;};
+
+const tip = document.getElementById('tip');
+function bindTip(node, html){
+  node.addEventListener('mouseenter',e=>{ tip.innerHTML=html; tip.style.opacity='1'; move(e); });
+  node.addEventListener('mousemove',move);
+  node.addEventListener('mouseleave',()=>{ tip.style.opacity='0'; });
+}
+function move(e){
+  const p=12, w=tip.offsetWidth, h=tip.offsetHeight;
+  let x=e.clientX+p, y=e.clientY+p;
+  if(x+w>innerWidth-8) x=e.clientX-w-p;
+  if(y+h>innerHeight-8) y=e.clientY-h-p;
+  tip.style.left=x+'px'; tip.style.top=y+'px';
+}
+document.getElementById('st-k').textContent = DATA.sel.chosen_k;
+
+/* ---- headline answers ---- */
+(function(){
+  const box=document.getElementById('answers');
+  const pw=DATA.pairs.top[0];
+  const cards=[
+    ['What kinds of rock are down there?', DATA.sel.chosen_k+' rock types',
+     'Sorted from mineral readings alone, with no hand labelling. Seven are dominated by one mineral; one is genuinely mixed rock covering 2,082 m.'],
+    ['Which two holes are most alike?', pw.hole_a+' + '+pw.hole_b,
+     (+pw.fingerprint_similarity_percentage).toFixed(1)+'% alike — both are over 85% chlorite. Across all 190 pairs, scores run from 1.8% to 86.7%.'],
+    ['Does this beat the obvious shortcut?', 'Yes, on mixed rock',
+     'On core with one obvious mineral it adds little. On the 2,990 m where nothing dominates, it finds groupings the shortcut cannot.'],
+    ['Can we trust it?', 'It found known pairs',
+     'Holes from the same drilling programme came out as near-top matches — and the method never saw a hole name, depth or location.']
+  ];
+  cards.forEach(([q,big,p])=>{
+    const c=el('div','ans');
+    c.appendChild(el('span','q',q));
+    c.appendChild(el('div','big',big));
+    c.appendChild(el('p','',p));
+    box.appendChild(c);
+  });
+})();
+
+/* ---- funnel ---- */
+(function(){
+  const d=DATA.diag, box=document.getElementById('funnel');
+  const stages=[
+    ['Rows the scanner produced', d.src_rows, Q[5], null],
+    ['Rows with a usable rock reading', d.selected, Q[4],
+      `−${fmt(d.excl.no_mineral)} no mineral found · −${fmt(d.excl.non_rock)} tray, wood or plastic · −${fmt(d.excl.aspectral)} unreadable spectrum`],
+    ['Metres of core after averaging', d.intervals, Q[3], `${fmt(d.selected)} readings averaged into ${fmt(d.intervals)} one-metre rows`],
+    ['Metres actually grouped', d.clustered, Q[2], `−${fmt(d.held)} metres held back: fewer than 10 readings, so not really averaged`]
+  ];
+  const max=stages[0][1];
+  stages.forEach(([label,val,col,note])=>{
+    const st=el('div','fstage'), bar=el('div','fbar');
+    bar.style.background=col;
+    bar.style.width=Math.max((val/max)*100,2.2)+'%';
+    bar.appendChild(el('span','flabel',fmt(val)));
+    const meta=el('div','fmeta');
+    meta.appendChild(el('span','',label));
+    meta.appendChild(el('span','mono',((val/max)*100).toFixed(1)+'%'));
+    st.appendChild(meta); st.appendChild(bar);
+    box.appendChild(st);
+    if(note) box.appendChild(el('div','fdrop',note));
+  });
+})();
+
+/* ---- before/after ---- */
+(function(){
+  const b=DATA.diag.before, a=DATA.diag.after;
+  const rows=[
+    ['Rows', fmt(b.rows), fmt(a.rows)],
+    ['Rows that are exact copies', fmt(b.dup)+' (37.5%)', fmt(a.dup)+' (0.6%)'],
+    ['Rows with one mineral only', fmt(b.onehot)+' (35.3%)', fmt(a.onehot)+' (0.7%)'],
+    ['Minerals in a typical row', b.minper, '<b>'+a.minper+'</b>'],
+    ['Empty cells in a row', b.zeros+'%', a.zeros+'%'],
+    ['File size', '284.8 MB', '3.6 MB']
+  ];
+  const tb=document.getElementById('ba');
+  rows.forEach(([k,was,now])=>{
+    const tr=el('tr');
+    tr.appendChild(el('td','',k));
+    tr.appendChild(el('td','r was',was));
+    tr.appendChild(el('td','r now',now));
+    tb.appendChild(tr);
+  });
+})();
+
+/* ---- K chart ---- */
+(function(){
+  const k=DATA.k, sel=DATA.sel;
+  const tied=String(sel.statistically_tied_k_values).split(',').map(s=>+s.trim());
+  const W=880,H=310,mL=48,mR=18,mT=18,mB=48;
+  const iw=W-mL-mR, ih=H-mT-mB;
+  const xs=k.map(r=>r.k_clusters);
+  const x=v=>mL+((v-Math.min(...xs))/(Math.max(...xs)-Math.min(...xs)))*iw;
+  const lo=0.15, hi=0.45, y=v=>mT+ih-((v-lo)/(hi-lo))*ih;
+  let s=`<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="Separation score rises steeply up to 8 groups, then flattens out through 15 groups">`;
+  for(let v=0.15;v<=0.451;v+=0.05){
+    s+=`<line class="gridline" x1="${mL}" y1="${y(v).toFixed(1)}" x2="${W-mR}" y2="${y(v).toFixed(1)}"/>`;
+    s+=`<text class="tick-t" x="${mL-9}" y="${(y(v)+4).toFixed(1)}" text-anchor="end">${v.toFixed(2)}</text>`;
+  }
+  const tMin=Math.min(...tied), tMax=Math.max(...tied);
+  s+=`<rect x="${x(tMin)-9}" y="${mT}" width="${x(tMax)-x(tMin)+18}" height="${ih}" fill="var(--accent-soft)" rx="4"/>`;
+  s+=`<text class="tick-t" x="${(x(tMin)+x(tMax))/2}" y="${mT+15}" text-anchor="middle">these all score about the same</text>`;
+  s+=`<polyline points="${k.map(r=>`${x(r.k_clusters).toFixed(1)},${y(r.silhouette_score).toFixed(1)}`).join(' ')}" fill="none" stroke="var(--s1)" stroke-width="2" stroke-linejoin="round"/>`;
+  k.forEach(r=>{
+    const isSel=r.k_clusters===sel.chosen_k;
+    s+=`<circle cx="${x(r.k_clusters).toFixed(1)}" cy="${y(r.silhouette_score).toFixed(1)}" r="${isSel?7:4.5}"
+      fill="${isSel?'var(--s1)':'var(--panel)'}" stroke="var(--s1)" stroke-width="2" class="kpt" style="cursor:pointer"
+      data-k="${r.k_clusters}" data-s="${r.silhouette_score}" data-sm="${r.smallest_cluster_percentage}"/>`;
+    s+=`<text class="tick-t" x="${x(r.k_clusters).toFixed(1)}" y="${H-mB+19}" text-anchor="middle"
+      ${isSel?'font-weight="600" fill="var(--ink)"':''}>${r.k_clusters}</text>`;
+  });
+  const cs=k.find(r=>r.k_clusters===sel.chosen_k).silhouette_score;
+  s+=`<text class="axis-t" x="${x(sel.chosen_k)}" y="${y(cs)-16}" text-anchor="middle" fill="var(--ink)" font-weight="600">chosen · 8 groups</text>`;
+  s+=`<line class="axis" x1="${mL}" y1="${mT+ih}" x2="${W-mR}" y2="${mT+ih}"/>`;
+  s+=`<text class="axis-t" x="${mL+iw/2}" y="${H-6}" text-anchor="middle">number of groups the computer was asked to make</text>`;
+  s+=`<text class="axis-t" transform="translate(12,${mT+ih/2}) rotate(-90)" text-anchor="middle">separation score</text>`;
+  s+=`</svg>`;
+  document.getElementById('kchart').innerHTML=s;
+  const bk=sel.highest_silhouette_k, bs=k.find(r=>r.k_clusters===bk).silhouette_score;
+  document.getElementById('k-lede').innerHTML =
+    `Higher is better. The very best score is ${bk} groups (${(+bs).toFixed(3)}), but 8 groups scores `+
+    `${(+cs).toFixed(3)} — so close that choosing the simpler answer costs only <b>${(+sel.silhouette_given_up_vs_best).toFixed(4)}</b>.`;
+  document.querySelectorAll('.kpt').forEach(n=>bindTip(n,
+    `<b>${n.dataset.k} groups</b><br>separation ${(+n.dataset.s).toFixed(3)}<br>smallest group ${(+n.dataset.sm).toFixed(1)}% of core`));
+})();
+
+/* ---- clusters ---- */
+(function(){
+  const box=document.getElementById('clusters');
+  DATA.clusters.forEach((c,i)=>{
+    const row=el('div','clrow'), chip=el('div','clchip',String(c.cluster_id));
+    chip.style.background=S[i];
+    const body=el('div');
+    body.appendChild(el('div','clname',c.cluster_name));
+    body.appendChild(el('div','clstat',
+      `${fmt(c.intervals)} metres of core · ${(+c.percentage_of_intervals).toFixed(1)}% of everything measured`));
+    const mins=el('div','mins');
+    [1,2,3].forEach(n=>{
+      const name=c['top_'+n+'_mineral'], val=+c['top_'+n+'_mean_abundance'];
+      if(val>0) mins.appendChild(el('span','min',`${name} <b>${val.toFixed(2)}</b>`));
+    });
+    body.appendChild(mins);
+    row.appendChild(chip); row.appendChild(body);
+    box.appendChild(row);
+  });
+})();
+
+/* ---- agreement bars ---- */
+(function(){
+  const b=DATA.baseline;
+  const bars=[
+    ['All 9,602 metres', +b.adjusted_rand_index, 'var(--s1)', 'overall'],
+    ['Core with one obvious mineral', +b.adjusted_rand_index_majority_intervals, 'var(--s4)',
+      fmt(b.intervals_with_majority_mineral)+' m — almost the same answer as the shortcut'],
+    ['Genuinely mixed core', +b.adjusted_rand_index_mixed_intervals, 'var(--s3)',
+      fmt(b.intervals_without_majority_mineral)+' m — a very different answer']
+  ];
+  const W=880,H=230,mL=232,mR=74,mT=14,mB=44, rh=46, iw=W-mL-mR;
+  let s=`<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="Agreement with the simple shortcut: 0.75 overall, 0.92 on core with one obvious mineral, 0.38 on genuinely mixed core">`;
+  [0,0.25,0.5,0.75,1].forEach(v=>{
+    const xx=mL+v*iw;
+    s+=`<line class="gridline" x1="${xx}" y1="${mT}" x2="${xx}" y2="${mT+bars.length*rh}"/>`;
+    s+=`<text class="tick-t" x="${xx}" y="${mT+bars.length*rh+18}" text-anchor="middle">${v.toFixed(2)}</text>`;
+  });
+  bars.forEach(([label,val,col,note],i)=>{
+    const yy=mT+i*rh+8, bh=21;
+    s+=`<text class="axis-t" x="${mL-12}" y="${yy+15}" text-anchor="end" fill="var(--ink)" font-weight="500">${label}</text>`;
+    s+=`<rect x="${mL}" y="${yy}" width="${(val*iw).toFixed(1)}" height="${bh}" fill="${col}" rx="4"/>`;
+    s+=`<text class="tick-t" x="${mL+val*iw+9}" y="${yy+15}" fill="var(--ink)" font-weight="600">${val.toFixed(2)}</text>`;
+    s+=`<text class="tick-t" x="${mL-12}" y="${yy+31}" text-anchor="end">${note}</text>`;
+  });
+  s+=`<text class="axis-t" x="${mL+iw/2}" y="${H-8}" text-anchor="middle">0.00 = completely different answers &nbsp;·&nbsp; 1.00 = identical answers, nothing gained</text>`;
+  s+=`</svg>`;
+  document.getElementById('ari').innerHTML=s;
+})();
+
+/* ---- legend ---- */
+(function(){
+  const ul=document.getElementById('legend');
+  DATA.clusters.forEach((c,i)=>{
+    const li=el('li'), sw=el('span','sw');
+    sw.style.background=S[i];
+    li.appendChild(sw);
+    li.appendChild(el('span','',`${c.cluster_id}. ${c.cluster_name}`));
+    ul.appendChild(li);
+  });
+})();
+
+/* ---- fingerprints ---- */
+(function(){
+  const box=document.getElementById('fp');
+  const holes=[...DATA.holes].sort((a,b)=>b.p[0]-a.p[0] || a.hole.localeCompare(b.hole));
+  holes.forEach(h=>{
+    const row=el('div','fprow');
+    row.appendChild(el('div','fpname',h.hole));
+    const bar=el('div','fpbar');
+    h.p.forEach((v,i)=>{
+      if(v<=0) return;
+      const seg=el('div','fpseg');
+      seg.style.background=S[i]; seg.style.flex=v;
+      bindTip(seg,`<b>${h.hole}</b><br>${DATA.clusters[i].cluster_name}<br>${v.toFixed(1)}% · ${Math.round(v/100*h.m)} m`);
+      bar.appendChild(seg);
+    });
+    row.appendChild(bar);
+    row.appendChild(el('div','fpm',Math.round(h.m)+' m'));
+    box.appendChild(row);
+  });
+  const t=document.getElementById('fptable');
+  let head='<thead><tr><th>Hole</th><th>Metres</th><th>Depth</th>';
+  DATA.clusters.forEach(c=>head+=`<th>${c.cluster_id}</th>`);
+  head+='<th>Mostly</th></tr></thead><tbody>';
+  let body='';
+  holes.forEach(h=>{
+    body+=`<tr><td class="h">${h.hole}</td><td class="n">${Math.round(h.m)}</td><td class="n">${h.top}–${h.bot} m</td>`;
+    h.p.forEach(v=>body+=`<td class="n">${v.toFixed(1)}</td>`);
+    body+=`<td>${h.domname}</td></tr>`;
+  });
+  t.innerHTML=head+body+'</tbody>';
+})();
+
+/* ---- matrix ---- */
+(function(){
+  const m=DATA.matrix, n=m.holes.length, flat=[];
+  for(let i=0;i<n;i++) for(let j=0;j<n;j++) if(i!==j) flat.push(m.v[i][j]);
+  const lo=Math.min(...flat), hi=Math.max(...flat);
+  let head='<thead><tr><th></th>';
+  m.holes.forEach(h=>head+=`<th class="col"><span>${h}</span></th>`);
+  head+='</tr></thead><tbody>';
+  let body='';
+  for(let i=0;i<n;i++){
+    body+=`<tr><th class="row">${m.holes[i]}</th>`;
+    for(let j=0;j<n;j++){
+      if(i===j){ body+='<td class="diag"></td>'; continue; }
+      const v=m.v[i][j];
+      const idx=Math.min(5,Math.max(0,Math.floor(((v-lo)/(hi-lo))*6)));
+      body+=`<td data-a="${m.holes[i]}" data-b="${m.holes[j]}" data-v="${v}" style="background:${Q[idx]}"></td>`;
+    }
+    body+='</tr>';
+  }
+  const t=document.getElementById('mx');
+  t.innerHTML=head+body+'</tbody>';
+  t.querySelectorAll('td[data-v]').forEach(c=>bindTip(c,
+    `<b>${c.dataset.a} + ${c.dataset.b}</b><br>${(+c.dataset.v).toFixed(1)}% alike`));
+})();
+
+/* ---- closest ---- */
+(function(){
+  const rows=[...DATA.closest].sort((a,b)=>b.fingerprint_similarity_percentage-a.fingerprint_similarity_percentage);
+  const set=new Set(rows.map(r=>r.hole_id+'>'+r.closest_hole_id));
+  let h='<thead><tr><th>Hole</th><th>Closest match</th><th>How alike</th><th>Mostly made of</th><th></th></tr></thead><tbody>';
+  rows.forEach(r=>{
+    const mutual=set.has(r.closest_hole_id+'>'+r.hole_id);
+    h+=`<tr><td class="h">${r.hole_id}</td><td class="h">${r.closest_hole_id}</td>`+
+       `<td class="n">${(+r.fingerprint_similarity_percentage).toFixed(1)}%</td>`+
+       `<td>${r.hole_dominant_cluster}</td>`+
+       `<td>${mutual?'<span class="pill mutual">mutual</span>':'<span class="pill solo">one-way</span>'}</td></tr>`;
+  });
+  document.getElementById('closest').innerHTML=h+'</tbody>';
+})();
+</script>
