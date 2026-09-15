@@ -1,6 +1,8 @@
 """Prepare cleaned sTSAS rows for clustering.
 
-This file performs the three preparation steps that come before any model:
+This file performs eleven steps, from the cleaned drill-hole rows through to a
+comparison of every pair of holes and a check on how far the result can be
+trusted:
 
 1. Read the cleaned paired sTSAS/uTSAS CSV for each selected drill hole,
    decide whether each row holds a usable sTSAS rock interpretation, record
@@ -22,6 +24,10 @@ This file performs the three preparation steps that come before any model:
    value added by the modelling is stated rather than assumed.
 9. Summarise each drill hole by the share of its core in each cluster, then
    compare every pair of holes to find the closest mineral matches.
+10. Rank every interval by how poorly it fits its own cluster, so unusual core
+    can be reviewed instead of being absorbed into the nearest group.
+11. Refit with different random starting seeds to show the grouping comes from
+    the data rather than from where the search began.
 
 Clustering uses the mineral-abundance columns directly. There is no PCA step:
 the interval table is small, and clusters expressed in mineral units can be
@@ -131,6 +137,20 @@ FIXED_CLUSTER_COUNT: int | None = None
 # mineral alone; below it, the three leading minerals form a "Mixed" name.
 CLUSTER_DOMINANT_MINERAL_SHARE = 0.5
 CLUSTER_NAME_MINERAL_COUNT = 3
+
+# An interval sitting far from its cluster's centre does not match the mineral
+# mixture the cluster describes. Those are the intervals worth a second look.
+# Distance is compared with the median distance inside the SAME cluster, because
+# a loose cluster naturally has larger distances than a tight one, and a raw
+# distance would simply rank every loose cluster's members as unusual.
+# Intervals above this percentile of that ratio are flagged for review.
+ODD_INTERVAL_FLAG_PERCENTILE = 99.0
+
+# The final clustering is repeated with these random starting seeds to check the
+# groups are a property of the data rather than of where the search happened to
+# begin. Every other setting matches the final fit exactly, so the test measures
+# the model that is actually used.
+STABILITY_SEEDS = (42, 101, 202, 303, 404)
 
 
 def read_selected_holes(selection_file: Path) -> list[str]:
@@ -1716,6 +1736,272 @@ def compare_hole_fingerprints(
     }
 
 
+def flag_unusual_intervals(
+    interval_file: Path,
+    labelled_file: Path,
+    mineral_summary_file: Path,
+    odd_intervals_file: Path,
+    hole_summary_file: Path,
+    flag_percentile: float = ODD_INTERVAL_FLAG_PERCENTILE,
+) -> dict[str, object]:
+    """Rank every interval by how poorly it fits its own cluster.
+
+    Clustering places every interval somewhere, including the ones that match
+    nothing well. This step measures that fit so the poor matches can be found
+    instead of disappearing into whichever cluster happened to be nearest.
+
+    Fit is the distance from the interval to its cluster's centre, divided by the
+    median distance inside that same cluster. Dividing matters: a broad cluster
+    has larger distances throughout, so a raw distance would rank all of its
+    members as unusual and never flag anything inside a tight cluster. The ratio
+    asks whether an interval is unusual *for its own cluster*.
+
+    Nothing is removed and no cluster label changes. The output is a review list:
+    the metres of core a geologist should look at first, with the minerals that
+    make each one unusual.
+    """
+
+    for required_file in (interval_file, labelled_file):
+        if not required_file.is_file():
+            raise FileNotFoundError(f"Missing input for flagging: {required_file}")
+    if not 0 < flag_percentile < 100:
+        raise ValueError("The flag percentile must be between 0 and 100")
+
+    labelled = pd.read_csv(labelled_file)
+    intervals = pd.read_csv(interval_file)
+    abundance_columns = [
+        column
+        for column in intervals.columns
+        if column.startswith("abundance_") and column != "abundance_sum_check"
+    ]
+
+    key = ["hole_id", "interval_start"]
+    merged = labelled.merge(
+        intervals[[*key, *abundance_columns]], on=key, how="left", validate="one_to_one"
+    )
+    if len(merged) != len(labelled):
+        raise ValueError("Flagging did not match every labelled interval")
+
+    # Compare each interval with the spread of its own cluster.
+    cluster_median = merged.groupby("cluster_id")["distance_to_centre"].transform(
+        "median"
+    )
+    if (cluster_median <= 0).any():
+        raise ValueError("A cluster has a zero median distance; cannot form a ratio")
+    merged["cluster_median_distance"] = cluster_median
+    merged["oddness_ratio"] = merged["distance_to_centre"] / cluster_median
+    merged["percentile_within_cluster"] = (
+        merged.groupby("cluster_id")["distance_to_centre"].rank(pct=True) * 100
+    )
+
+    threshold = float(np.percentile(merged["oddness_ratio"], flag_percentile))
+    merged["flagged_unusual"] = merged["oddness_ratio"].ge(threshold)
+    merged["oddness_rank"] = (
+        merged["oddness_ratio"].rank(ascending=False, method="min").astype(int)
+    )
+
+    mineral_name_of_column: dict[str, str] = {}
+    if mineral_summary_file.is_file():
+        summary = pd.read_csv(mineral_summary_file)
+        if {"abundance_column", "mineral_name"}.issubset(summary.columns):
+            mineral_name_of_column = (
+                summary.set_index("abundance_column")["mineral_name"].to_dict()
+            )
+
+    def readable_mineral(column: str) -> str:
+        if column in mineral_name_of_column:
+            return str(mineral_name_of_column[column])
+        return column[len("abundance_"):].replace("_", "-").title()
+
+    # Name what each flagged interval actually contains, so the list can be acted
+    # on without opening the 44-column table to find out why it stood out.
+    flagged = merged.loc[merged["flagged_unusual"]].copy()
+    values = flagged[abundance_columns].to_numpy(dtype=np.float64)
+    order = np.argsort(-values, axis=1)
+    for rank in range(3):
+        index = order[:, rank]
+        flagged[f"top_{rank + 1}_mineral"] = [
+            readable_mineral(abundance_columns[int(column)]) for column in index
+        ]
+        flagged[f"top_{rank + 1}_abundance"] = values[
+            np.arange(len(values)), index
+        ].round(4)
+
+    report_columns = [
+        "oddness_rank", "hole_id", "interval_start", "interval_end",
+        "cluster_id", "cluster_name", "minerals_present", "source_rows",
+        "distance_to_centre", "cluster_median_distance", "oddness_ratio",
+        "percentile_within_cluster",
+        "top_1_mineral", "top_1_abundance",
+        "top_2_mineral", "top_2_abundance",
+        "top_3_mineral", "top_3_abundance",
+    ]
+    flagged = flagged[report_columns].sort_values("oddness_rank", ignore_index=True)
+    odd_intervals_file.unlink(missing_ok=True)
+    flagged.to_csv(odd_intervals_file, index=False)
+
+    # Which holes carry the unusual core, so a region can be prioritised.
+    per_hole = (
+        merged.groupby("hole_id")
+        .agg(
+            clustered_intervals=("flagged_unusual", "size"),
+            flagged_intervals=("flagged_unusual", "sum"),
+            worst_oddness_ratio=("oddness_ratio", "max"),
+            mean_oddness_ratio=("oddness_ratio", "mean"),
+        )
+        .reset_index()
+    )
+    per_hole["percentage_flagged"] = (
+        100 * per_hole["flagged_intervals"] / per_hole["clustered_intervals"]
+    )
+    per_hole = per_hole.sort_values(
+        ["flagged_intervals", "worst_oddness_ratio"], ascending=False, ignore_index=True
+    )
+    hole_summary_file.unlink(missing_ok=True)
+    per_hole.to_csv(hole_summary_file, index=False)
+
+    worst = flagged.iloc[0] if len(flagged) else None
+    return {
+        "intervals_scored": len(merged),
+        "intervals_flagged": int(merged["flagged_unusual"].sum()),
+        "flag_percentile": flag_percentile,
+        "oddness_ratio_threshold": round(threshold, 4),
+        "holes_with_flagged_intervals": int(per_hole["flagged_intervals"].gt(0).sum()),
+        "most_flagged_hole": str(per_hole.iloc[0]["hole_id"]) if len(per_hole) else "",
+        "most_flagged_count": int(per_hole.iloc[0]["flagged_intervals"]) if len(per_hole) else 0,
+        "worst_interval": (
+            f"{worst['hole_id']} {worst['interval_start']:g}-{worst['interval_end']:g} m"
+            if worst is not None else ""
+        ),
+        "worst_oddness_ratio": round(float(worst["oddness_ratio"]), 3) if worst is not None else 0.0,
+    }
+
+
+def test_cluster_stability(
+    interval_file: Path,
+    cluster_count: int,
+    stability_file: Path,
+    seeds: tuple[int, ...] = STABILITY_SEEDS,
+    minimum_source_rows: int = MINIMUM_INTERVAL_SOURCE_ROWS,
+) -> dict[str, object]:
+    """Check the clusters survive a different random starting point.
+
+    K-means begins from randomly chosen centres and improves them, so a result
+    can in principle depend on where the search started rather than on the data.
+    The fit is repeated with several seeds and compared with the seed used for
+    the published result.
+
+    Every other setting matches ``fit_final_clusters`` exactly. A test run with
+    stronger settings than the published model would measure a model nobody uses,
+    which is the easiest way to report a reassuring number that means nothing.
+
+    Cluster numbers are arbitrary between runs, so agreement is measured with the
+    Adjusted Rand Index, which compares which intervals stay together and ignores
+    the labels. Each run is also matched to the reference by greatest overlap so
+    cluster sizes can be compared after the numbering difference is removed.
+
+    Nothing is written back to the published clustering; this reports only.
+    """
+
+    from scipy.optimize import linear_sum_assignment
+    from sklearn.cluster import KMeans
+    from sklearn.metrics import adjusted_rand_score
+
+    if not interval_file.is_file():
+        raise FileNotFoundError(f"Missing interval file: {interval_file}")
+    if len(seeds) < 2:
+        raise ValueError("At least two seeds are needed to compare runs")
+
+    intervals = pd.read_csv(interval_file)
+    abundance_columns = [
+        column
+        for column in intervals.columns
+        if column.startswith("abundance_") and column != "abundance_sum_check"
+    ]
+    clustered = intervals.loc[intervals["source_rows"].ge(minimum_source_rows)]
+    features = clustered[abundance_columns].to_numpy(dtype=np.float64)
+
+    labels_by_seed: dict[int, np.ndarray] = {}
+    inertia_by_seed: dict[int, float] = {}
+    for seed in seeds:
+        model = KMeans(
+            n_clusters=cluster_count,
+            init="k-means++",
+            n_init=KMEANS_N_INIT,
+            random_state=seed,
+        )
+        labels_by_seed[seed] = model.fit_predict(features)
+        inertia_by_seed[seed] = float(model.inertia_)
+
+    reference_seed = seeds[0]
+    reference = labels_by_seed[reference_seed]
+    reference_sizes = np.bincount(reference, minlength=cluster_count)
+
+    rows: list[dict[str, object]] = []
+    for seed in seeds:
+        labels = labels_by_seed[seed]
+        sizes = np.bincount(labels, minlength=cluster_count)
+
+        # Match this run's clusters to the reference by greatest shared membership.
+        overlap = np.zeros((cluster_count, cluster_count), dtype=np.int64)
+        np.add.at(overlap, (reference, labels), 1)
+        reference_index, candidate_index = linear_sum_assignment(-overlap)
+        matched_rows = int(overlap[reference_index, candidate_index].sum())
+        size_differences = [
+            abs(int(sizes[candidate]) - int(reference_sizes[ref]))
+            for ref, candidate in zip(reference_index, candidate_index)
+        ]
+
+        rows.append({
+            "random_seed": seed,
+            "reference_seed": reference_seed,
+            "is_reference": seed == reference_seed,
+            "clusters": cluster_count,
+            "intervals": len(features),
+            "adjusted_rand_index_vs_reference": float(
+                adjusted_rand_score(reference, labels)
+            ),
+            "matched_interval_agreement_percentage": 100 * matched_rows / len(features),
+            "inertia": inertia_by_seed[seed],
+            "inertia_difference_percentage_vs_reference": 100
+            * (inertia_by_seed[seed] - inertia_by_seed[reference_seed])
+            / inertia_by_seed[reference_seed],
+            "smallest_cluster_intervals": int(sizes.min()),
+            "largest_cluster_intervals": int(sizes.max()),
+            "largest_matched_cluster_size_difference": max(size_differences),
+            "n_init": KMEANS_N_INIT,
+        })
+
+    stability = pd.DataFrame(rows)
+    stability_file.unlink(missing_ok=True)
+    stability.to_csv(stability_file, index=False)
+
+    others = stability.loc[~stability["is_reference"]]
+    minimum_ari = float(others["adjusted_rand_index_vs_reference"].min())
+    if minimum_ari >= 0.9:
+        verdict = "stable_across_seeds"
+    elif minimum_ari >= 0.75:
+        verdict = "mostly_stable_with_some_boundary_movement"
+    else:
+        verdict = "unstable_the_grouping_depends_on_the_starting_point"
+
+    return {
+        "seeds_tested": len(seeds),
+        "reference_seed": reference_seed,
+        "minimum_adjusted_rand_index": round(minimum_ari, 4),
+        "mean_adjusted_rand_index": round(
+            float(others["adjusted_rand_index_vs_reference"].mean()), 4
+        ),
+        "minimum_matched_agreement_percentage": round(
+            float(others["matched_interval_agreement_percentage"].min()), 2
+        ),
+        "largest_matched_cluster_size_difference": int(
+            others["largest_matched_cluster_size_difference"].max()
+        ),
+        "verdict": verdict,
+    }
+
+
 def main() -> None:
     """Select sTSAS rock rows, build abundances, and summarise minerals."""
 
@@ -1777,6 +2063,15 @@ def main() -> None:
     )
     closest_holes_file = (
         output_folder / f"sathi_stsas_{INTERVAL_METRES:g}m_closest_hole_matches.csv"
+    )
+    odd_intervals_file = (
+        output_folder / f"sathi_stsas_{INTERVAL_METRES:g}m_unusual_intervals.csv"
+    )
+    odd_hole_summary_file = (
+        output_folder / f"sathi_stsas_{INTERVAL_METRES:g}m_unusual_intervals_by_hole.csv"
+    )
+    stability_file = (
+        output_folder / f"sathi_stsas_{INTERVAL_METRES:g}m_cluster_stability.csv"
     )
 
     # Overwrite only this script's generated outputs when it is re-run. The
@@ -2019,6 +2314,52 @@ def main() -> None:
     print(f"Pairwise similarity: {hole_pairwise_file}")
     print(f"Similarity matrix: {hole_matrix_file}")
     print(f"Closest match for each hole: {closest_holes_file}")
+
+    # STEP 10: Rank every interval by how poorly it fits its own cluster, so the
+    # metres of core worth a second look can be found rather than absorbed into
+    # whichever cluster was nearest. Nothing is removed or relabelled.
+    odd = flag_unusual_intervals(
+        interval_file,
+        labelled_intervals_file,
+        abundance_summary_file,
+        odd_intervals_file,
+        odd_hole_summary_file,
+    )
+    print(
+        f"Flagged {odd['intervals_flagged']:,} unusual intervals of "
+        f"{odd['intervals_scored']:,} "
+        f"(top {100 - odd['flag_percentile']:g}% by fit to their own cluster)."
+    )
+    print(
+        f"  Most unusual: {odd['worst_interval']} at "
+        f"{odd['worst_oddness_ratio']}x its cluster's median distance."
+    )
+    print(
+        f"  Most flagged hole: {odd['most_flagged_hole']} "
+        f"({odd['most_flagged_count']} intervals)."
+    )
+    print(f"Unusual intervals for review: {odd_intervals_file}")
+    print(f"Unusual intervals by hole: {odd_hole_summary_file}")
+
+    # STEP 11: Refit with different random starting seeds, using the same
+    # settings as the published model, to show the grouping is a property of the
+    # data and not of where the search began.
+    stability = test_cluster_stability(
+        interval_file,
+        int(decision["chosen_k"]),
+        stability_file,
+    )
+    print(
+        f"Stability across {stability['seeds_tested']} seeds: "
+        f"lowest agreement {stability['minimum_adjusted_rand_index']} "
+        f"(1.0 = identical grouping)."
+    )
+    print(
+        f"  Largest matched cluster size difference: "
+        f"{stability['largest_matched_cluster_size_difference']:,} intervals."
+    )
+    print(f"  Verdict: {stability['verdict'].replace('_', ' ')}")
+    print(f"Stability report: {stability_file}")
 
 
 if __name__ == "__main__":
