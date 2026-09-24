@@ -132,7 +132,7 @@ a demo cannot fail because the venue wifi died.
 |---|---|
 | `docker-compose.yml` | PostGIS 16-3.4 on host port **5433** |
 | `db/schema.sql` | Tables, indexes, comments. Applied automatically on first start. |
-| `etl/load_holes.py` | Combined local catalog → `hole` table. Idempotent (upsert). Deletes holes that have left the catalog so counts stay honest; `--no-prune` keeps them. |
+| `etl/load_holes.py` | Combined local catalog → `hole` table. Idempotent (upsert). Preserves holes absent from an incomplete snapshot; explicit `--prune` removes them after review. |
 | `backend/main.py` | FastAPI. GeoJSON endpoints + the map page. |
 | `frontend/index.html` | Leaflet map, marker clustering, filters. No build step. |
 

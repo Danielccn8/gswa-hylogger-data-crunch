@@ -67,7 +67,10 @@ def load_hole_spectra(config: AppConfig, hole_id: str) -> HoleSpectra:
     scalars = nir.scalars.reset_index(drop=True)
 
     keep = np.ones(len(spectra), dtype=bool)
-    keep &= np.isfinite(spectra).all(axis=1)
+    keep &= np.isfinite(spectra).all(axis=1) & (spectra > -1e38).all(axis=1)
+    mask_name = next((name for name in scalars if str(name).lower().replace(" ", "_") == "final_mask"), None)
+    if mask_name is not None:
+        keep &= pd.to_numeric(scalars[mask_name], errors="coerce").eq(1).to_numpy()
 
     def header(name: str, default: Any = pd.NA) -> np.ndarray:
         if name in headers.columns:

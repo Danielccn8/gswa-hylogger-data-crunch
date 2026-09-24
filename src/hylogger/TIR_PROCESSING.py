@@ -7,7 +7,7 @@ Flow:
   0. Download the shared 20-hole cohort (run once)
   1. Check TIR data availability across the cohort
   2. Extract TIR spectra + scalar columns per hole
-  3. Clean: remove duplicate rows, replace sentinel values, filter by Final Mask
+  3. Clean: retain repeated readings, replace sentinels, filter by Final Mask
   4. Decode numeric mineral/group codes into real names (some holes use codes, not text)
   5. Combine all holes, normalize (SNV), reduce dimensions (PCA)
   6. Cluster (K-means) and pick the best k
@@ -143,6 +143,7 @@ def load_hole_tir(hole_id: str) -> dict:
 
     metadata = pd.DataFrame({
         "hole_id": hole_id,
+        "source_row": np.arange(len(spectra)),
         "depth_m": pd.to_numeric(headers["D"], errors="coerce") if "D" in headers.columns else scalars["Depth (m)"],
         "tray": headers["T"] if "T" in headers.columns else scalars["Tray"],
     })
@@ -176,17 +177,12 @@ def load_all_tir_holes() -> dict:
 # ---------------------------------------------------------------------------
 
 def remove_duplicate_depths(holes: dict) -> dict:
-    """Drop exact-duplicate rows (all columns) per hole, keeping the first occurrence."""
-    cleaned = {}
+    """Report repeated metadata without discarding different spectral readings."""
     for hole_id, hole in holes.items():
         metadata = hole["metadata"]
-        total_before = len(metadata)
-        unique_mask = ~metadata.duplicated(keep="first")
-        new_metadata = metadata.loc[unique_mask].reset_index(drop=True)
-        new_spectra = hole["spectra"][unique_mask.to_numpy()]
-        cleaned[hole_id] = {**hole, "spectra": new_spectra, "metadata": new_metadata}
-        print(f"{hole_id}: {total_before} -> {len(new_metadata)} rows ({total_before - len(new_metadata)} exact duplicates dropped)")
-    return cleaned
+        repeated = metadata.drop(columns="source_row", errors="ignore").duplicated(keep=False)
+        print(f"{hole_id}: {int(repeated.sum())} repeated-metadata rows retained")
+    return holes
 
 
 def clean_tir_holes(holes: dict) -> dict:
@@ -201,7 +197,12 @@ def clean_tir_holes(holes: dict) -> dict:
             if pd.api.types.is_numeric_dtype(metadata[col]):
                 metadata[col] = metadata[col].where(metadata[col] > -1e38)
 
-        keep = np.isfinite(spectra).all(axis=1) & (metadata["Final Mask"].to_numpy() == 1)
+        keep = (
+            np.isfinite(spectra).all(axis=1)
+            & (np.asarray(spectra) > -1e38).all(axis=1)
+            & pd.to_numeric(metadata["depth_m"], errors="coerce").notna().to_numpy()
+            & (pd.to_numeric(metadata["Final Mask"], errors="coerce").to_numpy() == 1)
+        )
         new_metadata = metadata.loc[keep].reset_index(drop=True)
         new_spectra = spectra[keep]
 

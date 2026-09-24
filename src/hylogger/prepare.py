@@ -10,6 +10,7 @@ import pandas as pd
 from .config import AppConfig
 from .errors import HyLoggerError
 from .manifest import Manifest
+from .quality import QualityPolicy, apply_quality_policy
 from .raw import find_package_dir
 from .util import (
     atomic_write_frame,
@@ -64,13 +65,23 @@ def _prepare_raw_package(config: AppConfig, hole_id: str, package_dir: Path) -> 
             continue
         frame = _section_frame(section, hole_id=hole_id, region=region.upper())
         frame = _clean_and_sort(frame)
+        spectra = np.asarray(section.spectra)
+        if len(spectra) != len(frame):
+            raise HyLoggerError(f"{hole_id} {region}: metadata and spectra row counts differ")
+        finite = np.isfinite(spectra).all(axis=1) & (spectra > -1e38).all(axis=1)
+        frame["spectral_valid"] = finite[frame["source_row"].to_numpy(dtype=int)]
+        frame, quality = apply_quality_policy(frame, QualityPolicy())
+        frame = frame.loc[frame["spectral_valid"]].reset_index(drop=True)
+        selected_spectra = spectra[frame["source_row"].to_numpy(dtype=int)]
         path = config.data_dir / "prepared" / "samples" / f"{hole_id}_{region}.parquet"
         atomic_write_frame(frame, path)
         sample_paths.append(str(path))
         frames[region] = frame
-        spectra_payload[f"{region}_spectra"] = np.asarray(section.spectra)
+        spectra_payload[f"{region}_spectra"] = selected_spectra
         spectra_payload[f"{region}_wavelength"] = np.asarray(section.wavelength)
-        qc["sections"][region] = _frame_qc(frame, spectra_shape=list(section.spectra.shape))
+        qc["sections"][region] = _frame_qc(frame, spectra_shape=list(selected_spectra.shape))
+        qc["sections"][region]["quality_policy"] = quality
+        qc["sections"][region]["spectral_invalid_rows"] = int((~finite).sum())
 
     if not frames:
         raise HyLoggerError(f"pytsg found no spectral sections in {package_dir}")
@@ -115,6 +126,7 @@ def _prepare_processed(config: AppConfig, hole_id: str) -> dict[str, Any]:
         )
     frame = pd.concat([pd.read_parquet(path) for path in paths], ignore_index=True)
     frame = _clean_and_sort(frame)
+    frame, quality = apply_quality_policy(frame, QualityPolicy())
     sample_path = config.data_dir / "prepared" / "samples" / f"{hole_id}_processed.parquet"
     atomic_write_frame(frame, sample_path)
     features = _feature_row(hole_id, {"processed": frame})
@@ -126,7 +138,7 @@ def _prepare_processed(config: AppConfig, hole_id: str) -> dict[str, Any]:
         "input_paths": [str(path) for path in paths],
         "dataset_ids": [path.parent.name for path in paths],
         "category_logs": _category_qc(frame),
-        "sections": {"processed": _frame_qc(frame)},
+        "sections": {"processed": {**_frame_qc(frame), "quality_policy": quality}},
     }
     qc_path = config.data_dir / "prepared" / "samples" / f"{hole_id}_processed_qc.json"
     atomic_write_json(qc_path, qc)
@@ -209,6 +221,7 @@ def _section_frame(section: object, *, hole_id: str, region: str) -> pd.DataFram
     canonical_hole_id = frame.pop("hole_id")
     frame.insert(0, "spectral_region", spectral_region)
     frame.insert(0, "hole_id", canonical_hole_id)
+    frame["source_row"] = np.arange(len(frame))
     if "d" in frame.columns:
         frame = frame.rename(columns={"d": "depth_m"})
     elif "start_depth" in frame.columns:

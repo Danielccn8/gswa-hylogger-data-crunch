@@ -144,9 +144,9 @@ def _clean(value):
 
 
 def main() -> None:
-    # Keeping the DB in step with the catalog is the default; --no-prune opts out.
-    do_prune = "--no-prune" not in sys.argv
-    args = [a for a in sys.argv[1:] if a != "--no-prune"]
+    # Catalogue snapshots can be incomplete; removal needs an explicit --prune.
+    do_prune = "--prune" in sys.argv
+    args = [a for a in sys.argv[1:] if a != "--prune"]
 
     csv_path = Path(args[0]) if args else DEFAULT_CSV
     if not csv_path.exists():

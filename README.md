@@ -10,11 +10,21 @@ Search the catalog -> preview processed TSG logs -> select holes
                    -> inspect quality -> prepare features -> run clustering
 ```
 
+## Connected local system pilot
+
+The reproducible ETL → PostGIS → clustering → API → map/profile pilot is
+documented in [Pipeline guide](docs/PIPELINE_GUIDE.md),
+[Modeling guide](docs/MODELING_GUIDE.md), [English user guide](docs/USER_GUIDE.md)
+and [execution status](docs/delivery/EXECUTION_STATUS.md). It reads separately
+acquired data and writes generated products below ignored `data/system`.
+`docs/delivery/EVIDENCE_2026-09-25.md` distinguishes local measurements from
+pending geological review and unmeasured 50/200-hole capacity.
+
 ## What `processed` and `raw` mean
 
 | CLI term | Source | What it contains | Typical use |
 |---|---|---|---|
-| `processed` | NVCL Data Services through `nvcl-kit` | TSG-derived mineral, group, weight, error, mask, and diagnostic logs | Fast review and initial clustering |
+| `processed` | NVCL Data Services through `nvcl-kit` | TSG-derived mineral, group, weight, error and diagnostic logs; masks only where present | Fast review and initial clustering |
 | `raw` | NCI THREDDS ZIP package | NIR/SWIR/TIR spectra, TSG headers, images, CRAS, lidar, and supporting files | Spectral feature engineering and validation |
 
 Processed logs are small and can be fetched individually. Raw data is published as one ZIP per hole; the downloader keeps the immutable ZIP and extracts only the requested local components.

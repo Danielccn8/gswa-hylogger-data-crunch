@@ -46,6 +46,8 @@
                letter-spacing: .05em; }
 
   #map { height: 100vh; }
+  #profile { max-height: 300px; overflow-y: auto; margin: 10px 0; border: 1px solid var(--line); }
+  #profile button { border-left-width: 5px; }
   @media (max-width: 800px) { #map { height: 60vh; } }
 
   .note { font-size: 11px; color: var(--muted); border-left: 2px solid var(--warn);
@@ -82,7 +84,8 @@
 
 <aside>
   <h1>HyLogger holes</h1>
-  <div class="sub">Every NVCL-scanned drill hole in Western Australia</div>
+  <div class="sub">Local NVCL catalogue snapshot · processed coverage shown by marker colour</div>
+  <div class="note">● Grey: catalogue only · ● Blue: SWIR intervals · ● Purple: SWIR and TIR intervals. An orange outline means invalid recorded length.</div>
 
   <div class="stats">
     <div class="stat"><b id="s-shown">–</b><span>shown</span></div>
@@ -117,6 +120,23 @@
 
   <div class="note" id="note"></div>
   <div class="note" id="constant-note"></div>
+  <section id="analysis" aria-live="polite">
+    <h2 style="font-size:16px">Depth profile</h2>
+    <p id="profile-help">Select a map marker to inspect processed intervals. Grey means not evaluated.</p>
+    <label for="hole-search">Drill-hole ID</label><input id="hole-search" placeholder="e.g. 05GJD001">
+    <button id="open-hole">Open profile</button>
+    <label for="region">Sensor</label><select id="region"><option value="swir">SWIR (uTSAS)</option><option value="tir">TIR (ujCLST)</option></select>
+    <div id="model-explanation"></div>
+    <div id="profile"></div>
+    <div id="interval-detail"></div>
+    <div id="spectrum"></div>
+    <div id="similar"></div>
+    <a id="export-link" hidden>Download displayed depth range as CSV</a>
+  </section>
+  <section>
+    <h2 style="font-size:16px">Processing status</h2>
+    <p id="processing-status">No batch report loaded.</p>
+  </section>
 </aside>
 
 <div id="map"></div>
@@ -127,8 +147,8 @@
 // Western Australia, roughly centred.
 const map = L.map('map').setView([-26.0, 121.0], 5);
 
-L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
-  attribution: '&copy; OpenStreetMap, &copy; CARTO',
+L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+  attribution: '&copy; OpenStreetMap contributors',
   maxZoom: 19
 }).addTo(map);
 
@@ -143,6 +163,132 @@ map.addLayer(cluster);
 
 const $ = id => document.getElementById(id);
 const fmt = n => (n == null ? '–' : Number(n).toLocaleString());
+async function loadProcessingStatus() {
+  try {
+    const [runsResponse, coverageResponse] = await Promise.all([
+      fetch('/api/system/runs?limit=1'), fetch('/api/system/coverage')
+    ]);
+    if (!runsResponse.ok || !coverageResponse.ok) throw new Error('Server status unavailable');
+    const runs = await runsResponse.json(), coverage = await coverageResponse.json();
+    const holeCount = new Set(coverage.map(item => item.hole_id)).size;
+    $('processing-status').textContent = `${holeCount} holes with processed intervals · ${coverage.length} sensor products loaded.`;
+    if (runs.length) {
+      const report = runs[0].summary;
+      const failures = report.failed.map(item => `${item.hole_id ?? item.region} ${item.region ?? item.stage ?? ''}: ${item.reason}`).join('; ');
+      const count = report.requested_holes.length;
+      $('processing-status').textContent += ` Latest ${report.mode ?? 'train'} batch: ${count} ${count === 1 ? 'hole' : 'holes'} requested, ${report.failed.length} failures. ${failures || 'No failures.'} Batch ${runs[0].batch_id}.`;
+    }
+  } catch (error) { $('processing-status').textContent = `Processing status unavailable: ${error.message}`; }
+}
+let selectedHole = null;
+let selectedModel = null;
+async function showProfile(holeId) {
+  selectedHole = holeId;
+  const region = $('region').value;
+  $('profile-help').textContent = `Loading ${holeId} ${region}…`;
+  try {
+    const response = await fetch(`/api/system/holes/${encodeURIComponent(holeId)}/intervals?region=${region}&limit=2000`);
+    if (!response.ok) throw new Error(`Server returned ${response.status}`);
+    const data = await response.json();
+    selectedModel = data.model_id;
+    $('profile-help').textContent = `${holeId}: ${data.intervals.length} intervals shown, depth increases downward. Group frequencies are TSG interpretation frequencies, not rock percentages. Model: ${data.model_id ?? 'none'}.`;
+    await showModel(data.model_id);
+    $('profile').replaceChildren();
+    $('interval-detail').replaceChildren(); $('spectrum').replaceChildren(); $('similar').replaceChildren();
+    if (!data.intervals.length) {
+      $('profile').textContent = 'No processed intervals loaded for this sensor.';
+      $('export-link').hidden = true; return;
+    }
+    for (const item of data.intervals) {
+      const button = document.createElement('button');
+      button.className = 'ghost';
+      button.style.cssText = 'text-align:left;margin:2px 0;padding:5px;font-weight:normal';
+      const group = item.n_admitted ? item.dominant_group : 'No diagnostic group';
+      button.style.borderLeftColor = item.cluster_id == null ? '#8b98a8' : ['#4c9aff','#e0913a','#6cc48b','#c094ee'][item.cluster_id % 4];
+      button.style.background = `linear-gradient(90deg, #26415b ${Math.round(100 * item.n_admitted / item.n_total)}%, #0d1117 0)`;
+      button.textContent = `${item.depth_from_m.toFixed(1)}–${item.depth_to_m.toFixed(1)} m · ${group} · ${item.cluster_id == null ? 'Unassigned' : 'Group ' + item.cluster_id} · ${item.n_admitted}/${item.n_total} readings`;
+      button.onclick = () => showInterval(item.interval_id);
+      $('profile').appendChild(button);
+    }
+    const link = $('export-link');
+    const firstDepth = data.intervals[0].depth_from_m;
+    const lastDepth = data.intervals[data.intervals.length - 1].depth_to_m;
+    link.href = `/api/system/holes/${encodeURIComponent(holeId)}/export.csv?region=${region}&from_m=${firstDepth}&to_m=${lastDepth}${data.model_id ? '&model_id=' + encodeURIComponent(data.model_id) : ''}`;
+    link.hidden = false;
+  } catch (error) { $('profile-help').textContent = `Profile unavailable: ${error.message}`; }
+}
+async function showModel(modelId) {
+  const box = $('model-explanation'); box.replaceChildren();
+  if (!modelId) { box.textContent = 'No active clustering model for this sensor.'; return; }
+  try {
+    const response = await fetch('/api/system/models');
+    if (!response.ok) throw new Error(`Server returned ${response.status}`);
+    const model = (await response.json()).find(item => item.model_id === modelId);
+    if (!model) throw new Error('Model card unavailable');
+    const card = model.card;
+    const details = document.createElement('details');
+    const summary = document.createElement('summary'); summary.textContent = 'How the groups were made';
+    const description = document.createElement('p');
+    description.textContent = `${card.clustering} groups ${card.row_unit} from ${card.region.toUpperCase()} TSG group frequencies. ${card.representation}; PCA: ${card.pca}. Development holes: ${card.development_holes.length}; held-out hole: ${card.test_hole ?? 'none'}. k=${card.selected_k} was selected on development data. Test silhouette ${card.test_silhouette?.toFixed(3) ?? 'unavailable'} measures separation, not geological accuracy.`;
+    const profiles = document.createElement('ul');
+    for (const profile of card.profiles) {
+      const top = Object.entries(profile.mean_group_frequency).sort((a, b) => b[1] - a[1]).slice(0, 2);
+      const item = document.createElement('li');
+      item.textContent = `Group ${profile.cluster_id}: ${profile.n_intervals} assigned intervals; leading original TSG frequencies ${top.map(([name, value]) => `${name} ${(100 * value).toFixed(1)}%`).join(', ')}.`;
+      profiles.appendChild(item);
+    }
+    const note = document.createElement('p');
+    note.textContent = `Feature schema: ${card.feature_schema.join(', ')}. Model ${modelId}. Group IDs and distances are exploratory, not mineral percentages or probabilities.`;
+    details.append(summary, description, profiles, note); box.appendChild(details);
+  } catch (error) { box.textContent = `Model explanation unavailable: ${error.message}`; }
+}
+async function showInterval(intervalId) {
+  try {
+    const modelQuery = selectedModel ? `?model_id=${encodeURIComponent(selectedModel)}` : '';
+    const detail = await (await fetch(`/api/system/intervals/${intervalId}${modelQuery}`)).json();
+    const box = $('interval-detail'); box.replaceChildren();
+    const heading = document.createElement('h3'); heading.textContent = `Interval ${detail.depth_from_m}–${detail.depth_to_m} m`;
+    const body = document.createElement('p');
+    body.textContent = `Dominant TSG group: ${detail.dominant_group ?? 'none'}. ${detail.n_admitted} of ${detail.n_total} readings admitted. ${detail.assignment ? 'Group ' + detail.assignment.cluster_id + ', centroid distance ' + Number(detail.assignment.distance).toFixed(3) : 'No model assignment.'}`;
+    const provenance = document.createElement('details');
+    const summary = document.createElement('summary'); summary.textContent = 'How this was calculated';
+    const pre = document.createElement('pre'); pre.style.whiteSpace = 'pre-wrap';
+    pre.textContent = JSON.stringify({dataset: detail.dataset_id, intervalSet: detail.interval_set_id, sourceRowCount: detail.source_rows.length, firstSourceRows: detail.source_rows.slice(0, 10), model: detail.model_id, reasonCounts: detail.reason_counts, features: detail.features, mask: detail.qc.mask_status}, null, 2);
+    provenance.append(summary, pre); box.append(heading, body, provenance);
+    const similar = await (await fetch(`/api/system/intervals/${intervalId}/similar${modelQuery}`)).json();
+    $('similar').textContent = similar.items.length ? 'Similar intervals (same group, ranked by centroid distance): ' + similar.items.map(i => `${i.hole_id} ${i.depth_from_m} m`).join(', ') : 'No comparable intervals loaded.';
+    await showSpectrum(detail);
+  } catch (error) { $('interval-detail').textContent = `Interval unavailable: ${error.message}`; }
+}
+async function showSpectrum(detail) {
+  const box = $('spectrum'); box.replaceChildren();
+  const url = `/api/system/spectral/${detail.region}/${encodeURIComponent(detail.hole_id)}/${detail.depth_from_m}`;
+  const response = await fetch(url);
+  if (!response.ok) { box.textContent = 'No adjusted TSG spectrum prepared for this interval.'; return; }
+  const data = await response.json();
+  const observed = data.observation.spectrum;
+  const mean = data.representative_mean;
+  const values = observed.concat(mean);
+  const low = Math.min(...values), high = Math.max(...values), span = high - low || 1;
+  const ns = 'http://www.w3.org/2000/svg';
+  const svg = document.createElementNS(ns, 'svg');
+  svg.setAttribute('viewBox', '0 0 300 140'); svg.setAttribute('role', 'img');
+  svg.setAttribute('aria-label', 'Adjusted TSG spectrum and development-cluster mean by wavelength');
+  svg.style.cssText = 'width:100%;height:140px;background:#0d1117;border:1px solid #2a323d';
+  for (const [series, colour] of [[observed, '#4c9aff'], [mean, '#e0913a']]) {
+    const line = document.createElementNS(ns, 'polyline');
+    line.setAttribute('fill', 'none'); line.setAttribute('stroke', colour);
+    line.setAttribute('stroke-width', '2');
+    line.setAttribute('points', series.map((v, i) => `${5 + 290*i/(series.length-1)},${120 - 105*(v-low)/span}`).join(' '));
+    svg.appendChild(line);
+  }
+  const heading = document.createElement('h3'); heading.textContent = 'Adjusted TSG spectrum (pilot)';
+  const caption = document.createElement('p');
+  caption.textContent = `Blue: interval median; orange: development-cluster mean. ${data.wavelengths[0]}–${data.wavelengths.at(-1)} nm. Spectral status: ${data.observation.status}. This separate two-hole model is exploratory.`;
+  box.append(heading, svg, caption);
+}
+$('region').onchange = () => { if (selectedHole) showProfile(selectedHole); };
+$('open-hole').onclick = () => { if ($('hole-search').value.trim()) showProfile($('hole-search').value.trim().toUpperCase()); };
 
 async function loadFilters() {
   const f = await (await fetch('/api/filters')).json();
@@ -215,9 +361,10 @@ async function loadHoles() {
     const p = f.properties;
     return L.circleMarker([lat, lon], {
       radius: 5,
-      color: p.length_is_valid ? '#4c9aff' : '#e0913a',
+      color: p.length_is_valid ? '#d9e2eb' : '#e0913a',
+      fillColor: p.processed_regions.includes('tir') && p.processed_regions.includes('swir') ? '#c094ee' : p.processed_regions.length ? '#4c9aff' : '#8b98a8',
       weight: 1, fillOpacity: 0.75
-    }).bindPopup(popup(p));
+    }).bindPopup(popup(p)).on('click', () => showProfile(p.hole_id));
   });
   cluster.addLayers(markers);
   $('s-shown').textContent = fmt(geo.count);
@@ -259,6 +406,7 @@ $('reset').onclick = () => {
 loadFilters();
 loadStats();
 loadHoles();
+loadProcessingStatus();
 </script>
 </body>
 </html>

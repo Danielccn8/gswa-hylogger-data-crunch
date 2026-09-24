@@ -22,6 +22,7 @@ dependencies = [
 
 [project.optional-dependencies]
 analysis = [
+  "psutil>=6,<9",
   "jupyterlab>=4.2,<5",
   "matplotlib>=3.9,<4",
   "scikit-learn>=1.5,<2",
