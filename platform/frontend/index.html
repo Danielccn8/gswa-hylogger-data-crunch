@@ -78,6 +78,12 @@
              border: 1px solid var(--line); border-radius: 5px; cursor: pointer; }
   .copy-id:hover { color: var(--text); border-color: var(--accent); }
   .copy-id.done { color: #6cc48b; border-color: #6cc48b; }
+  .comparison-row { border: 1px solid var(--line); border-radius: 6px; padding: 8px;
+                    margin: 5px 0; background: #0d1117; }
+  .comparison-row strong { color: var(--accent); }
+  .comparison-row small { display: block; color: var(--muted); }
+  .comparison-row button { width: auto; padding: 4px 8px; margin-top: 4px; }
+  .review-flag { color: var(--warn); }
 </style>
 </head>
 <body>
@@ -132,6 +138,16 @@
     <div id="spectrum"></div>
     <div id="similar"></div>
     <a id="export-link" hidden>Download displayed depth range as CSV</a>
+  </section>
+  <section id="hole-comparison" aria-live="polite">
+    <h2 style="font-size:16px">Compare the 20-hole cohort</h2>
+    <p class="note">Each row represents a whole hole, summarised from its diagnostic TSG depth intervals. This model is separate from the interval groups in the depth profile.</p>
+    <label for="comparison-region">Sensor</label>
+    <select id="comparison-region"><option value="swir">SWIR (20 holes)</option><option value="tir">TIR (18 available)</option></select>
+    <button id="load-comparison">Show hole comparison</button>
+    <p id="comparison-summary"></p>
+    <div id="comparison-groups"></div>
+    <div id="comparison-rows"></div>
   </section>
   <section>
     <h2 style="font-size:16px">Processing status</h2>
@@ -289,6 +305,48 @@ async function showSpectrum(detail) {
 }
 $('region').onchange = () => { if (selectedHole) showProfile(selectedHole); };
 $('open-hole').onclick = () => { if ($('hole-search').value.trim()) showProfile($('hole-search').value.trim().toUpperCase()); };
+
+async function showHoleComparison() {
+  const region = $('comparison-region').value;
+  $('comparison-summary').textContent = `Loading ${region.toUpperCase()} hole comparison…`;
+  $('comparison-groups').replaceChildren(); $('comparison-rows').replaceChildren();
+  try {
+    const response = await fetch(`/api/system/comparisons/team-20/${region}`);
+    if (!response.ok) throw new Error(response.status === 404 ? 'Run scripts/compare_20_holes.py to generate it.' : `Server returned ${response.status}`);
+    const data = await response.json();
+    $('comparison-summary').textContent = `${data.included_holes} of ${data.requested_holes.length} holes included. ${data.excluded_holes.length ? 'Unavailable: ' + data.excluded_holes.join(', ') + '. ' : ''}K-Means k=${data.selected_k}; one hole per row. ${data.review_rule}. These are relative review candidates, not confirmed geological anomalies. Model ${data.model_id}.`;
+    const explanation = document.createElement('details');
+    const heading = document.createElement('summary'); heading.textContent = 'Method, evaluation and groups';
+    const method = document.createElement('p');
+    method.textContent = `${data.method}. Distance: ${data.distance}. Candidate k: ${data.candidate_k.map(c => `${c.k} (silhouette ${c.silhouette}, two-seed ARI ${c.two_seed_ari})`).join('; ')}. ${data.limitation}`;
+    explanation.append(heading, method);
+    for (const group of data.groups) {
+      const p = document.createElement('p');
+      p.textContent = `Group ${group.cluster_id}: ${group.hole_count} holes. Leading mean TSG groups: ${group.leading_groups.map(g => `${g.name} ${(g.mean_frequency * 100).toFixed(1)}%`).join(', ')}.`;
+      explanation.appendChild(p);
+    }
+    $('comparison-groups').appendChild(explanation);
+    for (const item of data.holes) {
+      const row = document.createElement('div'); row.className = 'comparison-row';
+      const title = document.createElement('strong'); title.textContent = `${item.hole_id} · Group ${item.cluster_id}`;
+      const flag = document.createElement('small');
+      flag.textContent = item.review_candidate ? 'Review candidate: unusual within this 20-hole cohort' : 'No relative review flag';
+      if (item.review_candidate) flag.className = 'review-flag';
+      const detail = document.createElement('small');
+      detail.textContent = `${item.intervals_with_features}/${item.intervals_total} diagnostic intervals · ${item.readings_admitted}/${item.readings_total} readings admitted · nearest: ${item.nearest_hole_id} (distance ${item.nearest_distance.toFixed(3)}) · centroid ${item.centroid_distance.toFixed(3)}`;
+      const top = Object.entries(item.group_frequencies).sort((a, b) => b[1] - a[1]).slice(0, 3);
+      const groups = document.createElement('small');
+      groups.textContent = `Leading TSG frequencies: ${top.map(([name, value]) => `${name} ${(value * 100).toFixed(1)}%`).join(', ')}. Set ${item.interval_set_id}.`;
+      const button = document.createElement('button'); button.className = 'ghost';
+      button.textContent = 'Open depth profile';
+      button.onclick = () => { $('region').value = region; $('hole-search').value = item.hole_id; showProfile(item.hole_id); $('analysis').scrollIntoView({behavior:'smooth'}); };
+      row.append(title, flag, detail, groups, button);
+      $('comparison-rows').appendChild(row);
+    }
+  } catch (error) { $('comparison-summary').textContent = `Comparison unavailable: ${error.message}`; }
+}
+$('load-comparison').onclick = showHoleComparison;
+$('comparison-region').onchange = showHoleComparison;
 
 async function loadFilters() {
   const f = await (await fetch('/api/filters')).json();

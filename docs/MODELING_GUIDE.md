@@ -14,4 +14,10 @@ Model IDs include scikit-learn, NumPy and pandas versions; inference checks thes
 
 The bounded spectral script reads **adjusted spectra from extracted TSG packages**, not uncorrected full-resolution instrument raw data. It checks Final Mask and wavelength compatibility, fits SNV/scaling/PCA/K-Means on one hole, and assigns a second with a training-only distance threshold. Its model card and mean spectra live in `data/system/spectral/<region>`. Two holes are an engineering contrast, not a generalisation estimate.
 
+## Exploratory whole-hole comparison
+
+`scripts/compare_20_holes.py` uses the exact interval-set IDs listed in the reviewed 20-hole benchmark. Its row unit is **one hole**. It averages TSG group frequencies across diagnostic 1 m intervals with equal interval weight so denser scanning does not automatically dominate a hole. It clusters the square-root feature vectors separately for SWIR and TIR. Candidate k values 2–4 are scored by whole-hole silhouette; the report also gives two-seed adjusted Rand agreement and mean group profiles. The selected k is an internal description of this small cohort, with no external validation or held-out confirmation.
+
+Each hole's nearest-neighbour distance in the transformed space supports a relative outlier screen. The top 10% are labelled **review candidates**, even though this rank alone cannot establish a geological anomaly. The artifact gives each hole's source interval-set ID, number of diagnostic bins, original feature frequencies, nearest hole, distances and group. TIR excludes 07THD003 and 09RTD001 because their processed logs lack the required group column. Both sensors still inherit the processed-log Final Mask limitation. This comparison does not use raw instrument spectra.
+
 The 05GJD001→LD82625W1 SWIR pilot flags 585/642 inference intervals outside its development distance threshold, while TIR flags 32/642. The interface draws the selected interval's adjusted spectrum and the development-cluster mean, and labels the distance status. The substantial SWIR shift is evidence against treating this pilot as a statewide model.

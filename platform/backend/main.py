@@ -34,6 +34,7 @@ DATABASE_URL = os.environ.get(
 
 FRONTEND = Path(__file__).resolve().parent.parent / "frontend"
 SPECTRAL_PILOT_DIR = Path(os.environ.get("SPECTRAL_PILOT_DIR", "data/system/spectral"))
+COMPARISON_DIR = Path(os.environ.get("COMPARISON_DIR", "data/system/comparisons"))
 
 app = FastAPI(
     title="GSWA HyLogger Platform",
@@ -254,6 +255,17 @@ def system_models():
                    FROM model_run m LEFT JOIN active_model a ON m.model_id=a.model_id
                    ORDER BY m.loaded_at DESC""")
         return cur.fetchall()
+
+
+@app.get("/api/system/comparisons/team-20/{region}")
+def team_20_comparison(region: str):
+    """Precomputed hole-level comparison, separate from interval model labels."""
+    if region not in {"swir", "tir"}:
+        raise HTTPException(404, "sensor region unavailable")
+    path = COMPARISON_DIR / f"team_20_{region}.json"
+    if not path.is_file():
+        raise HTTPException(404, "20-hole comparison has not been generated")
+    return json.loads(path.read_text(encoding="utf-8"))
 
 
 @app.get("/api/system/runs")

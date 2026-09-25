@@ -29,8 +29,10 @@ services:
     environment:
       DATABASE_URL: postgresql://hylogger:hylogger@db:5432/hylogger
       SPECTRAL_PILOT_DIR: /app/spectral
+      COMPARISON_DIR: /app/comparisons
     volumes:
       - ../data/system/spectral:/app/spectral:ro
+      - ../data/system/comparisons:/app/comparisons:ro
     ports:
       - "127.0.0.1:${HYLOGGER_API_PORT:-8000}:8000"
     depends_on:
