@@ -9,96 +9,58 @@ PostGIS + FastAPI + Leaflet.
 
 ## Quick start
 
-You need **Docker Desktop** and **Python 3.11+**.
-
-> **Every command below is run from the `platform/` directory, not the repository
-> root.** `docker-compose.yml`, `etl/`, and `backend/` all live here, so running
-> these from the root fails with `no configuration file provided: not found`.
-
-### First time only
-
-Install the platform dependencies (this one runs from the **repository root**,
-because that is where `pyproject.toml` is):
-
-```bash
-python -m pip install -e ".[platform]"
-```
-
-Then fetch the hole catalog. `hylogger` is an installed command, so it works
-from anywhere:
-
-```bash
-hylogger catalog refresh
-```
+To view an already loaded local demo, you need **Docker Desktop**. Run the
+commands below from the **repository root**. Python 3.11+ and the project venv
+are needed when acquiring or reprocessing data, not just to view the map.
 
 ### Starting the map
 
-**1. Start Docker Desktop** and wait for the whale icon to stop animating. If it
-is not running, the next command fails with `failed to connect to the docker API`.
+Start Docker Desktop, then in PowerShell:
 
-Activate the project's virtual environment in the same terminal — `uvicorn` and
-`hylogger` are installed inside it, so without this you get `command not found`:
-
-```bash
-.venv\Scripts\activate
+```powershell
+Set-Location -LiteralPath 'C:\Users\DCCN9\.codex\worktrees\hylogger-data-crunch-system'
+docker compose -p hylogger_system -f platform/docker-compose.yml up -d --build
+docker compose -p hylogger_system -f platform/docker-compose.yml ps
 ```
 
-(macOS or Linux: `source .venv/bin/activate`. Your prompt should now start with
-`(.venv)`.)
+With no service name after `up`, Compose starts **both** services in this file:
+`db` (PostGIS on `127.0.0.1:5433`) and `api` (FastAPI plus the Leaflet page on
+`127.0.0.1:8000`). `-d` keeps them running in the background. `--build` builds
+the API image. The API waits until the database health check passes.
 
-**2. Start the database:**
-
-```bash
-cd platform && docker compose up -d
-```
-
-**3. Load the holes into it** (safe to re-run; takes a few seconds):
-
-```bash
-python etl/load_holes.py
-```
-
-**4. Start the API and map:**
-
-```bash
-uvicorn backend.main:app --reload --port 8000
-```
-
-**5. Open <http://localhost:8000>.** API docs are at <http://localhost:8000/docs>.
-
-Leave the `uvicorn` window open — it is the server. `Ctrl+C` in that window
-stops the map.
+Open <http://localhost:8000>. API docs are at <http://localhost:8000/docs>.
+The existing named database volume keeps previously loaded holes and intervals.
+The Compose command alone does not download or cluster new source data; use
+`docs/PIPELINE_GUIDE.md` for the separate ETL and model commands.
 
 ### Stopping
 
-`Ctrl+C` the `uvicorn` window, then:
-
-```bash
-cd platform && docker compose down
+```powershell
+docker compose -p hylogger_system -f platform/docker-compose.yml stop
 ```
 
-Your loaded data survives `docker compose down`, so next time you only need
-steps 1, 2 and 4. Add `-v` to delete the database volume as well — after that
-you must run `python etl/load_holes.py` again.
+This stops only the two owned containers and preserves the database volume.
 
 ### Is it working?
 
-```bash
-curl http://localhost:8000/api/health
+```powershell
+Invoke-RestMethod 'http://localhost:8000/api/health'
 ```
 
-Expect `{"status":"ok","holes":1897}`. If `holes` is 0, run step 3.
+Expect `{"status":"ok","holes":1897}` for the current local snapshot. If
+`holes` is 0 on a new database, acquire a catalog and load it with
+`platform/etl/load_holes.py` as documented in `docs/PIPELINE_GUIDE.md`.
 
 ### Troubleshooting
 
 | Symptom | Cause | Fix |
 |---|---|---|
-| `no configuration file provided: not found` | You are in the repository root | `cd platform` first |
+| `no configuration file provided: not found` | Compose file was not specified | Run from the repository root with `-f platform/docker-compose.yml` |
 | `failed to connect to the docker API` | Docker Desktop is not running | Start it, wait for it to settle |
-| `catalog.csv not found` | Catalog never fetched | `hylogger catalog refresh` |
-| `database unavailable` from `/api/health` | Container not up | `docker compose up -d` |
+| `catalog.csv not found` | Catalog never fetched | Follow the acquisition steps in the root README |
+| `database unavailable` from `/api/health` | Database container is not healthy | Check `docker compose -p hylogger_system -f platform/docker-compose.yml ps` |
 | Page loads but no pins, no basemap | Leaflet and the tiles come from a CDN | Needs internet; the API itself works offline |
-| Port 8000 already in use | Another server is running | `--port 8001` |
+| Port 8000 already in use | Another server is running | Set `$env:HYLOGGER_API_PORT='8001'` before `up`; open port 8001 |
 
 ---
 

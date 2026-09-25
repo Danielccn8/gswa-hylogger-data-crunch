@@ -1,8 +1,6 @@
-# The database. One command brings it up:
-#
-#     docker compose up -d
-#
-# Local Postgres + PostGIS and API. Source data is acquired and loaded separately.
+# Local HyLogger stack: Postgres/PostGIS plus FastAPI and the map.
+# From the repository root: docker compose -p hylogger_system -f platform/docker-compose.yml up -d --build
+# Source data is acquired and loaded separately.
 services:
   db:
     image: postgis/postgis:16-3.4
