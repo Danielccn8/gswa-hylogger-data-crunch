@@ -5,7 +5,7 @@ Notebooks are organised by workflow stage: `00_getting_started`, `10_quality_con
 Notebooks must use `AppConfig.load()` and must not contain personal absolute paths. Reusable acquisition and transformation logic belongs in `src/hylogger/`.
 
 
-### PCA + Hole-Level Spectral Clustering 
+### PCA + Hole-Level Spectral Clustering (Raw_data_PCA.ipynb)
 
 1. **SWIR and TIR spectral data are processed separately** to preserve the characteristics of each sensor.
 
