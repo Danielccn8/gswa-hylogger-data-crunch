@@ -94,3 +94,31 @@ def test_processed_fetch_writes_source_parquet_and_manifest(app_config, monkeypa
     manifest = Manifest(app_config.manifest_path).get("processed:TEST:DATASET")
     assert manifest["status"] == "complete"
     assert manifest["metadata"]["rows"] == 3
+
+
+def test_narrow_fetch_keeps_broad_selected_table(app_config, monkeypatch):
+    folder = app_config.data_dir / "downloads/processed/TEST/DATASET"
+    folder.mkdir(parents=True)
+    broad = pd.DataFrame(
+        {
+            "hole_id": ["TEST"],
+            "dataset_id": ["DATASET"],
+            "start_depth": [1.0],
+            "grp1_u_tsas": ["A"],
+            "grp1_uj_clst": ["B"],
+        }
+    )
+    broad.to_parquet(folder / "scalar_logs.parquet", index=False)
+    inventory = {
+        "datasets": [{"dataset_id": "DATASET", "logs": [{"log_id": "x", "log_name": "Grp1 uTSAS"}]}]
+    }
+    monkeypatch.setattr("hylogger.processed.inventory_hole", lambda *args: inventory)
+    monkeypatch.setattr(
+        "hylogger.processed.create_reader",
+        lambda *args: SimpleNamespace(get_scalar_data=lambda ids: "Start Depth,Grp1 uTSAS\n1,A\n"),
+    )
+    output = fetch_processed_hole(app_config, "TEST")
+    assert output[0]["selected"] is False
+    pd.testing.assert_frame_equal(pd.read_parquet(folder / "scalar_logs.parquet"), broad)
+    assert Path(output[0]["path"]).is_file()
+    assert len(list((app_config.data_dir / "snapshots").glob("*/scalar_logs.parquet"))) == 2

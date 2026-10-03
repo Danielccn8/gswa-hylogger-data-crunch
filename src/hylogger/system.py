@@ -9,6 +9,7 @@ from pathlib import Path
 import numpy as np
 import pandas as pd
 
+from .preparation import QC_VERSION, gate_readings
 from .util import sha256_file
 
 REGIONS = {"swir": "u_tsas", "tir": "uj_clst"}
@@ -19,7 +20,7 @@ def interval_set(
     source: Path, hole_id: str, region: str, width_m: float = 1.0
 ) -> tuple[pd.DataFrame, dict]:
     """Create interval features and a reconciled QC report from one dataset revision."""
-    if region not in REGIONS or width_m <= 0:
+    if region not in REGIONS or not np.isfinite(width_m) or width_m <= 0:
         raise ValueError("Expected swir/tir and a positive interval width")
     frame = pd.read_parquet(source).reset_index(drop=True)
     suffix = REGIONS[region]
@@ -28,28 +29,33 @@ def interval_set(
         raise ValueError(f"{source} lacks {label_col} or start_depth")
     dataset_id = source.parent.name
     checksum = sha256_file(source)
-    set_id = hashlib.sha256(f"{checksum}:{hole_id}:{region}:{width_m}:v1".encode()).hexdigest()[:20]
-    depth = pd.to_numeric(frame.start_depth, errors="coerce")
-    mask_col = next((name for name in ("final_mask", "finalmask", "mask") if name in frame), None)
-    mask = pd.to_numeric(frame[mask_col], errors="coerce") if mask_col else None
+    set_id = hashlib.sha256(
+        f"{checksum}:{hole_id}:{region}:{width_m}:{QC_VERSION}".encode()
+    ).hexdigest()[:20]
+    frame, shared_qc = gate_readings(frame, depth_column="start_depth", retain_qc_rows=True)
+    depth = frame.start_depth
     labels = frame[label_col].astype("string").str.strip().str.upper()
-    primary = np.full(len(frame), "admitted", dtype=object)
-    primary[~np.isfinite(depth.to_numpy()) | (depth.to_numpy() < 0)] = "invalid_depth"
-    if mask is not None:
-        eligible = primary == "admitted"
-        primary[eligible & mask.isna().to_numpy()] = "unknown_mask"
-        primary[eligible & mask.notna().to_numpy() & mask.ne(1).to_numpy()] = "non_rock"
+    primary = frame.primary_reason.to_numpy(copy=True)
     eligible = primary == "admitted"
     nondiagnostic = labels.isna() | labels.isin(INVALID)
     primary[eligible & nondiagnostic.to_numpy()] = "nondiagnostic"
+    unknown_code = pd.to_numeric(labels, errors="coerce").notna()
+    primary[(primary == "admitted") & unknown_code.to_numpy()] = "unknown_class"
     counts = {
         name: int((primary == name).sum())
-        for name in ("admitted", "invalid_depth", "unknown_mask", "non_rock", "nondiagnostic")
+        for name in (
+            "admitted",
+            "invalid_depth",
+            "unknown_mask",
+            "masked",
+            "nondiagnostic",
+            "unknown_class",
+        )
     }
     assert sum(counts.values()) == len(frame)
     work = pd.DataFrame(
         {
-            "source_row": np.arange(len(frame)),
+            "source_row": frame.source_row,
             "depth_m": depth,
             "label": labels,
             "primary_reason": primary,
@@ -77,7 +83,13 @@ def interval_set(
                 "n_admitted": int(len(accepted)),
                 "reason_counts": {
                     reason: int((part.primary_reason == reason).sum())
-                    for reason in ("admitted", "unknown_mask", "non_rock", "nondiagnostic")
+                    for reason in (
+                        "admitted",
+                        "unknown_mask",
+                        "masked",
+                        "nondiagnostic",
+                        "unknown_class",
+                    )
                 },
                 "source_rows": part.source_row.astype(int).tolist(),
                 "source_depth_min_m": float(part.depth_m.min()),
@@ -96,7 +108,10 @@ def interval_set(
         "source_sha256": checksum,
         "region": region,
         "width_m": width_m,
-        "mask_status": "available" if mask_col else "unavailable_in_processed_log",
+        "qc_version": QC_VERSION,
+        "mask_status": "available"
+        if shared_qc["mask_status"] == "available"
+        else "unavailable_in_processed_log",
         "rows_received": len(frame),
         "primary_reasons": counts,
         "intervals": len(rows),

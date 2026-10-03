@@ -1,7 +1,9 @@
 from __future__ import annotations
 
 import fnmatch
+import hashlib
 import re
+import shutil
 from io import StringIO
 from typing import Any
 
@@ -144,21 +146,87 @@ def fetch_processed_hole(
             if isinstance(csv_content, bytes):
                 csv_content = csv_content.decode("utf-8", errors="replace")
             folder.mkdir(parents=True, exist_ok=True)
+            frame = normalise_scalar_csv(csv_content, hole_id=hole_id, dataset_id=dataset_id)
+            # Save immutable source responses before touching the selected table.
+            checksum = hashlib.sha256(csv_content.encode("utf-8")).hexdigest()
+            snapshot_key = hashlib.sha256(f"{hole_id}:{dataset_id}:{checksum}".encode()).hexdigest()
+            snapshot = config.data_dir / "snapshots" / snapshot_key
+            snapshot.mkdir(parents=True, exist_ok=True)
+            if not (snapshot / "scalar_logs.csv").exists():
+                (snapshot / "scalar_logs.csv").write_text(csv_content, encoding="utf-8")
+            if not (snapshot / "scalar_logs.parquet").exists():
+                atomic_write_frame(frame, snapshot / "scalar_logs.parquet")
+            receipt = {
+                "hole_id": hole_id,
+                "dataset": {key: value for key, value in dataset.items() if key != "logs"},
+                "profile": "all" if all_logs else profile,
+                "logs": selected,
+                "downloaded_at": utc_now(),
+                "source_sha256": checksum,
+            }
+            if not (snapshot / "logs.json").exists():
+                atomic_write_json(snapshot / "logs.json", receipt)
+            activate = True
+            if parquet_path.exists():
+                previous = pd.read_parquet(parquet_path)
+                legacy_hash = sha256_file(raw_path if raw_path.exists() else parquet_path)
+                archive_key = hashlib.sha256(
+                    f"{hole_id}:{dataset_id}:{legacy_hash}".encode()
+                ).hexdigest()
+                archive = config.data_dir / "snapshots" / archive_key
+                archive.mkdir(parents=True, exist_ok=True)
+                for prior in (raw_path, parquet_path, metadata_path):
+                    if prior.exists() and not (archive / prior.name).exists():
+                        shutil.copy2(prior, archive / prior.name)
+                # A narrower request is a separate snapshot, not a destructive
+                # replacement. Never join logs by row position across responses.
+                activate = set(previous.columns).issubset(frame.columns)
+            if not activate:
+                manifest.record(
+                    artifact_key=artifact_key,
+                    hole_id=hole_id,
+                    kind="processed",
+                    dataset_id=dataset_id,
+                    status="complete",
+                    local_path=parquet_path,
+                    completed_at=utc_now(),
+                    sha256=sha256_file(parquet_path),
+                    metadata={
+                        "preserved_selected_source": True,
+                        "rows": len(previous),
+                        "columns": list(previous.columns),
+                    },
+                )
+                manifest.record(
+                    artifact_key=f"{artifact_key}:snapshot:{checksum}",
+                    hole_id=hole_id,
+                    kind="processed_snapshot",
+                    dataset_id=dataset_id,
+                    status="complete",
+                    local_path=snapshot / "scalar_logs.parquet",
+                    sha256=checksum,
+                    started_at=started,
+                    completed_at=utc_now(),
+                    metadata={"selected": False, "reason": "narrower log coverage"},
+                )
+                outputs.append(
+                    {
+                        "hole_id": hole_id,
+                        "dataset_id": dataset_id,
+                        "logs": len(selected),
+                        "rows": len(frame),
+                        "path": str(snapshot / "scalar_logs.parquet"),
+                        "selected": False,
+                    }
+                )
+                continue
             temporary_csv = raw_path.with_name(f".{raw_path.name}.tmp")
             temporary_csv.write_text(csv_content, encoding="utf-8")
             temporary_csv.replace(raw_path)
-
-            frame = normalise_scalar_csv(csv_content, hole_id=hole_id, dataset_id=dataset_id)
             atomic_write_frame(frame, parquet_path)
             atomic_write_json(
                 metadata_path,
-                {
-                    "hole_id": hole_id,
-                    "dataset": {key: value for key, value in dataset.items() if key != "logs"},
-                    "profile": "all" if all_logs else profile,
-                    "logs": selected,
-                    "downloaded_at": utc_now(),
-                },
+                receipt,
             )
             checksum = sha256_file(raw_path)
             manifest.record(

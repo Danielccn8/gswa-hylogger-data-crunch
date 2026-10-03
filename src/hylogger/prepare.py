@@ -10,7 +10,7 @@ import pandas as pd
 from .config import AppConfig
 from .errors import HyLoggerError
 from .manifest import Manifest
-from .quality import QualityPolicy, apply_quality_policy
+from .preparation import gate_readings, wavelength_grid
 from .raw import find_package_dir
 from .util import (
     atomic_write_frame,
@@ -64,14 +64,13 @@ def _prepare_raw_package(config: AppConfig, hole_id: str, package_dir: Path) -> 
         if section is None or not hasattr(section, "spectra"):
             continue
         frame = _section_frame(section, hole_id=hole_id, region=region.upper())
-        frame = _clean_and_sort(frame)
         spectra = np.asarray(section.spectra)
         if len(spectra) != len(frame):
             raise HyLoggerError(f"{hole_id} {region}: metadata and spectra row counts differ")
-        finite = np.isfinite(spectra).all(axis=1) & (spectra > -1e38).all(axis=1)
-        frame["spectral_valid"] = finite[frame["source_row"].to_numpy(dtype=int)]
-        frame, quality = apply_quality_policy(frame, QualityPolicy())
-        frame = frame.loc[frame["spectral_valid"]].reset_index(drop=True)
+        wavelength_grid(spectra, np.asarray(section.wavelength, dtype=float))
+        frame, quality = gate_readings(
+            frame, depth_column="depth_m", spectra=spectra, require_mask=True
+        )
         selected_spectra = spectra[frame["source_row"].to_numpy(dtype=int)]
         path = config.data_dir / "prepared" / "samples" / f"{hole_id}_{region}.parquet"
         atomic_write_frame(frame, path)
@@ -81,7 +80,9 @@ def _prepare_raw_package(config: AppConfig, hole_id: str, package_dir: Path) -> 
         spectra_payload[f"{region}_wavelength"] = np.asarray(section.wavelength)
         qc["sections"][region] = _frame_qc(frame, spectra_shape=list(selected_spectra.shape))
         qc["sections"][region]["quality_policy"] = quality
-        qc["sections"][region]["spectral_invalid_rows"] = int((~finite).sum())
+        qc["sections"][region]["spectral_invalid_rows"] = quality["primary_reasons"][
+            "invalid_spectrum"
+        ]
 
     if not frames:
         raise HyLoggerError(f"pytsg found no spectral sections in {package_dir}")
@@ -125,8 +126,7 @@ def _prepare_processed(config: AppConfig, hole_id: str) -> dict[str, Any]:
             "automatic concatenation could double-count overlapping depths."
         )
     frame = pd.concat([pd.read_parquet(path) for path in paths], ignore_index=True)
-    frame = _clean_and_sort(frame)
-    frame, quality = apply_quality_policy(frame, QualityPolicy())
+    frame, quality = gate_readings(frame, depth_column="start_depth")
     sample_path = config.data_dir / "prepared" / "samples" / f"{hole_id}_processed.parquet"
     atomic_write_frame(frame, sample_path)
     features = _feature_row(hole_id, {"processed": frame})
@@ -208,6 +208,8 @@ def _section_frame(section: object, *, hole_id: str, region: str) -> pd.DataFram
     headers = section.sampleheaders.copy().reset_index(drop=True)
     headers.columns = unique_snake_columns(headers.columns)
     scalars = section.scalars.copy().reset_index(drop=True)
+    if len(headers) != len(scalars):
+        raise HyLoggerError("Sample headers and scalar rows differ")
     scalars.columns = unique_snake_columns(scalars.columns)
     overlap = set(headers.columns) & set(scalars.columns)
     if overlap:
@@ -291,8 +293,9 @@ def _feature_row(hole_id: str, frames: dict[str, pd.DataFrame]) -> dict[str, Any
 def _valid_categories(series: pd.Series) -> pd.Series:
     values = series.dropna().astype(str).str.strip().str.upper()
     invalid = values.str.replace(r"[^A-Z0-9]", "", regex=True).isin(
-        {"", "INVALID", "ASPECTRAL", "NOTAROK", "NOTAROCK", "NULL"}
+        {"", "INVALID", "ASPECTRAL", "NOTAROK", "NOTAROCK", "NULL", "NAN", "NONE"}
     )
+    invalid |= pd.to_numeric(values, errors="coerce").notna()
     # Match the output names before counting, so spelling/punctuation variants
     # cannot overwrite each other's proportions.
     return values[~invalid].str.lower().str.replace(r"[^a-z0-9]+", "_", regex=True).str.strip("_")

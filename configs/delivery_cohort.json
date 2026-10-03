@@ -1,0 +1,12 @@
+{
+  "name": "target-20",
+  "frozen_on": "2026-10-03",
+  "purpose": "Engineering evaluation with a regional transfer holdout; not independent geological validation",
+  "regions": {
+    "Kalgoorlie": ["KEDD002", "LD82625W1", "WKDD15001", "FDH002", "SPBD0364", "FDH007", "NBDH035"],
+    "Leonora / northern Goldfields": ["MWEX10270", "22USDH0207", "15RCDVZ001", "16CADD002", "13TRDD012", "13TRDD013", "RRLGDDD093"],
+    "Eastern Pilbara / Paterson": ["PND003", "PND005", "16MYD0047", "EPT2276", "16MYD0052", "PND004"]
+  },
+  "test_holes": ["PND003", "PND005", "16MYD0047", "EPT2276", "16MYD0052", "PND004"],
+  "split_reason": "Fit on the two Goldfields groups; report transfer to the entire third regional group. Do not retune after inspecting this holdout. These are broad regional labels, not lithological classes."
+}

@@ -1,4 +1,28 @@
-# HyLogger execution status — 2026-09-25
+# HyLogger execution status — 2026-10-03
+
+## Current local delivery
+
+Analytical overview is implemented and running at http://127.0.0.1:8000, with
+Compare, Map and Data & method. Shared QC, immutable response snapshots,
+QC-versioned/active interval products, correct query similarity and explicit
+model holdout are implemented. Target20 has 40 sensor products; the measured
+50-hole batch has 95 products and 30,579 interval rows. Five TIR sources are
+unavailable and 15 TIR inference rows are out of schema, explicitly reported.
+
+59 tests passed, including isolated database integration cases. Live API/CSV
+checks, real raw row/depth/median traces for two holes in both sensors, and a
+browser walkthrough passed. Source-level lint is checked for the new delivery
+modules; historical team scripts retain unrelated pre-existing lint issues.
+
+Raw18 acquisition, the 200-hole gate, independent scientific/human review,
+second-machine installation and hosted/client acceptance remain open. The
+two-hole spectral pilot has limited transfer coverage and is not promoted.
+See [current evidence](EVIDENCE_2026-10-03.md),
+[contribution decisions](CONTRIBUTION_REVIEW.md),
+[runbook](LOCAL_DELIVERY_RUNBOOK.md) and the compact
+[system guide](../SYSTEM_EXPLAINED.md).
+
+## Historical snapshot — 2026-09-25
 
 Base `origin/main` `1cd4ffc`; isolated branch `codex/hylogger-system` at
 `C:\Users\DCCN9\.codex\worktrees\hylogger-data-crunch-system`. Original `main`

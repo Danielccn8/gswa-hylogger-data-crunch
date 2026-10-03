@@ -13,7 +13,7 @@ To view an already loaded local demo, you need **Docker Desktop**. Run the
 commands below from the **repository root**. Python 3.11+ and the project venv
 are needed when acquiring or reprocessing data, not just to view the map.
 
-### Starting the map
+### Starting the analytical dashboard
 
 Start Docker Desktop, then in PowerShell:
 
@@ -24,14 +24,17 @@ docker compose -p hylogger_system -f platform/docker-compose.yml ps
 ```
 
 With no service name after `up`, Compose starts **both** services in this file:
-`db` (PostGIS on `127.0.0.1:5433`) and `api` (FastAPI plus the Leaflet page on
+`db` (PostGIS on `127.0.0.1:5433`) and `api` (FastAPI plus the analytical dashboard on
 `127.0.0.1:8000`). `-d` keeps them running in the background. `--build` builds
 the API image. The API waits until the database health check passes.
 
-Open <http://localhost:8000>. API docs are at <http://localhost:8000/docs>.
+Open <http://127.0.0.1:8000>. API docs are at <http://127.0.0.1:8000/docs>.
 The existing named database volume keeps previously loaded holes and intervals.
 The Compose command alone does not download or cluster new source data; use
-`docs/PIPELINE_GUIDE.md` for the separate ETL and model commands.
+`docs/delivery/LOCAL_DELIVERY_RUNBOOK.md` for acquisition, migration, ETL and
+verification commands. The selected20 dataset has both sensors; All prepared
+holes exposes the separate 50-hole capacity checkpoint. See
+`docs/SYSTEM_EXPLAINED.md` for the compact data/code/model explanation.
 
 ### Stopping
 
@@ -59,7 +62,8 @@ Expect `{"status":"ok","holes":1897}` for the current local snapshot. If
 | `failed to connect to the docker API` | Docker Desktop is not running | Start it, wait for it to settle |
 | `catalog.csv not found` | Catalog never fetched | Follow the acquisition steps in the root README |
 | `database unavailable` from `/api/health` | Database container is not healthy | Check `docker compose -p hylogger_system -f platform/docker-compose.yml ps` |
-| Page loads but no pins, no basemap | Leaflet and the tiles come from a CDN | Needs internet; the API itself works offline |
+| Map tiles unavailable | Basemap needs internet | Leaflet is bundled; coordinates, tables, profiles and comparison remain available |
+| Dashboard fails on an older database | Active-set migration/summaries missing | Apply migration 003 and run the delivery ETL; see the runbook |
 | Port 8000 already in use | Another server is running | Set `$env:HYLOGGER_API_PORT='8001'` before `up`; open port 8001 |
 
 ---
@@ -79,12 +83,13 @@ NVCL API + THREDDS  ──►  hylogger catalog refresh  ──►  data/catalog
                                      backend/main.py  (FastAPI, read-only)
                                                    │
                                                    ▼
-                                    frontend/index.html  (Leaflet)
+                         frontend/dashboard.html + app.js + app.css
+                            (Overview / Compare / Map / Method)
 ```
 
-**The rule this design exists to enforce:** the API only reads precomputed tables. It never runs
-a model and never calls GSWA. Every request is an indexed query — single-digit milliseconds — and
-a demo cannot fail because the venue wifi died.
+The API reads prepared products and summaries; it never trains a model or calls
+GSWA. Similarity computes distances from stored features. The local database
+must be running; loss of external map tiles does not prevent analytical use.
 
 ---
 
@@ -96,12 +101,18 @@ a demo cannot fail because the venue wifi died.
 | `db/schema.sql` | Tables, indexes, comments. Applied automatically on first start. |
 | `etl/load_holes.py` | Combined local catalog → `hole` table. Idempotent (upsert). Preserves holes absent from an incomplete snapshot; explicit `--prune` removes them after review. |
 | `backend/main.py` | FastAPI. GeoJSON endpoints + the map page. |
-| `frontend/index.html` | Leaflet map, marker clustering, filters. No build step. |
+| `frontend/dashboard.html`, `app.js`, `app.css` | Four connected analytical views; no frontend build step. |
+| `frontend/index.html` | Preserved historical map-first viewer. |
+| `db/migrations/003_active_interval_sets.sql` | Active source revisions and stored dashboard summaries. |
 
 ## Endpoints
 
 | Endpoint | Purpose |
 |---|---|
+| `GET /api/system/dashboard` | Prepared hole summaries, source coverage and active model card |
+| `GET /api/system/holes/{id}/intervals` | Paginated, version-specific depth profile |
+| `GET /api/system/holes/{id}/export.csv` | Same source/model and applied depth range |
+| `GET /api/system/intervals/{id}/similar` | Actual distance to the selected interval |
 | `GET /api/health` | Is the DB reachable, and how many holes are loaded |
 | `GET /api/stats` | Headline numbers for the UI |
 | `GET /api/filters` | Distinct values so the front-end hardcodes nothing |
@@ -130,7 +141,9 @@ These are measured facts about GSWA's data, not hypotheticals.
 - **The catalog spreadsheet and the live API disagree** — 1,951 vs 1,897 holes, with a few hundred
   unique to each. Unresolved; a question for GSWA.
 
-## What is not built yet
+## Remaining acceptance
 
-`hole_interval` and `hole_feature` exist in the schema but are empty. Filling them is Phase 1 and
-Phase 2 — see `Architectural Proposal` in the team's notes.
+Current interval products use `interval_product`, not the older `hole_interval`
+and `hole_feature` placeholders. Wider raw acquisition, the 200-hole checkpoint,
+independent geological review and second-machine/client acceptance remain open;
+see `docs/delivery/EVIDENCE_2026-10-03.md`.

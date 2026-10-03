@@ -25,6 +25,7 @@ import subprocess
 import re
 import pandas as pd
 import numpy as np
+from .preparation import gate_readings
 
 HOLE_IDS = [
     "KEDD002", "LD82625W1", "WKDD15001", "FDH002", "SPBD0364", "FDH007", "NBDH035",
@@ -197,17 +198,17 @@ def clean_tir_holes(holes: dict) -> dict:
             if pd.api.types.is_numeric_dtype(metadata[col]):
                 metadata[col] = metadata[col].where(metadata[col] > -1e38)
 
-        keep = (
-            np.isfinite(spectra).all(axis=1)
-            & (np.asarray(spectra) > -1e38).all(axis=1)
-            & pd.to_numeric(metadata["depth_m"], errors="coerce").notna().to_numpy()
-            & (pd.to_numeric(metadata["Final Mask"], errors="coerce").to_numpy() == 1)
+        paired = metadata.rename(columns={"Final Mask": "final_mask"}).copy()
+        paired["source_row"] = np.arange(len(paired))
+        accepted, qc = gate_readings(
+            paired, depth_column="depth_m", spectra=np.asarray(spectra), require_mask=True
         )
-        new_metadata = metadata.loc[keep].reset_index(drop=True)
-        new_spectra = spectra[keep]
+        indices = accepted.source_row.to_numpy()
+        new_metadata = metadata.iloc[indices].reset_index(drop=True)
+        new_spectra = spectra[indices]
 
         print(f"{hole_id}: {total_before} -> {len(new_metadata)} rows ({total_before - len(new_metadata)} masked/invalid dropped)")
-        cleaned[hole_id] = {**hole, "spectra": new_spectra, "metadata": new_metadata}
+        cleaned[hole_id] = {**hole, "spectra": new_spectra, "metadata": new_metadata, "qc": qc}
     return cleaned
 
 

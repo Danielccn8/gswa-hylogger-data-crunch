@@ -21,6 +21,7 @@ from psycopg.types.json import Jsonb
 
 ROOT = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(ROOT / "src"))
+from hylogger.dashboard import summarize_set  # noqa: E402
 from hylogger.interval_model import fit, infer  # noqa: E402
 from hylogger.system import REGIONS, interval_set, write_product  # noqa: E402
 
@@ -70,6 +71,18 @@ def load(conn: psycopg.Connection, table: pd.DataFrame, report: dict) -> None:
                     Jsonb(row["reason_counts"]),
                 ),
             )
+
+        cur.execute(
+            """INSERT INTO active_interval_set(hole_id,region,interval_set_id)
+            VALUES(%s,%s,%s) ON CONFLICT(hole_id,region) DO UPDATE SET
+            interval_set_id=EXCLUDED.interval_set_id,selected_at=now()""",
+            (report["hole_id"], report["region"], report["interval_set_id"]),
+        )
+        cur.execute(
+            """INSERT INTO interval_set_summary(interval_set_id,summary) VALUES(%s,%s)
+            ON CONFLICT(interval_set_id) DO UPDATE SET summary=EXCLUDED.summary""",
+            (report["interval_set_id"], Jsonb(summarize_set(table, report))),
+        )
 
 
 def load_model(conn: psycopg.Connection, card: dict, assignments: pd.DataFrame) -> None:
@@ -131,6 +144,7 @@ def run(
     width_m: float,
     mode: str = "train",
     model_ids: dict[str, str] | None = None,
+    test_holes: list[str] | None = None,
 ) -> dict:
     import psutil
 
@@ -155,11 +169,12 @@ def run(
         "completed": [],
         "failed": [],
     }
-    with psycopg.connect(database_url, autocommit=True) as conn:
+    with psycopg.connect(database_url, autocommit=True, connect_timeout=10) as conn:
         migration = (
             ROOT / "platform" / "db" / "migrations" / "002_interval_system.sql"
         ).read_text()
         conn.execute(migration)
+        conn.execute((ROOT / "platform/db/migrations/003_active_interval_sets.sql").read_text())
         for hole in holes:
             paths = sorted(
                 (data_dir / "downloads" / "processed" / hole).glob("*/scalar_logs.parquet")
@@ -202,7 +217,7 @@ def run(
             try:
                 table = pd.concat(parts, ignore_index=True)
                 if mode == "train":
-                    card = fit(table, output / "models" / region)
+                    card = fit(table, output / "models" / region, test_holes=test_holes)
                     assignments = pd.read_parquet(
                         output / "models" / region / card["model_id"] / "assignments.parquet"
                     )
@@ -216,10 +231,13 @@ def run(
                     valid = table.loc[table.n_admitted > 0].reset_index(drop=True)
                     if valid.empty:
                         continue
-                    assignments = infer(valid, model_dir)
+                    assignments = infer(valid, model_dir, flag_out_of_schema=True)
                     load_inference(conn, model_id, region, assignments)
                     summary.setdefault("models", {})[region] = model_id
                     summary.setdefault("inference_assignments", {})[region] = len(assignments)
+                    summary.setdefault("out_of_schema", {})[region] = int(
+                        assignments.status.eq("out_of_schema").sum()
+                    )
             except Exception as exc:
                 summary["failed"].append({"region": region, "stage": "model", "reason": str(exc)})
         summary["model_or_inference_elapsed_seconds"] = round(
@@ -237,7 +255,7 @@ def run(
     summary["output_bytes_total_at_end"] = sum(
         p.stat().st_size for p in output.rglob("*") if p.is_file()
     )
-    with psycopg.connect(database_url) as conn:
+    with psycopg.connect(database_url, connect_timeout=10) as conn:
         conn.execute(
             "INSERT INTO batch_run(batch_id,summary) VALUES(%s,%s)",
             (summary["batch_id"], Jsonb(summary)),
@@ -258,13 +276,19 @@ if __name__ == "__main__":
     parser.add_argument("--width-m", type=float, default=1.0)
     parser.add_argument("--mode", choices=("train", "infer", "etl-only"), default="train")
     parser.add_argument(
+        "--test-holes",
+        nargs="*",
+        default=None,
+        help="Freeze explicit whole-hole holdout IDs before model selection",
+    )
+    parser.add_argument(
         "--infer-model-swir", help="Frozen SWIR model ID; required for --mode infer"
     )
     parser.add_argument("--infer-model-tir", help="Frozen TIR model ID; required for --mode infer")
     parser.add_argument(
         "--database-url",
         default=os.environ.get(
-            "DATABASE_URL", "postgresql://hylogger:hylogger@localhost:5433/hylogger"
+            "DATABASE_URL", "postgresql://hylogger:hylogger@127.0.0.1:5433/hylogger"
         ),
     )
     args = parser.parse_args()
@@ -280,6 +304,7 @@ if __name__ == "__main__":
                 args.width_m,
                 args.mode,
                 {"swir": args.infer_model_swir, "tir": args.infer_model_tir},
+                args.test_holes,
             ),
             indent=2,
         )

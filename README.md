@@ -12,6 +12,14 @@ Search the catalog -> preview processed TSG logs -> select holes
 
 ## Connected local system pilot
 
+**Current local delivery (3 October 2026):** the application opens with an
+analytical dashboard, then Compare, Map and Data & method. The selected20
+processed cohort is complete in both sensors; a separate 50-hole checkpoint
+has 95 sensor products. Start with [System explained](docs/SYSTEM_EXPLAINED.md),
+[measured evidence](docs/delivery/EVIDENCE_2026-10-03.md) and the
+[local runbook](docs/delivery/LOCAL_DELIVERY_RUNBOOK.md). Scientific/client
+acceptance and broader raw coverage remain open.
+
 The reproducible ETL → PostGIS → clustering → API → map/profile pilot is
 documented in [Pipeline guide](docs/PIPELINE_GUIDE.md),
 [Modeling guide](docs/MODELING_GUIDE.md), [English user guide](docs/USER_GUIDE.md)

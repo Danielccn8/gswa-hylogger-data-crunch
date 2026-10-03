@@ -23,7 +23,8 @@ def test_interval_qc_preserves_repeated_depth_and_reconciles(tmp_path):
         "admitted": 3,
         "invalid_depth": 1,
         "unknown_mask": 1,
-        "non_rock": 0,
+        "masked": 0,
+        "unknown_class": 0,
         "nondiagnostic": 1,
     }
     assert table.loc[table.depth_from_m == 1, "n_admitted"].iloc[0] == 2
@@ -52,6 +53,11 @@ def test_inference_rejects_unseen_group(tmp_path):
     novel = pd.DataFrame([{**rows[0], "features": {"NEW": 1.0}}])
     with pytest.raises(ValueError, match="Unseen feature"):
         infer(novel, model_dir)
+    before = (model_dir / "model.joblib").read_bytes()
+    mixed = pd.DataFrame([rows[0], {**rows[1], "features": {"NEW": 1.0}}])
+    flagged = infer(mixed, model_dir, flag_out_of_schema=True)
+    assert flagged.status.tolist() == ["assigned", "out_of_schema"]
+    assert (model_dir / "model.joblib").read_bytes() == before
 
 
 def test_feature_matrix_survives_parquet_sparse_struct_roundtrip(tmp_path):

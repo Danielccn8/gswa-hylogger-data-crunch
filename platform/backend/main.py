@@ -18,6 +18,7 @@ milliseconds and demos safe when the venue wifi dies.
 import csv
 import io
 import json
+import math
 import os
 from contextlib import contextmanager
 from pathlib import Path
@@ -29,12 +30,14 @@ from fastapi.staticfiles import StaticFiles
 from psycopg.rows import dict_row
 
 DATABASE_URL = os.environ.get(
-    "DATABASE_URL", "postgresql://hylogger:hylogger@localhost:5433/hylogger"
+    "DATABASE_URL", "postgresql://hylogger:hylogger@127.0.0.1:5433/hylogger"
 )
 
 FRONTEND = Path(__file__).resolve().parent.parent / "frontend"
 SPECTRAL_PILOT_DIR = Path(os.environ.get("SPECTRAL_PILOT_DIR", "data/system/spectral"))
 COMPARISON_DIR = Path(os.environ.get("COMPARISON_DIR", "data/system/comparisons"))
+COHORT = json.loads((FRONTEND.parents[1] / "configs/delivery_cohort.json").read_text())
+TARGET_HOLES = [hole for holes in COHORT["regions"].values() for hole in holes]
 
 app = FastAPI(
     title="GSWA HyLogger Platform",
@@ -45,7 +48,7 @@ app = FastAPI(
 
 @contextmanager
 def db():
-    with psycopg.connect(DATABASE_URL, row_factory=dict_row) as conn:
+    with psycopg.connect(DATABASE_URL, row_factory=dict_row, connect_timeout=10) as conn:
         yield conn
 
 
@@ -180,7 +183,7 @@ def holes(
             FROM hole h
             LEFT JOIN (
                 SELECT hole_id, array_agg(DISTINCT region) AS regions
-                FROM interval_product GROUP BY hole_id
+                FROM active_interval_set GROUP BY hole_id
             ) c ON c.hole_id=h.hole_id
             WHERE {" AND ".join(where)}
             ORDER BY hole_id
@@ -242,10 +245,84 @@ def _current_model(cur, region: str, requested: str | None) -> str | None:
 @app.get("/api/system/coverage")
 def system_coverage():
     with db() as conn, conn.cursor() as cur:
-        cur.execute("""SELECT hole_id, region, count(*) AS intervals,
+        cur.execute("""SELECT i.hole_id, i.region, count(*) AS intervals,
                    sum(n_total) AS readings, sum(n_admitted) AS admitted
-                   FROM interval_product GROUP BY hole_id,region ORDER BY hole_id,region""")
+                   FROM interval_product i JOIN active_interval_set s USING(interval_set_id)
+                   GROUP BY i.hole_id,i.region ORDER BY i.hole_id,i.region""")
         return cur.fetchall()
+
+
+@app.get("/api/system/dashboard")
+def dashboard(
+    region: str = Query("swir", pattern="^(swir|tir)$"),
+    cohort: str = Query("target-20", pattern="^(target-20|available)$"),
+):
+    """Read precomputed hole summaries from exactly one active source revision."""
+    with db() as conn, conn.cursor() as cur:
+        cur.execute(
+            """SELECT s.hole_id, q.summary, h.project,h.lat,h.lon
+            FROM active_interval_set s JOIN interval_set_summary q USING(interval_set_id)
+            LEFT JOIN hole h ON h.hole_id=s.hole_id
+            WHERE s.region=%s AND (%s::text[] IS NULL OR s.hole_id=ANY(%s))
+            ORDER BY s.hole_id""",
+            (
+                region,
+                TARGET_HOLES if cohort == "target-20" else None,
+                TARGET_HOLES if cohort == "target-20" else None,
+            ),
+        )
+        rows = [
+            {
+                **r["summary"],
+                "project": r["project"],
+                "lat": r["lat"],
+                "lon": r["lon"],
+                "study_region": next(
+                    (k for k, v in COHORT["regions"].items() if r["hole_id"] in v), "Other"
+                ),
+            }
+            for r in cur.fetchall()
+        ]
+        selected = _current_model(cur, region, None)
+        cur.execute("SELECT card FROM model_run WHERE model_id=%s", (selected,))
+        model = cur.fetchone()
+        cur.execute("SELECT DISTINCT hole_id FROM active_interval_set ORDER BY hole_id")
+        requested = (
+            TARGET_HOLES if cohort == "target-20" else [r["hole_id"] for r in cur.fetchall()]
+        )
+        cur.execute("SELECT summary FROM batch_run ORDER BY recorded_at DESC LIMIT 1")
+        latest = cur.fetchone()
+    return {
+        "region": region,
+        "cohort": cohort,
+        "requested_holes": requested,
+        "missing_holes": sorted(set(requested) - {r["hole_id"] for r in rows}),
+        "holes": rows,
+        "model_id": selected,
+        "model_card": model["card"] if model else None,
+        "source": "processed TSG",
+        "row_unit": "one hole summary",
+        "meaning": "Interpretation frequency, not mineral mass percentage",
+        "latest_batch": latest["summary"] if latest else None,
+    }
+
+
+def _interval_set(cur, hole_id: str, region: str, requested: str | None) -> str | None:
+    if requested:
+        cur.execute(
+            "SELECT interval_set_id FROM etl_run "
+            "WHERE interval_set_id=%s AND hole_id=%s AND region=%s",
+            (requested, hole_id, region),
+        )
+    else:
+        cur.execute(
+            "SELECT interval_set_id FROM active_interval_set WHERE hole_id=%s AND region=%s",
+            (hole_id, region),
+        )
+    row = cur.fetchone()
+    if requested and row is None:
+        raise HTTPException(404, "interval revision unavailable for this hole and sensor")
+    return row["interval_set_id"] if row else None
 
 
 @app.get("/api/system/models")
@@ -326,22 +403,49 @@ def system_intervals(
     from_m: float | None = None,
     to_m: float | None = None,
     limit: int = Query(2000, ge=1, le=10000),
+    interval_set_id: str | None = None,
+    offset: int = Query(0, ge=0),
 ):
+    if any(
+        value is not None and (not math.isfinite(value) or value < 0) for value in (from_m, to_m)
+    ):
+        raise HTTPException(422, "Depth limits must be finite and non-negative")
+    if from_m is not None and to_m is not None and from_m >= to_m:
+        raise HTTPException(422, "from_m must be below to_m")
     with db() as conn, conn.cursor() as cur:
         selected = _current_model(cur, region, model_id)
+        selected_set = _interval_set(cur, hole_id, region, interval_set_id)
         cur.execute(
             """SELECT i.*,a.cluster_id,a.distance,a.status AS assignment_status,
                    e.qc->>'mask_status' AS mask_status
                    FROM interval_product i JOIN etl_run e USING(interval_set_id)
                    LEFT JOIN interval_assignment a ON a.interval_id=i.interval_id AND a.model_id=%s
-                   WHERE i.hole_id=%s AND i.region=%s
+                   WHERE i.hole_id=%s AND i.region=%s AND i.interval_set_id=%s
                      AND (%s::float8 IS NULL OR i.depth_to_m>%s)
                      AND (%s::float8 IS NULL OR i.depth_from_m<%s)
-                   ORDER BY i.depth_from_m LIMIT %s""",
-            (selected, hole_id, region, from_m, from_m, to_m, to_m, limit),
+                   ORDER BY i.depth_from_m,i.interval_id LIMIT %s OFFSET %s""",
+            (
+                selected,
+                hole_id,
+                region,
+                selected_set,
+                from_m,
+                from_m,
+                to_m,
+                to_m,
+                limit + 1,
+                offset,
+            ),
         )
         rows = cur.fetchall()
-        return {"hole_id": hole_id, "region": region, "model_id": selected, "intervals": rows}
+        return {
+            "hole_id": hole_id,
+            "region": region,
+            "model_id": selected,
+            "interval_set_id": selected_set,
+            "intervals": rows[:limit],
+            "next_offset": offset + limit if len(rows) > limit else None,
+        }
 
 
 @app.get("/api/system/intervals/{interval_id}")
@@ -370,39 +474,58 @@ def system_interval(interval_id: str, model_id: str | None = None):
 def system_similar(
     interval_id: str, model_id: str | None = None, limit: int = Query(10, ge=1, le=100)
 ):
-    # Bounded same-cluster distance ranking, labelled as a ranking rather than probability.
     with db() as conn, conn.cursor() as cur:
-        cur.execute("SELECT region FROM interval_product WHERE interval_id=%s", (interval_id,))
+        cur.execute(
+            "SELECT region,features FROM interval_product WHERE interval_id=%s", (interval_id,)
+        )
         source = cur.fetchone()
         if source is None:
             raise HTTPException(404, "interval unavailable")
         selected = _current_model(cur, source["region"], model_id)
+        cur.execute("SELECT card FROM model_run WHERE model_id=%s", (selected,))
+        model = cur.fetchone()
+        if model is None:
+            return {"model_id": None, "method": "No active model", "items": []}
+        columns = model["card"]["feature_schema"]
+        if not source["features"] or set(source["features"]) - set(columns):
+            return {"model_id": selected, "method": "No compatible source features", "items": []}
         cur.execute(
             """SELECT i.interval_id,i.hole_id,i.region,i.depth_from_m,i.depth_to_m,
-                   a.model_id,a.cluster_id,a.distance
+                   a.model_id,a.cluster_id,i.features
                    FROM interval_assignment a JOIN interval_product i USING(interval_id)
-                   WHERE a.model_id=%s
-                      AND a.cluster_id=(SELECT cluster_id FROM interval_assignment
-                                        WHERE interval_id=%s AND model_id=%s)
-                     AND i.interval_id<>%s ORDER BY a.distance LIMIT %s""",
-            (selected, interval_id, selected, interval_id, limit),
+                   JOIN active_interval_set s USING(interval_set_id)
+                   WHERE a.model_id=%s AND a.status='assigned' AND i.interval_id<>%s""",
+            (selected, interval_id),
         )
+        items = cur.fetchall()
+        for item in items:
+            features = item.pop("features")
+            item["distance"] = math.sqrt(
+                sum(
+                    (math.sqrt(source["features"].get(c) or 0) - math.sqrt(features.get(c) or 0))
+                    ** 2
+                    for c in columns
+                )
+            )
         return {
             "model_id": selected,
-            "method": "same cluster, ranked by distance to centroid",
-            "items": cur.fetchall(),
+            "method": "Square-root frequency distance to the selected interval (active sources)",
+            "items": sorted(items, key=lambda r: (r["distance"], r["interval_id"]))[:limit],
         }
 
 
 @app.get("/api/system/holes/{hole_id}/export.csv")
 def system_export(
     hole_id: str,
-    region: str = "swir",
+    region: str = Query("swir", pattern="^(swir|tir)$"),
     model_id: str | None = None,
     from_m: float | None = None,
     to_m: float | None = None,
+    interval_set_id: str | None = None,
 ):
-    result = system_intervals(hole_id, region, model_id, from_m, to_m, 10000)
+    result = system_intervals(hole_id, region, model_id, from_m, to_m, 10000, interval_set_id, 0)
+    if result["next_offset"] is not None:
+        raise HTTPException(422, "Export exceeds 10,000 intervals; narrow the depth range")
     buffer = io.StringIO()
     columns = [
         "interval_id",
@@ -451,4 +574,4 @@ if FRONTEND.exists():
 
     @app.get("/")
     def index():
-        return FileResponse(FRONTEND / "index.html")
+        return FileResponse(FRONTEND / "dashboard.html")

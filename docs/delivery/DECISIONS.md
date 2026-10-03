@@ -1,5 +1,20 @@
 # Decision log
 
+## 3 October delivery decisions
+
+| Decision | Reason and consequence |
+|---|---|
+| Adopt Analytical overview and retain a separate map | User selected this direction; the default screen explains patterns and support. Four views share dataset, sensor and visible holes. |
+| Use the shared `reading-contract-v2` gate | Raw and processed meanings differ; share identity/QC, not a forced feature representation. Raw primary analysis rejects absent masks, processed analysis labels the limitation. |
+| Snapshot API responses and protect broader selected logs | Avoid losing source history when a narrow profile is fetched. No positional joins across responses. |
+| Select exactly one active interval set | Prevent counts/profile/export from pooling revisions. Keep historical products accessible by ID. |
+| Freeze 14 development / 6 regional-holdout holes | Avoid random neighbouring-row leakage; test transfer to a whole regional group. This remains an engineering split. |
+| Balance K-Means training by hole | Long holes should not automatically dominate fitted centres. Silhouette remains interval-weighted and is labelled accordingly. |
+| Preserve frozen models at the 50-hole gate | Report incompatible TIR features (15 rows) without refitting on the expanded cohort. |
+| Keep the raw spectral result as a separate pilot | Large NIR training-distance exceedance indicates limited coverage. More raw data and preprocessing evaluation are required before promotion. |
+
+## Earlier decisions (historical)
+
 | Issue | Options and evidence | Choice | Consequence |
 |---|---|---|---|
 | Base and isolation | Local `main` is clean but three commits behind; `origin/main` contains Jovan TIR and SWIR scripts. | Worktree from `origin/main` `1cd4ffc`. | Existing team work retained; no remote mutation. |

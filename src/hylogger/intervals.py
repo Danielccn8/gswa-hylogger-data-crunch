@@ -30,7 +30,8 @@ import pandas as pd
 
 from .config import AppConfig
 from .errors import HyLoggerError
-from .quality import QualityPolicy, apply_quality_policy
+from .preparation import gate_readings, wavelength_grid
+from .quality import QualityPolicy
 from .raw import find_package_dir
 from .util import unique_snake_columns
 
@@ -145,7 +146,7 @@ def build_intervals(
     """Read one hole and aggregate its readings into depth intervals."""
     if region not in REGIONS:
         raise HyLoggerError(f"region must be one of {', '.join(REGIONS)}.")
-    if interval_m <= 0:
+    if not np.isfinite(interval_m) or interval_m <= 0 or min_readings < 1:
         raise HyLoggerError("interval_m must be positive.")
     hole_id = hole_id.upper()
     policy = policy or QualityPolicy()
@@ -165,40 +166,15 @@ def build_intervals(
         raise HyLoggerError(f"{hole_id} has no {region.upper()} section.")
 
     wavelengths = np.asarray(section.wavelength, dtype=np.float64)
-    spectra = np.asarray(section.spectra, dtype=np.float64)
+    spectra = np.asarray(section.spectra)
     frame = _reading_frame(section, hole_id)
     if len(frame) != len(spectra):
         raise HyLoggerError("Metadata and spectra row counts differ.")
-    if (
-        len(wavelengths) != spectra.shape[1]
-        or not np.isfinite(wavelengths).all()
-        or not np.all(np.diff(wavelengths) > 0)
-    ):
-        raise HyLoggerError("Wavelength grid must match spectra and be finite and increasing.")
-    qc: dict[str, Any] = {"readings_in": len(frame)}
-
-    # Gate readings: sentinels, non-finite spectra, then the quality policy.
-    spectra = np.where(spectra < -1e38, np.nan, spectra)
-    finite = np.isfinite(spectra).all(axis=1)
-    depth_valid = frame["depth_m"].notna().to_numpy()
-    mask_column = next((c for c in ("final_mask", "finalmask", "mask") if c in frame), None)
-    mask_values = pd.to_numeric(frame[mask_column], errors="coerce") if mask_column else None
-    reasons = np.full(len(frame), "admitted", dtype=object)
-    reasons[~depth_valid] = "invalid_depth"
-    reasons[depth_valid & ~finite] = "invalid_spectrum"
-    if mask_values is not None:
-        candidate = depth_valid & finite
-        reasons[candidate & mask_values.isna().to_numpy()] = "unknown_mask"
-        reasons[candidate & mask_values.notna().to_numpy() & mask_values.ne(1).to_numpy()] = (
-            "non_rock"
-        )
-    qc["primary_reasons"] = {
-        str(k): int(v) for k, v in zip(*np.unique(reasons, return_counts=True), strict=True)
-    }
-    qc["mask_status"] = "available" if mask_column else "unavailable"
-    frame = frame.loc[reasons == "admitted"]
-    qc["readings_dropped_non_finite"] = int((~finite).sum())
-    frame, qc["quality_policy"] = apply_quality_policy(frame, policy)
+    wavelength_grid(spectra, wavelengths)
+    frame, qc = gate_readings(
+        frame, depth_column="depth_m", spectra=spectra, policy=policy, require_mask=True
+    )
+    qc["readings_in"] = qc["rows_received"]
     qc["duplicate_depth_readings"] = int(frame["depth_m"].duplicated(keep=False).sum())
     qc["duplicate_readings_dropped"] = 0
     if frame.empty:
@@ -207,6 +183,8 @@ def build_intervals(
     if band_range is not None:
         low, high = band_range
         keep_bands = (wavelengths >= low) & (wavelengths <= high)
+        if not keep_bands.any() or not np.isfinite([low, high]).all() or low >= high:
+            raise HyLoggerError("Requested band range has no valid wavelength support")
         wavelengths = wavelengths[keep_bands]
         spectra = spectra[:, keep_bands]
     qc["bands"] = int(len(wavelengths))
@@ -220,6 +198,7 @@ def build_intervals(
     valid_bins = counts[counts >= min_readings].index
     frame = frame[frame["_bin"].isin(valid_bins)]
     qc["intervals_dropped_sparse"] = int((counts < min_readings).sum())
+    qc["readings_dropped_sparse"] = int(counts[counts < min_readings].sum())
     if frame.empty:
         raise HyLoggerError(f"No interval in {hole_id} has {min_readings} usable readings.")
 
@@ -280,6 +259,8 @@ def _reading_frame(section: object, hole_id: str) -> pd.DataFrame:
     headers = section.sampleheaders.copy().reset_index(drop=True)
     headers.columns = unique_snake_columns(headers.columns)
     scalars = section.scalars.copy().reset_index(drop=True)
+    if len(headers) != len(scalars):
+        raise HyLoggerError("Sample headers and scalar rows differ")
     scalars.columns = unique_snake_columns(scalars.columns)
     scalars = scalars.rename(
         columns={
@@ -324,7 +305,12 @@ def _summarise_interval(
             if column not in group:
                 continue
             values = group[column].dropna().astype(str).str.strip()
-            values = values[~values.str.upper().isin({"", "INVALID", "NULL"})]
+            values = values[
+                ~values.str.upper().isin(
+                    {"", "INVALID", "NULL", "ASPECTRAL", "NOTAROK", "NOTAROCK"}
+                )
+                & pd.to_numeric(values, errors="coerce").isna()
+            ]
             if values.empty:
                 row[column] = None
                 row[f"{column}_purity"] = np.nan

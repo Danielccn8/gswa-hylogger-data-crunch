@@ -16,6 +16,7 @@ services:
       # Anything in this folder runs automatically the first time the DB is created
       - ./db/schema.sql:/docker-entrypoint-initdb.d/01_schema.sql:ro
       - ./db/migrations/002_interval_system.sql:/docker-entrypoint-initdb.d/02_interval_system.sql:ro
+      - ./db/migrations/003_active_interval_sets.sql:/docker-entrypoint-initdb.d/03_active_interval_sets.sql:ro
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U hylogger -d hylogger"]
       interval: 5s
@@ -31,7 +32,7 @@ services:
       SPECTRAL_PILOT_DIR: /app/spectral
       COMPARISON_DIR: /app/comparisons
     volumes:
-      - ../data/system/spectral:/app/spectral:ro
+      - ../data/delivery-20261003/spectral:/app/spectral:ro
       - ../data/system/comparisons:/app/comparisons:ro
     ports:
       - "127.0.0.1:${HYLOGGER_API_PORT:-8000}:8000"

@@ -26,24 +26,42 @@ def matrix(table: pd.DataFrame, columns: list[str]) -> np.ndarray:
 
 
 def fit(
-    table: pd.DataFrame, output: Path, *, k_values: tuple[int, ...] = (2, 3, 4), seed: int = 42
+    table: pd.DataFrame,
+    output: Path,
+    *,
+    k_values: tuple[int, ...] = (2, 3, 4),
+    seed: int = 42,
+    test_holes: list[str] | None = None,
 ) -> dict:
     """Tune only on development holes; a third hole is needed for a real holdout."""
     valid = table[table.n_admitted > 0].copy().reset_index(drop=True)
     holes = sorted(valid.hole_id.unique())
     if len(holes) < 2:
         raise ValueError("At least two holes are needed for cross-hole evaluation")
-    test_hole = holes[-1] if len(holes) >= 3 else None
-    train = valid[valid.hole_id != test_hole] if test_hole else valid
+    if table.region.nunique() != 1:
+        raise ValueError("Fit one sensor region at a time")
+    tests = (
+        sorted(set(test_holes)) if test_holes is not None else holes[-1:] if len(holes) >= 3 else []
+    )
+    if set(tests) - set(holes):
+        raise ValueError(
+            f"Requested holdout holes lack diagnostic data: {sorted(set(tests) - set(holes))}"
+        )
+    train = valid[~valid.hole_id.isin(tests)]
+    if train.hole_id.nunique() < 2:
+        raise ValueError("At least two development holes must remain outside the holdout")
+    test_hole = tests[0] if len(tests) == 1 else None
     columns = sorted(set().union(*(item.keys() for item in train.features)))
     if not columns:
         raise ValueError("No diagnostic groups in training population")
     x = np.sqrt(matrix(train, columns))  # Hellinger geometry for proportions
+    weights = train.hole_id.map(1 / train.hole_id.value_counts()).to_numpy()
+    weights = weights * (len(weights) / weights.sum())
     candidates = []
     for k in k_values:
         if k < 2 or k >= len(x):
             continue
-        model = KMeans(n_clusters=k, random_state=seed, n_init=10).fit(x)
+        model = KMeans(n_clusters=k, random_state=seed, n_init=10).fit(x, sample_weight=weights)
         if len(set(model.labels_)) < 2:
             continue
         sample = min(len(x), 2000)
@@ -52,21 +70,29 @@ def fit(
     if not candidates:
         raise ValueError("Too few distinct intervals for k comparison")
     chosen = max(candidates, key=lambda row: row["development_silhouette"])
-    model = KMeans(n_clusters=chosen["k"], random_state=seed, n_init=10).fit(x)
+    model = KMeans(n_clusters=chosen["k"], random_state=seed, n_init=10).fit(
+        x, sample_weight=weights
+    )
     sample = min(len(x), 2000)
     direct = matrix(train, columns)
-    direct_model = KMeans(n_clusters=chosen["k"], random_state=seed, n_init=10).fit(direct)
+    direct_model = KMeans(n_clusters=chosen["k"], random_state=seed, n_init=10).fit(
+        direct, sample_weight=weights
+    )
     direct_score = float(
         silhouette_score(direct, direct_model.labels_, sample_size=sample, random_state=seed)
     )
-    pca = PCA(n_components=min(4, x.shape[1]), random_state=seed).fit(x)
+    pca = PCA(n_components=min(4, x.shape[1], len(x)), random_state=seed).fit(x)
     xp = pca.transform(x)
-    pca_model = KMeans(n_clusters=chosen["k"], random_state=seed, n_init=10).fit(xp)
+    pca_model = KMeans(n_clusters=chosen["k"], random_state=seed, n_init=10).fit(
+        xp, sample_weight=weights
+    )
     pca_score = float(
         silhouette_score(xp, pca_model.labels_, sample_size=sample, random_state=seed)
     )
     seed_labels = [
-        KMeans(n_clusters=chosen["k"], random_state=s, n_init=10).fit_predict(x)
+        KMeans(n_clusters=chosen["k"], random_state=s, n_init=10)
+        .fit(x, sample_weight=weights)
+        .labels_
         for s in (seed, seed + 1, seed + 2)
     ]
     seed_ari = float(
@@ -83,7 +109,8 @@ def fit(
             + json.dumps(chosen, sort_keys=True)
             + json.dumps(columns)
             + json.dumps(dependencies, sort_keys=True)
-            + ":runner-v4"
+            + json.dumps({"test_holes": tests, "seed": seed, "k_values": k_values})
+            + ":runner-v5-balanced-holes"
         ).encode()
     ).hexdigest()[:20]
     output = output / run_hash
@@ -106,7 +133,7 @@ def fit(
         )
         assignments = pd.concat([assignments, rejected], ignore_index=True)
     assignments.to_parquet(output / "assignments.parquet", index=False)
-    heldout = valid[valid.hole_id == test_hole] if test_hole else valid.iloc[:0]
+    heldout = valid[valid.hole_id.isin(tests)]
     heldout_assigned = heldout[
         heldout.interval_id.isin(assignments.loc[assignments.status == "assigned", "interval_id"])
     ]
@@ -142,6 +169,17 @@ def fit(
         "feature_schema": columns,
         "development_holes": sorted(train.hole_id.unique().tolist()),
         "test_hole": test_hole,
+        "test_holes": tests,
+        "split": "explicit whole-hole holdout"
+        if test_holes is not None
+        else "legacy alphabetical engineering split",
+        "training_weighting": "equal total weight per development hole",
+        "holdout_intervals": len(heldout),
+        "holdout_assigned": len(heldout_assigned),
+        "score_note": (
+            "Silhouette is interval-weighted within its representation; "
+            "do not compare geometries as geological accuracy"
+        ),
         "candidate_scores": candidates,
         "selected_k": chosen["k"],
         "direct_frequency_development_silhouette_same_k": direct_score,
@@ -164,7 +202,9 @@ def fit(
     return card
 
 
-def infer(table: pd.DataFrame, model_dir: Path) -> pd.DataFrame:
+def infer(
+    table: pd.DataFrame, model_dir: Path, *, flag_out_of_schema: bool = False
+) -> pd.DataFrame:
     """Assign using frozen schema and centroids. Retraining creates another model ID."""
     card_path = model_dir / "model_card.json"
     if card_path.exists():
@@ -180,10 +220,32 @@ def infer(table: pd.DataFrame, model_dir: Path) -> pd.DataFrame:
     if table.region.nunique() != 1 or table.region.iloc[0] != bundle["region"]:
         raise ValueError("Spectral region differs from frozen model")
     columns = bundle["columns"]
-    unknown = set().union(*(item.keys() for item in table.features)) - set(columns)
+    observed = table.features.map(
+        lambda item: {k for k, v in item.items() if v is not None and v != 0}
+    )
+    unknown = set().union(*observed) - set(columns)
     if unknown:
-        raise ValueError(f"Unseen feature groups require review: {sorted(unknown)}")
+        if not flag_out_of_schema:
+            raise ValueError(f"Unseen feature groups require review: {sorted(unknown)}")
+        compatible = observed.map(lambda keys: keys.issubset(columns))
+        rejected = pd.DataFrame(
+            {
+                "interval_id": table.loc[~compatible, "interval_id"].tolist(),
+                "model_id": model_dir.name,
+                "cluster_id": None,
+                "distance": None,
+                "status": "out_of_schema",
+            }
+        )
+        accepted = (
+            infer(table.loc[compatible].reset_index(drop=True), model_dir)
+            if compatible.any()
+            else rejected.iloc[:0]
+        )
+        return pd.concat([accepted, rejected], ignore_index=True)
     x = np.sqrt(matrix(table, columns))
+    if not np.isfinite(x).all() or not np.allclose((x * x).sum(axis=1), 1, atol=1e-5):
+        raise ValueError("Model input frequencies must be finite, non-negative and sum to one")
     model = bundle["model"]
     labels = model.predict(x)
     distances = model.transform(x)[np.arange(len(x)), labels]
