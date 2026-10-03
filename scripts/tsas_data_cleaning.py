@@ -16,6 +16,8 @@ The script performs thirteen preparation steps in order:
     copies contain useful TSAS results.
 12. Check repeated depths and whether their mineral results differ.
 13. Check for jumps in the depth sequence that may represent missing samples.
+14. Sort every reading by exactly how the two interpretations agree, and export
+    the disagreements with the question each one poses for assay or geology.
 
 Each step writes to a new folder. The extracted source files are never changed,
 and no drill-hole rows are removed during these steps.
@@ -1463,6 +1465,153 @@ def check_depth_gaps(
     }
 
 
+def classify_agreement(
+    hole_id: str,
+    cleaned_file: Path,
+    detail_writer: csv.DictWriter,
+    interval_metres: float = 1.0,
+) -> tuple[dict[str, object], list[dict[str, object]]]:
+    """Sort every reading by exactly how the two interpretations agree.
+
+    Steps 5 to 8 each answer one question: do they agree on the primary mineral,
+    on the whole mineral set, on the primary group, on the whole group set. A
+    reading can pass one and fail another, and which combination it falls into
+    decides what kind of outside evidence could settle it.
+
+    Four tests are applied to every reading, and the combination becomes one
+    class:
+
+    * ``min1``  - both name the same primary mineral
+    * ``grp1``  - both put that primary mineral in the same family
+    * ``mset``  - both find the same set of minerals across the three slots
+    * ``gset``  - both find the same set of families
+
+    The classes are ordered from complete agreement to genuine conflict, and are
+    mutually exclusive, so their counts add up to the number of readings. The
+    ones that matter for later work are ``primary_differs_same_family``, which an
+    assay can often settle on chemistry alone, and ``primary_differs_other_family``,
+    where the two readings describe different rock and only logged geology can
+    decide.
+
+    Two outputs are produced. The per-hole summary counts every class. The detail
+    file carries one row per disagreeing reading, with both minerals, both
+    families, the depth and the interval it falls in, so it can be joined to
+    assay or lithology without going back to the source files.
+
+    The cleaned file is read only.
+    """
+
+    counts: Counter[str] = Counter()
+    interval_rows: Counter[tuple[int, str]] = Counter()
+
+    for chunk in pd.read_csv(
+        cleaned_file,
+        chunksize=100_000,
+        dtype="string",
+        keep_default_na=False,
+        na_filter=False,
+    ):
+        text = chunk.apply(lambda column: column.str.strip())
+
+        def slots(prefix: str, family: str) -> list[pd.Series]:
+            return [text[f"{prefix}{position}_{family}"] for position in (1, 2, 3)]
+
+        s_min, u_min = slots("min", "s_tsas"), slots("min", "u_tsas")
+        s_grp, u_grp = slots("grp", "s_tsas"), slots("grp", "u_tsas")
+
+        # Sets ignore ranking and blank slots, so they answer "the same minerals?"
+        # rather than "the same minerals in the same order?".
+        def as_set(columns: list[pd.Series]) -> pd.Series:
+            frame = pd.concat([c.str.upper() for c in columns], axis=1)
+            return frame.apply(
+                lambda row: frozenset(v for v in row if v), axis=1
+            )
+
+        s_minset, u_minset = as_set(s_min), as_set(u_min)
+        s_grpset, u_grpset = as_set(s_grp), as_set(u_grp)
+
+        s_has, u_has = s_min[0].ne(""), u_min[0].ne("")
+        min1 = s_min[0].str.upper().eq(u_min[0].str.upper())
+        grp1 = s_grp[0].str.upper().eq(u_grp[0].str.upper())
+        mset = s_minset.eq(u_minset)
+        gset = s_grpset.eq(u_grpset)
+
+        # First matching rule wins, so the classes cannot overlap.
+        label = pd.Series("", index=chunk.index, dtype="object")
+        rules = [
+            (~s_has & ~u_has, "neither_found_a_mineral"),
+            (s_has & ~u_has, "only_stsas_found_a_mineral"),
+            (~s_has & u_has, "only_utsas_found_a_mineral"),
+            (min1 & mset & gset, "identical"),
+            (min1 & ~mset & gset, "primary_same_mixture_differs_same_families"),
+            (min1 & ~mset & ~gset, "primary_same_mixture_differs_other_families"),
+            (min1 & mset & ~gset, "primary_same_same_minerals_family_clash"),
+            (~min1 & grp1, "primary_differs_same_family"),
+            (~min1 & ~grp1, "primary_differs_other_family"),
+        ]
+        for mask, name in rules:
+            label = label.mask(label.eq("") & mask, name)
+        counts.update(label.value_counts().to_dict())
+
+        # Roll the disagreements up to the interval an assay would report on.
+        depth = pd.to_numeric(chunk["start_depth"], errors="coerce")
+        interval = np.floor(depth / interval_metres).astype("Int64")
+        disagrees = label.isin(
+            ["primary_differs_same_family", "primary_differs_other_family"]
+        )
+        for index in chunk.index[disagrees]:
+            detail_writer.writerow({
+                "hole_id": hole_id,
+                "start_depth": chunk.at[index, "start_depth"],
+                "interval_start": int(interval.at[index]) * interval_metres,
+                "agreement_class": label.at[index],
+                "min1_s_tsas": chunk.at[index, "min1_s_tsas"],
+                "grp1_s_tsas": chunk.at[index, "grp1_s_tsas"],
+                "wt1_s_tsas": chunk.at[index, "wt1_s_tsas"],
+                "min1_u_tsas": chunk.at[index, "min1_u_tsas"],
+                "grp1_u_tsas": chunk.at[index, "grp1_u_tsas"],
+                "wt1_u_tsas": chunk.at[index, "wt1_u_tsas"],
+                "same_family": label.at[index] == "primary_differs_same_family",
+            })
+        for index in chunk.index:
+            interval_rows[(int(interval.at[index]), label.at[index])] += 1
+
+    class_names = [name for _, name in rules]
+    total = sum(counts.values())
+    summary: dict[str, object] = {
+        "hole_id": hole_id,
+        "input_file": str(cleaned_file),
+        "total_rows": total,
+        **{name: counts[name] for name in class_names},
+    }
+    if sum(counts[name] for name in class_names) != total:
+        raise ValueError(f"{cleaned_file}: agreement classes do not cover every row")
+
+    # One row per interval, so the result can be joined to assay or lithology.
+    per_interval: dict[int, dict[str, object]] = {}
+    for (interval, name), rows in interval_rows.items():
+        row = per_interval.setdefault(
+            interval,
+            {
+                "hole_id": hole_id,
+                "interval_start": interval * interval_metres,
+                "interval_end": (interval + 1) * interval_metres,
+                "readings": 0,
+                **{name2: 0 for name2 in class_names},
+            },
+        )
+        row["readings"] += rows
+        row[name] = row.get(name, 0) + rows
+    intervals = sorted(per_interval.values(), key=lambda r: r["interval_start"])
+    for row in intervals:
+        settled = row["primary_differs_same_family"] + row["primary_differs_other_family"]
+        row["disagreeing_readings"] = settled
+        row["disagreement_percentage"] = round(100 * settled / row["readings"], 2)
+        row["needs_assay_readings"] = row["primary_differs_same_family"]
+        row["needs_lithology_readings"] = row["primary_differs_other_family"]
+    return summary, intervals
+
+
 def main() -> None:
     """Run validation, category-code resolution and no-data cleaning."""
 
@@ -1787,6 +1936,66 @@ def main() -> None:
     write_report_csv(pd.DataFrame(depth_gap_rows), depth_gap_report)
     print(f"Drill holes checked for depth gaps: {len(depth_gap_rows)}")
     print(f"Depth-gap report: {depth_gap_report}")
+
+    # STEP 14: Sort every reading by exactly how the two interpretations agree,
+    # so the disagreements can be taken to assay chemistry or logged geology with
+    # the right question attached to each one.
+    agreement_report = output_folder / "14_agreement_classification.csv"
+    agreement_detail = output_folder / "14_agreement_disagreeing_readings.csv"
+    agreement_intervals = output_folder / "14_agreement_by_interval.csv"
+    detail_temporary = agreement_detail.with_suffix(".csv.tmp")
+    detail_fields = [
+        "hole_id", "start_depth", "interval_start", "agreement_class",
+        "min1_s_tsas", "grp1_s_tsas", "wt1_s_tsas",
+        "min1_u_tsas", "grp1_u_tsas", "wt1_u_tsas", "same_family",
+    ]
+    agreement_rows: list[dict[str, object]] = []
+    interval_rows: list[dict[str, object]] = []
+    with detail_temporary.open("w", encoding="utf-8", newline="") as detail_output:
+        detail_writer = csv.DictWriter(detail_output, fieldnames=detail_fields)
+        detail_writer.writeheader()
+        for hole_id in hole_ids:
+            summary, intervals = classify_agreement(
+                hole_id,
+                cleaned_folder / f"{hole_id}_stsas_utsas_cleaned.csv",
+                detail_writer,
+            )
+            agreement_rows.append(summary)
+            interval_rows.extend(intervals)
+    try:
+        detail_temporary.replace(agreement_detail)
+    except PermissionError:
+        if agreement_detail.is_file() and filecmp.cmp(
+            detail_temporary, agreement_detail, shallow=False
+        ):
+            detail_temporary.unlink()
+        else:
+            raise
+
+    write_report_csv(pd.DataFrame(agreement_rows), agreement_report)
+    write_report_csv(pd.DataFrame(interval_rows), agreement_intervals)
+
+    agreement_totals = pd.DataFrame(agreement_rows).sum(numeric_only=True)
+    print(
+        f"Readings classified by agreement: {int(agreement_totals['total_rows']):,}"
+    )
+    print(
+        f"  identical in every respect: "
+        f"{int(agreement_totals['identical']):,}"
+    )
+    print(
+        f"  primary mineral differs, same family: "
+        f"{int(agreement_totals['primary_differs_same_family']):,}  "
+        f"(an assay can often settle these)"
+    )
+    print(
+        f"  primary mineral differs, other family: "
+        f"{int(agreement_totals['primary_differs_other_family']):,}  "
+        f"(logged geology is the better reference)"
+    )
+    print(f"Agreement classification: {agreement_report}")
+    print(f"Disagreeing readings: {agreement_detail}")
+    print(f"Agreement per interval: {agreement_intervals}")
 
 
 if __name__ == "__main__":
