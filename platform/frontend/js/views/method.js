@@ -24,6 +24,8 @@ export async function render(root) {
     <section class="panel"><h2>4 · Similarity, raw whole-hole clusters, prediction</h2><ul>
       <li>Hole fingerprint = share of its intervals in each fine cluster; distance = Jensen–Shannon (Sathi). SWIR+TIR averages both where available.</li>
       <li>Raw whole-hole distance = variance-weighted Wasserstein distance between holes' PCA score distributions (Yeshwanth's idea), with Final Mask and QC applied.</li>
+      <li>Virtual assays: gradient boosting predicts MgO, CaO, Na₂O, K₂O, LOI, Cr, Al₂O₃ and Ni from SWIR+TIR mineralogy (R² 0.30–0.57 on held-out holes); U, S, Fe₂O₃ and SiO₂ are not predictable and are not offered. Residuals feed the chemistry-mismatch anomaly.</li>
+      <li>Robustness: clusters refitted without ~20% of districts agree with the full fit (ARI ≈ 0.84–0.89); hole similarity is stable across 0.5–2 m intervals.</li>
       <li>Prediction = inverse-distance weighting of the 8 nearest holes. Tested by leaving each hole out (skill ${pct(pred?.loho_skill_vs_region)}) and leaving its whole district out (skill ${pct(pred?.lodo_skill_vs_region)}): useful within a few km of data, not as a regional map.</li></ul></section>
   </div>
   <section class="panel" style="margin-top:14px"><h2>Active results</h2><table><thead><tr><th>Kind</th><th>Sensor</th><th>Run</th><th>Created</th><th>Key facts</th></tr></thead><tbody>

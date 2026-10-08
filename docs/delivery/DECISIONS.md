@@ -17,6 +17,11 @@
 | Assays as an external reference | The GSWA package links 1,482 holes to WAMEX collars; mineral↔oxide correlations and per-cluster chemistry are stored with every run as consistency checks (the package marks these tables unverified). |
 | Prediction reported with its limits | Leave-one-district-out shows almost no skill over the regional average; the app shows a support limit and labels distant estimates as regional priors. |
 | Interim package stays out of Git and hosting | Its licence forbids sharing with third parties; the app shows a banner and runs locally. |
+| Assay reporting codes are missing values | Some submissions use -5000 for "not analysed"; values ≤ -1000 are dropped, small negatives stay half the detection limit, and per-element plausibility caps (e.g. U, Th ≤ 10%, Au ≤ 1%) remove unit or column errors such as 19–99% U in 2 cm intervals. |
+| Virtual assays only where skill is real | Chemistry is offered as a predicted track only when R² ≥ 0.3 on held-out holes (MgO, CaO, Na₂O, K₂O, LOI, Cr, Al₂O₃, Ni); U, S, Fe₂O₃ and SiO₂ are not predictable from HyLogger mineralogy. |
+| No covariate regional model | Gradient boosting with location, tectonic region and IDW-from-other-districts features did not beat distance weighting on unseen districts; the app reports the test and keeps IDW with a 20 km support limit. |
+| Adding holes refits the analysis | A statewide refit takes ~7–8 minutes and lets cluster definitions absorb new regions; `clusters.assign()` remains available for frozen assignment, but frozen anomaly and hole-embedding updates were not worth their complexity. |
+| DASC mineral-log CSVs not scripted | The package's MINERALLOG links return HTTP 403 to programmatic requests (Azure application gateway). They are not circumvented; raw summaries cover 444 of the 563 holes without public processed logs. |
 
 ## 3 October delivery decisions
 

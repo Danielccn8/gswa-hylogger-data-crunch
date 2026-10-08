@@ -291,7 +291,20 @@ def job_raw_fetch(ctx: Context) -> dict:
         .fetchall()
     )
 
+    force = bool(ctx.params.get("force", False))
+    done_already = {
+        row[0]
+        for row in ctx.conn.execute(
+            "SELECT hole_id FROM explorer_hole "
+            "WHERE hole_id = ANY(%s) AND raw_status LIKE 'summarised%%'",
+            (_holes(ctx),),
+        ).fetchall()
+    }
+    ctx.conn.commit()
+
     def work(hole_id: str, conn: psycopg.Connection) -> dict:
+        if hole_id in done_already and not force:
+            return {"ok": True, "skipped": "already summarised"}
         need = sizes.get(hole_id, 0) * (0.6 if mode == "spectral_only" else 1.4)
         free = shutil.disk_usage(ctx.data_dir).free
         if free - need < MIN_FREE_BYTES:
@@ -380,6 +393,12 @@ def job_analysis_refresh(ctx: Context) -> dict:
     )
 
 
+def job_robustness_check(ctx: Context) -> dict:
+    from ..explorer.analysis import run_robustness
+
+    return run_robustness(ctx.conn, ctx.data_dir, log=ctx.log)
+
+
 def job_promote(ctx: Context) -> dict:
     from ..explorer.analysis import promote
 
@@ -395,6 +414,7 @@ KINDS = {
     "reference_load": job_reference_load,
     "catalog_refresh": job_catalog_refresh,
     "analysis_refresh": job_analysis_refresh,
+    "robustness_check": job_robustness_check,
     "promote": job_promote,
 }
 

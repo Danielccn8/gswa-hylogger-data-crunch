@@ -124,3 +124,49 @@ def test_assay_cleaning_separates_codes_from_detection_limits():
     assert cleaned.iloc[2] == 12.0
     assert np.isnan(cleaned.iloc[3])  # impossible concentration
     assert np.isnan(_clean(pd.Series([140.0]), percent=True).iloc[0])
+
+
+def test_element_specific_plausibility_caps():
+    from hylogger.explorer.chemistry import PLAUSIBLE_PPM, _clean
+
+    cleaned = _clean(pd.Series([2780.0, 190_000.0]), cap=PLAUSIBLE_PPM["U_PPM"])
+    assert cleaned.iloc[0] == 2780.0 and np.isnan(cleaned.iloc[1])
+
+
+def test_virtual_assay_learns_chemistry_and_flags_mismatch():
+    from hylogger.explorer import virtual_assay
+
+    rng = np.random.default_rng(5)
+    n = 3000
+    mica = rng.uniform(0, 1, n)
+    x = np.c_[np.sqrt(mica), np.sqrt(1 - mica)].astype(np.float32)
+    meta = pd.DataFrame(
+        {
+            "hole_id": np.repeat([f"H{i}" for i in range(30)], 100),
+            "bin": np.tile(np.arange(100), 30),
+        }
+    )
+    k2o = 0.2 + 6 * mica
+    k2o[7] = 40.0  # chemistry that the mineralogy cannot explain
+    joined = pd.DataFrame(
+        {"rows": [np.array([i]) for i in range(n)], "hole_id": meta.hole_id, "K2O": k2o}
+    )
+    result = virtual_assay.fit(meta, x, joined)
+    skill = {r["analyte"]: r for r in result["skill"]}
+    assert skill["K2O"]["r2_holdout_holes"] > 0.8
+    mismatch = virtual_assay.mismatch_by_bin(meta, joined, result["z"])
+    assert mismatch.iloc[0][["hole_id", "bin"]].tolist() == ["H0", 7]
+    predicted = virtual_assay.predict(result["models"], x[:5])
+    assert predicted.K2O.between(0.1, 7).all()
+
+
+def test_minimum_curvature_desurvey():
+    from hylogger.explorer.desurvey import Desurvey, tvd_stations
+
+    md, tvd = tvd_stations(np.array([0, 100, 200.0]), np.array([-90, -90, -90.0]), np.zeros(3))
+    assert np.allclose(tvd, md)  # vertical hole
+    md, tvd = tvd_stations(np.array([50, 300.0]), np.array([-60, -60.0]), np.array([90, 90.0]))
+    assert np.isclose(tvd[-1], 300 * np.sin(np.radians(60)))  # constant inclination
+    survey = Desurvey({"H": (md, tvd, float(np.sin(np.radians(60))))})
+    assert np.isclose(survey.tvd("H", np.array([400.0]))[0], 400 * np.sin(np.radians(60)))
+    assert survey.tvd("unsurveyed", np.array([10.0]))[0] == 10.0

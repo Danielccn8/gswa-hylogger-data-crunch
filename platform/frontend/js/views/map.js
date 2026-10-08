@@ -12,6 +12,8 @@ const STATUS = {
   index_only: ['Package index only', '#c9d1d5'],
 };
 let map, layer, data, columns, rows, colourBy = 'status', view = 'combined', holeK = 'auto', clusterNames = {};
+let chem = null, analyte = 'U', threshold = 100;
+const ANALYTES = ['Au', 'Cu', 'Zn', 'Pb', 'Ni', 'U', 'Th', 'As', 'Cr', 'S', 'K2O', 'MgO', 'CaO', 'Na2O', 'Fe2O3T', 'SiO2', 'Al2O3'];
 
 function statusOf(r) {
   if (String(r.raw_status).startsWith('summarised')) return 'raw';
@@ -20,7 +22,22 @@ function statusOf(r) {
   if (!r.nvcl_available) return 'index_only';
   return 'not_fetched';
 }
+async function loadChem() {
+  $('#chem-controls').hidden = colourBy !== 'chem';
+  if (colourBy !== 'chem') return;
+  const d = await api(`/api/v2/chemistry?analyte=${analyte}&threshold=${threshold}`);
+  chem = { ...d, byHole: Object.fromEntries(d.holes.map(h => [h.hole_id, h])) };
+}
+function chemColour(r) {
+  const h = chem?.byHole[r.hole_id];
+  if (!h) return '#d5dcdf';
+  if (!h.above) return '#9fb7c2';
+  const top = Math.log10(Math.max(...chem.holes.map(x => x.max || 0), threshold * 10));
+  const t = Math.max(0, Math.min(1, (Math.log10(h.max) - Math.log10(Math.max(threshold, 1e-6))) / Math.max(top - Math.log10(Math.max(threshold, 1e-6)), 1e-6)));
+  return scoreColor(0.5 + t / 2);
+}
 function colourOf(r) {
+  if (colourBy === 'chem') return chemColour(r);
   if (colourBy === 'status') return STATUS[statusOf(r)][1];
   if (colourBy === 'cluster') return r.cluster_id == null ? '#d5dcdf' : clusterColor(r.cluster_id);
   if (colourBy === 'anomaly') return r.anomaly_score == null ? '#d5dcdf' : scoreColor(r.anomaly_score);
@@ -39,7 +56,9 @@ export async function render(root) {
         <label class="field">Colour by<select id="colour">
           <option value="status">Data available</option><option value="cluster">Hole cluster</option>
           <option value="anomaly">Unusualness</option><option value="commodity">Commodity</option>
-          <option value="region">Tectonic region</option><option value="assays">Has assays</option></select></label>
+          <option value="region">Tectonic region</option><option value="assays">Has assays</option><option value="chem">Assay above threshold</option></select></label>
+        <span id="chem-controls" class="row gap" hidden><label class="field">Analyte<select id="analyte">${ANALYTES.map(a => `<option ${a === analyte ? 'selected' : ''}>${a}</option>`).join('')}</select></label>
+        <label class="field">Threshold<input id="threshold" type="number" min="0" step="any" value="${threshold}" style="width:100px"></label></span>
         <label class="field">Analysis<select id="analysis">
           <option value="combined">SWIR + TIR</option><option value="swir">SWIR</option><option value="tir">TIR</option>
           <option value="raw_nir">Raw NIR/SWIR spectra</option><option value="raw_tir">Raw TIR spectra</option></select></label>
@@ -64,7 +83,9 @@ export async function render(root) {
     ['Holes with assays', num(c.with_assays), `${num(c.with_geology)} with logged geology`],
   ].map(([a, b, s]) => `<div class="metric"><span>${a}</span><strong>${b}</strong><small>${s}</small></div>`).join('');
   $('#colour').value = colourBy; $('#analysis').value = view;
-  $('#colour').onchange = e => { colourBy = e.target.value; draw(); };
+  $('#colour').onchange = async e => { colourBy = e.target.value; await loadChem(); draw(); };
+  $('#analyte').onchange = async e => { analyte = e.target.value; await loadChem(); draw(); };
+  $('#threshold').onchange = async e => { threshold = Math.max(0, Number(e.target.value) || 0); await loadChem(); draw(); };
   $('#analysis').onchange = async e => { view = e.target.value; await load(); draw(); };
   $('#filter').oninput = () => draw();
   $('#hole-k').onchange = async e => { holeK = e.target.value; await load(); if (colourBy !== 'cluster') { colourBy = 'cluster'; $('#colour').value = 'cluster'; } draw(); };
@@ -114,10 +135,10 @@ function draw() {
   layer.clearLayers();
   const shown = visible();
   for (const r of shown) {
-    const analysed = colourBy === 'cluster' ? r.cluster_id != null : colourBy === 'anomaly' ? r.anomaly_score != null : true;
+    const analysed = colourBy === 'cluster' ? r.cluster_id != null : colourBy === 'anomaly' ? r.anomaly_score != null : colourBy === 'chem' ? !!chem?.byHole[r.hole_id]?.above : true;
     const picked = selection.has(r.hole_id);
-    L.circleMarker([r.lat, r.lon], { radius: analysed ? (r.processed_status === 'prepared' ? 5 : 3.5) : 2.5, weight: picked ? 2 : .6, color: picked ? '#111' : '#ffffff', fillColor: colourOf(r), fillOpacity: analysed ? .92 : .35, opacity: analysed ? 1 : .4 })
-      .on('click', () => side(r)).bindTooltip(`${esc(r.hole_id)} · ${esc(r.commodity || '')}`).addTo(layer);
+    L.circleMarker([r.lat, r.lon], { radius: analysed ? (colourBy === 'chem' ? 6.5 : r.processed_status === 'prepared' ? 5 : 3.5) : 2.5, weight: picked ? 2 : .6, color: picked ? '#111' : '#ffffff', fillColor: colourOf(r), fillOpacity: analysed ? .92 : .35, opacity: analysed ? 1 : .4 })
+      .on('click', () => side(r)).bindTooltip(colourBy === 'chem' && chem?.byHole[r.hole_id] ? `${esc(r.hole_id)} · max ${analyte} ${num(chem.byHole[r.hole_id].max, 2)} ${chem.unit} · ${chem.byHole[r.hole_id].above} samples > ${threshold}` : `${esc(r.hole_id)} · target: ${esc(r.commodity || 'unknown')}`).addTo(layer);
   }
   legend(shown);
 }
@@ -128,6 +149,7 @@ function legend(shown) {
   else if (colourBy === 'cluster') items = [...new Set(shown.map(r => r.cluster_id).filter(v => v != null))].sort((a, b) => a - b).map(id => [`${id} · ${clusterNames[id] || 'Hole cluster'}`, clusterColor(id), shown.filter(r => r.cluster_id === id).length]);
   else if (colourBy === 'anomaly') items = [['Typical', scoreColor(.5)], ['Unusual', scoreColor(.85)], ['Most unusual', scoreColor(1)], ['Not analysed', '#d5dcdf']];
   else if (colourBy === 'assays') items = [['Has assays', '#0f6e68'], ['No assays', '#d5dcdf']];
+  else if (colourBy === 'chem') items = [[`No ${analyte} assays`, '#d5dcdf'], [`Max ≤ ${threshold} ${chem?.unit || ''}`, '#9fb7c2'], [`Above ${threshold}`, scoreColor(.6)], ['Highest', scoreColor(1)], [`${num(chem?.holes_above)} of ${num(chem?.holes_with_assays)} holes above`, 'transparent']];
   else {
     const key = colourBy === 'commodity' ? r => (r.commodity || '').split(',')[0] : r => r.tectonic_region;
     const counts = {}; shown.forEach(r => { const k = key(r) || 'Unknown'; counts[k] = (counts[k] || 0) + 1; });

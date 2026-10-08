@@ -175,6 +175,40 @@ def main() -> None:
                 f"average {s['region_baseline_median_error']}. Skill vs region: LOHO {s['loho_skill_vs_region']}, "
                 f"LODO {s['lodo_skill_vs_region']}. Support limit {s['support_limit_km']} km.\n"
             )
+            cov = run.card.get("covariate_model")
+            if cov:
+                out.append(
+                    f"  - Covariate model (location, tectonic region, IDW from other districts; folds hold out "
+                    f"whole districts): median error {cov['median_error']} vs {s['lodo_median_error']} for IDW "
+                    f"alone — {'used' if cov['beats_lodo_idw'] else 'not better, not used'}.\n"
+                )
+            survey = run.card.get("desurvey")
+            if survey:
+                out.append(f"  - Depth bands use minimum-curvature TVD for {survey['surveyed_holes']} surveyed holes.\n")
+        virtual = runs[runs.kind == "virtual_assay"]
+        if len(virtual):
+            card = virtual.iloc[0].card
+            out.append(
+                "\n## Virtual assays: chemistry predicted from SWIR+TIR mineralogy\n\n"
+                f"{card['method']}. {card['assay_intervals']:,} assay intervals. R² on whole holes held out:\n\n"
+                "| analyte | R² | typical error factor | n | holes | offered |\n|---|---|---|---|---|---|\n"
+            )
+            for r in sorted(card["skill"], key=lambda r: -r["r2_holdout_holes"]):
+                out.append(
+                    f"| {r['analyte']} | {r['r2_holdout_holes']} | ×{r['median_abs_error_factor']} | {r['n']:,} | "
+                    f"{r['holes']} | {'yes' if r.get('predictable') else 'no'} |\n"
+                )
+        robust = runs[runs.kind == "robustness"]
+        if len(robust):
+            out.append("\n## Cluster robustness\n\n")
+            for _, run in robust.iterrows():
+                t, w = run.card["district_transfer"], run.card["width_sensitivity"]
+                out.append(
+                    f"- **{run.sensor.upper()}**: withheld districts (~20% of holes, {len(t['repeats'])} repeats) "
+                    f"assigned to refitted centres agree with the full fit at ARI {t['mean_ari']} (min {t['min_ari']}). "
+                    f"Hole-similarity agreement with 1 m bins (Spearman, {w.get('holes')} holes): "
+                    f"{w.get('mantel_vs_1m')}; K chosen by the rule per width: {w.get('k_by_width')}.\n"
+                )
         out.append(raw_white_mica_check(conn))
         jobs = read_frame(
             conn,

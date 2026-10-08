@@ -31,12 +31,12 @@ The host venv and the API image share the exact versions in `platform/requiremen
 
 | Tab | Question | Content |
 |---|---|---|
-| Map | What exists, where, and what is it like? | All registered holes (NVCL catalogue ∪ GSWA index), coloured by data availability, hole cluster, unusualness, commodity, tectonic region or assays; rectangle selection |
+| Map | What exists, where, and what is it like? | All registered holes (NVCL catalogue ∪ GSWA index), coloured by data availability, hole cluster (choose 4–20), unusualness, exploration-target commodity, tectonic region, assays, or any analyte above a threshold (e.g. U > 100 ppm); rectangle selection |
 | Hole | What changes down this hole? | Strip log on one depth scale: SWIR/TIR/VNIR mineral-group mix, interval cluster, domains, unusualness, raw Al-OH 2200 nm position and spectral class, assays, logged geology; interval detail with raw spectrum and most similar intervals elsewhere |
 | Similarity | Which holes resemble each other? | N×N distance matrix (dendrogram order), t-SNE map of every hole's fingerprint, nearest matches with reasons; processed SWIR/TIR/combined and raw NIR/TIR fingerprints |
 | Clusters | What are the recurring mineral assemblages? | Fine clusters nested in broad groups, mineral mix, median assay chemistry per cluster, mineral↔oxide correlations, η² by analyte, K selection, raw spectral classes |
 | Anomalies | What should a geologist look at? | Ranked intervals with reasons, most unusual holes, data-quality outliers kept separate from geology |
-| Prediction | What should I expect here? | IDW of the nearest holes' composition, ± spread, by vertical-depth band, with leave-hole-out and leave-district-out validation and an explicit support limit |
+| Prediction | What should I expect here? | IDW of the nearest holes' composition, ± spread, by true-vertical-depth band, with leave-hole-out and leave-district-out validation, an explicit support limit and the tested covariate model |
 | Data | Can I add holes? | Catalogue search, selection, size/time estimate, jobs: fetch processed logs, fetch raw spectra (spectra-only or full ZIP, optional summary mode), re-run analysis, refresh catalogue, reload package |
 | Method | How was this made? | Plain-language method, active run cards, credits |
 
@@ -61,7 +61,9 @@ GSWA SQLite package          ─► ref_* tables, explorer_hole register, assays
 5. **Anomalies.** Mean percentile of poor fit (Sathi), Isolation Forest and ±5 m contrast, plus rare-mineral flags; hole-level unusualness and data-quality outliers separately.
 6. **Fingerprints and similarity.** Share of intervals per fine cluster, JS distance (Sathi); combined SWIR+TIR; raw whole-hole distance as variance-weighted Wasserstein between PCA score distributions (Yeshwanth), on mask-admitted 1 m medians. Hole clusters by average linkage, named from their mean mineral mix.
 7. **Validation.** Assays are joined by depth overlap and harmonised to oxides; correlations and per-cluster chemistry are stored with each run.
-8. **Prediction.** Inverse-distance weighting of the 8 nearest holes; leave-one-hole-out and leave-one-district-out cross-validation against the tectonic-region average; error by distance defines the support limit shown in the app.
+8. **Prediction.** Inverse-distance weighting of the 8 nearest holes; leave-one-hole-out and leave-one-district-out cross-validation against the tectonic-region average; error by distance defines the support limit shown in the app (skill ≥ 0.15). A gradient-boosting model with location, tectonic region and IDW-from-other-districts features was tested with whole districts held out; it did not beat IDW, so it is reported but not used. Depth bands use minimum-curvature true vertical depth (`explorer/desurvey.py`) where surveys exist.
+9. **Virtual assays.** Gradient boosting predicts chemistry from SWIR+TIR mineralogy per 1 m bin (`explorer/virtual_assay.py`), scored on whole holes held out. Analytes with R² ≥ 0.3 are shown as predicted tracks; their out-of-fold residuals add a *chemistry mismatch* anomaly component. Uranium, sulphur, Fe₂O₃ and SiO₂ are not predictable from HyLogger mineralogy and are not offered.
+10. **Robustness.** The `robustness_check` job withholds ~20% of districts, refits the clusters and reports agreement (ARI) for the withheld intervals, and re-prepares a sample of holes at 0.5 m and 2 m to compare hole-similarity matrices with the 1 m result.
 
 Every analysis writes a new `analysis_run` (staged) and is promoted explicitly, so retraining never silently changes what users see. Products (models, distance matrices, raw summaries) live under `<data root>/products`.
 
@@ -71,7 +73,7 @@ Every analysis writes a new `analysis_run` (staged) and is promoted explicitly, 
 |---|---|
 | Reference and register | `src/hylogger/explorer/reference.py`, `db.py` |
 | Features and loading | `explorer/features.py`, `prepare.py`, `data.py` |
-| Analysis | `explorer/clusters.py`, `domains.py`, `anomaly.py`, `fingerprints.py`, `rawcluster.py`, `chemistry.py`, `validation.py`, `prediction.py`, `analysis.py` (orchestrator, staging, promotion) |
+| Analysis | `explorer/clusters.py`, `domains.py`, `anomaly.py`, `fingerprints.py`, `rawcluster.py`, `chemistry.py`, `validation.py`, `prediction.py`, `desurvey.py`, `virtual_assay.py`, `robustness.py`, `analysis.py` (orchestrator, staging, promotion) |
 | Raw spectra | `explorer/spectral_fetch.py`, `raw_summary.py` |
 | Jobs | `src/hylogger/jobs/queue.py`, `worker.py`, `step.py`, `__main__.py`; `platform/db/migrations/004_jobs.sql` |
 | API and UI | `platform/backend/main.py` (v2), `backend/legacy.py` (v1 under `/legacy`), `platform/frontend/explorer.html`, `explorer.css`, `js/` |

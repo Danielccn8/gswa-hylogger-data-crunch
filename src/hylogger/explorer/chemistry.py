@@ -47,13 +47,27 @@ ANALYTES = list(OXIDES) + ["LOI", "S", "Au", "Cu", "Zn", "Pb", "Ni", "As", "Cr",
 
 
 CODE_THRESHOLD = -1000  # at or below: a reporting code, not a detection limit
+# Upper bounds (ppm) above which a reported value cannot be a real rock analysis
+# here (unit or column errors); roughly the pure-mineral content of the element.
+PLAUSIBLE_PPM = {
+    "U_PPM": 100_000,
+    "Th_PPM": 100_000,
+    "Au_PPM": 10_000,
+    "Cu_PPM": 400_000,
+    "Ni_PPM": 400_000,
+    "Zn_PPM": 650_000,
+    "Pb_PPM": 860_000,
+    "As_PPM": 750_000,
+    "Cr_PPM": 680_000,
+    "S_PPM": 530_000,
+}
 
 
-def _clean(values: pd.Series, *, percent: bool = False) -> pd.Series:
+def _clean(values: pd.Series, *, percent: bool = False, cap: float | None = None) -> pd.Series:
     values = pd.to_numeric(values, errors="coerce")
     values = values.mask(values <= CODE_THRESHOLD)
     values = values.where(values >= 0, values.abs() / 2)
-    return values.mask(values > (100 if percent else 1_000_000))
+    return values.mask(values > (cap if cap is not None else 100 if percent else 1_000_000))
 
 
 def assays(conn: psycopg.Connection, collar_ids: list[int] | None = None) -> pd.DataFrame:
@@ -74,7 +88,9 @@ def assays(conn: psycopg.Connection, collar_ids: list[int] | None = None) -> pd.
     for oxide, (pct, ppm, factor) in OXIDES.items():
         out[oxide] = _clean(raw[pct], percent=True).fillna(_clean(raw[ppm]) * factor)
     for column in ELEMENTS:
-        out[column.split("_")[0]] = _clean(raw[column], percent=column.endswith("_PCT"))
+        out[column.split("_")[0]] = _clean(
+            raw[column], percent=column.endswith("_PCT"), cap=PLAUSIBLE_PPM.get(column)
+        )
     return out
 
 
@@ -104,3 +120,37 @@ def join_intervals(
     frame["rows"] = [r[1] for r in rows]
     frame["hole_id"] = [r[2] for r in rows]
     return frame
+
+
+def analyte_columns(analyte: str) -> tuple[str | None, str | None, float]:
+    """(percent column, ppm column, ppm->percent factor) for one harmonised analyte."""
+    if analyte in OXIDES:
+        return OXIDES[analyte]
+    for column in ELEMENTS:
+        if column.split("_")[0] == analyte:
+            return (column, None, 1.0) if column.endswith("_PCT") else (None, column, 1.0)
+    raise KeyError(analyte)
+
+
+def analyte_values(conn: psycopg.Connection, analyte: str) -> pd.DataFrame:
+    """collar_id, f, t, value for one analyte across the whole package, cleaned."""
+    pct, ppm, factor = analyte_columns(analyte)
+    columns = [c for c in (pct, ppm) if c]
+    raw = read_frame(
+        conn,
+        'SELECT "CollarId" AS collar_id, "FromDepth" AS f, "ToDepth" AS t, '
+        + ", ".join(f'"{c}"' for c in columns)
+        + ' FROM ref_assay WHERE "ToDepth" > "FromDepth" AND ('
+        + " OR ".join(f'"{c}" IS NOT NULL' for c in columns)
+        + ")",
+    )
+    if pct and ppm:
+        value = _clean(raw[pct], percent=True).fillna(_clean(raw[ppm]) * factor)
+    elif pct:
+        value = _clean(raw[pct], percent=True)
+    else:
+        value = _clean(raw[ppm], cap=PLAUSIBLE_PPM.get(ppm))
+    reported = pd.concat([pd.to_numeric(raw[c], errors="coerce") for c in columns], axis=1)
+    reported = reported.notna().any(axis=1) & ~(reported <= CODE_THRESHOLD).any(axis=1)
+    out = raw[["collar_id", "f", "t"]].assign(value=value, rejected=reported & value.isna())
+    return out[out.value.notna() | out.rejected]

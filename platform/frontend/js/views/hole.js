@@ -5,7 +5,7 @@ import { stripLog, lineChart } from '../charts.js';
 import { go } from '../main.js';
 
 const DEFAULT_ANALYTES = ['K2O', 'MgO', 'CaO', 'Na2O', 'Fe2O3T', 'Au', 'Cu'];
-let chosenAnalytes = null;
+let chosenAnalytes = null, showPredicted = true;
 
 export async function render(root, [holeId]) {
   root.innerHTML = `<div class="page-head"><div><h1>Hole strip log</h1><p class="muted">Mineralogy by depth from every sensor, with clusters, domains, unusual intervals, assays and logged geology on one depth scale.</p></div>
@@ -84,16 +84,24 @@ function drawStrip(strip, highlight) {
       tracks.push({ label: `Raw ${sensor.toUpperCase()} class`, width: 34, kind: 'ribbon', rows: rows.filter(r => table.spectral_class[r.i] != null).map(r => ({ ...r, value: table.spectral_class[r.i] })), describe: r => `Spectral class ${r.value}` });
     }
   }
-  const analytes = chosenAnalytes || DEFAULT_ANALYTES.filter(a => strip.analytes.includes(a)).slice(0, 4);
+  const predictable = Object.fromEntries((strip.virtual_skill || []).map(r => [r.analyte, r]));
+  const available = [...new Set([...strip.analytes, ...(strip.virtual.length ? Object.keys(predictable) : [])])];
+  const analytes = chosenAnalytes || DEFAULT_ANALYTES.filter(a => available.includes(a)).slice(0, 4);
   for (const analyte of analytes) {
     const values = strip.assays.filter(a => a[analyte] != null);
-    if (!values.length) continue;
-    const sorted = values.map(v => v[analyte]).sort((a, b) => a - b);
+    const predicted = showPredicted && predictable[analyte] ? strip.virtual.filter(v => v[analyte] != null) : [];
+    if (!values.length && !predicted.length) continue;
+    const sorted = (values.length ? values : predicted).map(v => v[analyte]).sort((a, b) => a - b);
     const max = sorted[Math.floor(sorted.length * .98)] || sorted[sorted.length - 1];
     const log = ['Au', 'Cu', 'Zn', 'Pb', 'Ni', 'As', 'S', 'Cr', 'U', 'Th'].includes(analyte);
     tracks.push({ label: analyte, title: `Assay ${analyte} (${log ? 'ppm, log' : 'wt%'})`, width: 46, kind: 'line', log, min: log ? Math.max(sorted[0], 1e-3) : 0, max: Math.max(max, 1e-6), fill: '#b5502a',
-      rows: values.map(v => ({ f: v.f, t: v.t, value: v[analyte] })), describe: r => `${analyte} ${num(r.value, log ? 3 : 2)} ${log ? 'ppm' : '%'}` });
+      rows: values.map(v => ({ f: v.f, t: v.t, value: v[analyte] })), describe: r => `${analyte} ${num(r.value, log ? 3 : 2)} ${log ? 'ppm' : '%'} (measured)` });
     values.forEach(v => depths.push(v.f, v.t));
+    if (predicted.length) {
+      const skill = predictable[analyte];
+      tracks.push({ label: `${analyte} pred.`, title: `${analyte} predicted from mineralogy (virtual assay; R² ${skill.r2_holdout_holes} on held-out holes)`, width: 46, kind: 'line', log, min: log ? Math.max(sorted[0], 1e-3) : 0, max: Math.max(max, 1e-6), fill: '#2f8f83',
+        rows: predicted.map(v => ({ f: v.f, t: v.t, value: v[analyte] })), describe: r => `${analyte} ≈ ${num(r.value, log ? 1 : 2)} ${log ? 'ppm' : '%'} predicted<br><span class="muted">virtual assay · typical error ×${skill.median_abs_error_factor}</span>` });
+    }
   }
   if (strip.lithology.length) {
     tracks.push({ label: 'Logged geology', title: 'Company lithology (not harmonised) and GSWA rock name where provided', width: 110, kind: 'text',
@@ -104,13 +112,18 @@ function drawStrip(strip, highlight) {
   const depthMin = Math.max(0, Math.min(...depths)), depthMax = Math.max(...depths);
   const controls = $('#strip-controls');
   controls.innerHTML = `<label class="field">Scale<select id="scale"><option value="1">1 px/m</option><option value="2">2 px/m</option><option value="4">4 px/m</option><option value="8">8 px/m</option></select></label>
-    ${strip.analytes.length ? `<label class="field">Assays shown<select id="analytes" multiple size="1" style="min-width:160px">${strip.analytes.map(a => `<option ${analytes.includes(a) ? 'selected' : ''}>${a}</option>`).join('')}</select></label>` : '<span class="muted small">No assays linked to this hole.</span>'}
+    ${available.length ? `<label class="field">Chemistry shown<select id="analytes" multiple size="1" style="min-width:160px">${available.map(a => `<option ${analytes.includes(a) ? 'selected' : ''}>${a}</option>`).join('')}</select></label>` : ''}
+    ${strip.virtual.length ? `<label class="small"><input type="checkbox" id="predicted" ${showPredicted ? 'checked' : ''}> predicted chemistry (virtual assays)</label>` : ''}
+    ${strip.analytes.length ? '' : '<span class="muted small">No assays linked to this hole.</span>'}
     <span class="muted small">${num(depthMax - depthMin)} m · hover for values, click to inspect</span>`;
   const scale = Number(sessionStorage.getItem('strip-scale') || (depthMax - depthMin > 800 ? 1 : 2));
   $('#scale').value = String(scale);
   $('#scale').onchange = e => { try { sessionStorage.setItem('strip-scale', e.target.value); } catch { /* ignore */ } drawStrip(strip, highlight); };
   if ($('#analytes')) $('#analytes').onchange = e => { chosenAnalytes = [...e.target.selectedOptions].map(o => o.value); drawStrip(strip, highlight); };
-  const chart = stripLog($('#strip'), { tracks, depthMin, depthMax, pxPerMetre: Number($('#scale').value), highlight,
+  if ($('#predicted')) $('#predicted').onchange = e => { showPredicted = e.target.checked; drawStrip(strip, highlight); };
+  const sv = strip.survey;
+  const tvd = sv ? d => (d <= sv.md[sv.md.length - 1] ? interp(d, sv.md, sv.tvd) : sv.tvd[sv.tvd.length - 1] + (d - sv.md[sv.md.length - 1]) * sv.tail) : null;
+  const chart = stripLog($('#strip'), { tracks, depthMin, depthMax, pxPerMetre: Number($('#scale').value), highlight, tvd,
     onPick: hit => { if (hit.row?.row?.feature_set_id) inspect(strip, hit.row.row); } });
   const groups = new Set(); Object.values(strip.tracks).forEach(t => t.intervals.forEach(r => Object.keys(r.groups || {}).forEach(g => groups.add(g))));
   $('#strip-legend').innerHTML = [...groups].sort().map(g => `<span><i style="background:${groupColor(g)}"></i>${esc(title(g))}</span>`).join('');
@@ -143,3 +156,8 @@ async function similarHoles(holeId) {
 }
 
 export { categoryColor };
+
+function interp(x, xs, ys) {
+  for (let i = 1; i < xs.length; i += 1) if (x <= xs[i]) return ys[i - 1] + (ys[i] - ys[i - 1]) * (x - xs[i - 1]) / ((xs[i] - xs[i - 1]) || 1);
+  return ys[ys.length - 1];
+}

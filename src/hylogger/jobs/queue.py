@@ -17,6 +17,7 @@ LANES = {
     "raw_fetch": "raw",
     "raw_summarize": "analysis",
     "analysis_refresh": "analysis",
+    "robustness_check": "analysis",
     "promote": "analysis",
 }
 ACTIVE = ("queued", "running", "cancel_requested")

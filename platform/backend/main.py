@@ -332,10 +332,47 @@ def striplog(hole_id: str):
                ORDER BY "FromDepth" """,
             (int(record["wamex_collar_id"]),),
         )
+    virtual, virtual_skill = [], []
+    vrun = active_run("virtual_assay", "combined")
+    if vrun:
+        table = _parquet(vrun["run_id"], vrun["product_path"], "predictions.parquet")
+        part = table[table.hole_id == hole_id]
+        if len(part):
+            bins = part.bin.to_numpy()
+            virtual = [
+                {"f": float(b), "t": float(b) + 1.0, **{k: float(v) for k, v in row.items()}}
+                for b, row in zip(
+                    bins, part.drop(columns=["hole_id", "bin"]).to_dict("records"), strict=True
+                )
+            ]
+        virtual_skill = [r for r in vrun["card"].get("skill", []) if r.get("predictable")]
+    survey = None
+    if record and record["wamex_collar_id"]:
+        from hylogger.explorer.desurvey import tvd_stations
+
+        stations = query(
+            'SELECT "Depth" AS d, "Dip" AS dip, "Azimuth" AS az FROM ref_survey '
+            'WHERE "CollarId"=%s AND "Depth" >= 0 AND "Dip" BETWEEN -90 AND 90 ORDER BY "Depth"',
+            (int(record["wamex_collar_id"]),),
+        )
+        if stations and any(abs(r["dip"]) > 0 for r in stations):
+            md, tvd = tvd_stations(
+                np.array([r["d"] for r in stations], float),
+                np.array([r["dip"] for r in stations], float),
+                np.array([r["az"] if r["az"] is not None else np.nan for r in stations], float),
+            )
+            survey = {
+                "md": md.round(2).tolist(),
+                "tvd": tvd.round(2).tolist(),
+                "tail": float(abs(np.sin(np.radians(abs(stations[-1]["dip"]))))),
+            }
     return clean(
         {
             "hole_id": hole_id,
             "tracks": tracks,
+            "virtual": virtual,
+            "virtual_skill": virtual_skill,
+            "survey": survey,
             "assays": chemistry,
             "analytes": [a for a in ANALYTES if any(a in row for row in chemistry)],
             "lithology": lithology,
@@ -604,16 +641,20 @@ def hole_clusters(
         sizes[int(cluster)] = len(members)
         if means is not None:
             mix = means.reindex(members).mean()
-            mix.index = [str(c).removeprefix("mineral_").replace("class_", "class ") for c in mix.index]
+            mix.index = [
+                str(c).removeprefix("mineral_").replace("class_", "class ") for c in mix.index
+            ]
             cluster_names[int(cluster)] = name_profile(mix, dominant_share=0.5, parts=3)
-    return clean({
-        "view": view,
-        "run_id": run["run_id"],
-        "k": int(len(np.unique(labels))),
-        "assignments": dict(zip(names, labels.tolist(), strict=True)),
-        "names": cluster_names,
-        "sizes": sizes,
-    })
+    return clean(
+        {
+            "view": view,
+            "run_id": run["run_id"],
+            "k": int(len(np.unique(labels))),
+            "assignments": dict(zip(names, labels.tolist(), strict=True)),
+            "names": cluster_names,
+            "sizes": sizes,
+        }
+    )
 
 
 @app.get("/api/v2/holes/{hole_id}/similar")
@@ -713,8 +754,24 @@ def clusters(sensor: str = Query("swir", pattern="^(swir|tir)$")):
                     "preprocessing",
                 )
             }
+    vrun = active_run("virtual_assay", "combined")
+    virtual = (
+        {k: vrun["card"].get(k) for k in ("skill", "method", "assay_intervals", "meaning")}
+        if vrun
+        else None
+    )
+    robust_run = active_run("robustness", sensor)
+    robustness = robust_run["card"] if robust_run else None
     return clean(
-        {"sensor": sensor, "run_id": run["run_id"], "card": card, "profiles": profiles, "raw": raw}
+        {
+            "sensor": sensor,
+            "run_id": run["run_id"],
+            "card": card,
+            "profiles": profiles,
+            "raw": raw,
+            "virtual": virtual,
+            "robustness": robustness,
+        }
     )
 
 
@@ -861,6 +918,58 @@ def prediction_cv(sensor: str = Query("swir", pattern="^(swir|tir)$")):
 
 
 # -------------------------------------------------------------- data & jobs
+@lru_cache(maxsize=12)
+def _analyte(analyte: str) -> pd.DataFrame:
+    from hylogger.explorer.chemistry import analyte_values
+
+    with pool.connection() as conn:
+        return analyte_values(conn, analyte)
+
+
+@app.get("/api/v2/chemistry")
+def chemistry_search(analyte: str = Query(..., max_length=8), threshold: float = Query(0, ge=0)):
+    """Per hole: assay coverage, maximum and samples above a threshold for one analyte."""
+    if analyte not in ANALYTES:
+        raise HTTPException(422, f"Unknown analyte; choose one of {', '.join(ANALYTES)}")
+    values = _analyte(analyte)
+    rejected = values[values.rejected].groupby("collar_id").size()
+    values = values[~values.rejected]
+    if values.empty:
+        return {"analyte": analyte, "threshold": threshold, "unit": None, "holes": []}
+    grouped = values.groupby("collar_id")
+    stats = pd.DataFrame(
+        {
+            "n": grouped.size(),
+            "median": grouped.value.median(),
+            "max": grouped.value.max(),
+            "above": grouped.value.apply(lambda s: int((s > threshold).sum())),
+        }
+    )
+    top = values.loc[grouped.value.idxmax(), ["collar_id", "f", "t"]].set_index("collar_id")
+    stats = stats.join(top)
+    stats["implausible_removed"] = rejected.reindex(stats.index).fillna(0).astype(int)
+    holes = pd.DataFrame(
+        query(
+            "SELECT hole_id, wamex_collar_id FROM explorer_hole WHERE wamex_collar_id IS NOT NULL"
+        )
+    )
+    merged = holes.merge(stats, left_on="wamex_collar_id", right_index=True)
+    merged = merged.sort_values("max", ascending=False)
+    unit = "wt%" if analyte in OXIDES or analyte == "LOI" else "ppm"
+    return clean(
+        {
+            "analyte": analyte,
+            "threshold": threshold,
+            "unit": unit,
+            "holes_with_assays": int(len(merged)),
+            "holes_above": int((merged.above > 0).sum()),
+            "holes": merged.drop(columns="wamex_collar_id").round(4).to_dict("records"),
+            "note": "GSWA interim package assays (unverified); reporting codes (<= -1000) and "
+            "physically implausible values removed; below-detection values at half the limit",
+        }
+    )
+
+
 @app.get("/api/v2/catalog")
 def catalog(
     search: str | None = None,

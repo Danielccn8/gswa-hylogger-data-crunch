@@ -114,8 +114,14 @@ def summarise_sensor(
         raise HyLoggerError(f"No mask-admitted {sensor.upper()} readings for {hole_id}")
     frame = frame.assign(bin=np.floor(frame.depth_m / width_m).astype(int))
     counts = frame.groupby("bin").size()
+    sparse = not (counts >= min_readings).any()
+    if sparse:
+        # Chips and cuttings: one composite spectrum per sample interval.
+        min_readings = 1
     kept = counts[counts >= min_readings].index
     frame = frame[frame.bin.isin(kept)]
+    if frame.empty:
+        raise HyLoggerError(f"No {sensor.upper()} intervals for {hole_id}")
     medians, rows = [], []
     for bin_id, part in frame.groupby("bin", sort=True):
         medians.append(np.median(spectra[part.source_row.to_numpy()], axis=0))
@@ -151,6 +157,8 @@ def summarise_sensor(
             "grid_bands": int(len(grid)),
             "intervals": int(len(table)),
             "intervals_dropped_sparse": int((counts < min_readings).sum()),
+            "min_readings_used": int(min_readings),
+            "sparse_sampling": bool(sparse),
             "readings_used": int(len(frame)),
         }
     )

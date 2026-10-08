@@ -45,6 +45,8 @@ async function draw() {
         ${lineChart({ x: c.fine_scores.map(s => s.k), series: [{ values: c.fine_scores.map(s => s.silhouette), color: 'var(--accent)', name: 'silhouette (fine K)' }], xLabel: 'K', width: 460, height: 180 })}
         <p class="muted small">Scaled-vs-Hellinger agreement ARI ${c.scaled_vs_hellinger_ari} · training rows ${num(c.training_rows)} (hole-balanced).</p></details></section>
     </div>
+    ${robustSection(d.robustness)}
+    ${virtualSection(d.virtual)}
     ${rawSection(d.raw)}`;
 }
 
@@ -66,4 +68,26 @@ function rawSection(raw) {
     ${lineChart({ x: r.grid_nm, series: r.class_profiles.map(p => ({ values: p.mean_spectrum, color: clusterColor(p.cluster_id), name: `class ${p.cluster_id} (${num(p.n_intervals)})` })), xLabel: 'Wavelength (nm)', width: 900, height: 260 })}
     <div class="table-wrap"><table><thead><tr><th>Class</th><th class="num">Intervals</th><th class="num">Holes</th>${Object.keys(r.class_profiles[0].bands).map(b => `<th class="num">${esc(b)}</th>`).join('')}</tr></thead>
     <tbody>${r.class_profiles.map(p => `<tr><td><span class="swatch" style="background:${clusterColor(p.cluster_id)}"></span>${p.cluster_id}</td><td class="num">${num(p.n_intervals)}</td><td class="num">${num(p.n_holes)}</td>${Object.values(p.bands).map(x => `<td class="num">${x == null ? '–' : num(x, Math.abs(x) > 100 ? 0 : 3)}</td>`).join('')}</tr>`).join('')}</tbody></table></div></section>`).join('');
+}
+
+function virtualSection(v) {
+  if (!v || !v.skill) return '';
+  const rows = v.skill.slice().sort((a, b) => b.r2_holdout_holes - a.r2_holdout_holes).map(r => `<tr><td>${esc(r.analyte)}</td><td class="num">${r.r2_holdout_holes.toFixed(2)}</td><td class="num">×${r.median_abs_error_factor}</td><td class="num">${num(r.n)}</td><td class="num">${num(r.holes)}</td><td>${r.predictable ? '<span class="chip accent">yes</span>' : '<span class="chip">no</span>'}</td></tr>`).join('');
+  return `<section class="panel" style="margin-top:14px"><h2>Can the mineralogy predict the chemistry? (virtual assays)</h2>
+    <p class="muted small">${esc(v.method)}. R² is measured on whole holes the model never saw (${num(v.assay_intervals)} assay intervals). Analytes below R² 0.3 are not offered as predictions: HyLogger cannot see them well (e.g. U, sulphur, fine silica).</p>
+    <table><thead><tr><th>Analyte</th><th class="num">R² (held-out holes)</th><th class="num">Typical error</th><th class="num">Samples</th><th class="num">Holes</th><th>Offered</th></tr></thead><tbody>${rows}</tbody></table></section>`;
+}
+
+function robustSection(r) {
+  if (!r) return '';
+  const t = r.district_transfer || {}, w = r.width_sensitivity || {};
+  const widths = Object.entries(w.mantel_vs_1m || {}).map(([k, v]) => `${k} m: ρ ${v}`).join(' · ');
+  const ks = Object.entries(w.k_by_width || {}).map(([k, v]) => `${k} m → K ${v}`).join(' · ');
+  return `<section class="panel" style="margin-top:14px"><h2>How robust are these clusters?</h2>
+    <p class="muted small">${esc(r.meaning)}</p>
+    <div class="metrics" style="margin-top:8px">
+      <div class="metric"><span>Unseen districts (ARI)</span><strong>${t.mean_ari ?? '–'}</strong><small>mean of ${(t.repeats || []).length} repeats · min ${t.min_ari ?? '–'} · K=${t.k ?? '–'}</small></div>
+      <div class="metric"><span>Interval width vs 1 m</span><strong>${widths || '–'}</strong><small>hole-similarity agreement on ${num(w.holes)} sampled holes</small></div>
+      <div class="metric"><span>K chosen by width</span><strong style="font-size:16px">${ks || '–'}</strong><small>same rule applied at each width</small></div>
+    </div></section>`;
 }

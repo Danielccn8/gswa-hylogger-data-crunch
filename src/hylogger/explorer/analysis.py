@@ -28,11 +28,13 @@ from . import (
     anomaly,
     chemistry,
     clusters,
+    desurvey,
     domains,
     fingerprints,
     prediction,
     rawcluster,
     validation,
+    virtual_assay,
 )
 from .data import balanced_sample, group_abundance, load_intervals, model_features
 from .db import connect, copy_frame, read_frame, resolve_product
@@ -87,20 +89,22 @@ def promote(conn: psycopg.Connection, run_id: str) -> str:
 def hole_attributes(conn: psycopg.Connection) -> pd.DataFrame:
     holes = read_frame(
         conn,
-        "SELECT hole_id, lat, lon, district_id, tectonic_region, wamex_collar_id, commodity "
+        "SELECT hole_id, name, lat, lon, district_id, tectonic_region, wamex_collar_id, commodity "
         "FROM explorer_hole",
     )
-    dips = read_frame(
-        conn,
-        'SELECT "CollarId" AS collar, avg("Dip") AS dip FROM ref_survey '
-        'WHERE "Dip" BETWEEN -90 AND 90 GROUP BY 1',
-    )
-    holes["dip"] = holes.wamex_collar_id.map(dips.set_index("collar").dip)
     return holes.set_index("hole_id")
 
 
-def interval_run(conn, data_dir: Path, sensor: str, holes: pd.DataFrame, log) -> dict | None:
-    data = load_intervals(conn, sensor)
+def interval_run(
+    conn,
+    data_dir: Path,
+    sensor: str,
+    holes: pd.DataFrame,
+    log,
+    data=None,
+    chem_mismatch: pd.DataFrame | None = None,
+) -> dict | None:
+    data = data if data is not None else load_intervals(conn, sensor)
     if len(data) < 500 or data.meta.hole_id.nunique() < 3:
         log(f"{sensor}: too few intervals ({len(data)}) for clustering")
         return None
@@ -112,8 +116,23 @@ def interval_run(conn, data_dir: Path, sensor: str, holes: pd.DataFrame, log) ->
     domain_id, domain_table = domains.all_domains(
         data.meta, x, data.abundance, data.minerals, fit["labels"]
     )
+    chem_z = chem_analyte = None
+    if chem_mismatch is not None and len(chem_mismatch):
+        mapped = data.meta[["hole_id", "bin"]].merge(
+            chem_mismatch, on=["hole_id", "bin"], how="left"
+        )
+        chem_z = mapped.chem_z.to_numpy(float)
+        chem_analyte = mapped.chem_analyte.to_numpy(object)
     score, reasons, anomaly_card = anomaly.interval_scores(
-        data.meta, x, data.abundance, data.minerals, fit["relative_distance"], train, SEED
+        data.meta,
+        x,
+        data.abundance,
+        data.minerals,
+        fit["relative_distance"],
+        train,
+        SEED,
+        chem_z=chem_z,
+        chem_analyte=chem_analyte,
     )
     quality = anomaly.data_quality_flags(data.meta)
 
@@ -445,7 +464,9 @@ def raw_views(conn, data_dir: Path, processed: dict[str, dict], log) -> dict:
     return out
 
 
-def prediction_run(conn, data_dir: Path, run: dict, holes: pd.DataFrame, log) -> str | None:
+def prediction_run(
+    conn, data_dir: Path, run: dict, holes: pd.DataFrame, log, survey=None
+) -> str | None:
     data = run["data"]
     groups, names = run["groups"], run["group_names"]
     by_hole = pd.DataFrame(groups, columns=names).groupby(data.meta.hole_id.to_numpy()).mean()
@@ -459,7 +480,20 @@ def prediction_run(conn, data_dir: Path, run: dict, holes: pd.DataFrame, log) ->
         return None
     frame = located.reset_index().rename(columns={"index": "hole_id"})
     table, by_distance, summary = prediction.cross_validate(frame, by_hole.to_numpy())
-    bands = prediction.band_compositions(data.meta, groups, holes.dip.dropna().to_dict())
+    survey = survey or desurvey.load(conn, holes)
+    bands = prediction.band_compositions(data.meta, groups, survey)
+    covariate, covariate_table = prediction.covariate_cv(frame, by_hole.to_numpy())
+    covariate_table = covariate_table.merge(
+        table[["hole_id", "lodo_nearest_km", "region_error"]], on="hole_id"
+    )
+    covariate["by_distance"] = prediction._by_distance(
+        covariate_table, "lodo_nearest_km", "covariate_error"
+    )
+    covariate["skill_vs_region"] = round(
+        float(1 - covariate_table.covariate_error.median() / covariate_table.region_error.median()),
+        3,
+    )
+    covariate["beats_lodo_idw"] = bool(covariate["median_error"] < summary["lodo_median_error"])
     band_rows = [
         {"hole_id": h, "band": b, **dict(zip(names, v.round(5), strict=True))}
         for (h, b), v in bands.items()
@@ -471,7 +505,15 @@ def prediction_run(conn, data_dir: Path, run: dict, holes: pd.DataFrame, log) ->
         path / "holes.parquet"
     )
     pd.DataFrame(band_rows).to_parquet(path / "bands.parquet", index=False)
-    table.to_parquet(path / "cv.parquet", index=False)
+    table.merge(covariate_table[["hole_id", "covariate_error"]], on="hole_id").to_parquet(
+        path / "cv.parquet", index=False
+    )
+    if covariate["beats_lodo_idw"]:
+        import joblib
+
+        joblib.dump(
+            prediction.fit_covariate_models(frame, by_hole.to_numpy()), path / "regional.joblib"
+        )
     card = {
         "sensor": data.sensor,
         "target": "mean mineral-group composition per hole (and per vertical-depth band)",
@@ -480,6 +522,13 @@ def prediction_run(conn, data_dir: Path, run: dict, holes: pd.DataFrame, log) ->
         "depth_bands_m": prediction.DEPTH_BANDS,
         "summary": summary,
         "by_distance": by_distance,
+        "covariate_model": {
+            **covariate,
+            "method": "gradient boosting on lat/lon, tectonic region and IDW from other districts; "
+            "folds hold out whole districts",
+            "used_beyond_support": covariate["beats_lodo_idw"],
+        },
+        "desurvey": {"surveyed_holes": len(survey.surveyed()), "method": "minimum curvature"},
         "interval_run": run["run_id"],
     }
     with conn.transaction():
@@ -490,6 +539,43 @@ def prediction_run(conn, data_dir: Path, run: dict, holes: pd.DataFrame, log) ->
 
 def _finite(value: float) -> float | None:
     return float(value) if value is not None and np.isfinite(value) else None
+
+
+def virtual_assay_run(conn, data_dir: Path, datasets: dict, holes: pd.DataFrame, log):
+    """Fit chemistry-from-mineralogy models on SWIR+TIR together; store predictions."""
+    features = {s: (d.meta, *model_features(d)) for s, d in datasets.items()}
+    meta, x, columns = virtual_assay.combined_features(features)
+    collars = holes.wamex_collar_id.dropna().astype(int).to_dict()
+    chem = chemistry.assays(conn, sorted(set(collars.values())))
+    joined = chemistry.join_intervals(meta, chem, collars)
+    if joined.empty:
+        return None, None
+    result = virtual_assay.fit(meta, x, joined, SEED)
+    if not result["models"]:
+        return None, None
+    log(
+        "virtual assays: "
+        + ", ".join(f"{r['analyte']} R2={r['r2_holdout_holes']}" for r in result["skill"])
+    )
+    predictions = virtual_assay.predict(result["models"], x)
+    predictions.insert(0, "bin", meta.bin.to_numpy())
+    predictions.insert(0, "hole_id", meta.hole_id.to_numpy())
+    run_id = _run_id("virtual_assay", "combined")
+    path = data_dir / "products" / "analysis" / run_id
+    path.mkdir(parents=True, exist_ok=True)
+    predictions.to_parquet(path / "predictions.parquet", index=False)
+    card = {
+        "method": "Histogram gradient boosting on SWIR+TIR Hellinger mineral abundances per "
+        "1 m bin; target log10(analyte); skill from GroupKFold with whole holes held out",
+        "features": columns,
+        "skill": result["skill"],
+        "assay_intervals": int(len(joined)),
+        "meaning": "Predicted chemistry consistent with the mineralogy; not a measured assay",
+    }
+    with conn.transaction():
+        _store_run(conn, run_id, "virtual_assay", "combined", card, path)
+    mismatch = virtual_assay.mismatch_by_bin(meta, joined, result["z"])
+    return run_id, mismatch
 
 
 def run_analysis(
@@ -506,9 +592,20 @@ def run_analysis(
     holes = hole_attributes(conn)
     created: list[str] = []
     views: dict[str, dict] = {}
+    survey = desurvey.load(conn, holes)
+    log(f"desurvey: {len(survey.surveyed())} holes with surveys (others treated as vertical)")
+    progress(stage="loading intervals")
+    datasets = {sensor: load_intervals(conn, sensor) for sensor in SENSORS}
+    datasets = {s: d for s, d in datasets.items() if len(d) >= 500}
+    progress(stage="virtual assays")
+    virtual_id, mismatch = virtual_assay_run(conn, data_dir, datasets, holes, log)
+    if virtual_id:
+        created.append(virtual_id)
     for step, sensor in enumerate(SENSORS):
         progress(stage=f"{sensor} intervals", step=step)
-        run = interval_run(conn, data_dir, sensor, holes, log)
+        run = interval_run(
+            conn, data_dir, sensor, holes, log, data=datasets.get(sensor), chem_mismatch=mismatch
+        )
         if run is None:
             continue
         created.append(run["run_id"])
@@ -516,10 +613,11 @@ def run_analysis(
         views[sensor] = hole_views(conn, data_dir, run, log)
         created.append(views[sensor]["run_id"])
         progress(stage=f"{sensor} prediction", step=step)
-        predicted = prediction_run(conn, data_dir, run, holes, log)
+        predicted = prediction_run(conn, data_dir, run, holes, log, survey)
         if predicted:
             created.append(predicted)
         del run
+        datasets.pop(sensor, None)
     combined = combined_view(conn, data_dir, views, log)
     if combined:
         created.append(combined)
@@ -553,3 +651,49 @@ def main() -> None:
 
 if __name__ == "__main__":
     main()
+
+
+def run_robustness(
+    conn, data_dir: Path, *, sample_holes: int = 150, log=print, promote=True
+) -> dict:
+    """District-transfer and interval-width checks for the active interval clustering."""
+    from . import robustness
+
+    holes = hole_attributes(conn)
+    district = holes.district_id.dropna().astype(int).to_dict()
+    created = []
+    for sensor in SENSORS:
+        active = read_frame(
+            conn,
+            "SELECT card->'clustering'->>'k_fine' AS k FROM analysis_run "
+            "WHERE kind='interval' AND sensor=%s AND status='active'",
+            (sensor,),
+        )
+        data = load_intervals(conn, sensor)
+        if active.empty or len(data) < 500:
+            continue
+        k = int(active.k.iloc[0])
+        transfer = robustness.district_transfer(data, k, district, seed=SEED)
+        mean_ari, min_ari = transfer["mean_ari"], transfer["min_ari"]
+        log(f"{sensor}: district transfer ARI mean {mean_ari} (min {min_ari})")
+        rng = np.random.default_rng(SEED)
+        candidates = sorted(data.meta.hole_id.unique())
+        sample = sorted(rng.choice(candidates, min(sample_holes, len(candidates)), replace=False))
+        width = robustness.width_sensitivity(data_dir, sensor, sample, seed=SEED)
+        log(f"{sensor}: width sensitivity {width.get('mantel_vs_1m')} K {width.get('k_by_width')}")
+        run_id = _run_id("robustness", sensor)
+        path = data_dir / "products" / "analysis" / run_id
+        path.mkdir(parents=True, exist_ok=True)
+        card = {
+            "district_transfer": transfer,
+            "width_sensitivity": width,
+            "meaning": "ARI near 1: withheld districts fall into the same clusters as in the "
+            "full fit. Mantel rho near 1: hole similarity does not depend on interval width.",
+        }
+        with conn.transaction():
+            _store_run(conn, run_id, "robustness", sensor, card, path)
+        created.append(run_id)
+    if promote:
+        for run_id in created:
+            promote_run(conn, run_id)
+    return {"runs": created}

@@ -14,7 +14,7 @@ function hiDpi(canvas, width, height) {
 /* --------------------------------------------------------------- strip log
  tracks: [{label, width, kind: 'stack'|'ribbon'|'line'|'text', rows: [...], ...}]
  rows share depth_from/depth_to (metres). */
-export function stripLog(container, { tracks, depthMin, depthMax, pxPerMetre = 3, onPick, highlight }) {
+export function stripLog(container, { tracks, depthMin, depthMax, pxPerMetre = 3, onPick, highlight, tvd = null }) {
   const depthAxis = 46;
   const width = depthAxis + tracks.reduce((s, t) => s + t.width + 6, 0);
   const span = Math.max(1, depthMax - depthMin);
@@ -74,7 +74,7 @@ export function stripLog(container, { tracks, depthMin, depthMax, pxPerMetre = 3
   canvas.addEventListener('mousemove', event => {
     const hit = pick(event);
     if (!hit || !hit.row) { tooltip(null); return; }
-    tooltip(`<b>${esc(hit.track.label)}</b> · ${num(hit.row.f, 1)}–${num(hit.row.t, 1)} m<br>${hit.track.describe ? hit.track.describe(hit.row) : esc(hit.row.label ?? hit.row.value ?? '')}`, event);
+    tooltip(`<b>${esc(hit.track.label)}</b> · ${num(hit.row.f, 1)}–${num(hit.row.t, 1)} m${tvd ? ` <span class="muted">(TVD ≈ ${num(tvd((hit.row.f + hit.row.t) / 2))} m)</span>` : ''}<br>${hit.track.describe ? hit.track.describe(hit.row) : esc(hit.row.label ?? hit.row.value ?? '')}`, event);
   });
   canvas.addEventListener('mouseleave', () => tooltip(null));
   canvas.addEventListener('click', event => { const hit = pick(event); if (hit && onPick) onPick(hit); });

@@ -11,6 +11,8 @@ Components
 - isolation: Isolation Forest on the Hellinger features
 - downhole_contrast: distance to the median of the surrounding +/-5 m
 - rare_mineral: carries a mineral present in under 0.2% of intervals
+- chemistry_mismatch: where assays exist, the out-of-fold residual of the
+  virtual-assay model (assay disagrees with what the mineralogy predicts)
 """
 
 from __future__ import annotations
@@ -54,6 +56,8 @@ def interval_scores(
     relative_distance: np.ndarray,
     train: np.ndarray,
     seed: int = 42,
+    chem_z: np.ndarray | None = None,
+    chem_analyte: np.ndarray | None = None,
 ) -> tuple[np.ndarray, list[list[str]], dict]:
     forest = IsolationForest(n_estimators=200, random_state=seed, n_jobs=-1).fit(x[train])
     isolation = -forest.score_samples(x)
@@ -66,19 +70,31 @@ def interval_scores(
         "isolation": percentile(isolation),
         "downhole_contrast": percentile(contrast),
     }
-    score = np.mean(np.vstack(list(components.values())), axis=0)
+    stack = list(components.values())
+    if chem_z is not None and np.isfinite(chem_z).any():
+        chem = np.full(len(x), np.nan, dtype=np.float32)
+        known = np.isfinite(chem_z)
+        chem[known] = percentile(chem_z[known])
+        components["chemistry_mismatch"] = chem
+        stack.append(chem)
+    with np.errstate(all="ignore"):
+        score = np.nanmean(np.vstack(stack), axis=0)
     rare_flag = rare_share >= 0.1
     score = np.where(rare_flag, np.maximum(score, 0.9), score).astype(np.float32)
     reasons: list[list[str]] = [[] for _ in range(len(x))]
     for name, values in components.items():
-        for row in np.flatnonzero(values >= REASON_PERCENTILE):
-            reasons[row].append(name)
+        for row in np.flatnonzero(np.nan_to_num(values) >= REASON_PERCENTILE):
+            if name == "chemistry_mismatch" and chem_analyte is not None:
+                reasons[row].append(f"chemistry_mismatch:{chem_analyte[row]}")
+            else:
+                reasons[row].append(name)
     rare_names = np.array(minerals)[rare_columns] if len(rare_columns) else np.array([])
     for row in np.flatnonzero(rare_flag):
         present = rare_names[abundance[row, rare_columns] > 0]
         reasons[row].append("rare_mineral:" + "/".join(present[:3]))
     card = {
         "components": list(components) + ["rare_mineral"],
+        "chemistry_rows": int(np.isfinite(chem_z).sum()) if chem_z is not None else 0,
         "reason_percentile": REASON_PERCENTILE,
         "rare_prevalence": RARE,
         "rare_minerals": rare_names.tolist(),

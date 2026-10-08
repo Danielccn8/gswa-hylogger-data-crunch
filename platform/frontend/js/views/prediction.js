@@ -39,7 +39,10 @@ async function summary() {
     ${rowsOf(d.card.by_distance)}</tbody></table>
     ${s.lodo_by_distance ? `<h3 style="margin-top:14px">When the whole district is unseen (leave-district-out)</h3>
     <p class="muted small">The honest test for a new area: every hole within the same ~5 km district is withheld. ${esc(s.support_rule || '')}.</p>
-    <table><thead><tr><th>Nearest hole</th><th class="num">Holes</th><th class="num">Model error</th><th class="num">Regional baseline</th><th class="num">Skill</th></tr></thead><tbody>${rowsOf(s.lodo_by_distance)}</tbody></table>` : ''}`;
+    <table><thead><tr><th>Nearest hole</th><th class="num">Holes</th><th class="num">Model error</th><th class="num">Regional baseline</th><th class="num">Skill</th></tr></thead><tbody>${rowsOf(s.lodo_by_distance)}</tbody></table>` : ''}
+    ${d.card.covariate_model ? `<h3 style="margin-top:14px">Could a model with regional covariates do better far from data?</h3>
+    <p class="small">${esc(d.card.covariate_model.method)}. Median error on unseen districts ${d.card.covariate_model.median_error} vs ${s.lodo_median_error} for distance weighting alone (skill vs region ${pct(d.card.covariate_model.skill_vs_region)}).
+    ${d.card.covariate_model.beats_lodo_idw ? '<span class="chip accent">used beyond the support limit</span>' : '<span class="chip">not better — not used</span>'}</p>` : ''}`;
   cvLayer.clearLayers();
   if ($('#layer').value === 'error') {
     for (const h of d.holes) {

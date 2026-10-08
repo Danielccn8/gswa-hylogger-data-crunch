@@ -3,13 +3,13 @@ import { scoreColor } from '../palette.js';
 import { go } from '../main.js';
 
 let sensor = 'swir';
-const REASONS = { poor_fit: 'Poor fit to its cluster', isolation: 'Isolated in feature space', downhole_contrast: 'Unlike the metres around it', rare_mineral: 'Contains a rare mineral', unlike_other_holes: 'Unlike any other hole' };
+const REASONS = { poor_fit: 'Poor fit to its cluster', isolation: 'Isolated in feature space', downhole_contrast: 'Unlike the metres around it', rare_mineral: 'Contains a rare mineral', chemistry_mismatch: 'Assay disagrees with mineralogy', unlike_other_holes: 'Unlike any other hole' };
 
 export async function render(root) {
   root.innerHTML = `<div class="page-head"><div><h1>Unusual intervals and holes</h1>
     <p class="muted">Review candidates ranked by how unusual they are within this dataset, with the reasons. Not evidence of mineralisation or of an error.</p></div>
     <div class="toolbar"><label class="field">Sensor<select id="sensor"><option value="swir">SWIR</option><option value="tir">TIR</option></select></label>
-    <label class="field">Reason<select id="reason"><option value="">Any</option>${Object.entries(REASONS).slice(0, 4).map(([k, v]) => `<option value="${k}">${v}</option>`).join('')}</select></label>
+    <label class="field">Reason<select id="reason"><option value="">Any</option>${Object.entries(REASONS).slice(0, 5).map(([k, v]) => `<option value="${k}">${v}</option>`).join('')}</select></label>
     <label class="field">Commodity<input id="commodity" placeholder="e.g. gold"></label>
     <button id="apply" type="button">Apply</button></div></div><div id="body"></div>`;
   $('#sensor').value = sensor;
