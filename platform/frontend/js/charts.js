@@ -166,3 +166,39 @@ export function lineChart({ x, series, xLabel = '', yLabel = '', width = 560, he
 }
 
 export { scoreColor };
+
+/* ------------------------------------------------- DTW alignment of two holes */
+export function alignment(container, { a, b, stepsA, stepsB, path, colorOf, height = 640 }) {
+  const width = Math.max(420, Math.min(container.clientWidth || 560, 640));
+  const canvas = document.createElement('canvas'); container.replaceChildren(canvas);
+  const ctx = hiDpi(canvas, width, height);
+  ctx.fillStyle = css('--surface'); ctx.fillRect(0, 0, width, height);
+  const colW = 54, ax = 70, bx = width - 70 - colW, top = 34, bottom = height - 16;
+  const scale = steps => {
+    const lo = Math.min(...steps.map(s => s.f)), hi = Math.max(...steps.map(s => s.t));
+    return { lo, hi, y: d => top + (d - lo) / ((hi - lo) || 1) * (bottom - top) };
+  };
+  const sa = scale(stepsA), sb = scale(stepsB);
+  ctx.font = '12px Segoe UI, system-ui, sans-serif'; ctx.fillStyle = css('--ink'); ctx.textAlign = 'center';
+  ctx.fillText(a, ax + colW / 2, 18); ctx.fillText(b, bx + colW / 2, 18);
+  ctx.globalAlpha = 0.28; ctx.lineWidth = 1;
+  for (const [i, j] of path) {
+    const s1 = stepsA[i], s2 = stepsB[j];
+    ctx.strokeStyle = colorOf(s1.cluster_id);
+    ctx.beginPath();
+    ctx.moveTo(ax + colW, sa.y((s1.f + s1.t) / 2));
+    ctx.bezierCurveTo((ax + bx) / 2, sa.y((s1.f + s1.t) / 2), (ax + bx) / 2, sb.y((s2.f + s2.t) / 2), bx, sb.y((s2.f + s2.t) / 2));
+    ctx.stroke();
+  }
+  ctx.globalAlpha = 1;
+  const column = (steps, sc, x) => {
+    for (const s of steps) { ctx.fillStyle = colorOf(s.cluster_id); ctx.fillRect(x, sc.y(s.f), colW, Math.max(1, sc.y(s.t) - sc.y(s.f))); }
+    ctx.strokeStyle = css('--line'); ctx.strokeRect(x - .5, top - .5, colW + 1, bottom - top + 1);
+    ctx.fillStyle = css('--muted'); ctx.font = '10px Segoe UI, system-ui, sans-serif'; ctx.textAlign = x < width / 2 ? 'right' : 'left';
+    const step = [10, 20, 50, 100, 200, 500].find(v => (sc.hi - sc.lo) / v <= 12) || 1000;
+    for (let d = Math.ceil(sc.lo / step) * step; d <= sc.hi; d += step) {
+      ctx.fillText(`${d} m`, x < width / 2 ? x - 5 : x + colW + 5, sc.y(d) + 3);
+    }
+  };
+  column(stepsA, sa, ax); column(stepsB, sb, bx);
+}

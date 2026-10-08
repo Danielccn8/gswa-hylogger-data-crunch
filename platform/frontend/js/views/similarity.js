@@ -1,13 +1,13 @@
 import { $, api, esc, num, pct, stack, ranked, loading, failure } from '../util.js';
 import { selection } from '../state.js';
 import { clusterColor, mineralColor, categoryColor, scoreColor } from '../palette.js';
-import { heatmap, scatter, stripLog } from '../charts.js';
+import { heatmap, scatter, stripLog, alignment } from '../charts.js';
 import { groupColor } from '../palette.js';
 import { go } from '../main.js';
 import { kSelect, recut } from '../holeclusters.js';
 
 let view = 'combined', colourBy = 'cluster', holeK = 'auto';
-const VIEWS = { combined: 'SWIR + TIR (processed)', swir: 'SWIR (processed)', tir: 'TIR (processed)', raw_nir: 'Raw NIR/SWIR spectra', raw_tir: 'Raw TIR spectra' };
+const VIEWS = { combined: 'Mineral mix · SWIR + TIR', swir: 'Mineral mix · SWIR', tir: 'Mineral mix · TIR', seq_combined: 'Down-hole sequence · SWIR + TIR', seq_swir: 'Down-hole sequence · SWIR', seq_tir: 'Down-hole sequence · TIR', raw_nir: 'Raw NIR/SWIR spectra', raw_tir: 'Raw TIR spectra' };
 
 export async function render(root, [focus]) {
   root.innerHTML = `<div class="page-head"><div><h1>Similarity between holes</h1>
@@ -25,7 +25,11 @@ export async function render(root, [focus]) {
     <section class="panel" style="margin-top:14px"><h2>Selected holes</h2><div id="profiles"></div></section>
     <section class="panel" style="margin-top:14px"><div class="row gap" style="justify-content:space-between"><div><h2>Down-hole comparison</h2>
       <p class="muted small">Up to four holes side by side on one depth scale: SWIR and TIR mineral-group mix and interval cluster. Tick holes in the table above (the first four are used by default).</p></div>
-      <button id="compare-strips" type="button" class="secondary">Compare strip logs</button></div><div id="strips" class="row gap" style="align-items:flex-start;overflow-x:auto"></div></section>`;
+      <button id="compare-strips" type="button" class="secondary">Compare strip logs</button></div><div id="strips" class="row gap" style="align-items:flex-start;overflow-x:auto"></div></section>
+    <section class="panel" style="margin-top:14px"><div class="row gap" style="justify-content:space-between"><div><h2>Align two holes (down-hole sequence)</h2>
+      <p class="muted small">Dynamic time warping matches the two sequences top to bottom, letting zones stretch or thin. Lines join matched depths; colours are interval clusters. Uses the first two ticked holes, or else the most similar pair in the matrix.</p></div>
+      <div class="row gap"><label class="field">Sensor<select id="align-sensor"><option value="swir">SWIR</option><option value="tir">TIR</option></select></label><button id="align" type="button" class="secondary">Align</button></div></div>
+      <div class="grid cols-2"><div id="align-chart"></div><div id="align-zones"></div></div></section>`;
   $('#fingerprint').value = view; $('#colour').value = colourBy;
   $('#fingerprint').onchange = e => { view = e.target.value; refresh(); };
   $('#colour').onchange = e => { colourBy = e.target.value; drawEmbedding(); };
@@ -36,11 +40,13 @@ export async function render(root, [focus]) {
     selection.set([id, ...d.items.map(i => i.hole_id)]); refresh();
   };
   $('#compare-strips').onclick = compareStrips;
+  $('#align').onclick = alignTwo;
   if (focus && selection.list().length < 2) { $('#seed').click(); return; }
   refresh();
 }
 
 let embedding = null;
+let lastMatrix = null;
 async function refresh() {
   await Promise.all([drawMatrix(), loadEmbedding()]);
 }
@@ -54,6 +60,7 @@ async function drawMatrix() {
   let d;
   try { d = await api(`/api/v2/similarity?view=${view}&holes=${encodeURIComponent(holes.join(','))}`); } catch (error) { failure(node, error); return; }
   $('#matrix-note').textContent = `${d.distance || ''}. ${d.missing.length ? `Not in this analysis: ${d.missing.slice(0, 20).join(', ')}${d.missing.length > 20 ? '…' : ''}.` : ''}${all.length > 150 ? ` Showing the first 150 of ${all.length} selected holes.` : ''} Darker = more similar.`;
+  lastMatrix = d;
   heatmap(node, { labels: d.holes, matrix: d.matrix, onPick: (a) => go(`hole/${encodeURIComponent(a)}`) });
   const rows = d.holes.map(h => {
     const p = d.profiles[h]; const s = p?.summary || {};
@@ -119,4 +126,29 @@ async function compareStrips() {
     if (tracks.length) stripLog($(`#strip-${i}`), { tracks, depthMin: 0, depthMax, pxPerMetre: Math.max(0.5, Math.min(2, 900 / depthMax)) });
     else $(`#strip-${i}`).innerHTML = '<p class="empty">No prepared data.</p>';
   });
+}
+
+async function alignTwo() {
+  const ticked = [...document.querySelectorAll('[data-strip]:checked')].map(i => i.dataset.strip);
+  const holes = ticked.length >= 2 ? ticked.slice(0, 2) : closestPair();
+  const chart = $('#align-chart'), zones = $('#align-zones');
+  if (holes.length < 2) { chart.innerHTML = '<p class="empty">Select two holes first.</p>'; zones.innerHTML = ''; return; }
+  chart.innerHTML = '<p class="empty">Aligning…</p>'; zones.innerHTML = '';
+  let d;
+  try { d = await api(`/api/v2/align?a=${encodeURIComponent(holes[0])}&b=${encodeURIComponent(holes[1])}&sensor=${$('#align-sensor').value}`); }
+  catch (error) { chart.innerHTML = `<div class="notice">${esc(error.message)}</div>`; return; }
+  alignment(chart, { a: d.a, b: d.b, stepsA: d.steps_a, stepsB: d.steps_b, path: d.path, colorOf: clusterColor });
+  zones.innerHTML = `<p class="small"><b>Sequence distance ${d.distance.toFixed(3)}</b> <span class="muted">(0 = same sequence; ${esc(d.method || '')})</span></p>
+    <div class="table-wrap" style="max-height:560px"><table><thead><tr><th>${esc(d.a)} depth</th><th>matches ${esc(d.b)} depth</th><th>Zone (${esc(d.a)})</th><th class="num">Same cluster</th></tr></thead><tbody>
+    ${d.zones.filter(z => z.a_to - z.a_from >= 5).map(z => `<tr><td class="num">${num(z.a_from)}–${num(z.a_to)} m</td><td class="num">${num(z.b_from)}–${num(z.b_to)} m</td>
+      <td><span class="swatch" style="background:${clusterColor(z.cluster_id)}"></span>${esc(z.cluster_name || `cluster ${z.cluster_id}`)}</td><td class="num">${pct(z.same_cluster_share)}</td></tr>`).join('')}</tbody></table></div>
+    <p class="muted small">Zones shorter than 5 m are hidden. "Same cluster" is the share of matched metres in ${esc(d.b)} that fall in the same interval cluster.</p>`;
+}
+
+// Most similar pair in the current matrix: the natural default to align.
+function closestPair() {
+  const d = lastMatrix; if (!d || d.holes.length < 2) return [];
+  let best = [0, 1], low = Infinity;
+  d.matrix.forEach((row, i) => row.forEach((v, j) => { if (j > i && v != null && v < low) { low = v; best = [i, j]; } }));
+  return best.map(i => d.holes[i]);
 }

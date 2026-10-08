@@ -33,6 +33,7 @@ from . import (
     fingerprints,
     prediction,
     rawcluster,
+    sequence,
     validation,
     virtual_assay,
 )
@@ -247,6 +248,8 @@ def interval_run(
         "groups": groups,
         "group_names": group_names,
         "score": score,
+        "x": x,
+        "train": train,
     }
 
 
@@ -366,6 +369,7 @@ def hole_views(conn, data_dir: Path, run: dict, log) -> dict:
     log(f"{sensor}: hole run {run_id} ({len(names)} holes)")
     return {
         "minerals": mean,
+        "interval_run": run["run_id"],
         "run_id": run_id,
         "names": names,
         "matrix": js,
@@ -374,7 +378,15 @@ def hole_views(conn, data_dir: Path, run: dict, log) -> dict:
     }
 
 
-def combined_view(conn, data_dir: Path, views: dict[str, dict], log) -> str | None:
+def combined_view(
+    conn,
+    data_dir: Path,
+    views: dict[str, dict],
+    log,
+    sensor: str = "combined",
+    description: str = "mean of SWIR and TIR JS distances where both exist; "
+    "1.0 where a pair shares no sensor",
+) -> str | None:
     if len(views) < 2:
         return None
     names = sorted(set().union(*(set(v["names"]) for v in views.values())))
@@ -395,14 +407,13 @@ def combined_view(conn, data_dir: Path, views: dict[str, dict], log) -> str | No
     run_id = hole_run(
         conn,
         data_dir,
-        "combined",
+        sensor,
         names,
         distance,
         summaries,
         {
-            "sensor": "combined",
-            "distance": "mean of SWIR and TIR JS distances where both exist; "
-            "1.0 where a pair shares no sensor",
+            "sensor": sensor,
+            "distance": description,
             "views": {s: v["run_id"] for s, v in views.items()},
         },
         naming=pd.concat([v["minerals"] for v in views.values()], axis=1)
@@ -410,8 +421,63 @@ def combined_view(conn, data_dir: Path, views: dict[str, dict], log) -> str | No
         .sum()
         .T,
     )
-    log(f"combined: hole run {run_id} ({len(names)} holes)")
+    log(f"{sensor}: hole run {run_id} ({len(names)} holes)")
     return run_id
+
+
+def sequence_views(conn, data_dir: Path, steps: dict, views: dict, log) -> list[str]:
+    """DTW down-hole sequence similarity per sensor, then SWIR+TIR combined."""
+    created, seq_views = [], {}
+    for sensor, table in steps.items():
+        names, seqs = sequence.sequences(table)
+        if len(names) < 5:
+            continue
+        started = time.perf_counter()
+        matrix = sequence.dtw_matrix(seqs)
+        view = views.get(sensor, {})
+        minerals = view.get("minerals")
+        summaries = {h: view.get("summaries", {}).get(h, {}) for h in names}
+        extra = minerals.reindex(names).add_prefix("mineral_") if minerals is not None else None
+        run_id = hole_run(
+            conn,
+            data_dir,
+            f"seq_{sensor}",
+            names,
+            matrix,
+            summaries,
+            {
+                "sensor": f"seq_{sensor}",
+                "distance": f"banded DTW (band {sequence.BAND}) on {sequence.STEP_M:g} m "
+                f"true-vertical-depth steps of {sequence.COMPONENTS} PCA components of the mix; "
+                "order down the hole matters, thickness may stretch",
+                "step_m": sequence.STEP_M,
+                "band": sequence.BAND,
+                "interval_run": view.get("interval_run"),
+            },
+            extra,
+            naming=minerals,
+        )
+        table.to_parquet(data_dir / "products" / "analysis" / run_id / "steps.parquet", index=False)
+        log(f"seq_{sensor}: DTW {len(names)} holes in {time.perf_counter() - started:.0f} s")
+        created.append(run_id)
+        seq_views[sensor] = {
+            "run_id": run_id,
+            "names": names,
+            "matrix": matrix,
+            "summaries": summaries,
+            "minerals": minerals if minerals is not None else pd.DataFrame(index=names),
+        }
+    combined = combined_view(
+        conn,
+        data_dir,
+        seq_views,
+        log,
+        sensor="seq_combined",
+        description="mean of SWIR and TIR DTW sequence distances where both exist",
+    )
+    if combined:
+        created.append(combined)
+    return created
 
 
 def raw_views(conn, data_dir: Path, processed: dict[str, dict], log) -> dict:
@@ -601,6 +667,7 @@ def run_analysis(
     virtual_id, mismatch = virtual_assay_run(conn, data_dir, datasets, holes, log)
     if virtual_id:
         created.append(virtual_id)
+    steps: dict[str, pd.DataFrame] = {}
     for step, sensor in enumerate(SENSORS):
         progress(stage=f"{sensor} intervals", step=step)
         run = interval_run(
@@ -612,6 +679,8 @@ def run_analysis(
         progress(stage=f"{sensor} holes", step=step)
         views[sensor] = hole_views(conn, data_dir, run, log)
         created.append(views[sensor]["run_id"])
+        z = sequence.reduce(run["x"], run["train"], SEED)
+        steps[sensor] = sequence.build_steps(run["data"].meta, z, run["fit"]["labels"], survey)
         progress(stage=f"{sensor} prediction", step=step)
         predicted = prediction_run(conn, data_dir, run, holes, log, survey)
         if predicted:
@@ -621,6 +690,8 @@ def run_analysis(
     combined = combined_view(conn, data_dir, views, log)
     if combined:
         created.append(combined)
+    progress(stage="down-hole sequences")
+    created.extend(sequence_views(conn, data_dir, steps, views, log))
     if raw:
         progress(stage="raw spectra")
         created.extend(raw_views(conn, data_dir, views, log).values())

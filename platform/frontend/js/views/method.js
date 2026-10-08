@@ -23,6 +23,7 @@ export async function render(root) {
       <li>Anomaly score: mean percentile of poor fit to its cluster, Isolation Forest, contrast with ±5 m, plus rare-mineral flags. A review list, not a finding.</li></ul></section>
     <section class="panel"><h2>4 · Similarity, raw whole-hole clusters, prediction</h2><ul>
       <li>Hole fingerprint = share of its intervals in each fine cluster; distance = Jensen–Shannon (Sathi). SWIR+TIR averages both where available.</li>
+      <li>Down-hole sequence similarity: each hole becomes 10 m true-vertical-depth steps of its mineral mix; holes are compared with dynamic time warping (banded), so the order of zones matters while their thickness may differ. Similarity → “Align two holes” shows which zone matches which.</li>
       <li>Raw whole-hole distance = variance-weighted Wasserstein distance between holes' PCA score distributions (Yeshwanth's idea), with Final Mask and QC applied.</li>
       <li>Virtual assays: gradient boosting predicts MgO, CaO, Na₂O, K₂O, LOI, Cr, Al₂O₃ and Ni from SWIR+TIR mineralogy (R² 0.30–0.57 on held-out holes); U, S, Fe₂O₃ and SiO₂ are not predictable and are not offered. Residuals feed the chemistry-mismatch anomaly.</li>
       <li>Robustness: clusters refitted without ~20% of districts agree with the full fit (ARI ≈ 0.84–0.89); hole similarity is stable across 0.5–2 m intervals.</li>

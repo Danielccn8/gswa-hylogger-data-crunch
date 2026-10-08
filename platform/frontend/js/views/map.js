@@ -60,7 +60,8 @@ export async function render(root) {
         <span id="chem-controls" class="row gap" hidden><label class="field">Analyte<select id="analyte">${ANALYTES.map(a => `<option ${a === analyte ? 'selected' : ''}>${a}</option>`).join('')}</select></label>
         <label class="field">Threshold<input id="threshold" type="number" min="0" step="any" value="${threshold}" style="width:100px"></label></span>
         <label class="field">Analysis<select id="analysis">
-          <option value="combined">SWIR + TIR</option><option value="swir">SWIR</option><option value="tir">TIR</option>
+          <option value="combined">Mix · SWIR + TIR</option><option value="swir">Mix · SWIR</option><option value="tir">Mix · TIR</option>
+          <option value="seq_combined">Sequence · SWIR + TIR</option><option value="seq_swir">Sequence · SWIR</option><option value="seq_tir">Sequence · TIR</option>
           <option value="raw_nir">Raw NIR/SWIR spectra</option><option value="raw_tir">Raw TIR spectra</option></select></label>
         ${kSelect('hole-k', holeK)}
         <label class="field" style="flex:1;min-width:160px">Filter<input id="filter" type="search" placeholder="Hole, project, operator or commodity"></label>

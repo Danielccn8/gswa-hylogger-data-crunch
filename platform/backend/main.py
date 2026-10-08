@@ -41,7 +41,16 @@ DATABASE_URL = os.environ.get(
 DATA_DIR = Path(os.environ.get("HYLOGGER_DATA_DIR", "C:/HyLoggerData"))
 FRONTEND = Path(__file__).resolve().parent.parent / "frontend"
 SENSORS = ("swir", "tir", "vnir")
-HOLE_VIEWS = ("combined", "swir", "tir", "raw_nir", "raw_tir")
+HOLE_VIEWS = (
+    "combined",
+    "swir",
+    "tir",
+    "raw_nir",
+    "raw_tir",
+    "seq_combined",
+    "seq_swir",
+    "seq_tir",
+)
 MAX_JOB_HOLES = 2500
 
 pool = ConnectionPool(
@@ -176,7 +185,11 @@ def summary():
 
 
 @app.get("/api/v2/map")
-def map_holes(view: str = Query("combined", pattern="^(combined|swir|tir|raw_nir|raw_tir)$")):
+def map_holes(
+    view: str = Query(
+        "combined", pattern="^(combined|swir|tir|raw_nir|raw_tir|seq_combined|seq_swir|seq_tir)$"
+    ),
+):
     run = active_run("hole", view)
     rows = query(
         """SELECT h.hole_id, h.name, h.lat, h.lon, h.commodity, h.tectonic_region, h.district_id,
@@ -540,7 +553,10 @@ def interval_detail(feature_set_id: str, bin_id: int, limit: int = Query(12, le=
 # ---------------------------------------------------------- similarity etc.
 @app.get("/api/v2/similarity")
 def similarity(
-    holes: str, view: str = Query("combined", pattern="^(combined|swir|tir|raw_nir|raw_tir)$")
+    holes: str,
+    view: str = Query(
+        "combined", pattern="^(combined|swir|tir|raw_nir|raw_tir|seq_combined|seq_swir|seq_tir)$"
+    ),
 ):
     run = active_run("hole", view)
     if run is None:
@@ -615,7 +631,9 @@ def _mineral_means(run_id: str, path: str, card_json: str) -> pd.DataFrame | Non
 
 @app.get("/api/v2/hole-clusters")
 def hole_clusters(
-    view: str = Query("combined", pattern="^(combined|swir|tir|raw_nir|raw_tir)$"),
+    view: str = Query(
+        "combined", pattern="^(combined|swir|tir|raw_nir|raw_tir|seq_combined|seq_swir|seq_tir)$"
+    ),
     k: int = Query(..., ge=2, le=40),
 ):
     """Re-cut the stored average-linkage tree at a chosen number of hole clusters."""
@@ -660,7 +678,9 @@ def hole_clusters(
 @app.get("/api/v2/holes/{hole_id}/similar")
 def similar_holes(
     hole_id: str,
-    view: str = Query("combined", pattern="^(combined|swir|tir|raw_nir|raw_tir)$"),
+    view: str = Query(
+        "combined", pattern="^(combined|swir|tir|raw_nir|raw_tir|seq_combined|seq_swir|seq_tir)$"
+    ),
     limit: int = Query(15, le=50),
 ):
     run = active_run("hole", view)
@@ -708,8 +728,70 @@ def _why(a: dict, b: dict, view: str) -> list[str]:
     return out
 
 
+@app.get("/api/v2/align")
+def align(a: str, b: str, sensor: str = Query("swir", pattern="^(swir|tir)$")):
+    """DTW alignment of two holes' down-hole sequences: matched steps and zones."""
+    from hylogger.explorer import sequence
+
+    run = active_run("hole", f"seq_{sensor}")
+    if run is None:
+        raise HTTPException(404, f"No active {sensor} sequence analysis")
+    steps = _parquet(run["run_id"], run["product_path"], "steps.parquet")
+    columns = [c for c in steps.columns if c.startswith("c") and c[1:].isdigit()]
+    parts = {}
+    for hole_id in (a, b):
+        part = steps[steps.hole_id == hole_id].sort_values("step").reset_index(drop=True)
+        if len(part) < sequence.MIN_STEPS:
+            raise HTTPException(422, f"{hole_id} has too few {sensor.upper()} steps to align")
+        parts[hole_id] = part
+    distance, path = sequence.dtw_path(
+        parts[a][columns].to_numpy(np.float32), parts[b][columns].to_numpy(np.float32)
+    )
+    if not path:
+        raise HTTPException(422, "These holes cannot be aligned within the warping band")
+    zones = sequence.matched_zones(path, parts[a], parts[b])
+    interval_run = active_run("interval", sensor)
+    names = {}
+    if interval_run:
+        names = {
+            r["cluster_id"]: r["name"]
+            for r in query(
+                "SELECT cluster_id, name FROM cluster_profile WHERE run_id=%s AND level='fine'",
+                (interval_run["run_id"],),
+            )
+        }
+    for zone in zones:
+        zone["cluster_name"] = names.get(zone["cluster_id"])
+
+    def describe(part):
+        return [
+            {"f": r.md_from_m, "t": r.md_to_m, "tvd": r.tvd_from_m, "cluster_id": int(r.cluster_id)}
+            for r in part.itertuples()
+        ]
+
+    return clean(
+        {
+            "sensor": sensor,
+            "run_id": run["run_id"],
+            "a": a,
+            "b": b,
+            "distance": round(distance, 4),
+            "steps_a": describe(parts[a]),
+            "steps_b": describe(parts[b]),
+            "path": path,
+            "zones": zones,
+            "cluster_names": names,
+            "method": run["card"].get("distance"),
+        }
+    )
+
+
 @app.get("/api/v2/embedding")
-def embedding(view: str = Query("combined", pattern="^(combined|swir|tir|raw_nir|raw_tir)$")):
+def embedding(
+    view: str = Query(
+        "combined", pattern="^(combined|swir|tir|raw_nir|raw_tir|seq_combined|seq_swir|seq_tir)$"
+    ),
+):
     run = active_run("hole", view)
     if run is None:
         return {"view": view, "points": []}

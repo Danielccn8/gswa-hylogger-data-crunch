@@ -75,6 +75,51 @@ def raw_white_mica_check(conn) -> str:
     return "".join(lines)
 
 
+def sequence_check(conn) -> str:
+    """How much the DTW sequence distance adds beyond the mineral-mix distance."""
+    import numpy as np
+    from scipy.stats import rankdata, spearmanr
+
+    from hylogger.explorer.db import resolve_product
+
+    data_dir = os.environ.get("HYLOGGER_DATA_DIR", "C:/HyLoggerData")
+    runs = read_frame(
+        conn,
+        """SELECT sensor, product_path FROM analysis_run WHERE kind='hole' AND status='active'
+           AND sensor IN ('swir','tir','seq_swir','seq_tir')""",
+    )
+    paths = dict(zip(runs.sensor, runs.product_path, strict=True))
+    lines = []
+    for sensor in ("swir", "tir"):
+        if sensor not in paths or f"seq_{sensor}" not in paths:
+            continue
+        mix = np.load(resolve_product(paths[sensor], data_dir) / "distance.npz")
+        seq = np.load(resolve_product(paths[f"seq_{sensor}"], data_dir) / "distance.npz")
+        mix_names, seq_names = list(mix["names"]), list(seq["names"])
+        common = [h for h in seq_names if h in set(mix_names)]
+        i = [mix_names.index(h) for h in common]
+        j = [seq_names.index(h) for h in common]
+        upper = np.triu_indices(len(common), 1)
+        a = mix["distance"][np.ix_(i, i)][upper]
+        b = seq["distance"][np.ix_(j, j)][upper]
+        rho = spearmanr(a, b).statistic
+        ra, rb = rankdata(a) / len(a), rankdata(b) / len(b)
+        reordered = int(((ra < 0.02) & (rb > 0.6)).sum())
+        lines.append(
+            f"| {sensor.upper()} | {len(common):,} | {len(a):,} | {rho:.2f} | {reordered:,} |\n"
+        )
+    if not lines:
+        return ""
+    return (
+        "\n## Down-hole sequence similarity (DTW) vs mineral-mix similarity\n\n"
+        "Rank agreement between the two whole-hole distances over all hole pairs, and the number of "
+        "pairs that are in the closest 2% by mix but outside the closest 60% by sequence (same "
+        "minerals, different order or proportions down the hole).\n\n"
+        "| Sensor | holes | pairs | Spearman ρ | same mix, different sequence |\n|---|---|---|---|---|\n"
+        + "".join(lines)
+    )
+
+
 def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument(
@@ -209,6 +254,7 @@ def main() -> None:
                     f"Hole-similarity agreement with 1 m bins (Spearman, {w.get('holes')} holes): "
                     f"{w.get('mantel_vs_1m')}; K chosen by the rule per width: {w.get('k_by_width')}.\n"
                 )
+        out.append(sequence_check(conn))
         out.append(raw_white_mica_check(conn))
         jobs = read_frame(
             conn,

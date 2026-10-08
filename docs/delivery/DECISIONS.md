@@ -21,6 +21,7 @@
 | Virtual assays only where skill is real | Chemistry is offered as a predicted track only when R² ≥ 0.3 on held-out holes (MgO, CaO, Na₂O, K₂O, LOI, Cr, Al₂O₃, Ni); U, S, Fe₂O₃ and SiO₂ are not predictable from HyLogger mineralogy. |
 | No covariate regional model | Gradient boosting with location, tectonic region and IDW-from-other-districts features did not beat distance weighting on unseen districts; the app reports the test and keeps IDW with a 20 km support limit. |
 | Adding holes refits the analysis | A statewide refit takes ~7–8 minutes and lets cluster definitions absorb new regions; `clusters.assign()` remains available for frozen assignment, but frozen anomaly and hole-embedding updates were not worth their complexity. |
+| Sequence similarity by banded DTW on 10 m TVD steps | Mix-based fingerprints ignore order; DTW compares profiles (e.g. regolith → alteration → fresh rock) while tolerating thickness changes. A Sakoe-Chiba band (30% of relative position) prevents degenerate warps; distances are normalised by summed length so long and short holes compare. Very deep holes are coarsened to at most 120 steps. |
 | DASC mineral-log CSVs not scripted | The package's MINERALLOG links return HTTP 403 to programmatic requests (Azure application gateway). They are not circumvented; raw summaries cover 444 of the 563 holes without public processed logs. |
 
 ## 3 October delivery decisions

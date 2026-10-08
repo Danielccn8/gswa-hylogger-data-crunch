@@ -39,6 +39,13 @@ const assert = require('node:assert/strict');
 
   await time('similarity', async () => { await page.goto(`${base}/#/similarity/${encodeURIComponent(hole)}`); await page.locator('#matrix canvas').waitFor({timeout: 30000}); await page.locator('#embed canvas').waitFor(); });
   await shot('04-similarity');
+  await page.selectOption('#fingerprint', 'seq_combined');
+  await page.locator('#embed canvas').waitFor();
+  await page.click('#align');
+  await page.locator('#align-chart canvas').waitFor({timeout: 30000});
+  assert.ok(await page.locator('#align-zones tbody tr').count() >= 1, 'alignment zones listed');
+  await page.locator('#align-chart').scrollIntoViewIfNeeded();
+  await shot('05b-sequence-alignment');
   await page.click('#compare-strips');
   await page.locator('#strips canvas').first().waitFor();
   assert.ok(await page.locator('#strips canvas').count() >= 2);
