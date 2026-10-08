@@ -58,3 +58,6 @@ select = ["E", "F", "I", "UP", "B"]
 
 [tool.ruff.lint.per-file-ignores]
 "src/hylogger/inspect.py" = ["E501"]
+# Long SQL statements and generated Markdown templates read better unwrapped.
+"platform/backend/main.py" = ["E501"]
+"scripts/explorer_evidence.py" = ["E501"]

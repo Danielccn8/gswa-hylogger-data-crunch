@@ -1,6 +1,28 @@
-# Local HyLogger stack: Postgres/PostGIS plus FastAPI and the map.
-# From the repository root: docker compose -p hylogger_system -f platform/docker-compose.yml up -d --build
-# Source data is acquired and loaded separately.
+# HyLogger Explorer v2: PostGIS, read/enqueue API and (optionally) a background worker.
+# From the repository root:
+#   docker compose -f platform/docker-compose.yml up -d --build
+#   powershell -File scripts/start_worker.ps1        # worker on the Windows host
+# The project name, ports and volume differ from the earlier `hylogger_system`
+# stack, so both can run side by side.
+name: hylogger_v2
+
+x-app: &app
+  build:
+    context: ..
+    dockerfile: platform/Dockerfile
+  image: hylogger_v2-app
+  environment: &app-env
+    DATABASE_URL: postgresql://hylogger:hylogger@db:5432/hylogger
+    HYLOGGER_DATA_DIR: /data
+    HYLOGGER_DATA_HOST: ${HYLOGGER_DATA_HOST:-C:/HyLoggerData}
+    HYLOGGER_LEGACY_DIR: /legacy
+    HYLOGGER_REFERENCE_SQLITE: /data/reference/HyLogger_Dataset_Package.sqlite
+    OMP_NUM_THREADS: "4"
+    OPENBLAS_NUM_THREADS: "4"
+  depends_on:
+    db:
+      condition: service_healthy
+
 services:
   db:
     image: postgis/postgis:16-3.4
@@ -8,37 +30,45 @@ services:
       POSTGRES_USER: hylogger
       POSTGRES_PASSWORD: hylogger
       POSTGRES_DB: hylogger
+    command: ["postgres", "-c", "shared_buffers=512MB", "-c", "work_mem=64MB", "-c", "max_wal_size=4GB"]
     ports:
-      # host:container — 5433 on the host so it cannot clash with a local Postgres
-      - "127.0.0.1:${HYLOGGER_DB_PORT:-5433}:5432"
+      - "127.0.0.1:${HYLOGGER_DB_PORT:-5434}:5432"
     volumes:
       - pgdata:/var/lib/postgresql/data
-      # Anything in this folder runs automatically the first time the DB is created
-      - ./db/schema.sql:/docker-entrypoint-initdb.d/01_schema.sql:ro
-      - ./db/migrations/002_interval_system.sql:/docker-entrypoint-initdb.d/02_interval_system.sql:ro
-      - ./db/migrations/003_active_interval_sets.sql:/docker-entrypoint-initdb.d/03_active_interval_sets.sql:ro
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U hylogger -d hylogger"]
       interval: 5s
       timeout: 5s
       retries: 20
+    restart: unless-stopped
 
   api:
-    build:
-      context: ..
-      dockerfile: platform/Dockerfile
-    environment:
-      DATABASE_URL: postgresql://hylogger:hylogger@db:5432/hylogger
-      SPECTRAL_PILOT_DIR: /app/spectral
-      COMPARISON_DIR: /app/comparisons
+    <<: *app
+    command: ["uvicorn", "--app-dir", "platform", "backend.main:app", "--host", "0.0.0.0", "--port", "8000"]
     volumes:
-      - ../data/delivery-20261003/spectral:/app/spectral:ro
-      - ../data/system/comparisons:/app/comparisons:ro
+      - ${HYLOGGER_DATA_HOST:-C:/HyLoggerData}:/data:ro
+      - ../src:/app/src:ro
+      - ../platform:/app/platform:ro
+      - ../configs:/app/configs:ro
     ports:
-      - "127.0.0.1:${HYLOGGER_API_PORT:-8000}:8000"
-    depends_on:
-      db:
-        condition: service_healthy
+      - "127.0.0.1:${HYLOGGER_API_PORT:-8100}:8000"
+    restart: unless-stopped
+
+  # Background worker in a container. On Windows hosts run the worker natively instead
+  # (scripts/start_worker.ps1): SQLite's WAL manifest fails across Windows bind mounts.
+  # Linux/macOS: docker compose --profile docker-worker up -d
+  worker:
+    <<: *app
+    profiles: ["docker-worker"]
+    command: ["python", "-m", "hylogger.jobs.worker", "--lanes", "processed:4,raw:2,analysis:1"]
+    volumes:
+      - ${HYLOGGER_DATA_HOST:-C:/HyLoggerData}:/data
+      # Optional earlier data root, read-only, so existing raw ZIPs are reused without copying.
+      - ${HYLOGGER_LEGACY_HOST:-../data}:/legacy:ro
+      - ../src:/app/src:ro
+      - ../platform:/app/platform:ro
+      - ../configs:/app/configs
+    restart: unless-stopped
 
 volumes:
   pgdata:

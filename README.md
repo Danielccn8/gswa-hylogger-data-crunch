@@ -10,6 +10,19 @@ Search the catalog -> preview processed TSG logs -> select holes
                    -> inspect quality -> prepare features -> run clustering
 ```
 
+## HyLogger Explorer v2 (8 October 2026)
+
+Statewide explorer on the same toolkit: every registered hole on one map, mineral-level clustering
+(interval → domain → whole hole) for SWIR/TIR and raw spectra, anomaly ranking, N-hole similarity,
+expected mineralogy at a location, assay validation from the GSWA interim package, and in-app
+download/processing jobs (NVCL API and spectra-only THREDDS byte ranges). Start with
+[Explorer v2](docs/EXPLORER_V2.md) and the generated [evidence](docs/delivery/EXPLORER_V2_EVIDENCE.md).
+
+```powershell
+docker compose -f platform/docker-compose.yml up -d --build      # db :5434 + api :8100
+powershell -ExecutionPolicy Bypass -File scripts/start_worker.ps1 # job worker (Windows host)
+```
+
 ## Connected local system pilot
 
 **Current local delivery (3 October 2026):** the application opens with an

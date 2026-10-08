@@ -59,3 +59,9 @@ htmlcov/
 .idea/
 .DS_Store
 Thumbs.db
+
+# GSWA interim HyLogger package (licence forbids sharing) and any local database
+*.sqlite
+*.sqlite3
+*.sqlite-wal
+*.sqlite-shm

@@ -1,0 +1,46 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="color-scheme" content="light dark">
+<title>HyLogger Explorer</title>
+<link rel="stylesheet" href="/static/vendor/leaflet.css">
+<link rel="stylesheet" href="/static/explorer.css">
+<script src="/static/vendor/leaflet.js" defer></script>
+<script src="/static/js/main.js" type="module"></script>
+</head>
+<body>
+<header class="top">
+  <a class="brand" href="#/map"><span class="mark" aria-hidden="true">H</span><span>HyLogger <b>Explorer</b></span></a>
+  <nav class="tabs" aria-label="Workspaces">
+    <a href="#/map" data-tab="map">Map</a>
+    <a href="#/hole" data-tab="hole">Hole</a>
+    <a href="#/similarity" data-tab="similarity">Similarity</a>
+    <a href="#/clusters" data-tab="clusters">Clusters</a>
+    <a href="#/anomalies" data-tab="anomalies">Anomalies</a>
+    <a href="#/prediction" data-tab="prediction">Prediction</a>
+    <a href="#/data" data-tab="data">Data</a>
+    <a href="#/method" data-tab="method">Method</a>
+  </nav>
+  <button id="basket" class="basket" type="button" title="Holes selected for comparison or download">Selection <span id="basket-count">0</span></button>
+</header>
+<div class="licence" role="note">Interim GSWA HyLogger package · internal use only · not QA/QC'd · do not redistribute. Clusters and scores are exploratory patterns, not verified geology.</div>
+<div id="toast" class="toast" role="status" aria-live="polite" hidden></div>
+<main id="view" tabindex="-1"></main>
+<dialog id="basket-dialog">
+  <form method="dialog" class="dialog-body">
+    <h2>Selected holes</h2>
+    <p class="muted" id="basket-help">Add holes from the map, tables or similarity lists. Use them to compare or to download data.</p>
+    <div id="basket-list" class="chips"></div>
+    <div class="row gap">
+      <button type="button" id="basket-compare">Compare in Similarity</button>
+      <button type="button" id="basket-data" class="secondary">Download / process…</button>
+      <button type="button" id="basket-clear" class="ghost">Clear</button>
+      <button value="close" class="ghost">Close</button>
+    </div>
+  </form>
+</dialog>
+<div id="tooltip" class="tooltip" hidden></div>
+</body>
+</html>

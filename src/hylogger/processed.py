@@ -34,6 +34,46 @@ def create_reader(config: AppConfig):
     )
 
 
+def download_scalars(config: AppConfig, log_ids: list[str], *, workers: int = 4) -> str:
+    """Download scalar logs one log per request and join them column-wise.
+
+    The WA NVCL service answers single-log requests in seconds but returns 502
+    after about two minutes for multi-log requests, which is what nvcl-kit
+    sends. Every response has the same StartDepth/EndDepth rows in the same
+    order; that is verified before the value columns are joined.
+    """
+    from concurrent.futures import ThreadPoolExecutor
+
+    from nvcl_kit.param_builder import param_builder
+
+    from .catalog import http_session
+
+    url = param_builder(config.nvcl_provider, max_boreholes=0).NVCL_URL.rstrip("/")
+    url += "/downloadscalars.html"
+    session = http_session(config.retries)
+
+    def one(log_id: str) -> pd.DataFrame:
+        response = session.get(
+            url, params={"logid": log_id}, timeout=(15, config.request_timeout_seconds)
+        )
+        response.raise_for_status()
+        text = response.text
+        if not text.startswith("StartDepth"):
+            raise RemoteDataError(f"Unexpected scalar response for log {log_id}: {text[:80]!r}")
+        return pd.read_csv(StringIO(text), dtype=str, keep_default_na=False)
+
+    with ThreadPoolExecutor(max(1, min(workers, len(log_ids)))) as pool:
+        parts = list(pool.map(one, log_ids))
+    if not parts:
+        return ""
+    depths = parts[0].iloc[:, :2]
+    for log_id, part in zip(log_ids, parts, strict=True):
+        if part.shape[0] != depths.shape[0] or not part.iloc[:, :2].equals(depths):
+            raise RemoteDataError(f"Depth rows of log {log_id} differ from the first log")
+    joined = pd.concat([depths, *[part.iloc[:, 2:] for part in parts]], axis=1)
+    return joined.to_csv(index=False, lineterminator="\n")
+
+
 def inventory_hole(config: AppConfig, hole_id: str, *, persist: bool = True) -> dict[str, Any]:
     hole_id = hole_id.upper()
     reader = create_reader(config)
@@ -107,7 +147,6 @@ def fetch_processed_hole(
     hole_id = hole_id.upper()
     config.ensure_layout()
     manifest = Manifest(config.manifest_path)
-    reader = create_reader(config)
     inventory = inventory_hole(config, hole_id)
     outputs: list[dict[str, Any]] = []
 
@@ -138,7 +177,7 @@ def fetch_processed_hole(
             metadata={"profile": profile, "log_count": len(selected)},
         )
         try:
-            csv_content = reader.get_scalar_data([record["log_id"] for record in selected])
+            csv_content = download_scalars(config, [record["log_id"] for record in selected])
             if not csv_content:
                 raise RemoteDataError(
                     f"NVCL returned no scalar data for {hole_id}, dataset {dataset_id}."

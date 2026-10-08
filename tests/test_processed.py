@@ -75,12 +75,11 @@ def test_processed_fetch_writes_source_parquet_and_manifest(app_config, monkeypa
         ],
     }
 
-    class FakeReader:
-        def get_scalar_data(self, log_ids):
-            assert log_ids == ["min", "mask"]
-            return csv_content
+    def fake_download(_config, log_ids):
+        assert log_ids == ["min", "mask"]
+        return csv_content
 
-    monkeypatch.setattr("hylogger.processed.create_reader", lambda _config: FakeReader())
+    monkeypatch.setattr("hylogger.processed.download_scalars", fake_download)
     monkeypatch.setattr(
         "hylogger.processed.inventory_hole",
         lambda _config, _hole_id: inventory,
@@ -114,8 +113,8 @@ def test_narrow_fetch_keeps_broad_selected_table(app_config, monkeypatch):
     }
     monkeypatch.setattr("hylogger.processed.inventory_hole", lambda *args: inventory)
     monkeypatch.setattr(
-        "hylogger.processed.create_reader",
-        lambda *args: SimpleNamespace(get_scalar_data=lambda ids: "Start Depth,Grp1 uTSAS\n1,A\n"),
+        "hylogger.processed.download_scalars",
+        lambda *args: "Start Depth,Grp1 uTSAS\n1,A\n",
     )
     output = fetch_processed_hole(app_config, "TEST")
     assert output[0]["selected"] is False

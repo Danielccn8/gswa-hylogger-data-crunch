@@ -1,0 +1,13 @@
+.git
+.venv
+data
+notebooks
+reports
+experiments
+data_view
+**/__pycache__
+**/*.pyc
+.pytest_cache
+.ruff_cache
+*.zip
+*.sqlite

@@ -1,5 +1,7 @@
 # HyLogger system explained
 
+> **8 October 2026:** the Explorer v2 application supersedes the dashboard described below for statewide work. See [Explorer v2](EXPLORER_V2.md). This page remains the record of the 3 October pilot.
+
 This is the short guide to what the system does, how the data moves and why each step exists. Update it whenever the implementation changes. Keep it readable in one sitting; detailed evidence belongs in the linked technical records.
 
 **Status: 3 October 2026.** Implemented locally on `codex/hylogger-system`, building on `14039dd`. The application runs at **http://127.0.0.1:8000**. The selected 20 holes now have both processed SWIR and TIR products. A separate 50-hole expansion produced 95 sensor products. See [delivery evidence](delivery/EVIDENCE_2026-10-03.md) and [the delivery plan](delivery/NEXT_DELIVERY_PLAN.md) for checks and remaining work.

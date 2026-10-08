@@ -24,7 +24,7 @@ def api(monkeypatch):
 
     root = Path(__file__).resolve().parents[1]
     spec = importlib.util.spec_from_file_location(
-        "delivery_api_test", root / "platform/backend/main.py"
+        "delivery_api_test", root / "platform/backend/legacy.py"
     )
     module = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(module)

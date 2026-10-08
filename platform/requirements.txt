@@ -1,9 +1,0 @@
-# Platform runtime
-fastapi>=0.115
-uvicorn[standard]>=0.30
-psycopg[binary]>=3.2
-pandas>=2.0
-
-# Data acquisition (used by ../data_view/build_hole_index.py and future ETL)
-nvcl-kit>=0.5
-pytsg>=0.1

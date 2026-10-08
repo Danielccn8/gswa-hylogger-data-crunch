@@ -1,5 +1,23 @@
 # Decision log
 
+## 8 October — Explorer v2 decisions
+
+| Decision | Reason and consequence |
+|---|---|
+| Separate worktree, compose project `hylogger_v2`, ports 8100/5434, data root `C:\HyLoggerData` | The earlier stack and OneDrive checkout stay untouched; short paths avoid Windows path-length failures; large data is not synced by OneDrive. |
+| Download processed logs one log per request | The WA NVCL server returns HTTP 502 after ~2 min for multi-log `downloadscalars` requests (what nvcl-kit sends) but answers single logs in seconds. Columns are joined only after the StartDepth/EndDepth rows are verified identical. |
+| Fetch raw spectra by HTTP byte range | THREDDS honours explicit ranges (not suffix ranges). Reading only spectral members transfers ≈13–15% of a package; members are CRC-checked and were byte-identical to a full download for LD82625W1. Full-ZIP mode remains available. |
+| Raw summary mode is opt-in | Summaries (1 m medians, band features) are kept; source spectra are deleted only when the user ticks summary mode, so the statewide raw catalogue (1.9 TB of ZIPs) can be covered without filling the disk. |
+| Mineral-level abundance from Min1–3 × Wt1–3 (Sathi) | Grp1 frequencies discarded most of the TSG information; the mineral level separates e.g. muscovite/phengite/paragonite. Narrow historical downloads without weights fall back to Min1 frequency and are flagged. |
+| NOTAROK components are artefacts | Marker pen, core tray, wood, vegetation and tape are counted as `not_rock`, never as minerals; they previously surfaced as "rare minerals" in anomaly lists. |
+| Hellinger K-Means with a Sathi K rule and a coarse Ward level | Readable clusters at two granularities; full K-Means with 10 starts gives seed ARI ≥ 0.93 where MiniBatch gave 0.3–0.7. |
+| Staged analysis runs, explicit promotion | Retraining from the UI never silently changes what users see; old runs remain by ID. |
+| The API enqueues jobs | A deliberate change from the read-only v1 API: requests only insert queue rows; the worker does all network and compute work. |
+| Worker on the Windows host | SQLite's WAL download manifest fails across Docker bind mounts on Windows ("disk I/O error"). The container worker is kept as an optional profile for Linux/macOS. Versions are pinned in `platform/requirements.lock` for both. |
+| Assays as an external reference | The GSWA package links 1,482 holes to WAMEX collars; mineral↔oxide correlations and per-cluster chemistry are stored with every run as consistency checks (the package marks these tables unverified). |
+| Prediction reported with its limits | Leave-one-district-out shows almost no skill over the regional average; the app shows a support limit and labels distant estimates as regional priors. |
+| Interim package stays out of Git and hosting | Its licence forbids sharing with third parties; the app shows a banner and runs locally. |
+
 ## 3 October delivery decisions
 
 | Decision | Reason and consequence |
