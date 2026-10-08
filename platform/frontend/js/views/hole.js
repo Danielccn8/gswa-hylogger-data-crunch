@@ -90,7 +90,7 @@ function drawStrip(strip, highlight) {
     if (!values.length) continue;
     const sorted = values.map(v => v[analyte]).sort((a, b) => a - b);
     const max = sorted[Math.floor(sorted.length * .98)] || sorted[sorted.length - 1];
-    const log = ['Au', 'Cu', 'Zn', 'Pb', 'Ni', 'As', 'S', 'Cr'].includes(analyte);
+    const log = ['Au', 'Cu', 'Zn', 'Pb', 'Ni', 'As', 'S', 'Cr', 'U', 'Th'].includes(analyte);
     tracks.push({ label: analyte, title: `Assay ${analyte} (${log ? 'ppm, log' : 'wt%'})`, width: 46, kind: 'line', log, min: log ? Math.max(sorted[0], 1e-3) : 0, max: Math.max(max, 1e-6), fill: '#b5502a',
       rows: values.map(v => ({ f: v.f, t: v.t, value: v[analyte] })), describe: r => `${analyte} ${num(r.value, log ? 3 : 2)} ${log ? 'ppm' : '%'}` });
     values.forEach(v => depths.push(v.f, v.t));

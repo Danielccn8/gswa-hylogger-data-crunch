@@ -1,9 +1,12 @@
 """Harmonised assay chemistry and depth-overlap joins to HyLogger intervals.
 
 Oxide values come from the *_PCT column when present, else from the element
-in ppm with the standard oxide factor. Negative values, which WAMEX uses for
-"below detection", become half their absolute value; -999 was already NULL.
-The assay tables are flagged unverified in the package's own metadata.
+in ppm with the standard oxide factor. Small negative values, which WAMEX uses
+for "below detection limit", become half their absolute value. Negative values
+of -1000 or less are reporting codes, not detection limits (e.g. -5000 for "not
+analysed" in some company submissions) and become missing; -999 was already
+NULL. Physically impossible values (>100 wt% oxide, >1,000,000 ppm) are
+dropped. The assay tables are flagged unverified in the package's own metadata.
 """
 
 from __future__ import annotations
@@ -37,13 +40,20 @@ ELEMENTS = [
     "Ni_PPM",
     "As_PPM",
     "Cr_PPM",
+    "U_PPM",
+    "Th_PPM",
 ]
-ANALYTES = list(OXIDES) + ["LOI", "S", "Au", "Cu", "Zn", "Pb", "Ni", "As", "Cr"]
+ANALYTES = list(OXIDES) + ["LOI", "S", "Au", "Cu", "Zn", "Pb", "Ni", "As", "Cr", "U", "Th"]
 
 
-def _clean(values: pd.Series) -> pd.Series:
+CODE_THRESHOLD = -1000  # at or below: a reporting code, not a detection limit
+
+
+def _clean(values: pd.Series, *, percent: bool = False) -> pd.Series:
     values = pd.to_numeric(values, errors="coerce")
-    return values.where(values >= 0, values.abs() / 2)
+    values = values.mask(values <= CODE_THRESHOLD)
+    values = values.where(values >= 0, values.abs() / 2)
+    return values.mask(values > (100 if percent else 1_000_000))
 
 
 def assays(conn: psycopg.Connection, collar_ids: list[int] | None = None) -> pd.DataFrame:
@@ -62,9 +72,9 @@ def assays(conn: psycopg.Connection, collar_ids: list[int] | None = None) -> pd.
     )
     out = raw[["collar_id", "f", "t"]].copy()
     for oxide, (pct, ppm, factor) in OXIDES.items():
-        out[oxide] = _clean(raw[pct]).fillna(_clean(raw[ppm]) * factor)
+        out[oxide] = _clean(raw[pct], percent=True).fillna(_clean(raw[ppm]) * factor)
     for column in ELEMENTS:
-        out[column.split("_")[0]] = _clean(raw[column])
+        out[column.split("_")[0]] = _clean(raw[column], percent=column.endswith("_PCT"))
     return out
 
 

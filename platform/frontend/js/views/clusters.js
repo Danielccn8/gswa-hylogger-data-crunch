@@ -3,7 +3,7 @@ import { clusterColor, mineralColor } from '../palette.js';
 import { lineChart } from '../charts.js';
 
 let sensor = 'swir', level = 'fine';
-const CHEM = ['SiO2', 'Al2O3', 'Fe2O3T', 'MgO', 'CaO', 'Na2O', 'K2O', 'LOI', 'S', 'Au', 'Cu', 'Ni', 'Zn'];
+const CHEM = ['SiO2', 'Al2O3', 'Fe2O3T', 'MgO', 'CaO', 'Na2O', 'K2O', 'LOI', 'S', 'Au', 'Cu', 'Ni', 'Zn', 'U', 'Th'];
 
 export async function render(root) {
   root.innerHTML = `<div class="page-head"><div><h1>Interval clusters</h1>
@@ -54,7 +54,7 @@ function card_(p, coarse) {
   return `<section class="panel"><div class="row gap" style="justify-content:space-between"><h2><span class="swatch" style="background:${clusterColor(p.cluster_id)}"></span>${p.cluster_id} · ${esc(p.name)}</h2></div>
     <p class="muted small">${num(p.n_intervals)} intervals in ${num(p.n_holes)} holes${p.parent_id != null ? ` · group ${p.parent_id}: ${esc(coarse[p.parent_id] || '')}` : ''}</p>
     ${stack(p.minerals, mineralColor)}<div style="margin-top:8px">${bars(minerals, mineralColor)}</div>
-    ${chem.n_assays ? `<h3 style="margin-top:10px">Median chemistry · ${num(chem.n_assays)} assays</h3><div class="chips">${CHEM.filter(a => chem[a] != null).map(a => `<span class="chip">${a} ${['Au'].includes(a) ? Number(chem[a]).toPrecision(2) : num(chem[a], ['Cu', 'Ni', 'Zn', 'S'].includes(a) ? 0 : 2)}${['Au', 'Cu', 'Ni', 'Zn', 'S'].includes(a) ? ' ppm' : '%'}</span>`).join('')}</div>` : ''}</section>`;
+    ${chem.n_assays ? `<h3 style="margin-top:10px">Median chemistry · ${num(chem.n_assays)} assays</h3><div class="chips">${CHEM.filter(a => chem[a] != null).map(a => `<span class="chip">${a} ${['Au'].includes(a) ? Number(chem[a]).toPrecision(2) : num(chem[a], ['Cu', 'Ni', 'Zn', 'S'].includes(a) ? 0 : ['U', 'Th'].includes(a) ? 1 : 2)}${['Au', 'Cu', 'Ni', 'Zn', 'S', 'U', 'Th'].includes(a) ? ' ppm' : '%'}</span>`).join('')}</div>` : ''}</section>`;
 }
 
 function rawSection(raw) {

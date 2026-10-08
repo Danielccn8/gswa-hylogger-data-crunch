@@ -113,3 +113,14 @@ def test_prediction_cv_beats_baseline_on_smooth_field():
     table, by_distance, summary = prediction.cross_validate(holes, values)
     assert summary["loho_skill_vs_region"] > 0.5
     assert table.loho_error.median() < table.region_error.median()
+
+
+def test_assay_cleaning_separates_codes_from_detection_limits():
+    from hylogger.explorer.chemistry import _clean
+
+    cleaned = _clean(pd.Series([-0.01, -5000.0, 12.0, 2_000_000.0]))
+    assert cleaned.iloc[0] == 0.005  # below detection: half the limit
+    assert np.isnan(cleaned.iloc[1])  # reporting code, not a value
+    assert cleaned.iloc[2] == 12.0
+    assert np.isnan(cleaned.iloc[3])  # impossible concentration
+    assert np.isnan(_clean(pd.Series([140.0]), percent=True).iloc[0])
