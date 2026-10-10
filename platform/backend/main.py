@@ -201,6 +201,20 @@ def map_holes(
            WHERE h.lat IS NOT NULL ORDER BY h.hole_id""",
         (run["run_id"] if run else None,),
     )
+    tops: dict[str, dict] = {}
+    for sensor in ("swir", "tir"):
+        mix_run = active_run("hole", sensor)
+        if mix_run is None:
+            continue
+        for r in query(
+            "SELECT hole_id, summary->'top_minerals' AS top FROM hole_profile WHERE run_id=%s",
+            (mix_run["run_id"],),
+        ):
+            top = sorted((r["top"] or {}).items(), key=lambda kv: -kv[1])[:3]
+            tops.setdefault(r["hole_id"], {})[sensor] = [[m, round(v, 2)] for m, v in top]
+    for row in rows:
+        row["swir_top"] = tops.get(row["hole_id"], {}).get("swir")
+        row["tir_top"] = tops.get(row["hole_id"], {}).get("tir")
     columns = list(rows[0].keys()) if rows else []
     return clean(
         {
@@ -322,7 +336,10 @@ def striplog(hole_id: str):
             "domains": domains,
             "cluster_names": {f"{level}:{cid}": name for (level, cid), name in names.items()},
         }
-    record = one("SELECT wamex_collar_id FROM explorer_hole WHERE hole_id=%s", (hole_id,))
+    record = one(
+        "SELECT wamex_collar_id, raw_status FROM explorer_hole WHERE hole_id=%s", (hole_id,)
+    )
+    raw_status = (record or {}).get("raw_status")
     chemistry, lithology = [], []
     if record and record["wamex_collar_id"]:
         with pool.connection() as conn:
@@ -390,11 +407,170 @@ def striplog(hole_id: str):
             "analytes": [a for a in ANALYTES if any(a in row for row in chemistry)],
             "lithology": lithology,
             "raw": _raw_bins(hole_id),
+            "tsa_versions": _tsa_versions(hole_id, raw_status),
             "notes": {
                 "abundance": "Mean normalised TSG component weight per diagnostic reading; not mass %",
                 "assays": "GSWA interim package (unverified); negatives (below detection) shown as half "
                 "the limit; oxides from element ppm where no oxide was reported",
             },
+        }
+    )
+
+
+def _tsa_table(hole_id: str) -> pd.DataFrame | None:
+    row = one(
+        "SELECT product_path FROM raw_product WHERE hole_id=%s ORDER BY sensor LIMIT 1", (hole_id,)
+    )
+    if row is None:
+        return None
+    path = resolve(row["product_path"]) / "tsa_versions.parquet"
+    return pd.read_parquet(path) if path.exists() else None
+
+
+def _tsa_versions(hole_id: str, raw_status: str | None) -> dict:
+    """System (automatic) vs user (reviewed) TSA per metre, or why it is missing."""
+    import json
+
+    from hylogger.explorer import tsa_versions
+
+    table = _tsa_table(hole_id)
+    if table is None:
+        status = "needs_download" if str(raw_status).startswith("summarised") else "no_raw"
+        return {"status": status}
+    rows = [
+        {
+            "product": r.product,
+            "f": r.depth_from_m,
+            "t": r.depth_to_m,
+            "system_top": r.system_top,
+            "user_top": r.user_top,
+            "min1_agreement": r.min1_agreement,
+            "mix_overlap": r.mix_overlap,
+            "system_groups": json.loads(r.system_groups),
+            "user_groups": json.loads(r.user_groups),
+            "system_minerals": json.loads(r.system_minerals),
+            "user_minerals": json.loads(r.user_minerals),
+        }
+        for r in table.itertuples()
+    ]
+    return {"status": "available", "rows": rows, "summary": tsa_versions.summary(table)}
+
+
+def _mean_mix(dicts: list[dict], top: int = 10) -> dict[str, float]:
+    total: dict[str, float] = {}
+    for item in dicts:
+        for key, value in (item or {}).items():
+            total[key] = total.get(key, 0.0) + float(value)
+    n = max(len(dicts), 1)
+    ranked = sorted(total.items(), key=lambda kv: -kv[1])[:top]
+    return {k: round(v / n, 4) for k, v in ranked}
+
+
+@app.get("/api/v2/holes/{hole_id}/range")
+def depth_range(
+    hole_id: str,
+    start: float = Query(..., alias="from", ge=0),
+    end: float = Query(..., alias="to", gt=0),
+):
+    """Everything known about one depth range: minerals, clusters, assays, geology, spectra."""
+    import json
+
+    if end <= start:
+        raise HTTPException(422, "'to' must be deeper than 'from'")
+    record = one(
+        "SELECT wamex_collar_id, raw_status FROM explorer_hole WHERE hole_id=%s", (hole_id,)
+    )
+    if record is None:
+        raise HTTPException(404, "unknown hole")
+    sensors = {}
+    for sensor in SENSORS:
+        run = active_run("interval", sensor)
+        rows = query(
+            """SELECT f.minerals, f.groups, f.n_admitted, l.cluster_id, l.anomaly_reasons
+               FROM interval_feature f JOIN active_feature_set a USING (feature_set_id)
+               LEFT JOIN interval_label l ON l.run_id=%s AND l.feature_set_id=f.feature_set_id
+                    AND l.bin=f.bin
+               WHERE f.hole_id=%s AND f.sensor=%s AND f.depth_to_m > %s AND f.depth_from_m < %s""",
+            (run["run_id"] if run else None, hole_id, sensor, start, end),
+        )
+        if not rows:
+            continue
+        diagnostic = [r for r in rows if r["n_admitted"]]
+        names = _cluster_names(run["run_id"]) if run else {}
+        clusters: dict[int, int] = {}
+        reasons: dict[str, int] = {}
+        for r in rows:
+            if r["cluster_id"] is not None:
+                clusters[r["cluster_id"]] = clusters.get(r["cluster_id"], 0) + 1
+            for reason in r["anomaly_reasons"] or []:
+                key = reason.split(":")[0]
+                reasons[key] = reasons.get(key, 0) + 1
+        sensors[sensor] = {
+            "metres": len(rows),
+            "diagnostic_metres": len(diagnostic),
+            "minerals": _mean_mix([r["minerals"] for r in diagnostic]),
+            "groups": _mean_mix([r["groups"] for r in diagnostic]),
+            "clusters": [
+                [cid, names.get(cid), round(n / len(rows), 4)]
+                for cid, n in sorted(clusters.items(), key=lambda kv: -kv[1])[:6]
+            ],
+            "unusual_metres": sum(1 for r in rows if r["anomaly_reasons"]),
+            "reasons": reasons,
+        }
+    chemistry, lithology = [], []
+    if record["wamex_collar_id"]:
+        with pool.connection() as conn:
+            chem = assays(conn, [int(record["wamex_collar_id"])])
+        chem = chem[(chem.t > start) & (chem.f < end)]
+        for analyte in ANALYTES:
+            if analyte in chem.columns and chem[analyte].notna().any():
+                values = chem[analyte].dropna()
+                chemistry.append(
+                    {
+                        "analyte": analyte,
+                        "n": int(len(values)),
+                        "median": float(values.median()),
+                        "max": float(values.max()),
+                        "unit": "%" if analyte in OXIDES else "ppm",
+                    }
+                )
+        for row in query(
+            """SELECT greatest("FromDepth", %s) AS f, least("ToDepth", %s) AS t,
+                      coalesce("GSWARockName", "CompanyLithologyName",
+                               "CompanyLithologyCodeMerged") AS rock
+               FROM ref_geology WHERE "CollarId"=%s AND "ToDepth" > %s AND "FromDepth" < %s
+               ORDER BY "FromDepth" """,
+            (start, end, int(record["wamex_collar_id"]), start, end),
+        ):
+            lithology.append(row)
+    spectra_items = {}
+    for sensor in ("nir", "tir"):
+        if one("SELECT 1 FROM raw_product WHERE hole_id=%s AND sensor=%s", (hole_id, sensor)):
+            spectra_items[sensor] = spectra(holes=f"{hole_id}@{start}-{end}", sensor=sensor)
+    versions = None
+    table = _tsa_table(hole_id)
+    if table is not None:
+        part = table[(table.depth_to_m > start) & (table.depth_from_m < end)]
+        versions = {}
+        for product, rows in part.groupby("product"):
+            versions[product] = {
+                "metres": int(len(rows)),
+                "min1_agreement": round(float(rows.min1_agreement.mean()), 4),
+                "mix_overlap": round(float(rows.mix_overlap.mean()), 4),
+                "system": _mean_mix([json.loads(v) for v in rows.system_minerals], 6),
+                "user": _mean_mix([json.loads(v) for v in rows.user_minerals], 6),
+                "changed_metres": int((rows.system_top != rows.user_top).sum()),
+            }
+    return clean(
+        {
+            "hole_id": hole_id,
+            "from": start,
+            "to": end,
+            "sensors": sensors,
+            "assays": chemistry,
+            "lithology": lithology,
+            "spectra": spectra_items,
+            "tsa_versions": versions,
         }
     )
 
@@ -550,6 +726,115 @@ def interval_detail(feature_set_id: str, bin_id: int, limit: int = Query(12, le=
     )
 
 
+@lru_cache(maxsize=64)
+def _raw_spectra(product_path: str, sensor: str) -> dict:
+    folder = resolve(product_path)
+    archive = np.load(folder / f"raw_{sensor}.npz")
+    table = pd.read_parquet(folder / f"raw_{sensor}.parquet").set_index("bin")
+    bins = archive["bins"]
+    depth = table.reindex(bins)
+    return {
+        "wavelengths": archive["wavelengths"].astype(float),
+        "spectra": archive["spectra"].astype(np.float32),
+        "from": depth["depth_from_m"].to_numpy(float),
+        "to": depth["depth_to_m"].to_numpy(float),
+        "features": depth[
+            [c for c in table.columns if c.endswith(("_pos", "_depth")) or c == "albedo"]
+        ],
+    }
+
+
+RAW_FEATURES = {
+    "aloh_2200_pos": "Al-OH position (nm): white mica / kaolin chemistry",
+    "feoh_2250_pos": "Fe-OH position (nm): chlorite / epidote",
+    "mgoh_2330_pos": "Mg-OH / carbonate position (nm)",
+    "h2o_1900_depth": "Water absorption depth at 1900 nm",
+    "fe3_900_depth": "Ferric iron absorption depth at ~900 nm",
+    "albedo": "Overall brightness",
+}
+
+
+@app.get("/api/v2/spectra")
+def spectra(
+    holes: str = Query(..., description="Comma-separated HOLE or HOLE@from-to (metres)"),
+    sensor: str = Query("nir", pattern="^(nir|tir)$"),
+):
+    """Mean raw 1 m spectrum per hole or depth range, its 10-90% spread, and pairwise similarity."""
+    items = []
+    for token in [t.strip() for t in holes.split(",") if t.strip()][:8]:
+        hole_id, _, span = token.partition("@")
+        low = high = None
+        if span:
+            try:
+                low, high = (float(v) for v in span.split("-", 1))
+            except ValueError as error:
+                raise HTTPException(
+                    422, f"Bad depth range in {token!r}; use HOLE@from-to"
+                ) from error
+        item = {"hole_id": hole_id, "from_m": low, "to_m": high}
+        row = one(
+            "SELECT product_path FROM raw_product WHERE hole_id=%s AND sensor=%s", (hole_id, sensor)
+        )
+        if row is None:
+            items.append({**item, "missing": f"No raw {sensor.upper()} summary for this hole"})
+            continue
+        raw = _raw_spectra(row["product_path"], sensor)
+        keep = np.isfinite(raw["from"])
+        if low is not None:
+            keep &= (raw["to"] > low) & (raw["from"] < high)
+        block = raw["spectra"][keep]
+        if not len(block):
+            items.append({**item, "missing": "No raw metres in this depth range"})
+            continue
+        p10, p90 = np.nanpercentile(block, [10, 90], axis=0)
+        features = raw["features"][keep].median().dropna()
+        items.append(
+            {
+                **item,
+                "metres": int(keep.sum()),
+                "depth": [float(np.nanmin(raw["from"][keep])), float(np.nanmax(raw["to"][keep]))],
+                "mean": np.nanmean(block, axis=0).round(4).tolist(),
+                "p10": p10.round(4).tolist(),
+                "p90": p90.round(4).tolist(),
+                "features": {k: round(float(v), 4) for k, v in features.items()},
+                "_wavelengths": raw["wavelengths"],
+            }
+        )
+    wavelengths = next((i.pop("_wavelengths") for i in items if "_wavelengths" in i), None)
+    for item in items:
+        item.pop("_wavelengths", None)
+    means = [np.asarray(i["mean"]) if "mean" in i else None for i in items]
+    angle = [
+        [
+            None
+            if a is None or b is None
+            else round(
+                float(
+                    np.degrees(
+                        np.arccos(np.clip(a @ b / (np.linalg.norm(a) * np.linalg.norm(b)), -1, 1))
+                    )
+                ),
+                2,
+            )
+            for b in means
+        ]
+        for a in means
+    ]
+    return clean(
+        {
+            "sensor": sensor,
+            "wavelengths": None if wavelengths is None else wavelengths.round(1).tolist(),
+            "items": items,
+            "spectral_angle_deg": angle,
+            "features_meaning": RAW_FEATURES,
+            "method": "Median spectrum of each 1 m interval (Final Mask applied), averaged over the "
+            "hole or depth range; shaded band = 10th-90th percentile of metres. Spectral angle "
+            "compares shape and ignores brightness: below ~3° the spectra are nearly identical, "
+            "above ~10° clearly different.",
+        }
+    )
+
+
 # ---------------------------------------------------------- similarity etc.
 @app.get("/api/v2/similarity")
 def similarity(
@@ -675,6 +960,110 @@ def hole_clusters(
     )
 
 
+@lru_cache(maxsize=16)
+def _cluster_names(run_id: str | None) -> dict[int, str]:
+    if not run_id:
+        return {}
+    return {
+        r["cluster_id"]: r["name"]
+        for r in query(
+            "SELECT cluster_id, name FROM cluster_profile WHERE run_id=%s AND level='fine'",
+            (run_id,),
+        )
+    }
+
+
+def _fingerprints(view: str) -> tuple[dict, pd.DataFrame] | None:
+    run = active_run("hole", view)
+    if run is None or not (resolve(run["product_path"]) / "fingerprints.parquet").exists():
+        return None
+    return run, _parquet(run["run_id"], run["product_path"], "fingerprints.parquet")
+
+
+def _shares(table: pd.DataFrame, hole_id: str, prefix: str, names: dict | None = None) -> dict:
+    columns = [c for c in table.columns if c.startswith(prefix)]
+    values = table.loc[hole_id, columns].astype(float)
+    total = float(values.sum()) or 1.0
+    out: dict[str, float] = {}
+    for column, value in values.items():
+        if value > 0:
+            key = column.removeprefix(prefix)
+            label = names.get(int(key), f"cluster {key}") if names is not None else key
+            out[label] = out.get(label, 0.0) + float(value) / total
+    return out
+
+
+MIX_SENSORS = {
+    "combined": ("swir", "tir"),
+    "swir": ("swir",),
+    "tir": ("tir",),
+    "seq_combined": ("swir", "tir"),
+    "seq_swir": ("swir",),
+    "seq_tir": ("tir",),
+}
+
+
+def _explain(view: str, hole_id: str, items: list[dict], district: int | None) -> None:
+    """Attach plain-language reasons (`why`) and their numbers (`explain`) to each neighbour."""
+    from hylogger.explorer import explain
+
+    for item in items:
+        item["why"], item["explain"] = [], {}
+    for sensor in MIX_SENSORS.get(view, ()):
+        found = _fingerprints(sensor)
+        if found is None or hole_id not in found[1].index:
+            continue
+        run, table = found
+        names = _cluster_names(run["card"].get("interval_run"))
+        mine_c = _shares(table, hole_id, "cluster_", names)
+        mine_m = _shares(table, hole_id, "mineral_")
+        for item in items:
+            if item["hole_id"] not in table.index:
+                continue
+            clusters = explain.overlap(mine_c, _shares(table, item["hole_id"], "cluster_", names))
+            minerals = explain.overlap(mine_m, _shares(table, item["hole_id"], "mineral_"))
+            item["why"] += explain.mix_lines(sensor.upper(), clusters, minerals)
+            item["explain"][sensor] = {"clusters": clusters, "minerals": minerals}
+    if view.startswith("seq_"):
+        sensor = "tir" if view == "seq_tir" else "swir"
+        for item in items:
+            try:
+                zones = _align(hole_id, item["hole_id"], sensor)["zones"]
+            except HTTPException:
+                continue
+            summary = explain.sequence_summary(zones)
+            item["explain"]["sequence"] = summary
+            line = explain.sequence_line(summary)
+            if line:
+                item["why"].insert(0, line)
+    if view.startswith("raw_"):
+        sensor = view.removeprefix("raw_")
+        found = _fingerprints(view)
+        bands = {
+            r["hole_id"]: (r["summary"] or {}).get("feature_medians") or {}
+            for r in query(
+                "SELECT hole_id, summary FROM raw_product WHERE sensor=%s AND hole_id=ANY(%s)",
+                (sensor, [hole_id] + [i["hole_id"] for i in items]),
+            )
+        }
+        for item in items:
+            classes = None
+            if found and hole_id in found[1].index and item["hole_id"] in found[1].index:
+                classes = explain.overlap(
+                    _shares(found[1], hole_id, "class_"),
+                    _shares(found[1], item["hole_id"], "class_"),
+                )
+                item["explain"]["raw"] = classes
+            item["why"] += explain.raw_lines(
+                sensor.upper(), classes, bands.get(hole_id, {}), bands.get(item["hole_id"], {})
+            )
+    for item in items:
+        same = district is not None and item.get("district_id") == district
+        line = explain.context_line(item.get("km"), same)
+        if line:
+            item["why"].append(line)
+
+
 @app.get("/api/v2/holes/{hole_id}/similar")
 def similar_holes(
     hole_id: str,
@@ -688,7 +1077,7 @@ def similar_holes(
         return {"view": view, "items": []}
     rows = query(
         """SELECT n.neighbor_id AS hole_id, n.distance, n.rank, h.commodity, h.tectonic_region,
-                  h.lat, h.lon, p.cluster_id, p.summary,
+                  h.lat, h.lon, h.district_id, p.cluster_id, p.summary,
                   ST_Distance(h.geom, s.geom) / 1000 AS km
            FROM hole_neighbor n JOIN explorer_hole h ON h.hole_id=n.neighbor_id
            JOIN explorer_hole s ON s.hole_id=n.hole_id
@@ -696,12 +1085,8 @@ def similar_holes(
            WHERE n.run_id=%s AND n.hole_id=%s ORDER BY n.rank LIMIT %s""",
         (run["run_id"], hole_id, limit),
     )
-    me = one(
-        "SELECT summary FROM hole_profile WHERE run_id=%s AND hole_id=%s", (run["run_id"], hole_id)
-    )
-    mine = (me or {}).get("summary", {})
-    for row in rows:
-        row["why"] = _why(mine, row.get("summary") or {}, view)
+    me = one("SELECT district_id FROM explorer_hole WHERE hole_id=%s", (hole_id,))
+    _explain(view, hole_id, rows, (me or {}).get("district_id"))
     return clean(
         {
             "view": view,
@@ -712,25 +1097,7 @@ def similar_holes(
     )
 
 
-def _why(a: dict, b: dict, view: str) -> list[str]:
-    if view == "combined":
-        a, b = a.get("swir") or a.get("tir") or {}, b.get("swir") or b.get("tir") or {}
-    ma = dict(sorted(a.get("top_minerals", {}).items(), key=lambda kv: -kv[1]))
-    mb = dict(sorted(b.get("top_minerals", {}).items(), key=lambda kv: -kv[1]))
-    shared = [m for m in ma if m in mb][:3]
-    diffs = sorted(set(ma) | set(mb), key=lambda m: -abs(ma.get(m, 0) - mb.get(m, 0)))[:2]
-    out = [f"both rich in {', '.join(shared)}"] if shared else []
-    out += [
-        f"{m}: {ma.get(m, 0):.0%} vs {mb.get(m, 0):.0%}"
-        for m in diffs
-        if abs(ma.get(m, 0) - mb.get(m, 0)) > 0.05
-    ]
-    return out
-
-
-@app.get("/api/v2/align")
-def align(a: str, b: str, sensor: str = Query("swir", pattern="^(swir|tir)$")):
-    """DTW alignment of two holes' down-hole sequences: matched steps and zones."""
+def _align(a: str, b: str, sensor: str) -> dict:
     from hylogger.explorer import sequence
 
     run = active_run("hole", f"seq_{sensor}")
@@ -750,18 +1117,25 @@ def align(a: str, b: str, sensor: str = Query("swir", pattern="^(swir|tir)$")):
     if not path:
         raise HTTPException(422, "These holes cannot be aligned within the warping band")
     zones = sequence.matched_zones(path, parts[a], parts[b])
-    interval_run = active_run("interval", sensor)
-    names = {}
-    if interval_run:
-        names = {
-            r["cluster_id"]: r["name"]
-            for r in query(
-                "SELECT cluster_id, name FROM cluster_profile WHERE run_id=%s AND level='fine'",
-                (interval_run["run_id"],),
-            )
-        }
+    names = _cluster_names(run["card"].get("interval_run"))
     for zone in zones:
         zone["cluster_name"] = names.get(zone["cluster_id"])
+    return {
+        "run": run,
+        "parts": parts,
+        "distance": distance,
+        "path": path,
+        "zones": zones,
+        "names": names,
+    }
+
+
+@app.get("/api/v2/align")
+def align(a: str, b: str, sensor: str = Query("swir", pattern="^(swir|tir)$")):
+    """DTW alignment of two holes' down-hole sequences: matched steps and zones."""
+    from hylogger.explorer import explain
+
+    result = _align(a, b, sensor)
 
     def describe(part):
         return [
@@ -769,19 +1143,21 @@ def align(a: str, b: str, sensor: str = Query("swir", pattern="^(swir|tir)$")):
             for r in part.itertuples()
         ]
 
+    summary = explain.sequence_summary(result["zones"])
     return clean(
         {
             "sensor": sensor,
-            "run_id": run["run_id"],
+            "run_id": result["run"]["run_id"],
             "a": a,
             "b": b,
-            "distance": round(distance, 4),
-            "steps_a": describe(parts[a]),
-            "steps_b": describe(parts[b]),
-            "path": path,
-            "zones": zones,
-            "cluster_names": names,
-            "method": run["card"].get("distance"),
+            "distance": round(result["distance"], 4),
+            "steps_a": describe(result["parts"][a]),
+            "steps_b": describe(result["parts"][b]),
+            "path": result["path"],
+            "zones": result["zones"],
+            "cluster_names": result["names"],
+            "summary": {**summary, "sentence": explain.sequence_line(summary)},
+            "method": result["run"]["card"].get("distance"),
         }
     )
 
@@ -802,6 +1178,37 @@ def embedding(
         (run["run_id"],),
     )
     return clean({"view": view, "run_id": run["run_id"], "card": run["card"], "points": points})
+
+
+@lru_cache(maxsize=8)
+def _cluster_where(run_id: str) -> dict:
+    """Per cluster (fine and coarse): depth range of its metres and the holes holding most of it."""
+    out: dict[str, dict] = {"fine": {}, "coarse": {}}
+    for level, column in (("fine", "cluster_id"), ("coarse", "coarse_cluster_id")):
+        for r in query(
+            f"""SELECT l.{column} AS cid,
+                       percentile_cont(ARRAY[0.1, 0.5, 0.9]) WITHIN GROUP (ORDER BY f.depth_from_m)
+                           AS depth
+                FROM interval_label l JOIN interval_feature f
+                     ON f.feature_set_id=l.feature_set_id AND f.bin=l.bin
+                WHERE l.run_id=%s AND l.{column} IS NOT NULL GROUP BY 1""",
+            (run_id,),
+        ):
+            out[level][r["cid"]] = {
+                "depth_p10_p50_p90": [round(v, 1) for v in r["depth"]],
+                "holes": [],
+            }
+        for r in query(
+            f"""SELECT cid, hole_id, n FROM (
+                    SELECT l.{column} AS cid, l.hole_id, count(*) AS n,
+                           row_number() OVER (PARTITION BY l.{column} ORDER BY count(*) DESC) AS r
+                    FROM interval_label l WHERE l.run_id=%s AND l.{column} IS NOT NULL
+                    GROUP BY 1, 2) x
+                WHERE r <= 4 ORDER BY cid, n DESC""",
+            (run_id,),
+        ):
+            out[level].setdefault(r["cid"], {"holes": []})["holes"].append([r["hole_id"], r["n"]])
+    return out
 
 
 @app.get("/api/v2/clusters")
@@ -850,6 +1257,7 @@ def clusters(sensor: str = Query("swir", pattern="^(swir|tir)$")):
             "run_id": run["run_id"],
             "card": card,
             "profiles": profiles,
+            "where": _cluster_where(run["run_id"]),
             "raw": raw,
             "virtual": virtual,
             "robustness": robustness,
@@ -904,6 +1312,244 @@ def anomalies(
     )
 
 
+REASON_TEXT = {
+    "poor_fit": "Poor fit to its cluster",
+    "isolation": "Rare combination of minerals",
+    "downhole_contrast": "Unlike the metres around it",
+    "rare_mineral": "Contains a rare mineral",
+    "chemistry_mismatch": "Assay disagrees with the mineralogy",
+    "unlike_other_holes": "Unlike every other hole",
+}
+
+
+@lru_cache(maxsize=256)
+def _mineral_prevalence(sensor: str, mineral: str) -> float | None:
+    row = one(
+        """SELECT avg((f.minerals ? %s)::int) AS share
+           FROM interval_feature f JOIN active_feature_set a USING (feature_set_id)
+           WHERE f.sensor=%s AND f.n_admitted > 0""",
+        (mineral, sensor),
+    )
+    return None if row is None or row["share"] is None else float(row["share"])
+
+
+def _differences(here: dict, there: dict, n: int = 3) -> str:
+    keys = set(here) | set(there)
+    ranked = sorted(keys, key=lambda k: -abs(here.get(k, 0.0) - there.get(k, 0.0)))[:n]
+    return ", ".join(
+        f"{k} {here.get(k, 0.0):.0%} here vs {there.get(k, 0.0):.0%}"
+        for k in ranked
+        if abs(here.get(k, 0.0) - there.get(k, 0.0)) >= 0.05
+    )
+
+
+@app.get("/api/v2/anomalies/interval/{feature_set_id}/{bin_id}")
+def anomaly_interval(feature_set_id: str, bin_id: int):
+    """Why one metre is flagged: each reason with the numbers behind it, and its context."""
+    row = one(
+        "SELECT * FROM interval_feature WHERE feature_set_id=%s AND bin=%s",
+        (feature_set_id, bin_id),
+    )
+    if row is None:
+        raise HTTPException(404, "unknown interval")
+    sensor, hole_id = row["sensor"], row["hole_id"]
+    run = active_run("interval", sensor)
+    if run is None:
+        raise HTTPException(404, f"No active {sensor} interval analysis")
+    label = one(
+        "SELECT cluster_id, distance, anomaly_score, anomaly_reasons FROM interval_label "
+        "WHERE run_id=%s AND feature_set_id=%s AND bin=%s",
+        (run["run_id"], feature_set_id, bin_id),
+    )
+    if label is None:
+        raise HTTPException(404, "interval not labelled in the active analysis")
+    here = row["minerals"] or {}
+    context = query(
+        """SELECT f.bin, f.depth_from_m, f.depth_to_m, f.groups, f.minerals, f.dominant_mineral,
+                  l.cluster_id, l.anomaly_score, l.anomaly_reasons
+           FROM interval_feature f LEFT JOIN interval_label l ON l.run_id=%s
+                AND l.feature_set_id=f.feature_set_id AND l.bin=f.bin
+           WHERE f.feature_set_id=%s AND f.bin BETWEEN %s AND %s ORDER BY f.bin""",
+        (run["run_id"], feature_set_id, bin_id - 10, bin_id + 10),
+    )
+    around = [
+        c["minerals"] or {}
+        for c in context
+        if c["bin"] != bin_id and abs(c["bin"] - bin_id) <= 5 and c["minerals"]
+    ]
+    around_mix = _mean_mix(around, 12)
+    profile = one(
+        "SELECT name, minerals, n_intervals FROM cluster_profile WHERE run_id=%s "
+        "AND level='fine' AND cluster_id=%s",
+        (run["run_id"], label["cluster_id"]),
+    )
+    total = run["card"].get("intervals")
+    evidence = []
+    for reason in label["anomaly_reasons"] or []:
+        key, _, detail = reason.partition(":")
+        item = {"reason": key, "title": REASON_TEXT.get(key, key)}
+        if key == "poor_fit" and profile:
+            diff = _differences(here, profile["minerals"] or {})
+            item["text"] = (
+                f"It sits in cluster “{profile['name']}” but fits it less well than 98% of metres "
+                f"fit their own cluster. {('Biggest differences from that cluster: ' + diff + '.') if diff else ''}"
+            )
+        elif key == "isolation":
+            top = ", ".join(
+                f"{m} {v:.0%}" for m, v in sorted(here.items(), key=lambda kv: -kv[1])[:4]
+            )
+            item["text"] = (
+                f"Its combination ({top}) is easy to separate from the other "
+                f"{total:,} metres: fewer random splits isolate it than for 98% of metres."
+                if total
+                else f"Its combination ({top}) is rare among all metres."
+            )
+        elif key == "downhole_contrast":
+            diff = _differences(here, around_mix)
+            item["text"] = (
+                f"It differs sharply from the metres within 5 m above and below. "
+                f"{('Mineral changes: ' + diff + ' around it.') if diff else ''}"
+            )
+        elif key == "rare_mineral":
+            parts = []
+            for mineral in detail.split("/"):
+                prevalence = _mineral_prevalence(sensor, mineral)
+                share = here.get(mineral, 0.0)
+                parts.append(
+                    f"{mineral} ({share:.0%} of this metre; found in "
+                    f"{prevalence:.2%} of all metres)"
+                    if prevalence is not None
+                    else mineral
+                )
+            item["text"] = "Contains " + "; ".join(parts) + "."
+        elif key == "chemistry_mismatch":
+            item["text"] = _chemistry_evidence(hole_id, bin_id, row, detail)
+        evidence.append(item)
+    spectrum = None
+    raw_sensor = "nir" if sensor in ("swir", "vnir") else "tir"
+    raw = one(
+        "SELECT product_path FROM raw_product WHERE hole_id=%s AND sensor=%s", (hole_id, raw_sensor)
+    )
+    if raw:
+        data = _raw_spectra(raw["product_path"], raw_sensor)
+        match = np.flatnonzero(np.isclose(data["from"], row["depth_from_m"]))
+        if len(match):
+            spectrum = {
+                "sensor": raw_sensor,
+                "wavelengths": data["wavelengths"].round(1).tolist(),
+                "values": data["spectra"][match[0]].round(4).tolist(),
+            }
+    return clean(
+        {
+            "interval": {
+                k: row[k]
+                for k in ("hole_id", "sensor", "bin", "depth_from_m", "depth_to_m", "n_admitted")
+            },
+            "minerals": dict(sorted(here.items(), key=lambda kv: -kv[1])[:8]),
+            "score": label["anomaly_score"],
+            "cluster": {"id": label["cluster_id"], "name": (profile or {}).get("name")},
+            "evidence": evidence,
+            "context": context,
+            "around": around_mix,
+            "spectrum": spectrum,
+            "meaning": "Unusualness is the average percentile of the checks across all metres of "
+            "this sensor: 0.99 means more unusual than 99% of metres. A reason is listed when a "
+            "single check alone is in the top 2%.",
+        }
+    )
+
+
+def _chemistry_evidence(hole_id: str, bin_id: int, row: dict, analyte: str) -> str:
+    vrun = active_run("virtual_assay", "combined")
+    record = one("SELECT wamex_collar_id FROM explorer_hole WHERE hole_id=%s", (hole_id,))
+    predicted = measured = None
+    if vrun:
+        table = _parquet(vrun["run_id"], vrun["product_path"], "predictions.parquet")
+        hit = table[(table.hole_id == hole_id) & (table.bin == bin_id)]
+        if len(hit) and analyte in hit.columns:
+            predicted = float(hit[analyte].iloc[0])
+    if record and record["wamex_collar_id"]:
+        with pool.connection() as conn:
+            chem = assays(conn, [int(record["wamex_collar_id"])])
+        hit = chem[(chem.t > row["depth_from_m"]) & (chem.f < row["depth_to_m"])]
+        if analyte in hit.columns and hit[analyte].notna().any():
+            measured = float(hit[analyte].dropna().median())
+    unit = "%" if analyte in OXIDES else " ppm"
+    if measured is not None and predicted is not None:
+        direction = "higher" if measured > predicted else "lower"
+        return (
+            f"The assay gives {analyte} {measured:.3g}{unit}, but from its minerals the model "
+            f"expects about {predicted:.3g}{unit} — much {direction} than metres with this "
+            "mineralogy usually have (top 2% of differences)."
+        )
+    return f"The {analyte} assay differs strongly from what the mineralogy predicts (top 2%)."
+
+
+@lru_cache(maxsize=8)
+def _nearest_distances(run_id: str, path: str) -> tuple[list[str], np.ndarray]:
+    names, matrix, _ = _distance(run_id, path)
+    values = matrix.astype(float).copy()
+    np.fill_diagonal(values, np.inf)
+    return names, np.sort(values, axis=1)[:, :5].mean(axis=1)
+
+
+@app.get("/api/v2/anomalies/hole/{hole_id}")
+def anomaly_hole(
+    hole_id: str,
+    view: str = Query(
+        "combined", pattern="^(combined|swir|tir|raw_nir|raw_tir|seq_combined|seq_swir|seq_tir)$"
+    ),
+):
+    """Why a whole hole stands out: distance to its nearest holes and its distinctive minerals."""
+    run = active_run("hole", view)
+    if run is None:
+        raise HTTPException(404, f"No active {view} hole analysis")
+    names, nearest = _nearest_distances(run["run_id"], run["product_path"])
+    if hole_id not in names:
+        raise HTTPException(404, f"{hole_id} is not in the {view} analysis")
+    mine = float(nearest[names.index(hole_id)])
+    neighbours = query(
+        """SELECT n.neighbor_id AS hole_id, n.distance, ST_Distance(h.geom, s.geom)/1000 AS km
+           FROM hole_neighbor n JOIN explorer_hole h ON h.hole_id=n.neighbor_id
+           JOIN explorer_hole s ON s.hole_id=n.hole_id
+           WHERE n.run_id=%s AND n.hole_id=%s ORDER BY n.rank LIMIT 5""",
+        (run["run_id"], hole_id),
+    )
+    distinctive = []
+    for sensor in MIX_SENSORS.get(view, ()):
+        found = _fingerprints(sensor)
+        if found is None or hole_id not in found[1].index:
+            continue
+        table = found[1][[c for c in found[1].columns if c.startswith("mineral_")]].astype(float)
+        table = table.div(table.sum(axis=1).replace(0, 1), axis=0)
+        own, mean = table.loc[hole_id], table.mean()
+        for column in own.index:
+            if own[column] >= 0.05 and own[column] >= 3 * mean[column]:
+                distinctive.append(
+                    {
+                        "sensor": sensor.upper(),
+                        "mineral": column.removeprefix("mineral_"),
+                        "share": round(float(own[column]), 3),
+                        "typical": round(float(mean[column]), 3),
+                    }
+                )
+    distinctive.sort(key=lambda d: -d["share"] / max(d["typical"], 1e-3))
+    return clean(
+        {
+            "hole_id": hole_id,
+            "view": view,
+            "percentile": round(float((nearest < mine).mean()), 4),
+            "mean_distance_to_5_nearest": round(mine, 4),
+            "typical_mean_distance": round(float(np.median(nearest)), 4),
+            "neighbours": neighbours,
+            "distinctive": distinctive[:6],
+            "meaning": "Mean fingerprint distance to its five most similar holes, compared with "
+            "every other hole. A high value means even its closest matches are not very close: "
+            "a hole unlike the rest, or one with an unusual data quality.",
+        }
+    )
+
+
 # --------------------------------------------------------------- prediction
 @app.get("/api/v2/predict")
 def predict(
@@ -945,6 +1591,19 @@ def predict(
             }
         )
     order = np.argsort(-mean)
+    weights = 1 / np.maximum(dist, 0.05) ** predict_lib.POWER
+    weights = weights / weights.sum()
+
+    def mix(values) -> dict:
+        return {g: round(float(v), 4) for g, v in zip(groups, values, strict=True) if v > 0.005}
+
+    neighbour_bands = {
+        hole_id: {
+            int(band): mix(values)
+            for band, values in zip(part.band, part[groups].to_numpy(), strict=True)
+        }
+        for hole_id, part in bands[bands.hole_id.isin(neighbour_ids)].groupby("hole_id")
+    }
     return clean(
         {
             "sensor": sensor,
@@ -956,8 +1615,11 @@ def predict(
                 {
                     "hole_id": neighbour_ids[j],
                     "km": round(float(dist[j]), 2),
+                    "weight": round(float(weights[j]), 4),
                     "lat": float(holes.lat.iloc[index[j]]),
                     "lon": float(holes.lon.iloc[index[j]]),
+                    "composition": mix(holes[groups].iloc[index[j]].to_numpy()),
+                    "bands": neighbour_bands.get(neighbour_ids[j], {}),
                 }
                 for j in range(len(index))
             ],

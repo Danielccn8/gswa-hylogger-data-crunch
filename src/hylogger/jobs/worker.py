@@ -32,6 +32,8 @@ from ..explorer.db import connect, database_url
 from . import queue
 
 STEP_TIMEOUTS = {"processed-fetch": 900, "raw-fetch": 4 * 3600, "raw-summarize": 1800}
+# Spectra-only members are ~14% of a package; a fetch past this has stalled on the server.
+SPECTRAL_FETCH_TIMEOUT = 3600
 MIN_FREE_BYTES = 5 * 1024**3
 
 
@@ -65,8 +67,11 @@ class Context:
         self.conn.close()
 
 
-def run_step(ctx: Context, step: str, hole_id: str, *extra: str) -> dict:
+def run_step(
+    ctx: Context, step: str, hole_id: str, *extra: str, timeout: int | None = None
+) -> dict:
     """Run one child step; heartbeat, honour cancellation, enforce the timeout."""
+    limit = timeout or STEP_TIMEOUTS[step]
     command = [sys.executable, "-m", "hylogger.jobs.step", step, hole_id, *extra]
     process = subprocess.Popen(
         command, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, text=True, env=os.environ.copy()
@@ -85,9 +90,9 @@ def run_step(ctx: Context, step: str, hole_id: str, *extra: str) -> dict:
                 with ctx._lock:
                     queue.heartbeat(ctx.conn, ctx.job_id)
                 last_beat = elapsed
-            if elapsed > STEP_TIMEOUTS[step]:
+            if elapsed > limit:
                 process.kill()
-                return {"ok": False, "error": f"timeout after {STEP_TIMEOUTS[step]} s"}
+                return {"ok": False, "error": f"timeout after {limit} s"}
     except Cancelled:
         process.kill()
         raise
@@ -311,7 +316,8 @@ def job_raw_fetch(ctx: Context) -> dict:
             set_status(conn, hole_id, "raw_status", "failed")
             return {"ok": False, "error": f"Insufficient disk space ({free / 1e9:.1f} GB free)"}
         set_status(conn, hole_id, "raw_status", "downloading")
-        outcome = run_step(ctx, "raw-fetch", hole_id, "--mode", mode)
+        timeout = SPECTRAL_FETCH_TIMEOUT if mode == "spectral_only" else None
+        outcome = run_step(ctx, "raw-fetch", hole_id, "--mode", mode, timeout=timeout)
         if not outcome.get("ok"):
             set_status(conn, hole_id, "raw_status", "failed")
             return outcome

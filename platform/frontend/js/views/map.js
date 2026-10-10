@@ -1,29 +1,37 @@
-import { $, api, esc, num, pct, bars, ranked, toast } from '../util.js';
+import { $, api, esc, num, pct, bars, ranked, toast, loading } from '../util.js';
 import { selection } from '../state.js';
 import { clusterColor, categoryColor, scoreColor, mineralColor } from '../palette.js';
+import { lineChart } from '../charts.js';
 import { go } from '../main.js';
 import { kSelect, recut } from '../holeclusters.js';
+import { PROCESSED, RAW, statusText, TERMS, NIR_MARKS, info } from '../glossary.js';
 
 const STATUS = {
-  prepared: ['Processed logs prepared', '#0f6e68'],
-  raw: ['Raw spectra summarised', '#7b4173'],
-  no_logs: ['Scanned, no public processed logs', '#e6a23c'],
-  not_fetched: ['Not yet downloaded', '#9aa5ab'],
-  index_only: ['Package index only', '#c9d1d5'],
+  prepared: ['Mineral data ready', '#0f6e68'],
+  raw: ['Mineral data + raw spectra', '#7b4173'],
+  no_logs: ['Scanned, no public mineral logs', '#e6a23c'],
+  not_fetched: ['Not downloaded yet', '#9aa5ab'],
+  index_only: ['In the package index only', '#c9d1d5'],
 };
-let map, layer, data, columns, rows, colourBy = 'status', view = 'combined', holeK = 'auto', clusterNames = {};
-let chem = null, analyte = 'U', threshold = 100;
+const ANALYSES = {
+  combined: 'Mineral mix · SWIR + TIR', swir: 'Mineral mix · SWIR', tir: 'Mineral mix · TIR',
+  seq_combined: 'Down-hole sequence · SWIR + TIR', seq_swir: 'Down-hole sequence · SWIR', seq_tir: 'Down-hole sequence · TIR',
+  raw_nir: 'Raw spectra · NIR/SWIR', raw_tir: 'Raw spectra · TIR',
+};
 const ANALYTES = ['Au', 'Cu', 'Zn', 'Pb', 'Ni', 'U', 'Th', 'As', 'Cr', 'S', 'K2O', 'MgO', 'CaO', 'Na2O', 'Fe2O3T', 'SiO2', 'Al2O3'];
+let map, layer, focusLayer, rows = [], colourBy = 'status', view = 'combined', holeK = 'auto', clusterNames = {};
+let chem = null, analyte = 'U', threshold = 100;
+let focus = null, simView = 'combined';
+const markers = new Map();
 
 function statusOf(r) {
-  if (String(r.raw_status).startsWith('summarised')) return 'raw';
+  if (String(r.raw_status).startsWith('summarised') && r.processed_status === 'prepared') return 'raw';
   if (r.processed_status === 'prepared') return 'prepared';
   if (r.processed_status === 'no_logs') return 'no_logs';
   if (!r.nvcl_available) return 'index_only';
   return 'not_fetched';
 }
 async function loadChem() {
-  $('#chem-controls').hidden = colourBy !== 'chem';
   if (colourBy !== 'chem') return;
   const d = await api(`/api/v2/chemistry?analyte=${analyte}&threshold=${threshold}`);
   chem = { ...d, byHole: Object.fromEntries(d.holes.map(h => [h.hole_id, h])) };
@@ -44,61 +52,76 @@ function colourOf(r) {
   if (colourBy === 'assays') return r.n_assay > 0 ? '#0f6e68' : '#d5dcdf';
   return categoryColor(colourBy === 'commodity' ? (r.commodity || '').split(',')[0] : r.tectonic_region);
 }
+function syncControls() {
+  $('#chem-controls').hidden = colourBy !== 'chem';
+  $('#analysis-controls').hidden = !['cluster', 'anomaly'].includes(colourBy);
+  $('#k-wrap').hidden = colourBy !== 'cluster';
+}
 
-export async function render(root) {
+export async function render(root, [focusId] = []) {
   root.innerHTML = `
   <div class="page-head"><div><h1>Drill holes across Western Australia</h1>
-    <p class="muted">Every HyLogger-scanned hole in the catalogue and the GSWA package. Colour by data, geology or analysis; select an area to compare or download.</p></div></div>
+    <p class="muted">Every HyLogger-scanned hole in the catalogue and the GSWA package. Hover a hole for its main minerals; click it to see everything it contains and its most similar holes.</p></div></div>
   <div id="metrics" class="metrics"></div>
   <div class="grid cols-main-side">
     <section>
       <div class="toolbar">
-        <label class="field">Colour by<select id="colour">
-          <option value="status">Data available</option><option value="cluster">Hole cluster</option>
-          <option value="anomaly">Unusualness</option><option value="commodity">Commodity</option>
-          <option value="region">Tectonic region</option><option value="assays">Has assays</option><option value="chem">Assay above threshold</option></select></label>
-        <span id="chem-controls" class="row gap" hidden><label class="field">Analyte<select id="analyte">${ANALYTES.map(a => `<option ${a === analyte ? 'selected' : ''}>${a}</option>`).join('')}</select></label>
-        <label class="field">Threshold<input id="threshold" type="number" min="0" step="any" value="${threshold}" style="width:100px"></label></span>
-        <label class="field">Analysis<select id="analysis">
-          <option value="combined">Mix · SWIR + TIR</option><option value="swir">Mix · SWIR</option><option value="tir">Mix · TIR</option>
-          <option value="seq_combined">Sequence · SWIR + TIR</option><option value="seq_swir">Sequence · SWIR</option><option value="seq_tir">Sequence · TIR</option>
-          <option value="raw_nir">Raw NIR/SWIR spectra</option><option value="raw_tir">Raw TIR spectra</option></select></label>
-        ${kSelect('hole-k', holeK)}
+        <label class="field"><span>Colour by ${info('What the marker colour means. The legend under the map explains each colour.')}</span><select id="colour">
+          <option value="status">Data available</option><option value="cluster">Hole cluster (similar holes)</option>
+          <option value="anomaly">Unusualness</option><option value="commodity">Target commodity (company)</option>
+          <option value="region">Tectonic region</option><option value="assays">Has assays</option><option value="chem">Assay above a threshold</option></select></label>
+        <span id="analysis-controls" class="row gap" hidden><label class="field"><span>Based on ${info(TERMS.analysis)}</span><select id="analysis">
+          ${Object.entries(ANALYSES).map(([k, v]) => `<option value="${k}">${v}</option>`).join('')}</select></label>
+          <span id="k-wrap">${kSelect('hole-k', holeK)}</span></span>
+        <span id="chem-controls" class="row gap" hidden><label class="field"><span>Analyte ${info('Holes are coloured by their highest assay of this element or oxide; grey = no assays for it.')}</span><select id="analyte">${ANALYTES.map(a => `<option ${a === analyte ? 'selected' : ''}>${a}</option>`).join('')}</select></label>
+          <label class="field">Threshold<input id="threshold" type="number" min="0" step="any" value="${threshold}" style="width:100px"></label></span>
         <label class="field" style="flex:1;min-width:160px">Filter<input id="filter" type="search" placeholder="Hole, project, operator or commodity"></label>
         <button id="area" class="secondary" type="button" title="Drag a rectangle on the map to add holes to the selection">Select area</button>
       </div>
       <div id="map" aria-label="Map of drill holes"></div>
       <div id="legend" class="legend"></div>
     </section>
-    <aside class="panel" id="side"><h2>Hole</h2><p class="muted">Click a marker to see what the hole contains, its cluster and the most similar holes.</p></aside>
+    <aside class="panel side-panel" id="side"><h2>Hole</h2><p class="muted">Hover a marker for its main minerals. Click it to see its SWIR, TIR and raw-spectra summary, and to light up its most similar holes on the map.</p></aside>
   </div>`;
   const summary = await api('/api/v2/summary');
   const c = summary.counts;
   const intervals = Object.fromEntries(summary.intervals.map(r => [r.sensor, r]));
+  const metres = (sensor, label) => [`Metres of ${label} data`, num(intervals[sensor]?.intervals), `in ${num(intervals[sensor]?.holes)} holes · ${num(intervals[sensor]?.readings)} readings`,
+    `${TERMS.interval} ${TERMS[sensor]}`];
   $('#metrics').innerHTML = [
-    ['Holes registered', num(c.holes), `${num(c.nvcl)} with NVCL datasets`],
-    ['Processed & prepared', num(c.prepared), `${num(c.no_logs)} scanned but no public logs`],
-    ['SWIR intervals', num(intervals.swir?.intervals), `${num(intervals.swir?.holes)} holes · 1 m`],
-    ['TIR intervals', num(intervals.tir?.intervals), `${num(intervals.tir?.holes)} holes · 1 m`],
-    ['Raw spectra summarised', num(c.raw_summarised), `${num(c.raw)} raw packages exist`],
-    ['Holes with assays', num(c.with_assays), `${num(c.with_geology)} with logged geology`],
-  ].map(([a, b, s]) => `<div class="metric"><span>${a}</span><strong>${b}</strong><small>${s}</small></div>`).join('');
-  $('#colour').value = colourBy; $('#analysis').value = view;
-  $('#colour').onchange = async e => { colourBy = e.target.value; await loadChem(); draw(); };
+    ['Holes in the catalogue', num(c.holes), `${num(c.nvcl)} scanned by a HyLogger`, 'Every drill hole with coordinates in the NVCL catalogue or the GSWA package. Not all of them have published HyLogger data.'],
+    ['Holes with mineral data', num(c.prepared), `downloaded & processed · ${num(c.no_logs)} scanned without public logs`, PROCESSED.prepared[1]],
+    ['Holes with raw spectra', num(c.raw_summarised), `of ${num(c.raw)} raw packages published`, 'Raw spectra downloaded and reduced to one median spectrum per metre (Final Mask applied), with absorption features. Independent of the TSG mineral interpretation.'],
+    metres('swir', 'SWIR'), metres('tir', 'TIR'),
+    ['Holes with assays', num(c.with_assays), `${num(c.with_geology)} with logged geology`, TERMS.assays],
+  ].map(([a, b, s, tip]) => `<div class="metric" tabindex="0" data-tip="${esc(tip)}"><span>${a} <span class="info" aria-hidden="true">i</span></span><strong>${b}</strong><small>${s}</small></div>`).join('');
+  $('#colour').value = colourBy; $('#analysis').value = view; syncControls();
+  $('#colour').onchange = async e => { colourBy = e.target.value; syncControls(); await loadChem(); draw(); };
   $('#analyte').onchange = async e => { analyte = e.target.value; await loadChem(); draw(); };
   $('#threshold').onchange = async e => { threshold = Math.max(0, Number(e.target.value) || 0); await loadChem(); draw(); };
   $('#analysis').onchange = async e => { view = e.target.value; await load(); draw(); };
   $('#filter').oninput = () => draw();
-  $('#hole-k').onchange = async e => { holeK = e.target.value; await load(); if (colourBy !== 'cluster') { colourBy = 'cluster'; $('#colour').value = 'cluster'; } draw(); };
+  $('#hole-k').onchange = async e => { holeK = e.target.value; await load(); draw(); };
+  document.addEventListener('keydown', onKey);
   setupMap();
   await load();
   draw();
+  // #/map/<hole>: open that hole and frame it with its most similar holes.
+  const target = focusId && rows.find(r => r.hole_id === focusId);
+  if (target) { await side(target); frame(); }
 }
 
+function frame() {
+  if (!map || !focus) return;
+  const points = [[focus.hole.lat, focus.hole.lon], ...focus.items.filter(i => i.lat != null).map(i => [i.lat, i.lon])];
+  map.fitBounds(L.latLngBounds(points).pad(0.25), { maxZoom: 9, animate: false });
+}
+
+function onKey(event) { if (event.key === 'Escape' && focus) clearFocus(); }
+
 async function load() {
-  data = await api(`/api/v2/map?view=${view}`);
-  columns = data.columns;
-  rows = data.rows.map(r => Object.fromEntries(columns.map((c, i) => [c, r[i]])));
+  const data = await api(`/api/v2/map?view=${view}`);
+  rows = data.rows.map(r => Object.fromEntries(data.columns.map((c, i) => [c, r[i]])));
   clusterNames = data.cluster_names || {};
   const cut = await recut(view, holeK).catch(() => null);
   if (cut) { rows.forEach(r => { r.cluster_id = cut.assignments[r.hole_id] ?? null; }); clusterNames = cut.names; }
@@ -110,6 +133,7 @@ function setupMap() {
   L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', { attribution: '© OpenStreetMap contributors', maxZoom: 17 })
     .on('tileerror', () => { $('#legend').dataset.offline = '1'; }).addTo(map);
   layer = L.layerGroup().addTo(map);
+  focusLayer = L.layerGroup().addTo(map);
   let start = null, box = null;
   $('#area').onclick = () => { map.dragging.disable(); $('#area').textContent = 'Drag on the map…'; map._selecting = true; };
   map.on('mousedown', e => { if (!map._selecting) return; start = e.containerPoint; box = document.createElement('div'); box.className = 'select-box'; $('#map').append(box); });
@@ -131,18 +155,72 @@ function visible() {
   return rows.filter(r => !q || `${r.hole_id} ${r.name} ${r.project} ${r.operator} ${r.commodity}`.toLowerCase().includes(q));
 }
 
+const mineralLine = (label, top) => top?.length ? `<div class="tip-minerals"><b>${label}</b> ${top.map(([m, v]) => `${esc(m)} ${pct(v)}`).join(' · ')}</div>` : '';
+function hoverText(r) {
+  const h = chem?.byHole[r.hole_id];
+  return `<b>${esc(r.hole_id)}</b>${r.name && r.name !== r.hole_id ? ` <span class="tip-minerals">${esc(r.name)}</span>` : ''}
+    ${mineralLine('SWIR', r.swir_top)}${mineralLine('TIR', r.tir_top)}
+    ${!r.swir_top && !r.tir_top ? `<div class="tip-minerals">${esc(statusText(PROCESSED, r.processed_status)[0])}</div>` : ''}
+    ${colourBy === 'cluster' && r.cluster_id != null ? `<div>Hole cluster ${r.cluster_id}: ${esc(clusterNames[r.cluster_id] || '')}</div>` : ''}
+    ${colourBy === 'anomaly' && r.anomaly_score != null ? `<div>Unusualness ${pct(r.anomaly_score)}</div>` : ''}
+    ${colourBy === 'chem' && h ? `<div>max ${analyte} ${num(h.max, 2)} ${chem.unit} · ${h.above} samples &gt; ${threshold}</div>` : ''}
+    <div class="tip-minerals">Company target: ${esc(r.commodity || 'unknown')}</div>`;
+}
+
 function draw() {
   if (!map) return;
-  layer.clearLayers();
+  layer.clearLayers(); markers.clear();
   const shown = visible();
+  const ranks = focus ? new Map(focus.items.map((it, i) => [it.hole_id, i + 1])) : null;
   for (const r of shown) {
     const analysed = colourBy === 'cluster' ? r.cluster_id != null : colourBy === 'anomaly' ? r.anomaly_score != null : colourBy === 'chem' ? !!chem?.byHole[r.hole_id]?.above : true;
     const picked = selection.has(r.hole_id);
-    L.circleMarker([r.lat, r.lon], { radius: analysed ? (colourBy === 'chem' ? 6.5 : r.processed_status === 'prepared' ? 5 : 3.5) : 2.5, weight: picked ? 2 : .6, color: picked ? '#111' : '#ffffff', fillColor: colourOf(r), fillOpacity: analysed ? .92 : .35, opacity: analysed ? 1 : .4 })
-      .on('click', () => side(r)).bindTooltip(colourBy === 'chem' && chem?.byHole[r.hole_id] ? `${esc(r.hole_id)} · max ${analyte} ${num(chem.byHole[r.hole_id].max, 2)} ${chem.unit} · ${chem.byHole[r.hole_id].above} samples > ${threshold}` : `${esc(r.hole_id)} · target: ${esc(r.commodity || 'unknown')}`).addTo(layer);
+    const lit = !focus || ranks.has(r.hole_id) || focus.hole.hole_id === r.hole_id;
+    const radius = analysed ? (colourBy === 'chem' ? 6.5 : r.processed_status === 'prepared' ? 5 : 3.5) : 2.5;
+    const marker = L.circleMarker([r.lat, r.lon], {
+      radius, weight: picked ? 2 : .6, color: picked ? '#111' : '#ffffff', fillColor: colourOf(r),
+      fillOpacity: lit ? (analysed ? .92 : .35) : .12, opacity: lit ? (analysed ? 1 : .4) : .12,
+    }).on('click', () => side(r)).bindTooltip(() => hoverText(r), { direction: 'top', offset: [0, -4], className: 'wrap-tip' }).addTo(layer);
+    markers.set(r.hole_id, marker);
   }
+  drawFocus();
   legend(shown);
 }
+
+// Similar holes rise: they grow, get a numbered pin and a line to the chosen hole.
+function drawFocus() {
+  focusLayer.clearLayers();
+  if (!focus) return;
+  const origin = [focus.hole.lat, focus.hole.lon];
+  focus.items.forEach((it, i) => {
+    if (it.lat == null) return;
+    L.polyline([origin, [it.lat, it.lon]], { color: '#0f6e68', weight: 1.5, opacity: .55, dashArray: '4 4', interactive: false }).addTo(focusLayer);
+  });
+  focus.items.forEach((it, i) => {
+    if (it.lat == null) return;
+    const marker = markers.get(it.hole_id);
+    if (marker) { marker.bringToFront(); grow(marker, marker.getRadius(), 9, i); }
+    L.marker([it.lat, it.lon], { icon: L.divIcon({ className: 'rank-pin', html: `<span style="--i:${i}">${i + 1}</span>`, iconSize: [24, 24] }), zIndexOffset: 1000 - i, keyboard: false })
+      .bindTooltip(`<b>${i + 1}. ${esc(it.hole_id)}</b> · ${pct(1 - it.distance)} similar<br>${(it.why || []).slice(0, 2).map(esc).join('<br>')}`, { direction: 'top', offset: [0, -10], className: 'wrap-tip' })
+      .on('click', () => { const r = rows.find(x => x.hole_id === it.hole_id); if (r) side(r); })
+      .on('mouseover', () => $(`[data-sim="${CSS.escape(it.hole_id)}"]`)?.classList.add('on'))
+      .on('mouseout', () => $(`[data-sim="${CSS.escape(it.hole_id)}"]`)?.classList.remove('on'))
+      .addTo(focusLayer);
+  });
+  L.marker(origin, { icon: L.divIcon({ className: 'rank-pin focus', html: '<span>●</span>', iconSize: [28, 28] }), zIndexOffset: 2000, interactive: false }).addTo(focusLayer);
+}
+
+function grow(marker, from, to, delay) {
+  const started = performance.now() + delay * 40;
+  const step = now => {
+    const t = Math.max(0, Math.min(1, (now - started) / 400));
+    marker.setRadius(from + (to - from) * (1 - (1 - t) ** 3));
+    if (t < 1) requestAnimationFrame(step);
+  };
+  requestAnimationFrame(step);
+}
+
+function clearFocus() { focus = null; draw(); }
 
 function legend(shown) {
   let items = [];
@@ -156,34 +234,96 @@ function legend(shown) {
     const counts = {}; shown.forEach(r => { const k = key(r) || 'Unknown'; counts[k] = (counts[k] || 0) + 1; });
     items = Object.entries(counts).sort((a, b) => b[1] - a[1]).slice(0, 14).map(([k, n]) => [k, categoryColor(k === 'Unknown' ? '' : k), n]);
   }
-  $('#legend').innerHTML = `${items.map(([label, color, n]) => `<span><i style="background:${color}"></i>${esc(label)}${n != null ? ` <span class="muted">${num(n)}</span>` : ''}</span>`).join('')}
-    <span class="muted">${num(shown.length)} shown${$('#legend').dataset.offline ? ' · basemap offline' : ''}</span>`;
+  const note = colourBy === 'cluster' || colourBy === 'anomaly' ? ` · based on ${ANALYSES[view]}` : colourBy === 'commodity' ? ` · ${TERMS.commodity}` : '';
+  $('#legend').innerHTML = `${focus ? `<span class="chip accent">Showing the ${focus.items.length} holes most similar to ${esc(focus.hole.hole_id)} (${esc(ANALYSES[focus.view])}) <button type="button" id="clear-focus" aria-label="Clear highlight">×</button></span>` : ''}
+    ${items.map(([label, color, n]) => `<span><i style="background:${color}"></i>${esc(label)}${n != null ? ` <span class="muted">${num(n)}</span>` : ''}</span>`).join('')}
+    <span class="muted">${num(shown.length)} shown${esc(note)}${$('#legend').dataset.offline ? ' · basemap offline' : ''}</span>`;
+  const clear = $('#clear-focus'); if (clear) clear.onclick = clearFocus;
+}
+
+function whiteMica(position, depth) {
+  if (position == null) return '';
+  if (depth != null && depth < 0.02) return 'weak Al-OH absorption: little white mica or kaolin';
+  if (position < 2198) return 'sodic to muscovitic white mica (paragonite–muscovite)';
+  if (position <= 2206) return 'muscovitic white mica';
+  return 'phengitic (Fe/Mg-rich) white mica';
 }
 
 async function side(r) {
   const node = $('#side');
   node.innerHTML = `<h2>${esc(r.hole_id)}</h2><p class="muted">Loading…</p>`;
-  const [detail, similar] = await Promise.all([
+  const rawDone = String(r.raw_status).startsWith('summarised');
+  const [detail, nir, tir] = await Promise.all([
     api(`/api/v2/holes/${encodeURIComponent(r.hole_id)}`),
-    api(`/api/v2/holes/${encodeURIComponent(r.hole_id)}/similar?view=${view}&limit=6`).catch(() => ({ items: [] })),
+    rawDone ? api(`/api/v2/spectra?holes=${encodeURIComponent(r.hole_id)}&sensor=nir`).catch(() => null) : null,
+    rawDone ? api(`/api/v2/spectra?holes=${encodeURIComponent(r.hole_id)}&sensor=tir`).catch(() => null) : null,
   ]);
   const h = detail.hole;
-  const profile = detail.profiles.swir?.summary || detail.profiles.tir?.summary;
-  node.innerHTML = `<h2>${esc(h.hole_id)}</h2>
-    <p class="muted">${esc(h.commodity || 'Commodity unknown')} · ${esc(h.tectonic_region || 'Region unknown')}</p>
-    <div class="facts"><div><span>Operator</span>${esc(h.operator || '–')}</div><div><span>Length</span>${num(h.length_m)} m</div>
-    <div><span>Assays</span>${num(h.n_assay)} intervals</div><div><span>Processed</span>${esc(h.processed_status)}</div><div><span>Raw</span>${esc(h.raw_status)}</div></div>
-    ${profile ? `<h3 style="margin-top:12px">Main minerals (SWIR)</h3>${bars(ranked(profile.top_minerals, 6), mineralColor)}` : '<p class="notice">No prepared mineral data yet. Use Data to download and process it.</p>'}
-    ${similar.items.length ? `<h3 style="margin-top:12px">Most similar holes</h3><table><tbody>${similar.items.map(s => `<tr><td><button class="link" data-open="${esc(s.hole_id)}">${esc(s.hole_id)}</button></td><td class="num">${pct(1 - s.distance)}</td><td class="num muted">${num(s.km)} km</td></tr>`).join('')}</tbody></table>` : ''}
+  const [pLabel, pText] = statusText(PROCESSED, h.processed_status);
+  const [rLabel, rText] = statusText(RAW, h.raw_status, h.raw_available);
+  const minerals = (sensor, label) => {
+    const top = detail.profiles[sensor]?.summary?.top_minerals;
+    const metres = detail.sensors[sensor];
+    return top ? `<h3 style="margin-top:12px">${label} minerals ${info(TERMS[sensor])}</h3>${bars(ranked(top, 6), mineralColor)}
+      <p class="muted small">${metres ? `${num(metres.with_minerals)} of ${num(metres.intervals)} metres with a diagnostic reading` : ''}</p>` : '';
+  };
+  const spectrum = (d, label) => {
+    const item = d?.items?.[0];
+    if (!item?.mean) return '';
+    const aloh = item.features?.aloh_2200_pos;
+    return `<h3 style="margin-top:12px">Raw ${label} spectrum ${info(d.method)}</h3>
+      ${lineChart({ x: d.wavelengths, bands: [{ low: item.p10, high: item.p90, color: '#0f6e68', name: '10–90% of metres' }], series: [{ values: item.mean, color: '#0f6e68', name: `mean of ${num(item.metres)} m` }],
+        marks: label === 'NIR/SWIR' ? NIR_MARKS : [], xLabel: 'Wavelength (nm)', width: 340, height: 160 })}
+      ${label === 'NIR/SWIR' && aloh ? `<p class="small">Al-OH absorption at <b>${num(aloh, 1)} nm</b>: ${esc(whiteMica(aloh, item.features.aloh_2200_depth))}.</p>` : ''}`;
+  };
+  node.innerHTML = `<h2>${esc(h.hole_id)} <span class="muted small">${esc(h.name && h.name !== h.hole_id ? h.name : '')}</span></h2>
+    <p class="muted small">Company target: ${esc(h.commodity || 'unknown')} ${info(TERMS.commodity)} · ${esc(h.tectonic_region || 'Region unknown')} · ${esc(h.operator || '')}</p>
+    <section><h3>What data this hole has</h3><div class="data-status">
+      <div><span>Mineral logs</span><b data-tip="${esc(pText)}" tabindex="0">${esc(pLabel)} <span class="info" aria-hidden="true">i</span></b></div>
+      <div><span>Raw spectra</span><b data-tip="${esc(rText)}" tabindex="0">${esc(rLabel)} <span class="info" aria-hidden="true">i</span></b></div>
+      <div><span>Assays</span>${h.n_assay ? `${num(h.n_assay)} intervals` : 'none linked'}</div>
+      <div><span>Logged geology</span>${h.n_geology ? `${num(h.n_geology)} intervals` : 'none linked'}</div>
+      <div><span>Length</span>${num(h.length_m)} m</div></div></section>
+    ${minerals('swir', 'SWIR') || minerals('tir', 'TIR') ? `<section>${minerals('swir', 'SWIR')}${minerals('tir', 'TIR')}</section>` : '<section><p class="notice">No mineral data yet. Use Data to download and process it.</p></section>'}
+    ${nir?.items?.[0]?.mean || tir?.items?.[0]?.mean ? `<section>${spectrum(nir, 'NIR/SWIR')}${spectrum(tir, 'TIR')}</section>` : ''}
+    <section><div class="row gap" style="justify-content:space-between"><h3 style="margin:0">Most similar holes ${info(TERMS.similarity)}</h3>
+      <label class="field"><select id="sim-view" aria-label="Similarity based on">${Object.entries(ANALYSES).map(([k, v]) => `<option value="${k}" ${k === simView ? 'selected' : ''}>${v}</option>`).join('')}</select></label></div>
+      <div id="similar" style="margin-top:8px"></div></section>
     <div class="row gap" style="margin-top:12px">
       <button type="button" data-open="${esc(h.hole_id)}">Open strip log</button>
       <button type="button" class="secondary" id="add">${selection.has(h.hole_id) ? 'Remove from selection' : 'Add to selection'}</button>
+      <button type="button" class="secondary" id="compare" hidden>Compare these holes</button>
     </div>`;
   node.onclick = event => {
     const open = event.target.closest('[data-open]')?.dataset.open;
     if (open) go(`hole/${encodeURIComponent(open)}`);
-    if (event.target.id === 'add') { selection.toggle(h.hole_id); side(r); draw(); }
+    if (event.target.id === 'add') { selection.toggle(h.hole_id); event.target.textContent = selection.has(h.hole_id) ? 'Remove from selection' : 'Add to selection'; draw(); }
+    if (event.target.id === 'compare' && focus) { selection.set([h.hole_id, ...focus.items.map(i => i.hole_id)]); go(`similarity/${encodeURIComponent(h.hole_id)}`); }
   };
+  $('#sim-view').onchange = e => { simView = e.target.value; similar(r); };
+  await similar(r);
 }
 
-export function leave() { if (map) { map.remove(); map = null; } }
+async function similar(r) {
+  const node = $('#similar'); loading(node, 'Finding similar holes…');
+  const d = await api(`/api/v2/holes/${encodeURIComponent(r.hole_id)}/similar?view=${simView}&limit=10`).catch(() => ({ items: [] }));
+  if (!d.items.length) { node.innerHTML = `<p class="muted small">This hole is not in the ${esc(ANALYSES[simView])} analysis.</p>`; focus = null; draw(); return; }
+  focus = { hole: r, items: d.items, view: simView };
+  draw();
+  node.innerHTML = `<div class="similar-list">${d.items.map((s, i) => `<div class="similar-item" data-sim="${esc(s.hole_id)}"><span class="rank">${i + 1}</span>
+      <div><button class="link" data-open="${esc(s.hole_id)}">${esc(s.hole_id)}</button> <span class="muted small">${pct(1 - s.distance)} similar</span>
+      <ul>${(s.why || []).slice(0, 3).map(w => `<li>${esc(w)}</li>`).join('')}</ul></div></div>`).join('')}</div>
+    <p class="muted small" style="margin-top:6px">${esc(d.distance || '')}. Numbers on the map show the ranking; press Esc to clear.</p>`;
+  $('#compare').hidden = false;
+  node.querySelectorAll('[data-sim]').forEach(item => {
+    const marker = markers.get(item.dataset.sim);
+    item.onmouseenter = () => marker?.setStyle({ weight: 3, color: '#111' });
+    item.onmouseleave = () => marker?.setStyle({ weight: .6, color: '#ffffff' });
+  });
+}
+
+export function leave() {
+  document.removeEventListener('keydown', onKey);
+  focus = null;
+  if (map) { map.remove(); map = null; }
+}

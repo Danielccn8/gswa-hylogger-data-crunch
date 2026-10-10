@@ -36,7 +36,7 @@ class HttpRangeFile(io.RawIOBase):
         session: requests.Session | None = None,
         block: int = 8 << 20,
         timeout: float = 180,
-        retries: int = 4,
+        retries: int = 5,
     ) -> None:
         self.url, self.size, self.block, self.timeout, self.retries = (
             url,
@@ -53,7 +53,7 @@ class HttpRangeFile(io.RawIOBase):
         self.requests = 0
         self.segment: tuple[int, int, Any] | None = None  # (start, end, temp file)
 
-    def prefetch(self, start: int, end: int, *, part: int = 16 << 20, workers: int = 8) -> None:
+    def prefetch(self, start: int, end: int, *, part: int = 16 << 20, workers: int = 4) -> None:
         """Download [start, end] with parallel ranges into a temp file served by reads.
 
         Each request costs ~14 s before the first byte on THREDDS, so one large
@@ -119,7 +119,8 @@ class HttpRangeFile(io.RawIOBase):
             except (requests.RequestException, HyLoggerError):
                 if attempt == self.retries:
                     raise
-                time.sleep(2 * (attempt + 1))
+                # THREDDS resets connections in bursts; back off long enough to outlast one.
+                time.sleep(min(120, 5 * 3**attempt))
         raise AssertionError("unreachable")
 
     def readinto(self, target) -> int:
@@ -210,7 +211,14 @@ def fetch_spectral(
         handle: Any = local_archive.open("rb")
         stream = None
     else:
-        probe = probe_raw(config, hole_id)
+        for attempt in range(4):
+            try:
+                probe = probe_raw(config, hole_id)
+                break
+            except requests.ConnectionError:
+                if attempt == 3:
+                    raise
+                time.sleep(30 * (attempt + 1))
         source_url = probe["url"]
         size = probe["size_bytes"]
         if not size:

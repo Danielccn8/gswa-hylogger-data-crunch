@@ -52,11 +52,16 @@ def raw_summarize(config: AppConfig, hole_id: str, args: argparse.Namespace) -> 
     result = summarise_hole(package, hole_id, output)
     summarised = any(v.get("status") == "summarised" for v in result["sensors"].values())
     if args.discard_source and summarised:
+        # Keep the .tsg tables (a few MB: system and user TSA, masks, scalars); drop the spectra.
         hole_dir = config.data_dir / "downloads" / "raw" / hole_id
-        freed = sum(path.stat().st_size for path in hole_dir.rglob("*") if path.is_file())
-        shutil.rmtree(hole_dir / "extracted", ignore_errors=True)
+        freed = 0
+        for path in list(hole_dir.rglob("*")):
+            if path.is_file() and path.suffix.lower() != ".tsg":
+                freed += path.stat().st_size
+                path.unlink(missing_ok=True)
         shutil.rmtree(hole_dir / "archive", ignore_errors=True)
         result["discarded_source_bytes"] = freed
+        result["kept_tables"] = sorted(p.name for p in hole_dir.rglob("*.tsg"))
     result["output"] = str(output)
     return result
 

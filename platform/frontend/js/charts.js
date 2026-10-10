@@ -14,7 +14,7 @@ function hiDpi(canvas, width, height) {
 /* --------------------------------------------------------------- strip log
  tracks: [{label, width, kind: 'stack'|'ribbon'|'line'|'text', rows: [...], ...}]
  rows share depth_from/depth_to (metres). */
-export function stripLog(container, { tracks, depthMin, depthMax, pxPerMetre = 3, onPick, highlight, tvd = null }) {
+export function stripLog(container, { tracks, depthMin, depthMax, pxPerMetre = 3, onPick, onRange, highlight, tvd = null }) {
   const depthAxis = 46;
   const width = depthAxis + tracks.reduce((s, t) => s + t.width + 6, 0);
   const span = Math.max(1, depthMax - depthMin);
@@ -77,8 +77,30 @@ export function stripLog(container, { tracks, depthMin, depthMax, pxPerMetre = 3
     tooltip(`<b>${esc(hit.track.label)}</b> · ${num(hit.row.f, 1)}–${num(hit.row.t, 1)} m${tvd ? ` <span class="muted">(TVD ≈ ${num(tvd((hit.row.f + hit.row.t) / 2))} m)</span>` : ''}<br>${hit.track.describe ? hit.track.describe(hit.row) : esc(hit.row.label ?? hit.row.value ?? '')}`, event);
   });
   canvas.addEventListener('mouseleave', () => tooltip(null));
-  canvas.addEventListener('click', event => { const hit = pick(event); if (hit && onPick) onPick(hit); });
-  return { scrollTo: depth => { container.scrollTop = Math.max(0, y(depth) - 80); } };
+  // Drag vertically to choose a depth range (onRange); a plain click inspects one metre (onPick).
+  let drag = null, dragged = false;
+  const depthAt = event => depthMin + (event.clientY - canvas.getBoundingClientRect().top - 5) / (height - 10) * span;
+  const box = document.createElement('div'); box.className = 'range-box'; box.hidden = true; container.append(box);
+  canvas.addEventListener('mousedown', event => { if (onRange && event.button === 0) { drag = { start: depthAt(event), y0: event.clientY }; dragged = false; } });
+  const move = event => {
+    if (!drag) return;
+    if (Math.abs(event.clientY - drag.y0) > 4) dragged = true;
+    if (!dragged) return;
+    const a = Math.max(depthMin, Math.min(drag.start, depthAt(event))), b = Math.min(depthMax, Math.max(drag.start, depthAt(event)));
+    Object.assign(box.style, { top: `${canvas.offsetTop + y(a)}px`, left: `${depthAxis}px`, width: `${width - depthAxis}px`, height: `${Math.max(2, y(b) - y(a))}px` });
+    box.hidden = false; tooltip(`${num(a, 1)}–${num(b, 1)} m`, event);
+  };
+  const up = event => {
+    if (!drag) return;
+    const start = drag.start; drag = null; box.hidden = true;
+    if (dragged) { const end = depthAt(event); onRange(Math.max(depthMin, Math.min(start, end)), Math.min(depthMax, Math.max(start, end))); }
+  };
+  window.addEventListener('mousemove', move); window.addEventListener('mouseup', up);
+  canvas.addEventListener('click', event => { if (dragged) { dragged = false; return; } const hit = pick(event); if (hit && onPick) onPick(hit); });
+  return {
+    scrollTo: depth => { container.scrollTop = Math.max(0, y(depth) - 80); },
+    destroy: () => { window.removeEventListener('mousemove', move); window.removeEventListener('mouseup', up); },
+  };
 }
 
 /* ----------------------------------------------------------------- heatmap */
@@ -146,23 +168,33 @@ export function scatter(container, { points, colorOf, highlight = new Set(), onP
 }
 
 /* ------------------------------------------------------------ line (SVG) */
-export function lineChart({ x, series, xLabel = '', yLabel = '', width = 560, height = 220 }) {
-  const all = series.flatMap(s => s.values).filter(Number.isFinite);
+// bands: [{ low, high, color, name }] are shaded ranges (for example the 10th–90th percentile).
+// marks: [{ x, label }] are vertical guide lines (for example absorption features).
+export function lineChart({ x, series, bands = [], marks = [], xLabel = '', yLabel = '', width = 560, height = 220 }) {
+  const all = [...series.flatMap(s => s.values), ...bands.flatMap(b => [...b.low, ...b.high])].filter(Number.isFinite);
   if (!all.length || x.length < 2) return '<p class="empty">No data.</p>';
   const lo = Math.min(...all), hi = Math.max(...all), span = hi - lo || 1;
-  const px = i => 48 + (x[i] - x[0]) / (x[x.length - 1] - x[0]) * (width - 60);
-  const py = v => height - 34 - (v - lo) / span * (height - 50);
+  const pxv = v => 48 + (v - x[0]) / (x[x.length - 1] - x[0]) * (width - 60);
+  const px = i => pxv(x[i]);
+  const py = v => height - 30 - (v - lo) / span * (height - 42);
   const path = values => values.map((v, i) => Number.isFinite(v) ? `${px(i).toFixed(1)},${py(v).toFixed(1)}` : null).filter(Boolean).join(' ');
-  return `<svg viewBox="0 0 ${width} ${height}" width="100%" role="img" aria-label="${esc(yLabel)} against ${esc(xLabel)}" style="max-width:${width}px">
-    <path d="M48 12V${height - 34}H${width - 12}" fill="none" stroke="var(--line)"/>
+  const area = b => {
+    const top = b.high.map((v, i) => Number.isFinite(v) ? `${px(i).toFixed(1)},${py(v).toFixed(1)}` : null).filter(Boolean);
+    const bottom = b.low.map((v, i) => Number.isFinite(v) ? `${px(i).toFixed(1)},${py(v).toFixed(1)}` : null).filter(Boolean).reverse();
+    return `<polygon points="${[...top, ...bottom].join(' ')}" fill="${b.color}" fill-opacity="${b.opacity ?? 0.18}" stroke="none"/>`;
+  };
+  const named = [...bands.filter(b => b.name).map(b => ({ ...b, band: true })), ...series.filter(s => s.name)];
+  return `<svg viewBox="0 0 ${width} ${height}" width="100%" role="img" aria-label="${esc(yLabel || 'Values')} against ${esc(xLabel)}" style="max-width:${width}px">
+    <path d="M48 8V${height - 30}H${width - 12}" fill="none" stroke="var(--line)"/>
+    ${marks.map(m => `<line x1="${pxv(m.x).toFixed(1)}" x2="${pxv(m.x).toFixed(1)}" y1="8" y2="${height - 30}" stroke="var(--line)" stroke-dasharray="2 3"/><text x="${pxv(m.x).toFixed(1)}" y="16" text-anchor="middle" font-size="9" fill="var(--muted)">${esc(m.label)}</text>`).join('')}
+    ${bands.map(area).join('')}
     ${series.map(s => `<polyline points="${path(s.values)}" fill="none" stroke="${s.color}" stroke-width="${s.width || 1.6}" ${s.dash ? 'stroke-dasharray="4 3"' : ''}/>`).join('')}
-    <text x="44" y="18" text-anchor="end" font-size="10" fill="var(--muted)">${hi.toPrecision(3)}</text>
-    <text x="44" y="${height - 34}" text-anchor="end" font-size="10" fill="var(--muted)">${lo.toPrecision(3)}</text>
-    <text x="48" y="${height - 18}" font-size="10" fill="var(--muted)">${num(x[0])}</text>
-    <text x="${width - 12}" y="${height - 18}" text-anchor="end" font-size="10" fill="var(--muted)">${num(x[x.length - 1])}</text>
-    <text x="${(width + 36) / 2}" y="${height - 4}" text-anchor="middle" font-size="11" fill="var(--muted)">${esc(xLabel)}</text>
-    ${series.length > 1 ? '' : ''}${series.map((s, i) => `<g transform="translate(${60 + (i % 4) * 150},${16 + Math.floor(i / 4) * 12})"><rect width="10" height="3" y="-3" fill="${s.color}"/><text x="14" font-size="10" fill="var(--muted)">${esc(s.name || '')}</text></g>`).join('')}
-  </svg>`;
+    <text x="44" y="14" text-anchor="end" font-size="10" fill="var(--muted)">${hi.toPrecision(3)}</text>
+    <text x="44" y="${height - 30}" text-anchor="end" font-size="10" fill="var(--muted)">${lo.toPrecision(3)}</text>
+    <text x="48" y="${height - 16}" font-size="10" fill="var(--muted)">${num(x[0])}</text>
+    <text x="${width - 12}" y="${height - 16}" text-anchor="end" font-size="10" fill="var(--muted)">${num(x[x.length - 1])}</text>
+    <text x="${(width + 36) / 2}" y="${height - 3}" text-anchor="middle" font-size="11" fill="var(--muted)">${esc(xLabel)}</text>
+  </svg>${named.length ? `<div class="legend small">${named.map(s => `<span><i style="background:${s.color};${s.band ? 'opacity:.35;border-radius:2px' : 'border-radius:1px;height:3px;vertical-align:3px'}"></i>${esc(s.name)}</span>`).join('')}</div>` : ''}`;
 }
 
 export { scoreColor };

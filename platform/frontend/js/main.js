@@ -51,6 +51,23 @@ $('#basket-data').addEventListener('click', () => { $('#basket-dialog').close();
 selection.on(list => renderBasket(list));
 renderBasket(selection.list());
 
+// Any element with data-tip explains itself on hover or keyboard focus.
+let tipFor = null;
+document.addEventListener('mouseover', event => {
+  const node = event.target.closest?.('[data-tip]');
+  if (node === tipFor) return;
+  tipFor = node;
+  if (!node) { tooltip(null); return; }
+  tooltip(esc(node.dataset.tip), event);
+});
+document.addEventListener('mousemove', event => { if (tipFor) tooltip(esc(tipFor.dataset.tip), event); });
+document.addEventListener('focusin', event => {
+  const node = event.target.closest?.('[data-tip]'); if (!node) return;
+  const box = node.getBoundingClientRect(); tipFor = node;
+  tooltip(esc(node.dataset.tip), { clientX: box.right, clientY: box.bottom });
+});
+document.addEventListener('focusout', () => { if (tipFor) { tipFor = null; tooltip(null); } });
+
 window.addEventListener('hashchange', route);
 api('/api/v2/mineral-groups').then(setMineralGroups).catch(() => {}).finally(route);
 api('/api/v2/health').catch(error => toast(`Database unavailable: ${error.message}`));

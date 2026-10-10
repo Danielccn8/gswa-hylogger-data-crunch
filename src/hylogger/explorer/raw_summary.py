@@ -23,6 +23,7 @@ import pandas as pd
 from ..errors import HyLoggerError
 from ..intervals import _reading_frame, _upper_hull_indices, read_package_metadata
 from ..preparation import QC_VERSION, gate_readings, wavelength_grid
+from . import tsa_versions
 
 RAW_VERSION = f"{QC_VERSION}+raw-summary-v1"
 SECTIONS = {"nir": ("*_tsg.tsg", "*_tsg.bip"), "tir": ("*_tsg_tir.tsg", "*_tsg_tir.bip")}
@@ -43,6 +44,45 @@ BANDS = {
         "carbonate_11300": (11000, 11600, "peak"),
     },
 }
+
+
+def read_section(tsg_file: Path, bip_file: Path, sensor: str):
+    """pytsg.read_tsg_bip_pair with class-coded scalars mapped safely.
+
+    pytsg maps class codes to names only for class tables numbered above 0, so a
+    table numbered 0 (often the system TSA minerals) comes back as numbers, and a
+    code missing from its table raises KeyError. Here every class table is used
+    and unknown codes become "class code N".
+    """
+    from pytsg import parse_tsg
+
+    text = parse_tsg._read_tsg_file(tsg_file)
+    info = parse_tsg._parse_tsg(text, parse_tsg._find_header_sections(text))
+    data = parse_tsg._read_bip(bip_file, info["coordinates"])
+    wavelength = parse_tsg._calculate_wavelengths(info["wavelength specs"], info["coordinates"])
+    nodata = np.finfo("float32").min
+    columns = []
+    for band in info["band headers"]:
+        values = data[1, :, band.band]
+        table = info["class"].get(band.class_number) if band.flag == 2 else None
+        if table is not None:
+            missing = np.isclose(values, nodata) | ~np.isfinite(values)
+            codes = pd.Series(np.where(missing, -1, values).astype(int))
+            names = codes.map(table.classes)
+            unknown = names.isna() & codes.ge(0)
+            names[unknown] = "class code " + codes[unknown].astype(str)
+            values = names.where(codes.ge(0), "").to_numpy()
+        columns.append(pd.DataFrame({band.name: values}))
+    scalars = pd.concat(columns, axis=1)
+    return parse_tsg.Spectra(
+        sensor,
+        data[0],
+        wavelength,
+        info["sample headers"],
+        info["class"],
+        info["band headers"],
+        scalars,
+    )
 
 
 def find_section_files(package_dir: Path, sensor: str) -> tuple[Path, Path] | None:
@@ -97,14 +137,19 @@ def band_parameters(
 
 
 def summarise_sensor(
-    package_dir: Path, hole_id: str, sensor: str, *, width_m: float = 1.0, min_readings: int = 3
+    package_dir: Path,
+    hole_id: str,
+    sensor: str,
+    *,
+    width_m: float = 1.0,
+    min_readings: int = 3,
+    versions: dict | None = None,
 ) -> tuple[pd.DataFrame, np.ndarray, dict]:
+    """1 m medians and band parameters; `versions` collects system-vs-user TSA per metre."""
     files = find_section_files(package_dir, sensor)
     if files is None:
         raise HyLoggerError(f"{hole_id} has no {sensor.upper()} section")
-    from pytsg import parse_tsg
-
-    section = parse_tsg.read_tsg_bip_pair(files[0], files[1], sensor)
+    section = read_section(files[0], files[1], sensor)
     wavelengths = np.asarray(section.wavelength, dtype=np.float64)
     spectra = np.asarray(section.spectra)
     wavelength_grid(spectra, wavelengths)
@@ -122,6 +167,8 @@ def summarise_sensor(
     frame = frame[frame.bin.isin(kept)]
     if frame.empty:
         raise HyLoggerError(f"No {sensor.upper()} intervals for {hole_id}")
+    if versions is not None:
+        versions[sensor] = tsa_versions.per_metre(frame, sensor, width_m)
     medians, rows = [], []
     for bin_id, part in frame.groupby("bin", sort=True):
         medians.append(np.median(spectra[part.source_row.to_numpy()], axis=0))
@@ -170,9 +217,10 @@ def summarise_hole(package_dir: Path, hole_id: str, output: Path) -> dict:
     output.mkdir(parents=True, exist_ok=True)
     results: dict = {"hole_id": hole_id, "package": str(package_dir), "sensors": {}}
     metadata = read_package_metadata(next(package_dir.rglob("*_tsg.tsg")).parent)
+    versions: dict[str, pd.DataFrame] = {}
     for sensor in SECTIONS:
         try:
-            table, spectra, qc = summarise_sensor(package_dir, hole_id, sensor)
+            table, spectra, qc = summarise_sensor(package_dir, hole_id, sensor, versions=versions)
         except HyLoggerError as error:
             results["sensors"][sensor] = {"status": "unavailable", "reason": str(error)}
             continue
@@ -191,6 +239,10 @@ def summarise_hole(package_dir: Path, hole_id: str, output: Path) -> dict:
             "depth_to_m": float(table.depth_to_m.max()),
             "feature_medians": {c: _finite(table[c].median()) for c in features + ["albedo"]},
         }
+    compared = pd.concat([v for v in versions.values() if not v.empty] or [pd.DataFrame()])
+    if not compared.empty:
+        compared.to_parquet(output / "tsa_versions.parquet", index=False)
+        results["tsa_versions"] = tsa_versions.summary(compared)
     results["metadata"] = metadata
     (output / "summary.json").write_text(json.dumps(results, indent=2), encoding="utf-8")
     return results
