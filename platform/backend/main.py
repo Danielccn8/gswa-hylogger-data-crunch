@@ -201,6 +201,7 @@ def map_holes(
            WHERE h.lat IS NOT NULL ORDER BY h.hole_id""",
         (run["run_id"] if run else None,),
     )
+    agreement = _tsa_overview()["holes"]
     tops: dict[str, dict] = {}
     for sensor in ("swir", "tir"):
         mix_run = active_run("hole", sensor)
@@ -214,6 +215,7 @@ def map_holes(
             tops.setdefault(r["hole_id"], {})[sensor] = [[m, round(v, 2)] for m, v in top]
     for row in rows:
         row["swir_top"] = tops.get(row["hole_id"], {}).get("swir")
+        row["tsa_agreement"] = agreement.get(row["hole_id"], {}).get("swir")
         row["tir_top"] = tops.get(row["hole_id"], {}).get("tir")
     columns = list(rows[0].keys()) if rows else []
     return clean(
@@ -413,6 +415,93 @@ def striplog(hole_id: str):
                 "assays": "GSWA interim package (unverified); negatives (below detection) shown as half "
                 "the limit; oxides from element ppm where no oxide was reported",
             },
+        }
+    )
+
+
+def _tsa_files() -> tuple[tuple[str, float], ...]:
+    files = sorted((DATA_DIR / "products" / "raw").glob("*/tsa_versions.parquet"))
+    return tuple((str(f), f.stat().st_mtime) for f in files)
+
+
+@lru_cache(maxsize=2)
+def _tsa_overview_cached(files: tuple[tuple[str, float], ...]) -> dict:
+    import json
+    from collections import Counter
+
+    def main_group(text: str) -> str | None:
+        groups = json.loads(text) if text else {}
+        return max(groups, key=groups.get) if groups else None
+
+    frames = []
+    for path, _ in files:
+        table = pd.read_parquet(path)
+        table["hole_id"] = Path(path).parent.name
+        frames.append(table)
+    if not frames:
+        return {"products": {}, "holes": {}}
+    table = pd.concat(frames, ignore_index=True)
+    table["system_group"] = table.system_groups.map(main_group)
+    table["user_group"] = table.user_groups.map(main_group)
+    products, holes = {}, {}
+    for product, part in table.groupby("product"):
+        part = part.assign(is_changed=part.system_top != part.user_top)
+        per_hole = part.groupby("hole_id").agg(
+            agreement=("min1_agreement", "mean"),
+            metres=("bin", "size"),
+            changed=("is_changed", "sum"),
+        )
+        changed = part[part.system_top != part.user_top]
+        groups_known = part.system_group.notna() & part.user_group.notna()
+        group_changed = part[groups_known & (part.system_group != part.user_group)]
+        to_aspectral = changed.user_top.str.lower().isin(["aspectral", "notinlibrary", "higherror"])
+        bands = [0, 0.7, 0.9, 0.97, 1.0001]
+        counts = pd.cut(per_hole.agreement, bands, right=False).value_counts().sort_index()
+        products[product] = {
+            "holes": int(per_hole.shape[0]),
+            "metres": int(len(part)),
+            "readings": int(part.n_readings.sum()),
+            "first_mineral_agreement": round(float(part.min1_agreement.mean()), 4),
+            "median_hole_agreement": round(float(per_hole.agreement.median()), 4),
+            "mix_overlap": round(float(part.mix_overlap.mean()), 4),
+            "main_mineral_changed": round(len(changed) / len(part), 4),
+            "main_group_changed": round(len(group_changed) / max(int(groups_known.sum()), 1), 4),
+            "changed_to_no_match": round(float(to_aspectral.mean()), 4) if len(changed) else 0.0,
+            "identical_holes": int((per_hole.agreement >= 0.999).sum()),
+            "holes_by_agreement": [
+                [bands[i], min(bands[i + 1], 1.0), int(n)] for i, n in enumerate(counts.to_numpy())
+            ],
+            "top_changes": [
+                [a, b, int(n)]
+                for (a, b), n in Counter(
+                    zip(changed.system_top, changed.user_top, strict=True)
+                ).most_common(10)
+            ],
+            "lowest": [
+                [hole, round(float(r.agreement), 4), int(r.metres)]
+                for hole, r in per_hole.sort_values("agreement").head(8).iterrows()
+            ],
+        }
+        for hole, r in per_hole.iterrows():
+            holes.setdefault(hole, {})[product] = round(float(r.agreement), 4)
+    return {"products": products, "holes": holes}
+
+
+def _tsa_overview() -> dict:
+    return _tsa_overview_cached(_tsa_files())
+
+
+@app.get("/api/v2/tsa-versions")
+def tsa_versions_overview():
+    """How often the reviewed (user) TSA run differs from the automatic (system) run, all holes."""
+    overview = _tsa_overview()
+    return clean(
+        {
+            "products": overview["products"],
+            "meaning": "Share of readings whose first mineral is the same in the automatic (system) "
+            "and reviewed (user) TSA runs, from raw packages summarised in this data root. The "
+            "reviewed run is the one NVCL publishes; a difference is where an analyst re-ran or "
+            "edited the automatic answer, not necessarily an automatic error.",
         }
     )
 

@@ -63,6 +63,7 @@ async function draw() {
     </div>
     <div class="cluster-cards">${profiles.map(p => clusterCard(p, coarse, d.where?.[level]?.[p.cluster_id])).join('')}</div>
     ${robustSection(d.robustness, seed)}
+    <section class="panel" style="margin-top:14px" id="tsa-section"><h2>How often does the analyst change the machine’s answer?</h2><p class="muted">Loading…</p></section>
     <div class="grid cols-2" style="margin-top:14px">
       <section class="panel"><h2>Does the mineralogy agree with the chemistry? ${info('Spearman rank correlation (ρ) between how much of a mineral group a metre has and the assay of the same depth. ρ near +1: more of the mineral, more of the element; near 0: no relation. “Within hole” repeats the test inside each hole, which removes differences between areas. Assays: GSWA package, unverified.')}</h2>
         <p class="muted small">Each row tests a relation we expect from the mineral’s chemistry. A clear positive ρ means the HyLogger mineralogy and the laboratory agree.</p>
@@ -79,6 +80,30 @@ async function draw() {
     ${rawSection(d.raw)}`;
   body.onclick = event => { const id = event.target.closest('[data-hole]')?.dataset.hole; if (id) go(`hole/${encodeURIComponent(id)}`); };
   filterCards();
+  tsaSection();
+}
+
+const PRODUCT_LABEL = { swir: ['SWIR', 'sTSAS', 'uTSAS'], tir: ['TIR', 'sjCLST', 'ujCLST'], vnir: ['VNIR', 'sTSAV', 'uTSAV'] };
+async function tsaSection() {
+  const node = $('#tsa-section'); if (!node) return;
+  let d; try { d = await api('/api/v2/tsa-versions'); } catch (error) { failure(node, error); return; }
+  const products = ['swir', 'tir', 'vnir'].filter(p => d.products[p]);
+  if (!products.length) { node.innerHTML = '<h2>How often does the analyst change the machine’s answer?</h2><p class="muted">No raw packages with both interpretations summarised yet.</p>'; return; }
+  const band = (low, high) => high >= 1 && low >= 0.97 ? '≥ 97%' : low === 0 ? `below ${pct(high)}` : `${pct(low)}–${pct(high)}`;
+  node.innerHTML = `<h2>How often does the analyst change the machine’s answer? ${info(d.meaning)}</h2>
+    <p class="small">TSG first interprets every reading automatically (the <b>system</b> run: sTSAS, sjCLST). An analyst then re-runs or edits it (the <b>user</b> run: uTSAS, ujCLST), which is the only version NVCL publishes. Comparing the two, reading by reading, shows how much the reviewed answer differs from the machine's. A difference is not always a machine error: often the analyst restricts the mineral library for the area or rejects low-confidence matches.</p>
+    <div class="grid" style="grid-template-columns:repeat(auto-fit,minmax(300px,1fr));margin-top:10px">
+    ${products.map(p => { const s = d.products[p]; const [label, sys, user] = PRODUCT_LABEL[p]; return `<div class="panel" style="box-shadow:none">
+      <h3>${label} · ${sys} vs ${user}</h3>
+      <p style="margin:4px 0"><strong style="font-size:26px">${pct(s.first_mineral_agreement, 1)}</strong> <span class="muted small">of readings: same first mineral</span></p>
+      <p class="small">The main mineral of the metre changes in <b>${pct(s.main_mineral_changed, 1)}</b> of metres, the main mineral <i>group</i> in only <b>${pct(s.main_group_changed, 1)}</b>${s.changed_to_no_match > 0.2 ? `; ${pct(s.changed_to_no_match)} of the changes are the analyst rejecting the match (Aspectral / not in library)` : ''}.</p>
+      <p class="muted small">${num(s.holes)} holes · ${num(s.metres)} metres · ${num(s.readings)} readings · ${num(s.identical_holes)} holes identical</p>
+      <table class="mini-table" style="margin-top:6px"><thead><tr><th>Holes where they agree…</th><th class="num">Holes</th></tr></thead><tbody>
+        ${s.holes_by_agreement.slice().reverse().map(([low, high, n]) => `<tr><td>${band(low, high)}</td><td class="num">${n}</td></tr>`).join('')}</tbody></table>
+      <h3 style="margin-top:10px">Most common changes</h3><table class="mini-table"><thead><tr><th>Machine said</th><th>Analyst says</th><th class="num">Metres</th></tr></thead><tbody>
+        ${s.top_changes.slice(0, 6).map(([a, b, n]) => `<tr><td>${esc(a)}</td><td>${esc(b)}</td><td class="num">${num(n)}</td></tr>`).join('')}</tbody></table>
+      <h3 style="margin-top:10px">Holes with the most changes</h3><p class="small">${s.lowest.slice(0, 5).map(([h, a]) => `<button class="link" data-hole="${esc(h)}">${esc(h)}</button> <span class="muted">${pct(a)}</span>`).join(' · ')}</p></div>`; }).join('')}
+    </div><p class="muted small" style="margin-top:8px">Open any hole to see both versions side by side (“auto”, “reviewed” and “Agree” tracks); the Map can colour holes by this agreement.</p>`;
 }
 
 function strength(rho) {

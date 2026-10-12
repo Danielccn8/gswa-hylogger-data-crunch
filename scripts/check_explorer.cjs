@@ -69,6 +69,7 @@ const assert = require('node:assert/strict');
   await shot('05c-raw-spectra');
 
   await time('clusters', async () => { await page.goto(`${base}/#/clusters`); await page.locator('.cluster-cards .panel').first().waitFor(); });
+  await page.locator('#tsa-section .mini-table').first().waitFor({timeout: 60000});
   await shot('06-clusters');
   await page.goto(`${base}/#/anomalies`); await page.locator('#lists tr[data-fs]').first().waitFor();
   await page.locator('#lists tr[data-fs]').first().click();

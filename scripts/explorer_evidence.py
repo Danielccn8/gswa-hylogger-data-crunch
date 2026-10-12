@@ -120,6 +120,50 @@ def sequence_check(conn) -> str:
     )
 
 
+def tsa_versions_check() -> str:
+    """Automatic (system) vs reviewed (user) TSA interpretation across summarised raw packages."""
+    import json
+    from collections import Counter
+
+    import pandas as pd
+
+    data_dir = Path(os.environ.get("HYLOGGER_DATA_DIR", "C:/HyLoggerData"))
+    frames = []
+    for path in (data_dir / "products" / "raw").glob("*/tsa_versions.parquet"):
+        frames.append(pd.read_parquet(path).assign(hole_id=path.parent.name))
+    if not frames:
+        return ""
+    table = pd.concat(frames, ignore_index=True)
+
+    def main_group(text: str) -> str | None:
+        groups = json.loads(text) if text else {}
+        return max(groups, key=groups.get) if groups else None
+
+    table["system_group"] = table.system_groups.map(main_group)
+    table["user_group"] = table.user_groups.map(main_group)
+    lines = [
+        "\n## Automatic (system) vs reviewed (user) TSA interpretation\n\n",
+        "Both runs are read from the raw `.bip` scalar plane of each summarised package; NVCL "
+        "publishes only the user run. Agreement = share of mask-admitted readings with the same "
+        "first mineral. A change is where an analyst re-ran or edited the automatic answer, not "
+        "necessarily an automatic error.\n\n",
+        "| Product | holes | metres | first-mineral agreement | metres with main mineral changed "
+        "| main group changed | most common changes (machine → analyst, metres) |\n"
+        "|---|---|---|---|---|---|---|\n",
+    ]
+    for product, part in table.groupby("product"):
+        changed = part[part.system_top != part.user_top]
+        known = part.system_group.notna() & part.user_group.notna()
+        group_changed = (known & (part.system_group != part.user_group)).sum() / max(known.sum(), 1)
+        top = Counter(zip(changed.system_top, changed.user_top, strict=True)).most_common(3)
+        lines.append(
+            f"| {product.upper()} | {part.hole_id.nunique()} | {len(part):,} "
+            f"| {part.min1_agreement.mean():.1%} | {len(changed) / len(part):.1%} "
+            f"| {group_changed:.1%} | {'; '.join(f'{a} → {b} ({n:,})' for (a, b), n in top)} |\n"
+        )
+    return "".join(lines)
+
+
 def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument(
@@ -229,7 +273,9 @@ def main() -> None:
                 )
             survey = run.card.get("desurvey")
             if survey:
-                out.append(f"  - Depth bands use minimum-curvature TVD for {survey['surveyed_holes']} surveyed holes.\n")
+                out.append(
+                    f"  - Depth bands use minimum-curvature TVD for {survey['surveyed_holes']} surveyed holes.\n"
+                )
         virtual = runs[runs.kind == "virtual_assay"]
         if len(virtual):
             card = virtual.iloc[0].card
@@ -255,6 +301,7 @@ def main() -> None:
                     f"{w.get('mantel_vs_1m')}; K chosen by the rule per width: {w.get('k_by_width')}.\n"
                 )
         out.append(sequence_check(conn))
+        out.append(tsa_versions_check())
         out.append(raw_white_mica_check(conn))
         jobs = read_frame(
             conn,

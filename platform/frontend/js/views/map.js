@@ -50,8 +50,11 @@ function colourOf(r) {
   if (colourBy === 'cluster') return r.cluster_id == null ? '#d5dcdf' : clusterColor(r.cluster_id);
   if (colourBy === 'anomaly') return r.anomaly_score == null ? '#d5dcdf' : scoreColor(r.anomaly_score);
   if (colourBy === 'assays') return r.n_assay > 0 ? '#0f6e68' : '#d5dcdf';
+  if (colourBy === 'tsa') return tsaColour(r.tsa_agreement);
   return categoryColor(colourBy === 'commodity' ? (r.commodity || '').split(',')[0] : r.tectonic_region);
 }
+const TSA_BANDS = [[0.97, '#2f8f4e', '≥ 97% agree'], [0.9, '#9cc96b', '90–97%'], [0.7, '#e6a23c', '70–90%'], [0, '#c0392b', 'below 70%']];
+function tsaColour(value) { return value == null ? '#d5dcdf' : TSA_BANDS.find(([low]) => value >= low)[1]; }
 function syncControls() {
   $('#chem-controls').hidden = colourBy !== 'chem';
   $('#analysis-controls').hidden = !['cluster', 'anomaly'].includes(colourBy);
@@ -69,7 +72,8 @@ export async function render(root, [focusId] = []) {
         <label class="field"><span>Colour by ${info('What the marker colour means. The legend under the map explains each colour.')}</span><select id="colour">
           <option value="status">Data available</option><option value="cluster">Hole cluster (similar holes)</option>
           <option value="anomaly">Unusualness</option><option value="commodity">Target commodity (company)</option>
-          <option value="region">Tectonic region</option><option value="assays">Has assays</option><option value="chem">Assay above a threshold</option></select></label>
+          <option value="region">Tectonic region</option><option value="assays">Has assays</option><option value="chem">Assay above a threshold</option>
+          <option value="tsa">Machine vs analyst (SWIR)</option></select></label>
         <span id="analysis-controls" class="row gap" hidden><label class="field"><span>Based on ${info(TERMS.analysis)}</span><select id="analysis">
           ${Object.entries(ANALYSES).map(([k, v]) => `<option value="${k}">${v}</option>`).join('')}</select></label>
           <span id="k-wrap">${kSelect('hole-k', holeK)}</span></span>
@@ -163,6 +167,7 @@ function hoverText(r) {
     ${!r.swir_top && !r.tir_top ? `<div class="tip-minerals">${esc(statusText(PROCESSED, r.processed_status)[0])}</div>` : ''}
     ${colourBy === 'cluster' && r.cluster_id != null ? `<div>Hole cluster ${r.cluster_id}: ${esc(clusterNames[r.cluster_id] || '')}</div>` : ''}
     ${colourBy === 'anomaly' && r.anomaly_score != null ? `<div>Unusualness ${pct(r.anomaly_score)}</div>` : ''}
+    ${r.tsa_agreement != null ? `<div class="tip-minerals">Machine vs analyst (SWIR): first mineral agrees in ${pct(r.tsa_agreement)} of readings</div>` : ''}
     ${colourBy === 'chem' && h ? `<div>max ${analyte} ${num(h.max, 2)} ${chem.unit} · ${h.above} samples &gt; ${threshold}</div>` : ''}
     <div class="tip-minerals">Company target: ${esc(r.commodity || 'unknown')}</div>`;
 }
@@ -173,7 +178,7 @@ function draw() {
   const shown = visible();
   const ranks = focus ? new Map(focus.items.map((it, i) => [it.hole_id, i + 1])) : null;
   for (const r of shown) {
-    const analysed = colourBy === 'cluster' ? r.cluster_id != null : colourBy === 'anomaly' ? r.anomaly_score != null : colourBy === 'chem' ? !!chem?.byHole[r.hole_id]?.above : true;
+    const analysed = colourBy === 'cluster' ? r.cluster_id != null : colourBy === 'anomaly' ? r.anomaly_score != null : colourBy === 'chem' ? !!chem?.byHole[r.hole_id]?.above : colourBy === 'tsa' ? r.tsa_agreement != null : true;
     const picked = selection.has(r.hole_id);
     const lit = !focus || ranks.has(r.hole_id) || focus.hole.hole_id === r.hole_id;
     const radius = analysed ? (colourBy === 'chem' ? 6.5 : r.processed_status === 'prepared' ? 5 : 3.5) : 2.5;
@@ -228,13 +233,14 @@ function legend(shown) {
   else if (colourBy === 'cluster') items = [...new Set(shown.map(r => r.cluster_id).filter(v => v != null))].sort((a, b) => a - b).map(id => [`${id} · ${clusterNames[id] || 'Hole cluster'}`, clusterColor(id), shown.filter(r => r.cluster_id === id).length]);
   else if (colourBy === 'anomaly') items = [['Typical', scoreColor(.5)], ['Unusual', scoreColor(.85)], ['Most unusual', scoreColor(1)], ['Not analysed', '#d5dcdf']];
   else if (colourBy === 'assays') items = [['Has assays', '#0f6e68'], ['No assays', '#d5dcdf']];
+  else if (colourBy === 'tsa') items = [...TSA_BANDS.map(([low, colour, label]) => [label, colour, shown.filter(r => r.tsa_agreement != null && tsaColour(r.tsa_agreement) === colour).length]), ['Not compared', '#d5dcdf']];
   else if (colourBy === 'chem') items = [[`No ${analyte} assays`, '#d5dcdf'], [`Max ≤ ${threshold} ${chem?.unit || ''}`, '#9fb7c2'], [`Above ${threshold}`, scoreColor(.6)], ['Highest', scoreColor(1)], [`${num(chem?.holes_above)} of ${num(chem?.holes_with_assays)} holes above`, 'transparent']];
   else {
     const key = colourBy === 'commodity' ? r => (r.commodity || '').split(',')[0] : r => r.tectonic_region;
     const counts = {}; shown.forEach(r => { const k = key(r) || 'Unknown'; counts[k] = (counts[k] || 0) + 1; });
     items = Object.entries(counts).sort((a, b) => b[1] - a[1]).slice(0, 14).map(([k, n]) => [k, categoryColor(k === 'Unknown' ? '' : k), n]);
   }
-  const note = colourBy === 'cluster' || colourBy === 'anomaly' ? ` · based on ${ANALYSES[view]}` : colourBy === 'commodity' ? ` · ${TERMS.commodity}` : '';
+  const note = colourBy === 'cluster' || colourBy === 'anomaly' ? ` · based on ${ANALYSES[view]}` : colourBy === 'commodity' ? ` · ${TERMS.commodity}` : colourBy === 'tsa' ? ' · share of SWIR readings where the automatic (sTSAS) and reviewed (uTSAS) first mineral agree' : '';
   $('#legend').innerHTML = `${focus ? `<span class="chip accent">Showing the ${focus.items.length} holes most similar to ${esc(focus.hole.hole_id)} (${esc(ANALYSES[focus.view])}) <button type="button" id="clear-focus" aria-label="Clear highlight">×</button></span>` : ''}
     ${items.map(([label, color, n]) => `<span><i style="background:${color}"></i>${esc(label)}${n != null ? ` <span class="muted">${num(n)}</span>` : ''}</span>`).join('')}
     <span class="muted">${num(shown.length)} shown${esc(note)}${$('#legend').dataset.offline ? ' · basemap offline' : ''}</span>`;
