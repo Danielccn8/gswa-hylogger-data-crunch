@@ -87,13 +87,16 @@ def read_section(tsg_file: Path, bip_file: Path, sensor: str):
 
 def find_section_files(package_dir: Path, sensor: str) -> tuple[Path, Path] | None:
     header_glob, data_glob = SECTIONS[sensor]
-    for header in sorted(package_dir.rglob(header_glob)):
+    pairs = []
+    for header in package_dir.rglob(header_glob):
         if sensor == "nir" and header.name.endswith("_tir.tsg"):
             continue
         data = header.with_suffix(".bip")
         if data.exists():
-            return header, data
-    return None
+            pairs.append((data.stat().st_size, header, data))
+    # Some packages also carry small spectral-library files (e.g. "Magnetite local mean_tsg");
+    # the hole's own section is the largest.
+    return max(pairs)[1:] if pairs else None
 
 
 def band_parameters(

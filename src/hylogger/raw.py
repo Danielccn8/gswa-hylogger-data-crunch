@@ -299,13 +299,38 @@ def verify_extracted_package(target: Path) -> dict[str, Any]:
     from pytsg import parse_tsg
 
     package_dir = headers[0].parent
-    package = parse_tsg.read_package(package_dir, read_cras_file=False)
+    try:
+        package = parse_tsg.read_package(package_dir, read_cras_file=False)
+    except KeyError as error:
+        # pytsg raises on scalar class codes missing from their class table; the spectra are fine.
+        return _verify_spectra_only(package_dir, error)
     output: dict[str, Any] = {"pytsg_verified": hasattr(package.nir, "spectra")}
     for name in ("nir", "tir", "mir"):
         section = getattr(package, name, None)
         if section is not None and hasattr(section, "spectra"):
             output[f"{name}_shape"] = list(section.spectra.shape)
     output["package_dir"] = str(package_dir)
+    return output
+
+
+def _verify_spectra_only(package_dir: Path, error: Exception) -> dict[str, Any]:
+    """Check each TSG header against its .bip size without decoding the scalars."""
+    from pytsg import parse_tsg
+
+    output: dict[str, Any] = {"package_dir": str(package_dir), "scalar_warning": repr(error)}
+    for header in sorted(package_dir.glob("*_tsg*.tsg")):
+        data = header.with_suffix(".bip")
+        if not data.exists():
+            continue
+        text = parse_tsg._read_tsg_file(header)
+        info = parse_tsg._parse_tsg(text, parse_tsg._find_header_sections(text))
+        samples = int(info["coordinates"]["lastsample"])
+        bands = int(info["coordinates"]["lastband"])
+        if data.stat().st_size != 2 * samples * bands * 4:
+            raise HyLoggerError(f"{data.name} size does not match its TSG header")
+        name = "tir" if header.stem.endswith("_tir") else "nir"
+        output[f"{name}_shape"] = [samples, bands]
+    output["pytsg_verified"] = "nir_shape" in output
     return output
 
 
