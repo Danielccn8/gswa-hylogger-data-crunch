@@ -12,6 +12,12 @@ Search the catalog -> preview processed TSG logs -> select holes
 
 ## HyLogger Explorer v2 (8 October 2026)
 
+**Standalone Windows delivery:** build or open `HyLoggerExplorer.exe` to run Explorer
+without installing Python or Docker. The Data tab includes persistent automatic
+collection, counts of ready/pending/failed data, and pause/resume. See the
+[desktop delivery guide](docs/delivery/DESKTOP_DELIVERY.md) for use, retention,
+rebuilding, and verification. The executable starts with public data only.
+
 Statewide explorer on the same toolkit: every registered hole on one map, mineral-level clustering
 (interval → domain → whole hole) for SWIR/TIR and raw spectra, anomaly ranking, N-hole similarity,
 expected mineralogy at a location, assay validation from the GSWA interim package, and in-app

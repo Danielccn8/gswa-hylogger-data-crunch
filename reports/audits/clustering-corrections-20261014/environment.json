@@ -1,0 +1,12 @@
+{
+  "python": "3.14.3",
+  "packages": {
+    "numpy": "2.5.3",
+    "pandas": "3.0.6",
+    "scikit-learn": "1.9.1",
+    "scipy": "1.18.1",
+    "psycopg": "3.3.6"
+  },
+  "threads": 4,
+  "policy_note": "0.5 diagnostic fraction is a declared modelling-support policy, not a calibrated accuracy cutoff"
+}

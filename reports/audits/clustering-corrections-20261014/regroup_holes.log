@@ -1,0 +1,8 @@
+combined hole-combined-20261014T123014-804589 2 selected {0: 700, 1: 400}
+raw_nir hole-raw_nir-20261014T123016-acf1f9 1 no_valid_candidates {0: 1261}
+raw_tir hole-raw_tir-20261014T123017-bd2953 2 selected {0: 1163, 1: 62}
+seq_combined hole-seq_combined-20261014T123019-4f7a0f 2 selected {0: 681, 1: 425}
+seq_swir hole-seq_swir-20261014T123020-72a5b5 2 selected {0: 1059, 1: 119}
+seq_tir hole-seq_tir-20261014T123021-4b2327 2 selected {0: 1017, 1: 123}
+swir hole-swir-20261014T123022-89a20a 8 selected {0: 306, 1: 209, 2: 161, 3: 150, 4: 123, 5: 109, 6: 68, 7: 51}
+tir hole-tir-20261014T123024-ebc2ff 2 selected {0: 791, 1: 358}

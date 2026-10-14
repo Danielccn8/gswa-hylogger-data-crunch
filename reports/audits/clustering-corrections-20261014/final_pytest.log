@@ -1,0 +1,13 @@
+ssssssss................................................................ [ 50%]
+........................ssss............................................ [100%]
+============================== warnings summary ===============================
+tests/test_system.py::test_inference_rejects_unseen_group
+  C:\HyLogger\explorer-v2\.venv\Lib\site-packages\sklearn\base.py:1403: ConvergenceWarning: Number of distinct clusters (2) found smaller than n_clusters (3). Possibly due to duplicate points in X.
+    return fit_method(estimator, *args, **kwargs)
+
+tests/test_system.py::test_inference_rejects_unseen_group
+  C:\HyLogger\explorer-v2\.venv\Lib\site-packages\sklearn\base.py:1403: ConvergenceWarning: Number of distinct clusters (2) found smaller than n_clusters (4). Possibly due to duplicate points in X.
+    return fit_method(estimator, *args, **kwargs)
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+132 passed, 12 skipped, 2 warnings in 14.54s

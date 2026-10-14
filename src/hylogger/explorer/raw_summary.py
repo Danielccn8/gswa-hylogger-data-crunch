@@ -251,6 +251,43 @@ def summarise_hole(package_dir: Path, hole_id: str, output: Path) -> dict:
     return results
 
 
+def validate_summary(package: Path, output: Path, result: dict) -> None:
+    """Read products back before any source deletion. A partial sensor is not success."""
+    present = [s for s in SECTIONS if find_section_files(package, s) is not None]
+    result["expected_sensors"] = present
+    validate_saved_summary(output, result)
+    result["validated"] = True
+
+
+def validate_saved_summary(output: Path, result: dict) -> None:
+    """Also usable after a crash between source cleanup and database registration."""
+    present = result.get("expected_sensors", [])
+    if not present:
+        raise HyLoggerError("No source sensors to validate")
+    for sensor in present:
+        item = result["sensors"].get(sensor, {})
+        if item.get("status") != "summarised":
+            raise HyLoggerError(
+                f"{sensor}: incomplete summary; source retained: {item.get('reason')}"
+            )
+        table = pd.read_parquet(output / f"raw_{sensor}.parquet")
+        with np.load(output / f"raw_{sensor}.npz", allow_pickle=False) as data:
+            spectra, grid, bins = data["spectra"], data["wavelengths"], data["bins"]
+            if (
+                spectra.shape != (len(table), len(grid))
+                or not len(table)
+                or not np.array_equal(bins, table.bin.to_numpy())
+                or not np.isfinite(spectra).all()
+                or not np.isfinite(grid).all()
+                or not (np.diff(grid) > 0).all()
+            ):
+                raise HyLoggerError(
+                    f"{sensor}: invalid persisted spectrum product; source retained"
+                )
+    if result.get("tsa_versions") and not (output / "tsa_versions.parquet").exists():
+        raise HyLoggerError("Missing TSA comparison product; source retained")
+
+
 def _finite(value: float) -> float | None:
     return float(value) if np.isfinite(value) else None
 

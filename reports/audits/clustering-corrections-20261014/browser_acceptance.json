@@ -1,0 +1,38 @@
+{
+  "status": "PASS",
+  "url": "http://127.0.0.1:8100",
+  "pages": [
+    "SWIR interval clusters",
+    "TIR interval clusters",
+    "Data & method",
+    "Supported combined similarity",
+    "Raw NIR automatic unsupported grouping",
+    "Raw NIR manual K4 unsupported grouping"
+  ],
+  "observed": {
+    "swir": "289266 eligible,8fine/6broad",
+    "tir": "353059 eligible,2fine/2broad",
+    "raw_nir": "1261distance profiles,Unassigned automatic/manualK4;gray markers andscatter;two selectedholesremain usable",
+    "manual_selected_holes": [
+      "KMRD057",
+      "MAD180W1"
+    ],
+    "pair_heatmap": "one canvas rendered",
+    "console_errors": [],
+    "raw_nir_map": {
+      "located_holes": 1260,
+      "embedding_holes": 1261,
+      "missing_location_holes": [
+        "WILSON CLIFFS 1_HL3"
+      ]
+    }
+  },
+  "screenshots": [
+    "browser_clusters_swir.png",
+    "browser_clusters_tir.png",
+    "browser_method.png",
+    "browser_similarity_combined.png",
+    "browser_raw_nir_auto.png",
+    "browser_raw_nir_manual4.png"
+  ]
+}

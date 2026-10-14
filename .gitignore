@@ -65,3 +65,8 @@ Thumbs.db
 *.sqlite3
 *.sqlite-wal
 *.sqlite-shm
+
+# Standalone Windows distributions, dependency archives and isolated acceptance data
+build/
+dist/
+vendor/

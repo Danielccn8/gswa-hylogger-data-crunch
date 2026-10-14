@@ -14,7 +14,6 @@ from __future__ import annotations
 import argparse
 import json
 import os
-import shutil
 import sys
 from pathlib import Path
 
@@ -43,26 +42,58 @@ def raw_fetch(config: AppConfig, hole_id: str, args: argparse.Namespace) -> dict
 
 
 def raw_summarize(config: AppConfig, hole_id: str, args: argparse.Namespace) -> dict:
-    from ..explorer.raw_summary import summarise_hole
+    from ..explorer.raw_summary import summarise_hole, validate_summary
+    from ..manifest import Manifest
+    from ..util import sha256_file
 
     package = config.data_dir / "downloads" / "raw" / hole_id / "extracted"
     if not package.exists() or not any(package.rglob("*_tsg.tsg")):
         raise FileNotFoundError(f"No extracted spectra for {hole_id}; fetch raw first")
     output = config.data_dir / "products" / "raw" / hole_id
     result = summarise_hole(package, hole_id, output)
-    summarised = any(v.get("status") == "summarised" for v in result["sensors"].values())
-    if args.discard_source and summarised:
+    validate_summary(package, output, result)
+    result["discard_requested"] = bool(args.discard_source)
+    if args.discard_source:
         # Keep the .tsg tables (a few MB: system and user TSA, masks, scalars); drop the spectra.
         hole_dir = config.data_dir / "downloads" / "raw" / hole_id
+        managed = (config.data_dir / "downloads" / "raw").resolve()
+        if hole_dir.resolve().parent != managed:
+            raise ValueError("Cleanup must stay inside the managed raw directory")
+        files = list(hole_dir.rglob("*"))
+        if any(
+            path.is_symlink() or (path.is_file() and not path.resolve().is_relative_to(managed))
+            for path in files
+        ):
+            raise ValueError("Refusing cleanup through a symbolic link")
+        result["source_sha256"] = {
+            path.relative_to(hole_dir).as_posix(): sha256_file(path, config.chunk_size_bytes)
+            for path in files
+            if path.is_file() and path.suffix.lower() in (".tsg", ".bip")
+        }
+        result["retention"] = "QC-admitted 1 m median spectra; resampled wavelengths; float16"
+        summary_file = output / "summary.json"
+        temporary = summary_file.with_suffix(".json.part")
+        temporary.write_text(json.dumps(result, indent=2), encoding="utf-8")
+        temporary.replace(summary_file)
         freed = 0
-        for path in list(hole_dir.rglob("*")):
+        for path in files:
             if path.is_file() and path.suffix.lower() != ".tsg":
                 freed += path.stat().st_size
                 path.unlink(missing_ok=True)
-        shutil.rmtree(hole_dir / "archive", ignore_errors=True)
         result["discarded_source_bytes"] = freed
         result["kept_tables"] = sorted(p.name for p in hole_dir.rglob("*.tsg"))
+        Manifest(config.manifest_path).record(
+            artifact_key=f"raw_spectral:{hole_id}",
+            hole_id=hole_id,
+            kind="raw_spectral",
+            status="summarised_discarded",
+            local_path=output,
+            metadata=result,
+        )
     result["output"] = str(output)
+    temporary = output / "summary.json.part"
+    temporary.write_text(json.dumps(result, indent=2), encoding="utf-8")
+    temporary.replace(output / "summary.json")
     return result
 
 

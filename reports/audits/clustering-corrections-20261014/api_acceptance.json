@@ -1,0 +1,73 @@
+{
+  "clusters_swir": {
+    "status": 200,
+    "run_id": "interval-swir-20261014T121201-c8ee6b",
+    "K": 8,
+    "robustness_status": {
+      "status": "current",
+      "run_id": "robustness-swir-20261014T122213-22bbc9"
+    }
+  },
+  "clusters_tir": {
+    "status": 200,
+    "run_id": "interval-tir-20261014T121353-e7fc92",
+    "K": 2,
+    "robustness_status": {
+      "status": "current",
+      "run_id": "robustness-tir-20261014T122320-9f3e13"
+    }
+  },
+  "combined": {
+    "status": 200,
+    "run_id": "hole-combined-20261014T123014-804589",
+    "holes": 1100,
+    "group_status": "selected",
+    "descriptive_container": false
+  },
+  "seq_combined": {
+    "status": 200,
+    "run_id": "hole-seq_combined-20261014T123019-4f7a0f",
+    "holes": 1106,
+    "group_status": "selected",
+    "descriptive_container": false
+  },
+  "raw_nir": {
+    "status": 200,
+    "run_id": "hole-raw_nir-20261014T123016-acf1f9",
+    "holes": 1261,
+    "group_status": "no_valid_candidates",
+    "descriptive_container": true
+  },
+  "raw_tir": {
+    "status": 200,
+    "run_id": "hole-raw_tir-20261014T123017-bd2953",
+    "holes": 1225,
+    "group_status": "selected",
+    "descriptive_container": false
+  },
+  "map_raw_nir": {
+    "clusters": null,
+    "grouping": {
+      "supported": false,
+      "status": "no_valid_candidates",
+      "k": null,
+      "reason": "every candidate fails the minimum replicated group support floor",
+      "meaning": "Unassigned: no supported hole grouping"
+    }
+  },
+  "manual_raw_nir4": {
+    "actual_k": 4,
+    "requested_k": 4,
+    "supported": false,
+    "status": "exploratory_unsupported"
+  },
+  "excluded_visible": {
+    "hole": "BEHARRA SPRINGS NORTH 1",
+    "visible_excluded_intervals": 1,
+    "all_cluster_labels_null": true
+  },
+  "method": {
+    "status": 200,
+    "active_runs": 15
+  }
+}

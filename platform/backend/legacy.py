@@ -25,15 +25,16 @@ from pathlib import Path
 
 import psycopg
 from fastapi import FastAPI, HTTPException, Query
-from fastapi.responses import FileResponse, Response
-from fastapi.staticfiles import StaticFiles
+from fastapi.responses import Response
 from psycopg.rows import dict_row
+
+from hylogger.runtime import root as runtime_root
 
 DATABASE_URL = os.environ.get(
     "DATABASE_URL", "postgresql://hylogger:hylogger@127.0.0.1:5433/hylogger"
 )
 
-FRONTEND = Path(__file__).resolve().parent.parent / "frontend"
+FRONTEND = runtime_root() / "platform" / "frontend"
 SPECTRAL_PILOT_DIR = Path(os.environ.get("SPECTRAL_PILOT_DIR", "data/system/spectral"))
 COMPARISON_DIR = Path(os.environ.get("COMPARISON_DIR", "data/system/comparisons"))
 COHORT = json.loads((FRONTEND.parents[1] / "configs/delivery_cohort.json").read_text())

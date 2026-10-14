@@ -1,0 +1,11 @@
+{
+  "runs": [
+    "robustness-swir-20261014T122213-22bbc9",
+    "robustness-tir-20261014T122320-9f3e13"
+  ],
+  "skipped": [],
+  "promoted": false,
+  "width_sources_unchanged": true,
+  "width_sources_match_active_qc": true,
+  "validation_source_sha256": "5791b1796e4fd01b36e3f59af3a07455b409bbb5123614bdd63952cadb6c6276"
+}

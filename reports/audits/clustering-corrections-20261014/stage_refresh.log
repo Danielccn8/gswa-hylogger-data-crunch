@@ -1,0 +1,20 @@
+RESOURCE {"available_ram_gb": 4.55, "cpu_threads": 4}
+desurvey: 1308 holes with surveys (others treated as vertical)
+C:\HyLogger\explorer-v2\src\hylogger\explorer\virtual_assay.py:54: RuntimeWarning: Mean of empty slice
+  features = np.vstack([np.nanmean(x[rows], axis=0) for rows in joined.rows])
+virtual assays: SiO2 R2=0.094, Al2O3 R2=0.303, Fe2O3T R2=0.124, MgO R2=0.533, CaO R2=0.435, Na2O R2=0.506, K2O R2=0.425, LOI R2=0.473, S R2=0.024, Ni R2=0.266, Cr R2=0.439, U R2=-0.141
+swir: 289,266 intervals from 1272 holes
+swir: k_fine=8 k_coarse=6
+swir: hole run hole-swir-20261014T121214-7e48f9 (1177 holes)
+swir: prediction CV {'holes': 1177, 'loho_median_error': 0.2398, 'lodo_median_error': 0.3937, 'global_baseline_median_error': 0.4603, 'region_baseline_median_error': 0.4197, 'loho_skill_vs_region': 0.429, 'lodo_skill_vs_region': 0.062, 'support_limit_km': 20.0, 'support_rule': 'nearest-hole distance bins with skill >= 0.15 vs region', 'lodo_by_distance': [{'from_km': 5.0, 'to_km': 10.0, 'holes': 320, 'model_error': 0.3221, 'region_baseline_error': 0.4236, 'skill_vs_region': 0.24}, {'from_km': 10.0, 'to_km': 20.0, 'holes': 363, 'model_error': 0.377, 'region_baseline_error': 0.4124, 'skill_vs_region': 0.086}, {'from_km': 20.0, 'to_km': 50.0, 'holes': 316, 'model_error': 0.4258, 'region_baseline_error': 0.4201, 'skill_vs_region': -0.014}, {'from_km': 50.0, 'to_km': 100.0, 'holes': 155, 'model_error': 0.4591, 'region_baseline_error': 0.3988, 'skill_vs_region': -0.151}, {'from_km': 100.0, 'to_km': 10000.0, 'holes': 23, 'model_error': 0.5971, 'region_baseline_error': 0.5344, 'skill_vs_region': -0.117}]}
+tir: 353,059 intervals from 1224 holes
+tir: k_fine=2 k_coarse=2
+tir: hole run hole-tir-20261014T121407-de1339 (1149 holes)
+tir: prediction CV {'holes': 1149, 'loho_median_error': 0.2303, 'lodo_median_error': 0.3553, 'global_baseline_median_error': 0.3885, 'region_baseline_median_error': 0.3579, 'loho_skill_vs_region': 0.357, 'lodo_skill_vs_region': 0.007, 'support_limit_km': 20.0, 'support_rule': 'nearest-hole distance bins with skill >= 0.15 vs region', 'lodo_by_distance': [{'from_km': 5.0, 'to_km': 10.0, 'holes': 294, 'model_error': 0.2838, 'region_baseline_error': 0.3558, 'skill_vs_region': 0.202}, {'from_km': 10.0, 'to_km': 20.0, 'holes': 363, 'model_error': 0.3462, 'region_baseline_error': 0.3437, 'skill_vs_region': -0.007}, {'from_km': 20.0, 'to_km': 50.0, 'holes': 305, 'model_error': 0.3923, 'region_baseline_error': 0.3737, 'skill_vs_region': -0.05}, {'from_km': 50.0, 'to_km': 100.0, 'holes': 162, 'model_error': 0.4159, 'region_baseline_error': 0.3537, 'skill_vs_region': -0.176}, {'from_km': 100.0, 'to_km': 10000.0, 'holes': 25, 'model_error': 0.3776, 'region_baseline_error': 0.3922, 'skill_vs_region': 0.037}]}
+combined: hole run hole-combined-20261014T121439-746060 (1100 common holes; 126 excluded)
+seq_swir: DTW 1178 holes in 46 s
+seq_tir: DTW 1140 holes in 49 s
+seq_combined: hole run hole-seq_combined-20261014T121618-40fc62 (1106 common holes; 106 excluded)
+raw nir: hole run hole-raw_nir-20261014T121904-f124b4 (1261 holes)
+raw tir: hole run hole-raw_tir-20261014T122019-e6f74a (1225 holes)
+STAGED_RESULT {"runs": ["virtual_assay-combined-20261014T121007-c7e2d5", "interval-swir-20261014T121201-c8ee6b", "hole-swir-20261014T121214-7e48f9", "prediction-swir-20261014T121239-b57e5e", "interval-tir-20261014T121353-e7fc92", "hole-tir-20261014T121407-de1339", "prediction-tir-20261014T121437-00a0f6", "hole-combined-20261014T121439-746060", "hole-seq_swir-20261014T121525-b51998", "hole-seq_tir-20261014T121614-bfab29", "hole-seq_combined-20261014T121618-40fc62", "hole-raw_nir-20261014T121904-f124b4", "hole-raw_tir-20261014T122019-e6f74a"], "promoted": false, "skipped": [], "mode": "retrain", "seconds": 946.2, "source_unchanged": false, "local_database": "127.0.0.1:5434/hylogger"}

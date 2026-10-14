@@ -2,7 +2,8 @@
 
 Geometry: Hellinger (square root of mineral abundance), so distance follows
 compositional differences. Fitting uses a hole-balanced sample. The fine level
-is K-Means (10 starts); the coarse level merges fine centroids with Ward linkage,
+is K-Means (10 starts); the coarse level merges fine centroids with Ward SSE
+using their counts in the training population,
 so every fine cluster has one coarse parent (a two-level tree the UI can show).
 
 K rule (scripts/tsas_data_clustering.py, choose_cluster_count): discard K with
@@ -15,16 +16,28 @@ from __future__ import annotations
 
 import numpy as np
 import pandas as pd
-from scipy.cluster.hierarchy import fcluster, linkage
+from scipy.cluster.hierarchy import cut_tree
 from sklearn.cluster import KMeans
 from sklearn.metrics import adjusted_rand_score, normalized_mutual_info_score, silhouette_score
 from sklearn.preprocessing import StandardScaler
 
-FINE_K = (6, 8, 10, 12, 15, 18, 22)
-COARSE_K = (3, 4, 5, 6, 7)
+FINE_K = (2, 3, 4, 5, 6, 8, 10, 12, 15, 18, 22)
+COARSE_K = (2, 3, 4, 5, 6, 7)
+MODEL_VERSION = "hellinger-weighted-ward-v2"
 SILHOUETTE_TOLERANCE = 0.02
 MIN_SHARE = 0.005
 SEEDS = (42, 101, 202)
+
+
+class NoValidClusteringError(ValueError):
+    """Expected model-selection failure that orchestration can report and skip."""
+
+    def __init__(
+        self, message: str, scores: pd.DataFrame | None = None, details: dict | None = None
+    ):
+        super().__init__(message)
+        self.scores = [] if scores is None else scores.to_dict("records")
+        self.details = details or {}
 
 
 def _kmeans(x: np.ndarray, k: int, seed: int, n_init: int = 10) -> KMeans:
@@ -36,9 +49,15 @@ def _subsample(n: int, size: int, seed: int) -> np.ndarray:
 
 
 def choose_k(scores: pd.DataFrame) -> int:
-    eligible = scores[scores.min_share >= MIN_SHARE]
+    """Select a supported K; an unsatisfied gate is an explicit model failure."""
+    if scores.empty:
+        raise NoValidClusteringError("No valid K candidate: insufficient observations", scores)
+    valid = scores.get("valid", pd.Series(True, index=scores.index))
+    eligible = scores[valid & np.isfinite(scores.silhouette) & (scores.min_share >= MIN_SHARE)]
     if eligible.empty:
-        eligible = scores
+        raise NoValidClusteringError(
+            "No valid K candidate satisfies the minimum cluster-share gate", scores
+        )
     best = eligible.silhouette.max()
     return int(eligible[eligible.silhouette >= best - SILHOUETTE_TOLERANCE].k.min())
 
@@ -48,24 +67,91 @@ def score_k(
 ) -> pd.DataFrame:
     """Silhouette and smallest cluster share per K, fitted on a subsample for speed."""
     x = x[_subsample(len(x), fit_rows, seed + 7)]
+    if not np.isfinite(x).all():
+        raise ValueError("K selection requires finite features")
     probe = _subsample(len(x), sample, seed)
+    unique_rows = len(np.unique(x, axis=0))
     rows = []
     for k in ks:
         if k >= len(x):
             continue
+        if k > unique_rows:
+            rows.append(
+                {
+                    "k": k,
+                    "actual_k": unique_rows,
+                    "valid": False,
+                    "reason": "requested K exceeds distinct feature rows",
+                    "silhouette": -1.0,
+                    "min_share": 0.0,
+                    "inertia": 0.0,
+                }
+            )
+            continue
         model = _kmeans(x, k, seed, n_init=3)
         labels = model.predict(x[probe])
         shares = np.bincount(model.labels_, minlength=k) / len(x)
-        score = silhouette_score(x[probe], labels) if len(set(labels)) > 1 else -1
+        actual_k = len(np.unique(model.labels_))
+        probe_k = len(np.unique(labels))
+        valid = actual_k == k and 2 <= probe_k < len(probe)
+        score = silhouette_score(x[probe], labels) if valid else -1.0
         rows.append(
             {
                 "k": k,
+                "actual_k": actual_k,
+                "valid": valid,
+                "reason": None if valid else "collapsed clusters or insufficient probe support",
                 "silhouette": float(score),
                 "min_share": float(shares.min()),
                 "inertia": float(model.inertia_),
             }
         )
-    return pd.DataFrame(rows)
+    table = pd.DataFrame(
+        rows, columns=["k", "actual_k", "valid", "reason", "silhouette", "min_share", "inertia"]
+    )
+    # Pandas 3 infers strings and turns mixed None/string values into NaN;
+    # model cards and PostgreSQL JSON require valid reasons to remain null.
+    table["reason"] = pd.Series([row["reason"] for row in rows], dtype=object)
+    return table
+
+
+def weighted_ward(centres: np.ndarray, weights: np.ndarray) -> np.ndarray:
+    """Ward merges of indivisible fine groups using their training population.
+
+    Merge cost is the increase in within-group SSE:
+    n_a*n_b/(n_a+n_b) * ||mean_a-mean_b||^2. Heights use scipy's
+    sqrt(2*cost) convention. Linkage leaf counts remain counts of fine groups;
+    population weights are tracked separately in centroid updates.
+    """
+    centres = np.asarray(centres, dtype=float)
+    weights = np.asarray(weights, dtype=float)
+    n = len(centres)
+    if weights.shape != (n,) or not np.isfinite(weights).all() or (weights <= 0).any():
+        raise ValueError("Ward needs one positive finite training weight per centroid")
+    if not np.isfinite(centres).all():
+        raise ValueError("Ward requires finite centroids")
+    active = {i: (centres[i], weights[i], 1) for i in range(n)}
+    rows = []
+    while len(active) > 1:
+        keys = sorted(active)
+        candidates = []
+        for p, a in enumerate(keys):
+            ca, wa, _ = active[a]
+            for b in keys[p + 1 :]:
+                cb, wb, _ = active[b]
+                cost = wa * wb / (wa + wb) * float(np.sum((ca - cb) ** 2))
+                candidates.append((cost, a, b))
+        cost, a, b = min(candidates)
+        ca, wa, na = active.pop(a)
+        cb, wb, nb = active.pop(b)
+        active[n + len(rows)] = ((wa * ca + wb * cb) / (wa + wb), wa + wb, na + nb)
+        rows.append([a, b, np.sqrt(2 * cost), na + nb])
+    return np.asarray(rows, dtype=float).reshape(-1, 4)
+
+
+def tree_cut(tree: np.ndarray, k: int) -> np.ndarray:
+    """Cut by merge count; tied heights must not silently reduce requested K."""
+    return cut_tree(tree, n_clusters=[k]).reshape(-1)
 
 
 def name_profile(profile: pd.Series, dominant_share: float = 0.5, parts: int = 3) -> str:
@@ -96,6 +182,10 @@ def fit(
     fine_scores = score_k(xt, FINE_K, seed)
     k = choose_k(fine_scores)
     model = _kmeans(xt, k, seed)
+    if len(np.unique(model.labels_)) != k:
+        raise NoValidClusteringError("Final interval fit collapsed the selected K", fine_scores)
+    if np.bincount(model.labels_, minlength=k).min() / len(xt) < MIN_SHARE:
+        raise NoValidClusteringError("Final interval fit failed minimum cluster share", fine_scores)
     # Renumber largest-first so IDs are stable and readable.
     order = np.argsort(-np.bincount(model.labels_, minlength=k))
     remap = np.empty(k, dtype=int)
@@ -104,22 +194,37 @@ def fit(
     labels, _, distance = assign(x, centres, np.arange(k))
     sizes = np.bincount(labels, minlength=k)
 
-    # Coarse level: Ward merge of the fine centroids.
-    tree = linkage(centres, method="ward")
+    # Coarse Ward SSE uses the same training population as the fine model.
+    training_sizes = np.bincount(model.labels_, minlength=k)[order]
+    tree = weighted_ward(centres, training_sizes)
     coarse_rows = []
     probe = np.random.default_rng(seed).choice(len(xt), min(15000, len(xt)), replace=False)
     fine_probe = labels[train][probe]
     for kc in COARSE_K:
         if kc >= k:
             continue
-        parent = fcluster(tree, kc, criterion="maxclust") - 1
+        parent = tree_cut(tree, kc)
         lab = parent[fine_probe]
-        score = silhouette_score(xt[probe], lab) if len(set(lab)) > 1 else -1
-        share = np.bincount(parent[labels], minlength=kc) / len(labels)
-        coarse_rows.append({"k": kc, "silhouette": float(score), "min_share": float(share.min())})
+        actual_k = len(np.unique(lab))
+        valid = 2 <= actual_k < len(probe)
+        score = silhouette_score(xt[probe], lab) if valid else -1
+        share = np.bincount(parent[labels[train]], minlength=kc) / len(train)
+        coarse_rows.append(
+            {
+                "k": kc,
+                "actual_k": len(np.unique(parent)),
+                "valid": valid,
+                "silhouette": float(score),
+                "min_share": float(share.min()),
+            }
+        )
     coarse_scores = pd.DataFrame(coarse_rows)
-    kc = choose_k(coarse_scores) if len(coarse_scores) else k
-    parent = fcluster(tree, kc, criterion="maxclust") - 1 if kc < k else np.arange(k)
+    coarse_status = "selected" if len(coarse_scores) else "same_as_fine"
+    try:
+        kc = choose_k(coarse_scores) if len(coarse_scores) else k
+    except NoValidClusteringError:
+        kc, coarse_status = k, "no_valid_merge; same_as_fine"
+    parent = tree_cut(tree, kc) if kc < k else np.arange(k)
     # Renumber coarse groups largest-first too.
     coarse_sizes = np.bincount(parent[labels], minlength=kc)
     corder = np.argsort(-coarse_sizes)
@@ -159,8 +264,14 @@ def fit(
                 }
             )
     card = {
+        "model_version": MODEL_VERSION,
         "geometry": "Hellinger (square root of mineral abundance)",
-        "algorithm": "K-Means, 10 starts (fine) + Ward merge of centroids (coarse)",
+        "algorithm": "K-Means, 10 starts (fine) + training-count-weighted Ward SSE (coarse)",
+        "coarse_weighting": "fine-cluster counts in the selected training population",
+        "coarse_status": coarse_status,
+        "training_cluster_sizes": training_sizes.tolist(),
+        "final_min_share": float(training_sizes.min() / len(train)),
+        "minimum_share_population": "selected training rows; rechecked after final fit",
         "k_fine": k,
         "k_coarse": int(kc),
         "fine_scores": fine_scores.to_dict("records"),

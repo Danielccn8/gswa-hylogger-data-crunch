@@ -2,11 +2,13 @@ import { $, api, esc, num, bytes, toast, loading, failure } from '../util.js';
 import { selection } from '../state.js';
 import { go } from '../main.js';
 
-let timer = null, rows = [];
+let timer = null, rows = [], downloadScope = 'selected', actionsVersion = 0, stopSelection = null;
+let analyzeAfter = true, fullZip = false, discardSource = false;
 
 export async function render(root) {
   root.innerHTML = `<div class="page-head"><div><h1>Data: download, process, analyse</h1>
     <p class="muted">Search the catalogue, choose holes, then fetch processed logs from the NVCL API or raw spectra from NCI THREDDS. Jobs run in the background worker and can be cancelled.</p></div></div>
+    <section class="panel" id="autofill" style="margin-bottom:14px"><h2>Automatic collection</h2><p>Loading progress…</p></section>
     <div class="grid cols-main-side">
       <section class="panel">
         <div class="toolbar">
@@ -29,7 +31,8 @@ export async function render(root) {
   $('#search').onclick = search;
   $('#q').onkeydown = e => { if (e.key === 'Enter') search(); };
   $('#add-all').onclick = () => { selection.add(rows.map(r => r.hole_id)); toast(`${rows.length} holes added`); actions(); };
-  selection.on(() => actions());
+  stopSelection?.();
+  stopSelection = selection.on(() => actions());
   await search();
   actions(); storage(); jobs();
   timer = setInterval(jobs, 3000);
@@ -60,34 +63,59 @@ async function search() {
 
 async function actions() {
   const node = $('#actions'); if (!node) return;
-  const holes = selection.list();
-  const e = holes.length ? await api('/api/v2/estimate', { method: 'POST', body: { holes } }).catch(() => null) : null;
-  node.innerHTML = `<h2>Selected: ${num(holes.length)} holes</h2>
-    ${e ? `<dl class="kv"><dt>Processed (API)</dt><dd>${num(e.processed.holes)} holes · ~${num(e.processed.estimated_minutes, 0)} min · ~${bytes(e.processed.estimated_bytes)} · ${num(e.processed.already_prepared)} already prepared</dd>
-      <dt>Raw packages</dt><dd>${num(e.raw.holes)} holes · ZIPs ${bytes(e.raw.zip_bytes)}</dd>
-      <dt>Spectra only</dt><dd>~${bytes(e.raw.spectral_only_transfer_bytes)} transfer · ~${bytes(e.raw.spectral_only_disk_bytes)} on disk (≈${num(e.raw.estimated_minutes_spectral_only, 0)} min)</dd>
-      <dt>Summary mode</dt><dd>~${bytes(e.raw.summary_bytes)} kept after discarding spectra</dd>
-      <dt>Free disk</dt><dd>${bytes(e.free_bytes)}</dd></dl>` : '<p class="muted">Select holes in the table, on the map or in Similarity.</p>'}
-    <div class="grid" style="margin-top:10px">
-      <button type="button" data-job="processed_fetch" ${holes.length ? '' : 'disabled'}>Fetch processed logs (NVCL API) + prepare</button>
-      <label class="small"><input type="checkbox" id="analyze" checked> then re-run clusters, similarity and prediction (re-fits all prepared holes as a new version, ~5–10 min statewide)</label>
-      <button type="button" data-job="raw_fetch" class="secondary" ${holes.length ? '' : 'disabled'}>Fetch raw spectra + summarise</button>
-      <label class="small"><input type="checkbox" id="full-zip"> download the full ZIP (includes core imagery; much larger)</label>
-      <label class="small"><input type="checkbox" id="discard"> summary mode: delete spectra after summarising (keeps ~3 MB per hole)</label>
-      <hr style="border:0;border-top:1px solid var(--line);width:100%">
-      <button type="button" data-job="analysis_refresh" class="secondary">Re-run analysis on all prepared holes</button>
-      <button type="button" data-job="catalog_refresh" class="ghost">Refresh catalogue from NVCL/THREDDS</button>
-      <button type="button" data-job="reference_load" class="ghost">Reload GSWA reference package</button>
-    </div>`;
-  node.onclick = async event => {
-    const kind = event.target.closest('[data-job]')?.dataset.job; if (!kind) return;
-    const params = {};
-    if (kind === 'processed_fetch') Object.assign(params, { holes, analyze: $('#analyze').checked, parallel: 4 });
-    if (kind === 'raw_fetch') Object.assign(params, { holes, mode: $('#full-zip').checked ? 'full_zip' : 'spectral_only', discard_source: $('#discard').checked, analyze: true, parallel: 2 });
-    if (kind === 'analysis_refresh') Object.assign(params, { mode: 'retrain', promote: true });
-    if (kind === 'raw_fetch' && $('#discard').checked && !confirm('Summary mode deletes the downloaded spectra after summarising. Continue?')) return;
-    try { const job = await api('/api/v2/jobs', { method: 'POST', body: { kind, params } }); toast(`Job ${job.job_id.slice(0, 8)} queued`); jobs(); } catch (error) { toast(error.message); }
+  if ($('#analyze')) analyzeAfter = $('#analyze').checked;
+  if ($('#full-zip')) fullZip = $('#full-zip').checked;
+  if ($('#discard')) discardSource = $('#discard').checked;
+  const version = ++actionsVersion, scope = downloadScope, holes = selection.list();
+  const all = scope === 'all_catalogue';
+  const scopeParams = all ? { scope } : { scope, holes };
+  let e = null, error = '';
+  const draw = () => {
+    node.innerHTML = `<h2>Download data</h2>
+      <label class="field" for="download-scope">Download scope<select id="download-scope"><option value="selected" ${all ? '' : 'selected'}>Selected holes (${num(holes.length)})</option><option value="all_catalogue" ${all ? 'selected' : ''}>All catalogue (missing data)</option></select></label>
+      <p class="muted small">${all ? 'Uses the complete catalogue, including holes outside the displayed table and search. Skips prepared logs, known no-public logs and existing raw summaries.' : 'Uses your current selection. Selected processed logs can be fetched again.'}</p>
+      ${e ? `<p class="small">${num(e.holes)} catalogue holes in this scope.</p><dl class="kv">
+        <dt>Processed (NVCL)</dt><dd>${num(e.processed.holes)} available · ${num(e.processed.already_prepared)} ready · ${num(e.processed.no_public_logs)} no public logs · ${num(e.processed.pending)} missing</dd>
+        <dt>Processed download</dt><dd>${num(e.processed.download_holes)} holes · ~${num(e.processed.estimated_minutes, 0)} min · ~${bytes(e.processed.estimated_bytes)}</dd>
+        <dt>Raw (NCI)</dt><dd>${num(e.raw.holes)} available · ${num(e.raw.already_summarised)} summarised · ${num(e.raw.pending)} missing</dd>
+        <dt>Raw download</dt><dd>${num(e.raw.download_holes)} holes · ZIPs ${bytes(e.raw.zip_bytes)}</dd>
+        <dt>Spectra only</dt><dd>~${bytes(e.raw.spectral_only_transfer_bytes)} transfer · ~${bytes(e.raw.spectral_only_disk_bytes)} on disk (≈${num(e.raw.estimated_minutes_spectral_only, 0)} min)</dd>
+        <dt>Summary mode</dt><dd>~${bytes(e.raw.summary_bytes)} kept</dd><dt>Free disk</dt><dd>${bytes(e.free_bytes)}</dd></dl><p class="muted small">${esc(e.estimate_note)}</p>` : `<p class="muted">${esc(error || (holes.length || all ? 'Loading source counts and estimates…' : 'Select holes, or choose All catalogue to acquire missing data.'))}</p>`}
+      <div class="grid" style="margin-top:10px">
+        <button type="button" data-job="processed_fetch" ${e?.processed.download_holes ? '' : 'disabled'}>Fetch processed logs (NVCL API) + prepare${e ? ` (${num(e.processed.download_holes)})` : ''}</button>
+        <label class="small"><input type="checkbox" id="analyze" ${analyzeAfter ? 'checked' : ''}> then re-run clusters, similarity and prediction (re-fits all prepared holes as a new version)</label>
+        <button type="button" data-job="raw_fetch" class="secondary" ${e?.raw.download_holes ? '' : 'disabled'}>Fetch raw spectra + summarise${e ? ` (${num(e.raw.download_holes)})` : ''}</button>
+        <label class="small"><input type="checkbox" id="full-zip" ${fullZip ? 'checked' : ''}> download the full ZIP (includes core imagery; much larger)</label>
+        <label class="small"><input type="checkbox" id="discard" ${discardSource ? 'checked' : ''}> summary mode: delete spectra after summarising (keeps ~3 MB per hole)</label>
+        <hr style="border:0;border-top:1px solid var(--line);width:100%">
+        <button type="button" data-job="analysis_refresh" class="secondary">Re-run analysis on all prepared holes</button>
+        <button type="button" data-job="catalog_refresh" class="ghost">Refresh catalogue from NVCL/THREDDS</button>
+        <button type="button" data-job="reference_load" class="ghost">Reload GSWA reference package</button>
+      </div>`;
+    node.onchange = event => {
+      if (event.target.id === 'analyze') analyzeAfter = event.target.checked;
+      if (event.target.id === 'full-zip') fullZip = event.target.checked;
+      if (event.target.id === 'discard') discardSource = event.target.checked;
+      if (event.target.id === 'download-scope') { downloadScope = event.target.value; actions(); }
+    };
+    node.onclick = async event => {
+      const kind = event.target.closest('[data-job]')?.dataset.job; if (!kind) return;
+      const params = {};
+      if (kind === 'processed_fetch') Object.assign(params, scopeParams, { analyze: analyzeAfter, parallel: 4 });
+      if (kind === 'raw_fetch') Object.assign(params, scopeParams, { mode: fullZip ? 'full_zip' : 'spectral_only', discard_source: discardSource, analyze: analyzeAfter, parallel: 2 });
+      if (['processed_fetch', 'raw_fetch'].includes(kind) && !e) return;
+      if (kind === 'analysis_refresh') Object.assign(params, { mode: 'retrain', promote: true });
+      if (kind === 'raw_fetch' && discardSource && !confirm('Summary mode deletes the downloaded spectra after summarising. Continue?')) return;
+      try { const job = await api('/api/v2/jobs', { method: 'POST', body: { kind, params } }); toast(`Job ${job.job_id.slice(0, 8)} queued`); jobs(); }
+      catch (failure) { toast(failure.message); }
+    };
   };
+  draw();
+  if (!holes.length && !all) return;
+  try { e = await api('/api/v2/estimate', { method: 'POST', body: scopeParams }); }
+  catch (failure) { error = failure.message; }
+  if (version !== actionsVersion || !node.isConnected) return;
+  draw();
 }
 
 async function storage() {
@@ -99,6 +127,7 @@ async function jobs() {
   const node = $('#jobs'); if (!node) { clearInterval(timer); return; }
   const list = await api('/api/v2/jobs?limit=25').catch(() => null); if (!list) return;
   const summary = await api('/api/v2/summary').catch(() => null);
+  await automatic();
   const workers = summary?.workers || [];
   const banner = workers.length
     ? `<p class="small"><span class="chip accent">Worker online</span> ${workers.map(w => esc(w.lanes)).join(' · ')}</p>`
@@ -116,6 +145,29 @@ async function jobs() {
   };
 }
 
+async function automatic() {
+  const node = $('#autofill'); if (!node) return;
+  const s = await api('/api/v2/autofill').catch(() => null);
+  if (!s) { node.innerHTML = '<h2>Automatic collection</h2><p>Progress unavailable. Check the local service.</p>'; return; }
+  node.innerHTML = `<div class="row gap" style="justify-content:space-between"><h2>Automatic collection</h2>
+    <span class="chip ${s.control.enabled ? 'accent' : ''}">${s.control.enabled ? 'Enabled' : 'Paused'}</span></div>
+    <p class="muted">Build this computer's collection from the public Western Australia catalogue. Download, process and resume automatically while Explorer is open. Progress survives closing the app.</p>
+    <div class="table-wrap"><table><thead><tr><th>Source</th><th>Available</th><th>Ready</th><th>Pending</th><th>Working</th><th>Failed / partial</th><th>No usable public data</th></tr></thead><tbody>
+    ${Object.entries(s.sources).map(([source,c]) => `<tr><th>${source === 'raw' ? 'Raw spectra' : 'Processed TSG'}</th><td>${num(c.total)}</td><td>${num(c.complete)}</td><td>${num(c.pending)}</td><td>${num(c.running)}</td><td>${num(c.failed + c.partial)}</td><td>${num(c.unavailable)}</td></tr>`).join('')}</tbody></table></div>
+    <p class="small">Raw retention: QC-admitted median spectra per metre, wavelength grids, depths and quality reports. Original readings are reduced; source files are removed only after all available sensors validate. Images are not requested.</p>
+    <p class="muted small">${esc(s.control.message)}${s.control.catalog_checked_at ? ` · Catalogue checked ${new Date(s.control.catalog_checked_at).toLocaleString()}` : ''}</p>
+    <div class="row gap"><button id="auto-toggle">${s.control.enabled ? 'Pause collection' : 'Start / resume collection'}</button>
+      <button id="auto-retry" class="secondary">Retry failed / refresh catalogue</button></div>
+    ${s.problems.length ? `<details><summary>${s.problems.length} recent problems (automatic retries are limited)</summary><ul>${s.problems.map(p => `<li>${esc(p.hole_id)} · ${esc(p.source)} · attempt ${p.attempts}/3: ${esc(p.error || p.state)}</li>`).join('')}</ul></details>` : ''}`;
+  $('#auto-toggle').onclick = () => controlAuto(!s.control.enabled, false);
+  $('#auto-retry').onclick = () => controlAuto(true, true);
+}
+
+async function controlAuto(enabled, retry) {
+  try { await api('/api/v2/autofill', {method:'POST', body:{enabled,retry}}); await automatic(); }
+  catch(error) { toast(error.message); }
+}
+
 async function showJob(id) {
   const d = await api(`/api/v2/jobs/${id}`);
   const failed = d.job.result?.failed || {};
@@ -126,4 +178,4 @@ async function showJob(id) {
     <details><summary>Parameters and result</summary><pre>${esc(JSON.stringify({ params: d.job.params, result: d.job.result }, null, 2)).slice(0, 20000)}</pre></details>`;
 }
 
-export function leave() { clearInterval(timer); }
+export function leave() { clearInterval(timer); stopSelection?.(); stopSelection = null; actionsVersion++; }

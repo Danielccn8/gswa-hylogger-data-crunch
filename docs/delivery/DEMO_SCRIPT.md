@@ -20,7 +20,7 @@ About 12 minutes. Internal: the GSWA interim package is not to be shown outside 
 
 ## 1 · Map — what exists (1.5 min)
 
-- The six cards: 2,161 holes in the catalogue, 1,322 with mineral data, ~1,340 with raw spectra summarised, 416k metres of SWIR and 384k of TIR. Hover a card for what it counts.
+- The six cards: 2,161 holes in the catalogue, 1,322 with mineral data, 1,357 with raw spectra summarised, 416k metres of SWIR and 384k of TIR. Hover a card for what it counts.
 - Hover any hole: its three main SWIR and TIR minerals. The “target” line is the company’s exploration commodity, not a measurement.
 - Click **WTB-60**: SWIR minerals, the raw spectrum with the Al-OH position (2195 nm → sodic/muscovitic white mica), and the ten most similar holes rise on the map with the reasons (“same order down the hole: Chlorite-FeMg → Paragonite; 85% of metres in the same clusters; less than 1 km, same district”).
 - Switch “Most similar holes” to **Down-hole sequence** and to **Raw spectra**: the same neighbours (WTB-29, WTB-22) come back from independent evidence.
@@ -45,7 +45,7 @@ About 12 minutes. Internal: the GSWA interim package is not to be shown outside 
 - Robustness: three checks, all **stable** — clusters hold for hidden districts (ARI ≈ 0.89 SWIR), for other interval widths, and from new random starts.
 - Mineralogy vs chemistry: white mica ↔ K₂O ρ 0.52, carbonate ↔ LOI, plagioclase ↔ Na₂O, each with why it is expected.
 - Virtual assays: MgO, CaO, Na₂O, K₂O, LOI, Cr, Al₂O₃, Ni predicted on unseen holes (R² 0.30–0.57); gold, uranium, sulphur and fine silica cannot be predicted — the HyLogger does not see their host minerals.
-- **How often does the analyst change the machine’s answer?** SWIR 95.4% of readings agree (103 holes), TIR 87.9% (94 holes), VNIR 99.8%. The main mineral group changes in only 2.9% (SWIR) and 5.1% (TIR) of metres: most changes are species within a group (ankerite ↔ dolomite, Fe ↔ FeMg chlorite) or the analyst rejecting a low-confidence match (Aspectral). In TIR the analyst most often replaces quartz (by chlorite or albite).
+- **How often does the analyst change the machine’s answer?** SWIR 95.5% of readings agree (108 holes), TIR 87.0% (100 holes), VNIR 99.8% (31 holes). The main mineral group changes in only 2.9% (SWIR) and 5.8% (TIR) of metres: most changes are species within a group (ankerite ↔ dolomite, Fe ↔ FeMg chlorite) or the analyst rejecting a low-confidence match (Aspectral). In TIR the analyst most often replaces quartz (by chlorite or albite).
 
 ## 5 · Anomalies (1 min)
 

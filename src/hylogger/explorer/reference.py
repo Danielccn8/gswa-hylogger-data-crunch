@@ -114,6 +114,8 @@ def _districts(lat: np.ndarray, lon: np.ndarray) -> np.ndarray:
 
 def build_register(conn: psycopg.Connection, catalog: pd.DataFrame) -> dict[str, int]:
     """Union of the NVCL/raw catalogue and the package index, keyed by catalogue hole ID."""
+    if conn.execute("SELECT to_regclass('ref_index')").fetchone()[0] is None:
+        return build_public_register(conn, catalog)
     index = read_frame(conn, 'SELECT * FROM ref_index ORDER BY "HyloggerIndexId"')
     collars = read_frame(conn, "SELECT * FROM ref_collar")
     wapims = read_frame(conn, "SELECT * FROM ref_wapims_collar")
@@ -243,6 +245,53 @@ def build_register(conn: psycopg.Connection, catalog: pd.DataFrame) -> dict[str,
         "linked_to_collar": int(register.wamex_collar_id.isin(collars.index).sum()),
         "with_assays": int((register.n_assay > 0).sum()),
         "districts": int(register.district_id.max() + 1),
+    }
+
+
+def build_public_register(conn: psycopg.Connection, catalog: pd.DataFrame) -> dict[str, int]:
+    """Bootstrap from public services without the separately licensed GSWA package.
+
+    Upsert catalogue attributes only: completed products and their status survive refreshes.
+    A temporarily absent source never deletes locally acquired holes.
+    """
+    frame = catalog.copy()
+    districts = _districts(frame.lat.to_numpy(float), frame.lon.to_numpy(float))
+    for record, district in zip(frame.to_dict("records"), districts, strict=True):
+        row = _register_row(record, None, "public_catalog")
+        columns = [
+            "hole_id",
+            "name",
+            "lat",
+            "lon",
+            "length_m",
+            "nvcl_available",
+            "raw_available",
+            "raw_size_bytes",
+            "operator",
+            "project",
+            "drilling_method",
+        ]
+        values = [None if pd.isna(row.get(c)) else row.get(c) for c in columns]
+        values.append(int(district))
+        columns.append("district_id")
+        update = ", ".join(f"{c}=EXCLUDED.{c}" for c in columns if c != "hole_id")
+        conn.execute(
+            f"INSERT INTO explorer_hole({','.join(columns)}) "
+            f"VALUES ({','.join(['%s'] * len(columns))}) ON CONFLICT(hole_id) "
+            f"DO UPDATE SET {update}, updated_at=now()",
+            values,
+        )
+    conn.execute(
+        "UPDATE explorer_hole SET geom=ST_SetSRID(ST_MakePoint(lon,lat),4326)::geography "
+        "WHERE lat BETWEEN -90 AND 90 AND lon BETWEEN -180 AND 180"
+    )
+    conn.commit()
+    return {
+        "holes": len(frame),
+        "linked_to_index": 0,
+        "linked_to_collar": 0,
+        "with_assays": 0,
+        "districts": len(set(districts)),
     }
 
 

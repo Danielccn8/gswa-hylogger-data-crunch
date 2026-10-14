@@ -1,0 +1,2603 @@
+{
+  "runs": [
+    "hole-combined-20261014T123014-804589",
+    "hole-raw_nir-20261014T123016-acf1f9",
+    "hole-raw_tir-20261014T123017-bd2953",
+    "hole-seq_combined-20261014T123019-4f7a0f",
+    "hole-seq_swir-20261014T123020-72a5b5",
+    "hole-seq_tir-20261014T123021-4b2327",
+    "hole-swir-20261014T123022-89a20a",
+    "hole-tir-20261014T123024-ebc2ff"
+  ],
+  "source_mapping": {
+    "hole-combined-20261014T121439-746060": "hole-combined-20261014T123014-804589",
+    "hole-raw_nir-20261014T121904-f124b4": "hole-raw_nir-20261014T123016-acf1f9",
+    "hole-raw_tir-20261014T122019-e6f74a": "hole-raw_tir-20261014T123017-bd2953",
+    "hole-seq_combined-20261014T121618-40fc62": "hole-seq_combined-20261014T123019-4f7a0f",
+    "hole-seq_swir-20261014T121525-b51998": "hole-seq_swir-20261014T123020-72a5b5",
+    "hole-seq_tir-20261014T121614-bfab29": "hole-seq_tir-20261014T123021-4b2327",
+    "hole-swir-20261014T121214-7e48f9": "hole-swir-20261014T123022-89a20a",
+    "hole-tir-20261014T121407-de1339": "hole-tir-20261014T123024-ebc2ff"
+  },
+  "reports": [
+    {
+      "source_run": "hole-combined-20261014T121439-746060",
+      "run_id": "hole-combined-20261014T123014-804589",
+      "sensor": "combined",
+      "holes": 1100,
+      "grouping": {
+        "grouping_version": "average-linkage-replicated-groups-v2",
+        "candidate_k": [
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9,
+          10,
+          11,
+          12,
+          13,
+          14,
+          15
+        ],
+        "algorithm": "average linkage; exact merge-count cut",
+        "support_policy": {
+          "minimum_holes_per_group": 2,
+          "meaning": "replication floor for descriptive groups; not geological validation"
+        },
+        "k_rule": "smallest K within 0.02 of best silhouette among supported candidates",
+        "k": 2,
+        "scores": [
+          {
+            "k": 2,
+            "actual_k": 2,
+            "silhouette": 0.3005054281065235,
+            "singletons": 0,
+            "cluster_sizes": [
+              700,
+              400
+            ],
+            "min_size": 400,
+            "valid": true,
+            "reason": null
+          },
+          {
+            "k": 3,
+            "actual_k": 3,
+            "silhouette": 0.2703067197396411,
+            "singletons": 0,
+            "cluster_sizes": [
+              700,
+              354,
+              46
+            ],
+            "min_size": 46,
+            "valid": true,
+            "reason": null
+          },
+          {
+            "k": 4,
+            "actual_k": 4,
+            "silhouette": 0.23956018394448744,
+            "singletons": 0,
+            "cluster_sizes": [
+              700,
+              347,
+              46,
+              7
+            ],
+            "min_size": 7,
+            "valid": true,
+            "reason": null
+          },
+          {
+            "k": 5,
+            "actual_k": 5,
+            "silhouette": 0.1980603096452123,
+            "singletons": 0,
+            "cluster_sizes": [
+              700,
+              340,
+              46,
+              7,
+              7
+            ],
+            "min_size": 7,
+            "valid": true,
+            "reason": null
+          },
+          {
+            "k": 6,
+            "actual_k": 6,
+            "silhouette": 0.16487543667086882,
+            "singletons": 0,
+            "cluster_sizes": [
+              560,
+              340,
+              140,
+              46,
+              7,
+              7
+            ],
+            "min_size": 7,
+            "valid": true,
+            "reason": null
+          },
+          {
+            "k": 7,
+            "actual_k": 7,
+            "silhouette": 0.18132008589638454,
+            "singletons": 0,
+            "cluster_sizes": [
+              560,
+              239,
+              140,
+              101,
+              46,
+              7,
+              7
+            ],
+            "min_size": 7,
+            "valid": true,
+            "reason": null
+          },
+          {
+            "k": 8,
+            "actual_k": 8,
+            "silhouette": 0.18891030275390397,
+            "singletons": 0,
+            "cluster_sizes": [
+              466,
+              239,
+              140,
+              101,
+              94,
+              46,
+              7,
+              7
+            ],
+            "min_size": 7,
+            "valid": true,
+            "reason": null
+          },
+          {
+            "k": 9,
+            "actual_k": 9,
+            "silhouette": 0.17362336952631174,
+            "singletons": 0,
+            "cluster_sizes": [
+              454,
+              239,
+              140,
+              101,
+              94,
+              46,
+              12,
+              7,
+              7
+            ],
+            "min_size": 7,
+            "valid": true,
+            "reason": null
+          },
+          {
+            "k": 10,
+            "actual_k": 10,
+            "silhouette": 0.17639896496455326,
+            "singletons": 0,
+            "cluster_sizes": [
+              454,
+              164,
+              140,
+              101,
+              94,
+              75,
+              46,
+              12,
+              7,
+              7
+            ],
+            "min_size": 7,
+            "valid": true,
+            "reason": null
+          },
+          {
+            "k": 11,
+            "actual_k": 11,
+            "silhouette": 0.20509272366219491,
+            "singletons": 0,
+            "cluster_sizes": [
+              232,
+              222,
+              164,
+              140,
+              101,
+              94,
+              75,
+              46,
+              12,
+              7,
+              7
+            ],
+            "min_size": 7,
+            "valid": true,
+            "reason": null
+          },
+          {
+            "k": 12,
+            "actual_k": 12,
+            "silhouette": 0.19415876164306156,
+            "singletons": 0,
+            "cluster_sizes": [
+              232,
+              222,
+              164,
+              140,
+              101,
+              94,
+              75,
+              46,
+              8,
+              7,
+              7,
+              4
+            ],
+            "min_size": 4,
+            "valid": true,
+            "reason": null
+          },
+          {
+            "k": 13,
+            "actual_k": 13,
+            "silhouette": 0.200902090765158,
+            "singletons": 0,
+            "cluster_sizes": [
+              222,
+              175,
+              164,
+              140,
+              101,
+              94,
+              75,
+              57,
+              46,
+              8,
+              7,
+              7,
+              4
+            ],
+            "min_size": 4,
+            "valid": true,
+            "reason": null
+          },
+          {
+            "k": 14,
+            "actual_k": 14,
+            "silhouette": 0.19733804306257954,
+            "singletons": 0,
+            "cluster_sizes": [
+              222,
+              175,
+              164,
+              140,
+              101,
+              94,
+              75,
+              57,
+              46,
+              8,
+              7,
+              4,
+              4,
+              3
+            ],
+            "min_size": 3,
+            "valid": true,
+            "reason": null
+          },
+          {
+            "k": 15,
+            "actual_k": 15,
+            "silhouette": 0.19424174388143026,
+            "singletons": 0,
+            "cluster_sizes": [
+              222,
+              175,
+              164,
+              124,
+              101,
+              94,
+              75,
+              57,
+              46,
+              16,
+              8,
+              7,
+              4,
+              4,
+              3
+            ],
+            "min_size": 3,
+            "valid": true,
+            "reason": null
+          }
+        ],
+        "status": "selected",
+        "descriptive_container": false,
+        "tied_merge_heights": true,
+        "partition_note": "descriptive partition selected by silhouette; not geological validation",
+        "sizes": {
+          "0": 700,
+          "1": 400
+        },
+        "names": {
+          "0": "Quartz + Chlorite-FeMg + Muscovite",
+          "1": "Chlorite-FeMg + Hornblende + Quartz"
+        }
+      },
+      "distance_unchanged": true,
+      "source_distance_npz_sha256": "1dcc20e38e65f1769c90cffdbb9b90804de49b78f1b91cf5381d02e9e7611a34"
+    },
+    {
+      "source_run": "hole-raw_nir-20261014T121904-f124b4",
+      "run_id": "hole-raw_nir-20261014T123016-acf1f9",
+      "sensor": "raw_nir",
+      "holes": 1261,
+      "grouping": {
+        "grouping_version": "average-linkage-replicated-groups-v2",
+        "candidate_k": [
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9,
+          10,
+          11,
+          12,
+          13,
+          14,
+          15
+        ],
+        "algorithm": "average linkage; exact merge-count cut",
+        "support_policy": {
+          "minimum_holes_per_group": 2,
+          "meaning": "replication floor for descriptive groups; not geological validation"
+        },
+        "k_rule": "smallest K within 0.02 of best silhouette among supported candidates",
+        "k": 1,
+        "scores": [
+          {
+            "k": 2,
+            "actual_k": 2,
+            "silhouette": 0.46938005523062276,
+            "singletons": 1,
+            "cluster_sizes": [
+              1260,
+              1
+            ],
+            "min_size": 1,
+            "valid": false,
+            "reason": "minimum replicated group support not satisfied"
+          },
+          {
+            "k": 3,
+            "actual_k": 3,
+            "silhouette": 0.30961838413873904,
+            "singletons": 1,
+            "cluster_sizes": [
+              1253,
+              7,
+              1
+            ],
+            "min_size": 1,
+            "valid": false,
+            "reason": "minimum replicated group support not satisfied"
+          },
+          {
+            "k": 4,
+            "actual_k": 4,
+            "silhouette": 0.32634016474225547,
+            "singletons": 1,
+            "cluster_sizes": [
+              721,
+              532,
+              7,
+              1
+            ],
+            "min_size": 1,
+            "valid": false,
+            "reason": "minimum replicated group support not satisfied"
+          },
+          {
+            "k": 5,
+            "actual_k": 5,
+            "silhouette": 0.27039121313494413,
+            "singletons": 2,
+            "cluster_sizes": [
+              720,
+              532,
+              7,
+              1,
+              1
+            ],
+            "min_size": 1,
+            "valid": false,
+            "reason": "minimum replicated group support not satisfied"
+          },
+          {
+            "k": 6,
+            "actual_k": 6,
+            "silhouette": 0.21155975917613754,
+            "singletons": 2,
+            "cluster_sizes": [
+              720,
+              526,
+              7,
+              6,
+              1,
+              1
+            ],
+            "min_size": 1,
+            "valid": false,
+            "reason": "minimum replicated group support not satisfied"
+          },
+          {
+            "k": 7,
+            "actual_k": 7,
+            "silhouette": 0.19968012266127544,
+            "singletons": 2,
+            "cluster_sizes": [
+              716,
+              526,
+              7,
+              6,
+              4,
+              1,
+              1
+            ],
+            "min_size": 1,
+            "valid": false,
+            "reason": "minimum replicated group support not satisfied"
+          },
+          {
+            "k": 8,
+            "actual_k": 8,
+            "silhouette": 0.19139413089104193,
+            "singletons": 2,
+            "cluster_sizes": [
+              716,
+              429,
+              97,
+              7,
+              6,
+              4,
+              1,
+              1
+            ],
+            "min_size": 1,
+            "valid": false,
+            "reason": "minimum replicated group support not satisfied"
+          },
+          {
+            "k": 9,
+            "actual_k": 9,
+            "silhouette": 0.18870808042390522,
+            "singletons": 3,
+            "cluster_sizes": [
+              716,
+              429,
+              97,
+              6,
+              6,
+              4,
+              1,
+              1,
+              1
+            ],
+            "min_size": 1,
+            "valid": false,
+            "reason": "minimum replicated group support not satisfied"
+          },
+          {
+            "k": 10,
+            "actual_k": 10,
+            "silhouette": 0.18104978201692687,
+            "singletons": 3,
+            "cluster_sizes": [
+              716,
+              425,
+              97,
+              6,
+              6,
+              4,
+              4,
+              1,
+              1,
+              1
+            ],
+            "min_size": 1,
+            "valid": false,
+            "reason": "minimum replicated group support not satisfied"
+          },
+          {
+            "k": 11,
+            "actual_k": 11,
+            "silhouette": 0.17174206578341136,
+            "singletons": 3,
+            "cluster_sizes": [
+              664,
+              425,
+              97,
+              52,
+              6,
+              6,
+              4,
+              4,
+              1,
+              1,
+              1
+            ],
+            "min_size": 1,
+            "valid": false,
+            "reason": "minimum replicated group support not satisfied"
+          },
+          {
+            "k": 12,
+            "actual_k": 12,
+            "silhouette": 0.16729682055957545,
+            "singletons": 3,
+            "cluster_sizes": [
+              646,
+              425,
+              97,
+              52,
+              18,
+              6,
+              6,
+              4,
+              4,
+              1,
+              1,
+              1
+            ],
+            "min_size": 1,
+            "valid": false,
+            "reason": "minimum replicated group support not satisfied"
+          },
+          {
+            "k": 13,
+            "actual_k": 13,
+            "silhouette": 0.15833086643176086,
+            "singletons": 4,
+            "cluster_sizes": [
+              646,
+              425,
+              97,
+              52,
+              18,
+              6,
+              5,
+              4,
+              4,
+              1,
+              1,
+              1,
+              1
+            ],
+            "min_size": 1,
+            "valid": false,
+            "reason": "minimum replicated group support not satisfied"
+          },
+          {
+            "k": 14,
+            "actual_k": 14,
+            "silhouette": 0.14932571506986345,
+            "singletons": 4,
+            "cluster_sizes": [
+              646,
+              420,
+              97,
+              52,
+              18,
+              6,
+              5,
+              5,
+              4,
+              4,
+              1,
+              1,
+              1,
+              1
+            ],
+            "min_size": 1,
+            "valid": false,
+            "reason": "minimum replicated group support not satisfied"
+          },
+          {
+            "k": 15,
+            "actual_k": 15,
+            "silhouette": 0.14665682873812766,
+            "singletons": 4,
+            "cluster_sizes": [
+              646,
+              420,
+              91,
+              52,
+              18,
+              6,
+              6,
+              5,
+              5,
+              4,
+              4,
+              1,
+              1,
+              1,
+              1
+            ],
+            "min_size": 1,
+            "valid": false,
+            "reason": "minimum replicated group support not satisfied"
+          }
+        ],
+        "status": "no_valid_candidates",
+        "reason": "every candidate fails the minimum replicated group support floor",
+        "descriptive_container": true,
+        "sizes": {
+          "0": 1261
+        },
+        "names": {
+          "0": "Unassigned \u2014 no supported hole grouping"
+        }
+      },
+      "distance_unchanged": true,
+      "source_distance_npz_sha256": "b8c0a2d251d0252bdd9d81ff6b48de3e98e2af09c8fbd4cb61e9ba99058cc7a8"
+    },
+    {
+      "source_run": "hole-raw_tir-20261014T122019-e6f74a",
+      "run_id": "hole-raw_tir-20261014T123017-bd2953",
+      "sensor": "raw_tir",
+      "holes": 1225,
+      "grouping": {
+        "grouping_version": "average-linkage-replicated-groups-v2",
+        "candidate_k": [
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9,
+          10,
+          11,
+          12,
+          13,
+          14,
+          15
+        ],
+        "algorithm": "average linkage; exact merge-count cut",
+        "support_policy": {
+          "minimum_holes_per_group": 2,
+          "meaning": "replication floor for descriptive groups; not geological validation"
+        },
+        "k_rule": "smallest K within 0.02 of best silhouette among supported candidates",
+        "k": 2,
+        "scores": [
+          {
+            "k": 2,
+            "actual_k": 2,
+            "silhouette": 0.4849255702669247,
+            "singletons": 0,
+            "cluster_sizes": [
+              1163,
+              62
+            ],
+            "min_size": 62,
+            "valid": true,
+            "reason": null
+          },
+          {
+            "k": 3,
+            "actual_k": 3,
+            "silhouette": 0.4782939272581935,
+            "singletons": 1,
+            "cluster_sizes": [
+              1163,
+              61,
+              1
+            ],
+            "min_size": 1,
+            "valid": false,
+            "reason": "minimum replicated group support not satisfied"
+          },
+          {
+            "k": 4,
+            "actual_k": 4,
+            "silhouette": 0.3612481099689232,
+            "singletons": 1,
+            "cluster_sizes": [
+              1126,
+              61,
+              37,
+              1
+            ],
+            "min_size": 1,
+            "valid": false,
+            "reason": "minimum replicated group support not satisfied"
+          },
+          {
+            "k": 5,
+            "actual_k": 5,
+            "silhouette": 0.3434415838722208,
+            "singletons": 1,
+            "cluster_sizes": [
+              1126,
+              43,
+              37,
+              18,
+              1
+            ],
+            "min_size": 1,
+            "valid": false,
+            "reason": "minimum replicated group support not satisfied"
+          },
+          {
+            "k": 6,
+            "actual_k": 6,
+            "silhouette": 0.22159257227722626,
+            "singletons": 1,
+            "cluster_sizes": [
+              1121,
+              43,
+              37,
+              18,
+              5,
+              1
+            ],
+            "min_size": 1,
+            "valid": false,
+            "reason": "minimum replicated group support not satisfied"
+          },
+          {
+            "k": 7,
+            "actual_k": 7,
+            "silhouette": 0.21703386459727983,
+            "singletons": 1,
+            "cluster_sizes": [
+              1050,
+              71,
+              43,
+              37,
+              18,
+              5,
+              1
+            ],
+            "min_size": 1,
+            "valid": false,
+            "reason": "minimum replicated group support not satisfied"
+          },
+          {
+            "k": 8,
+            "actual_k": 8,
+            "silhouette": 0.21405951939703616,
+            "singletons": 1,
+            "cluster_sizes": [
+              1050,
+              71,
+              41,
+              37,
+              18,
+              5,
+              2,
+              1
+            ],
+            "min_size": 1,
+            "valid": false,
+            "reason": "minimum replicated group support not satisfied"
+          },
+          {
+            "k": 9,
+            "actual_k": 9,
+            "silhouette": 0.2147267900246485,
+            "singletons": 1,
+            "cluster_sizes": [
+              1050,
+              71,
+              37,
+              32,
+              18,
+              9,
+              5,
+              2,
+              1
+            ],
+            "min_size": 1,
+            "valid": false,
+            "reason": "minimum replicated group support not satisfied"
+          },
+          {
+            "k": 10,
+            "actual_k": 10,
+            "silhouette": 0.26513419683594386,
+            "singletons": 1,
+            "cluster_sizes": [
+              724,
+              326,
+              71,
+              37,
+              32,
+              18,
+              9,
+              5,
+              2,
+              1
+            ],
+            "min_size": 1,
+            "valid": false,
+            "reason": "minimum replicated group support not satisfied"
+          },
+          {
+            "k": 11,
+            "actual_k": 11,
+            "silhouette": 0.2638962469969886,
+            "singletons": 3,
+            "cluster_sizes": [
+              724,
+              326,
+              71,
+              37,
+              32,
+              18,
+              9,
+              5,
+              1,
+              1,
+              1
+            ],
+            "min_size": 1,
+            "valid": false,
+            "reason": "minimum replicated group support not satisfied"
+          },
+          {
+            "k": 12,
+            "actual_k": 12,
+            "silhouette": 0.26236876374425805,
+            "singletons": 4,
+            "cluster_sizes": [
+              724,
+              326,
+              71,
+              37,
+              32,
+              17,
+              9,
+              5,
+              1,
+              1,
+              1,
+              1
+            ],
+            "min_size": 1,
+            "valid": false,
+            "reason": "minimum replicated group support not satisfied"
+          },
+          {
+            "k": 13,
+            "actual_k": 13,
+            "silhouette": 0.23264424693296193,
+            "singletons": 4,
+            "cluster_sizes": [
+              724,
+              305,
+              71,
+              37,
+              32,
+              21,
+              17,
+              9,
+              5,
+              1,
+              1,
+              1,
+              1
+            ],
+            "min_size": 1,
+            "valid": false,
+            "reason": "minimum replicated group support not satisfied"
+          },
+          {
+            "k": 14,
+            "actual_k": 14,
+            "silhouette": 0.2165111930034196,
+            "singletons": 4,
+            "cluster_sizes": [
+              724,
+              305,
+              71,
+              35,
+              32,
+              21,
+              17,
+              9,
+              5,
+              2,
+              1,
+              1,
+              1,
+              1
+            ],
+            "min_size": 1,
+            "valid": false,
+            "reason": "minimum replicated group support not satisfied"
+          },
+          {
+            "k": 15,
+            "actual_k": 15,
+            "silhouette": 0.21185251268496447,
+            "singletons": 4,
+            "cluster_sizes": [
+              724,
+              305,
+              71,
+              35,
+              32,
+              17,
+              14,
+              9,
+              7,
+              5,
+              2,
+              1,
+              1,
+              1,
+              1
+            ],
+            "min_size": 1,
+            "valid": false,
+            "reason": "minimum replicated group support not satisfied"
+          }
+        ],
+        "status": "selected",
+        "descriptive_container": false,
+        "tied_merge_heights": false,
+        "partition_note": "descriptive partition selected by silhouette; not geological validation",
+        "sizes": {
+          "0": 1163,
+          "1": 62
+        },
+        "names": {
+          "0": "class 0-dominant",
+          "1": "class 2-dominant"
+        }
+      },
+      "distance_unchanged": true,
+      "source_distance_npz_sha256": "9d79809707b972c58a2ac5f610b94742afe76cb2001a24dabda1dedec12bc4ba"
+    },
+    {
+      "source_run": "hole-seq_combined-20261014T121618-40fc62",
+      "run_id": "hole-seq_combined-20261014T123019-4f7a0f",
+      "sensor": "seq_combined",
+      "holes": 1106,
+      "grouping": {
+        "grouping_version": "average-linkage-replicated-groups-v2",
+        "candidate_k": [
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9,
+          10,
+          11,
+          12,
+          13,
+          14,
+          15
+        ],
+        "algorithm": "average linkage; exact merge-count cut",
+        "support_policy": {
+          "minimum_holes_per_group": 2,
+          "meaning": "replication floor for descriptive groups; not geological validation"
+        },
+        "k_rule": "smallest K within 0.02 of best silhouette among supported candidates",
+        "k": 2,
+        "scores": [
+          {
+            "k": 2,
+            "actual_k": 2,
+            "silhouette": 0.18096792883435547,
+            "singletons": 0,
+            "cluster_sizes": [
+              681,
+              425
+            ],
+            "min_size": 425,
+            "valid": true,
+            "reason": null
+          },
+          {
+            "k": 3,
+            "actual_k": 3,
+            "silhouette": 0.17005153380191426,
+            "singletons": 0,
+            "cluster_sizes": [
+              681,
+              346,
+              79
+            ],
+            "min_size": 79,
+            "valid": true,
+            "reason": null
+          },
+          {
+            "k": 4,
+            "actual_k": 4,
+            "silhouette": 0.12833402110792855,
+            "singletons": 0,
+            "cluster_sizes": [
+              679,
+              346,
+              79,
+              2
+            ],
+            "min_size": 2,
+            "valid": true,
+            "reason": null
+          },
+          {
+            "k": 5,
+            "actual_k": 5,
+            "silhouette": 0.10781782025325387,
+            "singletons": 0,
+            "cluster_sizes": [
+              679,
+              346,
+              66,
+              13,
+              2
+            ],
+            "min_size": 2,
+            "valid": true,
+            "reason": null
+          },
+          {
+            "k": 6,
+            "actual_k": 6,
+            "silhouette": 0.11013340991354051,
+            "singletons": 0,
+            "cluster_sizes": [
+              679,
+              218,
+              128,
+              66,
+              13,
+              2
+            ],
+            "min_size": 2,
+            "valid": true,
+            "reason": null
+          },
+          {
+            "k": 7,
+            "actual_k": 7,
+            "silhouette": 0.10899742897826498,
+            "singletons": 0,
+            "cluster_sizes": [
+              600,
+              218,
+              128,
+              79,
+              66,
+              13,
+              2
+            ],
+            "min_size": 2,
+            "valid": true,
+            "reason": null
+          },
+          {
+            "k": 8,
+            "actual_k": 8,
+            "silhouette": 0.09703994335099787,
+            "singletons": 0,
+            "cluster_sizes": [
+              578,
+              218,
+              128,
+              79,
+              66,
+              22,
+              13,
+              2
+            ],
+            "min_size": 2,
+            "valid": true,
+            "reason": null
+          },
+          {
+            "k": 9,
+            "actual_k": 9,
+            "silhouette": 0.08819889443887749,
+            "singletons": 0,
+            "cluster_sizes": [
+              578,
+              218,
+              128,
+              79,
+              60,
+              22,
+              13,
+              6,
+              2
+            ],
+            "min_size": 2,
+            "valid": true,
+            "reason": null
+          },
+          {
+            "k": 10,
+            "actual_k": 10,
+            "silhouette": 0.09284851402304557,
+            "singletons": 0,
+            "cluster_sizes": [
+              578,
+              140,
+              128,
+              79,
+              78,
+              60,
+              22,
+              13,
+              6,
+              2
+            ],
+            "min_size": 2,
+            "valid": true,
+            "reason": null
+          },
+          {
+            "k": 11,
+            "actual_k": 11,
+            "silhouette": 0.07251284738858889,
+            "singletons": 0,
+            "cluster_sizes": [
+              578,
+              140,
+              128,
+              78,
+              64,
+              60,
+              22,
+              15,
+              13,
+              6,
+              2
+            ],
+            "min_size": 2,
+            "valid": true,
+            "reason": null
+          },
+          {
+            "k": 12,
+            "actual_k": 12,
+            "silhouette": 0.06991395998507835,
+            "singletons": 0,
+            "cluster_sizes": [
+              578,
+              140,
+              128,
+              78,
+              64,
+              60,
+              22,
+              15,
+              11,
+              6,
+              2,
+              2
+            ],
+            "min_size": 2,
+            "valid": true,
+            "reason": null
+          },
+          {
+            "k": 13,
+            "actual_k": 13,
+            "silhouette": 0.09085807168261767,
+            "singletons": 0,
+            "cluster_sizes": [
+              404,
+              174,
+              140,
+              128,
+              78,
+              64,
+              60,
+              22,
+              15,
+              11,
+              6,
+              2,
+              2
+            ],
+            "min_size": 2,
+            "valid": true,
+            "reason": null
+          },
+          {
+            "k": 14,
+            "actual_k": 14,
+            "silhouette": 0.0837590544058999,
+            "singletons": 0,
+            "cluster_sizes": [
+              404,
+              174,
+              140,
+              121,
+              78,
+              64,
+              60,
+              22,
+              15,
+              11,
+              7,
+              6,
+              2,
+              2
+            ],
+            "min_size": 2,
+            "valid": true,
+            "reason": null
+          },
+          {
+            "k": 15,
+            "actual_k": 15,
+            "silhouette": 0.07760223827324866,
+            "singletons": 0,
+            "cluster_sizes": [
+              404,
+              174,
+              140,
+              117,
+              78,
+              64,
+              60,
+              22,
+              15,
+              11,
+              7,
+              6,
+              4,
+              2,
+              2
+            ],
+            "min_size": 2,
+            "valid": true,
+            "reason": null
+          }
+        ],
+        "status": "selected",
+        "descriptive_container": false,
+        "tied_merge_heights": false,
+        "partition_note": "descriptive partition selected by silhouette; not geological validation",
+        "sizes": {
+          "0": 681,
+          "1": 425
+        },
+        "names": {
+          "0": "Chlorite-FeMg + Quartz + Hornblende",
+          "1": "Quartz + Kaolinite-WX + Muscovite"
+        }
+      },
+      "distance_unchanged": true,
+      "source_distance_npz_sha256": "14c7eee95bce9b37275bffbabed40ae60d1a81a1074027508143b1138ac6b094"
+    },
+    {
+      "source_run": "hole-seq_swir-20261014T121525-b51998",
+      "run_id": "hole-seq_swir-20261014T123020-72a5b5",
+      "sensor": "seq_swir",
+      "holes": 1178,
+      "grouping": {
+        "grouping_version": "average-linkage-replicated-groups-v2",
+        "candidate_k": [
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9,
+          10,
+          11,
+          12,
+          13,
+          14,
+          15
+        ],
+        "algorithm": "average linkage; exact merge-count cut",
+        "support_policy": {
+          "minimum_holes_per_group": 2,
+          "meaning": "replication floor for descriptive groups; not geological validation"
+        },
+        "k_rule": "smallest K within 0.02 of best silhouette among supported candidates",
+        "k": 2,
+        "scores": [
+          {
+            "k": 2,
+            "actual_k": 2,
+            "silhouette": 0.246274673669475,
+            "singletons": 0,
+            "cluster_sizes": [
+              1059,
+              119
+            ],
+            "min_size": 119,
+            "valid": true,
+            "reason": null
+          },
+          {
+            "k": 3,
+            "actual_k": 3,
+            "silhouette": 0.1595370431444847,
+            "singletons": 0,
+            "cluster_sizes": [
+              1053,
+              119,
+              6
+            ],
+            "min_size": 6,
+            "valid": true,
+            "reason": null
+          },
+          {
+            "k": 4,
+            "actual_k": 4,
+            "silhouette": 0.14496157043284924,
+            "singletons": 0,
+            "cluster_sizes": [
+              802,
+              251,
+              119,
+              6
+            ],
+            "min_size": 6,
+            "valid": true,
+            "reason": null
+          },
+          {
+            "k": 5,
+            "actual_k": 5,
+            "silhouette": 0.15460550045934826,
+            "singletons": 0,
+            "cluster_sizes": [
+              657,
+              251,
+              145,
+              119,
+              6
+            ],
+            "min_size": 6,
+            "valid": true,
+            "reason": null
+          },
+          {
+            "k": 6,
+            "actual_k": 6,
+            "silhouette": 0.1532421568572172,
+            "singletons": 0,
+            "cluster_sizes": [
+              657,
+              193,
+              145,
+              119,
+              58,
+              6
+            ],
+            "min_size": 6,
+            "valid": true,
+            "reason": null
+          },
+          {
+            "k": 7,
+            "actual_k": 7,
+            "silhouette": 0.13694061978168384,
+            "singletons": 0,
+            "cluster_sizes": [
+              657,
+              193,
+              119,
+              101,
+              58,
+              44,
+              6
+            ],
+            "min_size": 6,
+            "valid": true,
+            "reason": null
+          },
+          {
+            "k": 8,
+            "actual_k": 8,
+            "silhouette": 0.12730957394348638,
+            "singletons": 0,
+            "cluster_sizes": [
+              657,
+              173,
+              119,
+              101,
+              58,
+              44,
+              20,
+              6
+            ],
+            "min_size": 6,
+            "valid": true,
+            "reason": null
+          },
+          {
+            "k": 9,
+            "actual_k": 9,
+            "silhouette": 0.10135800079391875,
+            "singletons": 0,
+            "cluster_sizes": [
+              657,
+              173,
+              119,
+              98,
+              58,
+              44,
+              20,
+              6,
+              3
+            ],
+            "min_size": 3,
+            "valid": true,
+            "reason": null
+          },
+          {
+            "k": 10,
+            "actual_k": 10,
+            "silhouette": 0.10841285243655824,
+            "singletons": 0,
+            "cluster_sizes": [
+              657,
+              119,
+              98,
+              92,
+              81,
+              58,
+              44,
+              20,
+              6,
+              3
+            ],
+            "min_size": 3,
+            "valid": true,
+            "reason": null
+          },
+          {
+            "k": 11,
+            "actual_k": 11,
+            "silhouette": 0.1095340690534455,
+            "singletons": 0,
+            "cluster_sizes": [
+              657,
+              119,
+              98,
+              81,
+              58,
+              54,
+              44,
+              38,
+              20,
+              6,
+              3
+            ],
+            "min_size": 3,
+            "valid": true,
+            "reason": null
+          },
+          {
+            "k": 12,
+            "actual_k": 12,
+            "silhouette": 0.09952314751953091,
+            "singletons": 0,
+            "cluster_sizes": [
+              657,
+              119,
+              98,
+              81,
+              58,
+              54,
+              44,
+              38,
+              16,
+              6,
+              4,
+              3
+            ],
+            "min_size": 3,
+            "valid": true,
+            "reason": null
+          },
+          {
+            "k": 13,
+            "actual_k": 13,
+            "silhouette": 0.10701417711693868,
+            "singletons": 0,
+            "cluster_sizes": [
+              553,
+              119,
+              104,
+              98,
+              81,
+              58,
+              54,
+              44,
+              38,
+              16,
+              6,
+              4,
+              3
+            ],
+            "min_size": 3,
+            "valid": true,
+            "reason": null
+          },
+          {
+            "k": 14,
+            "actual_k": 14,
+            "silhouette": 0.10229179081801355,
+            "singletons": 0,
+            "cluster_sizes": [
+              553,
+              119,
+              104,
+              98,
+              81,
+              58,
+              54,
+              44,
+              36,
+              16,
+              6,
+              4,
+              3,
+              2
+            ],
+            "min_size": 2,
+            "valid": true,
+            "reason": null
+          },
+          {
+            "k": 15,
+            "actual_k": 15,
+            "silhouette": 0.08836926942257654,
+            "singletons": 0,
+            "cluster_sizes": [
+              553,
+              119,
+              104,
+              81,
+              66,
+              58,
+              54,
+              44,
+              36,
+              32,
+              16,
+              6,
+              4,
+              3,
+              2
+            ],
+            "min_size": 2,
+            "valid": true,
+            "reason": null
+          }
+        ],
+        "status": "selected",
+        "descriptive_container": false,
+        "tied_merge_heights": false,
+        "partition_note": "descriptive partition selected by silhouette; not geological validation",
+        "sizes": {
+          "0": 1059,
+          "1": 119
+        },
+        "names": {
+          "0": "Chlorite-FeMg + Muscovite + Hornblende",
+          "1": "Kaolinite-WX + Kaolinite-PX + Dickite"
+        }
+      },
+      "distance_unchanged": true,
+      "source_distance_npz_sha256": "e4aba0722a24e2a9f7edf04ac2eaf98c7809d39757a4a2d9bc757fef6988a6f7"
+    },
+    {
+      "source_run": "hole-seq_tir-20261014T121614-bfab29",
+      "run_id": "hole-seq_tir-20261014T123021-4b2327",
+      "sensor": "seq_tir",
+      "holes": 1140,
+      "grouping": {
+        "grouping_version": "average-linkage-replicated-groups-v2",
+        "candidate_k": [
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9,
+          10,
+          11,
+          12,
+          13,
+          14,
+          15
+        ],
+        "algorithm": "average linkage; exact merge-count cut",
+        "support_policy": {
+          "minimum_holes_per_group": 2,
+          "meaning": "replication floor for descriptive groups; not geological validation"
+        },
+        "k_rule": "smallest K within 0.02 of best silhouette among supported candidates",
+        "k": 2,
+        "scores": [
+          {
+            "k": 2,
+            "actual_k": 2,
+            "silhouette": 0.19174144426225453,
+            "singletons": 0,
+            "cluster_sizes": [
+              1017,
+              123
+            ],
+            "min_size": 123,
+            "valid": true,
+            "reason": null
+          },
+          {
+            "k": 3,
+            "actual_k": 3,
+            "silhouette": 0.16265315480881629,
+            "singletons": 0,
+            "cluster_sizes": [
+              953,
+              123,
+              64
+            ],
+            "min_size": 64,
+            "valid": true,
+            "reason": null
+          },
+          {
+            "k": 4,
+            "actual_k": 4,
+            "silhouette": 0.12182397995388214,
+            "singletons": 0,
+            "cluster_sizes": [
+              916,
+              123,
+              64,
+              37
+            ],
+            "min_size": 37,
+            "valid": true,
+            "reason": null
+          },
+          {
+            "k": 5,
+            "actual_k": 5,
+            "silhouette": 0.10466582421520285,
+            "singletons": 0,
+            "cluster_sizes": [
+              916,
+              123,
+              64,
+              23,
+              14
+            ],
+            "min_size": 14,
+            "valid": true,
+            "reason": null
+          },
+          {
+            "k": 6,
+            "actual_k": 6,
+            "silhouette": 0.0968235687871412,
+            "singletons": 0,
+            "cluster_sizes": [
+              916,
+              66,
+              64,
+              57,
+              23,
+              14
+            ],
+            "min_size": 14,
+            "valid": true,
+            "reason": null
+          },
+          {
+            "k": 7,
+            "actual_k": 7,
+            "silhouette": 0.08719553121782636,
+            "singletons": 0,
+            "cluster_sizes": [
+              916,
+              66,
+              57,
+              57,
+              23,
+              14,
+              7
+            ],
+            "min_size": 7,
+            "valid": true,
+            "reason": null
+          },
+          {
+            "k": 8,
+            "actual_k": 8,
+            "silhouette": 0.07281365940936303,
+            "singletons": 0,
+            "cluster_sizes": [
+              916,
+              66,
+              57,
+              57,
+              17,
+              14,
+              7,
+              6
+            ],
+            "min_size": 6,
+            "valid": true,
+            "reason": null
+          },
+          {
+            "k": 9,
+            "actual_k": 9,
+            "silhouette": 0.1035040669019577,
+            "singletons": 0,
+            "cluster_sizes": [
+              709,
+              207,
+              66,
+              57,
+              57,
+              17,
+              14,
+              7,
+              6
+            ],
+            "min_size": 6,
+            "valid": true,
+            "reason": null
+          },
+          {
+            "k": 10,
+            "actual_k": 10,
+            "silhouette": 0.10115874078384411,
+            "singletons": 0,
+            "cluster_sizes": [
+              709,
+              207,
+              66,
+              57,
+              57,
+              17,
+              12,
+              7,
+              6,
+              2
+            ],
+            "min_size": 2,
+            "valid": true,
+            "reason": null
+          },
+          {
+            "k": 11,
+            "actual_k": 11,
+            "silhouette": 0.09417505315894564,
+            "singletons": 0,
+            "cluster_sizes": [
+              709,
+              207,
+              66,
+              57,
+              54,
+              17,
+              12,
+              7,
+              6,
+              3,
+              2
+            ],
+            "min_size": 2,
+            "valid": true,
+            "reason": null
+          },
+          {
+            "k": 12,
+            "actual_k": 12,
+            "silhouette": 0.07734465652494331,
+            "singletons": 0,
+            "cluster_sizes": [
+              709,
+              207,
+              66,
+              57,
+              47,
+              17,
+              12,
+              7,
+              7,
+              6,
+              3,
+              2
+            ],
+            "min_size": 2,
+            "valid": true,
+            "reason": null
+          },
+          {
+            "k": 13,
+            "actual_k": 13,
+            "silhouette": 0.08998501620259494,
+            "singletons": 0,
+            "cluster_sizes": [
+              593,
+              207,
+              116,
+              66,
+              57,
+              47,
+              17,
+              12,
+              7,
+              7,
+              6,
+              3,
+              2
+            ],
+            "min_size": 2,
+            "valid": true,
+            "reason": null
+          },
+          {
+            "k": 14,
+            "actual_k": 14,
+            "silhouette": 0.08127220676370726,
+            "singletons": 0,
+            "cluster_sizes": [
+              593,
+              207,
+              116,
+              66,
+              57,
+              47,
+              12,
+              11,
+              7,
+              7,
+              6,
+              6,
+              3,
+              2
+            ],
+            "min_size": 2,
+            "valid": true,
+            "reason": null
+          },
+          {
+            "k": 15,
+            "actual_k": 15,
+            "silhouette": 0.07926256686473436,
+            "singletons": 0,
+            "cluster_sizes": [
+              593,
+              207,
+              116,
+              57,
+              57,
+              47,
+              12,
+              11,
+              9,
+              7,
+              7,
+              6,
+              6,
+              3,
+              2
+            ],
+            "min_size": 2,
+            "valid": true,
+            "reason": null
+          }
+        ],
+        "status": "selected",
+        "descriptive_container": false,
+        "tied_merge_heights": false,
+        "partition_note": "descriptive partition selected by silhouette; not geological validation",
+        "sizes": {
+          "0": 1017,
+          "1": 123
+        },
+        "names": {
+          "0": "Quartz + Albite + Chlorite-FeMg",
+          "1": "Quartz + Talc + Augite"
+        }
+      },
+      "distance_unchanged": true,
+      "source_distance_npz_sha256": "347602425e1915926491b1902edf89cceb80dd88cb5b5e9dae79284033bb28a0"
+    },
+    {
+      "source_run": "hole-swir-20261014T121214-7e48f9",
+      "run_id": "hole-swir-20261014T123022-89a20a",
+      "sensor": "swir",
+      "holes": 1177,
+      "grouping": {
+        "grouping_version": "average-linkage-replicated-groups-v2",
+        "candidate_k": [
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9,
+          10,
+          11,
+          12,
+          13,
+          14,
+          15
+        ],
+        "algorithm": "average linkage; exact merge-count cut",
+        "support_policy": {
+          "minimum_holes_per_group": 2,
+          "meaning": "replication floor for descriptive groups; not geological validation"
+        },
+        "k_rule": "smallest K within 0.02 of best silhouette among supported candidates",
+        "k": 8,
+        "scores": [
+          {
+            "k": 2,
+            "actual_k": 2,
+            "silhouette": 0.18663887543993637,
+            "singletons": 0,
+            "cluster_sizes": [
+              948,
+              229
+            ],
+            "min_size": 229,
+            "valid": true,
+            "reason": null
+          },
+          {
+            "k": 3,
+            "actual_k": 3,
+            "silhouette": 0.21056178646497958,
+            "singletons": 0,
+            "cluster_sizes": [
+              774,
+              229,
+              174
+            ],
+            "min_size": 174,
+            "valid": true,
+            "reason": null
+          },
+          {
+            "k": 4,
+            "actual_k": 4,
+            "silhouette": 0.2060163827038581,
+            "singletons": 0,
+            "cluster_sizes": [
+              774,
+              174,
+              161,
+              68
+            ],
+            "min_size": 68,
+            "valid": true,
+            "reason": null
+          },
+          {
+            "k": 5,
+            "actual_k": 5,
+            "silhouette": 0.21165141400968784,
+            "singletons": 0,
+            "cluster_sizes": [
+              774,
+              161,
+              123,
+              68,
+              51
+            ],
+            "min_size": 51,
+            "valid": true,
+            "reason": null
+          },
+          {
+            "k": 6,
+            "actual_k": 6,
+            "silhouette": 0.21962014755404813,
+            "singletons": 0,
+            "cluster_sizes": [
+              665,
+              161,
+              123,
+              109,
+              68,
+              51
+            ],
+            "min_size": 51,
+            "valid": true,
+            "reason": null
+          },
+          {
+            "k": 7,
+            "actual_k": 7,
+            "silhouette": 0.23998940590472917,
+            "singletons": 0,
+            "cluster_sizes": [
+              515,
+              161,
+              150,
+              123,
+              109,
+              68,
+              51
+            ],
+            "min_size": 51,
+            "valid": true,
+            "reason": null
+          },
+          {
+            "k": 8,
+            "actual_k": 8,
+            "silhouette": 0.27491672058085226,
+            "singletons": 0,
+            "cluster_sizes": [
+              306,
+              209,
+              161,
+              150,
+              123,
+              109,
+              68,
+              51
+            ],
+            "min_size": 51,
+            "valid": true,
+            "reason": null
+          },
+          {
+            "k": 9,
+            "actual_k": 9,
+            "silhouette": 0.24381854711876774,
+            "singletons": 0,
+            "cluster_sizes": [
+              295,
+              209,
+              161,
+              150,
+              123,
+              109,
+              68,
+              51,
+              11
+            ],
+            "min_size": 11,
+            "valid": true,
+            "reason": null
+          },
+          {
+            "k": 10,
+            "actual_k": 10,
+            "silhouette": 0.23279118411750985,
+            "singletons": 0,
+            "cluster_sizes": [
+              295,
+              209,
+              161,
+              150,
+              109,
+              85,
+              68,
+              51,
+              38,
+              11
+            ],
+            "min_size": 11,
+            "valid": true,
+            "reason": null
+          },
+          {
+            "k": 11,
+            "actual_k": 11,
+            "silhouette": 0.23028173204943067,
+            "singletons": 0,
+            "cluster_sizes": [
+              295,
+              209,
+              161,
+              150,
+              109,
+              68,
+              68,
+              51,
+              38,
+              17,
+              11
+            ],
+            "min_size": 11,
+            "valid": true,
+            "reason": null
+          },
+          {
+            "k": 12,
+            "actual_k": 12,
+            "silhouette": 0.22382339610767524,
+            "singletons": 0,
+            "cluster_sizes": [
+              295,
+              209,
+              161,
+              150,
+              109,
+              68,
+              68,
+              45,
+              38,
+              17,
+              11,
+              6
+            ],
+            "min_size": 6,
+            "valid": true,
+            "reason": null
+          },
+          {
+            "k": 13,
+            "actual_k": 13,
+            "silhouette": 0.2087067072761752,
+            "singletons": 0,
+            "cluster_sizes": [
+              295,
+              209,
+              157,
+              150,
+              109,
+              68,
+              68,
+              45,
+              38,
+              17,
+              11,
+              6,
+              4
+            ],
+            "min_size": 4,
+            "valid": true,
+            "reason": null
+          },
+          {
+            "k": 14,
+            "actual_k": 14,
+            "silhouette": 0.19706805334897118,
+            "singletons": 0,
+            "cluster_sizes": [
+              295,
+              209,
+              157,
+              150,
+              109,
+              68,
+              64,
+              45,
+              38,
+              17,
+              11,
+              6,
+              4,
+              4
+            ],
+            "min_size": 4,
+            "valid": true,
+            "reason": null
+          },
+          {
+            "k": 15,
+            "actual_k": 15,
+            "silhouette": 0.19112309468986283,
+            "singletons": 0,
+            "cluster_sizes": [
+              295,
+              209,
+              157,
+              109,
+              101,
+              68,
+              64,
+              49,
+              45,
+              38,
+              17,
+              11,
+              6,
+              4,
+              4
+            ],
+            "min_size": 4,
+            "valid": true,
+            "reason": null
+          }
+        ],
+        "status": "selected",
+        "descriptive_container": false,
+        "tied_merge_heights": true,
+        "partition_note": "descriptive partition selected by silhouette; not geological validation",
+        "sizes": {
+          "0": 306,
+          "1": 209,
+          "2": 161,
+          "3": 150,
+          "4": 123,
+          "5": 109,
+          "6": 68,
+          "7": 51
+        },
+        "names": {
+          "0": "Chlorite-FeMg + Hornblende + Chlorite-Fe",
+          "1": "Muscovite + Chlorite-FeMg + Chlorite-Fe",
+          "4": "Phengite + Muscovite + Chlorite-FeMg",
+          "5": "Chlorite-Mg + Talc + Serpentine",
+          "2": "Kaolinite-WX + Kaolinite-PX + Montmorillonite",
+          "3": "Hornblende + Chlorite-FeMg + Muscovite",
+          "6": "Paragonite + Chlorite-Fe + Montmorillonite",
+          "7": "Dolomite-dominant"
+        }
+      },
+      "distance_unchanged": true,
+      "source_distance_npz_sha256": "2894d9d39e2fdc084e01e83899dc52e6f0b47877c339841d6942e7f87fa48e50"
+    },
+    {
+      "source_run": "hole-tir-20261014T121407-de1339",
+      "run_id": "hole-tir-20261014T123024-ebc2ff",
+      "sensor": "tir",
+      "holes": 1149,
+      "grouping": {
+        "grouping_version": "average-linkage-replicated-groups-v2",
+        "candidate_k": [
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9,
+          10,
+          11,
+          12,
+          13,
+          14,
+          15
+        ],
+        "algorithm": "average linkage; exact merge-count cut",
+        "support_policy": {
+          "minimum_holes_per_group": 2,
+          "meaning": "replication floor for descriptive groups; not geological validation"
+        },
+        "k_rule": "smallest K within 0.02 of best silhouette among supported candidates",
+        "k": 2,
+        "scores": [
+          {
+            "k": 2,
+            "actual_k": 2,
+            "silhouette": 0.6205045906943619,
+            "singletons": 0,
+            "cluster_sizes": [
+              791,
+              358
+            ],
+            "min_size": 358,
+            "valid": true,
+            "reason": null
+          },
+          {
+            "k": 3,
+            "actual_k": 3,
+            "silhouette": 0.558657387050251,
+            "singletons": 0,
+            "cluster_sizes": [
+              791,
+              296,
+              62
+            ],
+            "min_size": 62,
+            "valid": true,
+            "reason": null
+          },
+          {
+            "k": 4,
+            "actual_k": 4,
+            "silhouette": 0.5800949060292968,
+            "singletons": 0,
+            "cluster_sizes": [
+              411,
+              380,
+              296,
+              62
+            ],
+            "min_size": 62,
+            "valid": true,
+            "reason": null
+          },
+          {
+            "k": 5,
+            "actual_k": 5,
+            "silhouette": 0.5762960094363002,
+            "singletons": 0,
+            "cluster_sizes": [
+              411,
+              380,
+              158,
+              138,
+              62
+            ],
+            "min_size": 62,
+            "valid": true,
+            "reason": null
+          },
+          {
+            "k": 6,
+            "actual_k": 6,
+            "silhouette": 0.5760953772003674,
+            "singletons": 0,
+            "cluster_sizes": [
+              411,
+              232,
+              158,
+              148,
+              138,
+              62
+            ],
+            "min_size": 62,
+            "valid": true,
+            "reason": null
+          },
+          {
+            "k": 7,
+            "actual_k": 7,
+            "silhouette": 0.5780857764859535,
+            "singletons": 0,
+            "cluster_sizes": [
+              411,
+              232,
+              148,
+              138,
+              92,
+              66,
+              62
+            ],
+            "min_size": 62,
+            "valid": true,
+            "reason": null
+          },
+          {
+            "k": 8,
+            "actual_k": 8,
+            "silhouette": 0.5907986360920354,
+            "singletons": 0,
+            "cluster_sizes": [
+              411,
+              148,
+              138,
+              123,
+              109,
+              92,
+              66,
+              62
+            ],
+            "min_size": 62,
+            "valid": true,
+            "reason": null
+          },
+          {
+            "k": 9,
+            "actual_k": 9,
+            "silhouette": 0.6077680576362422,
+            "singletons": 0,
+            "cluster_sizes": [
+              301,
+              148,
+              138,
+              123,
+              110,
+              109,
+              92,
+              66,
+              62
+            ],
+            "min_size": 62,
+            "valid": true,
+            "reason": null
+          },
+          {
+            "k": 10,
+            "actual_k": 10,
+            "silhouette": 0.6067379792291949,
+            "singletons": 0,
+            "cluster_sizes": [
+              301,
+              148,
+              138,
+              123,
+              110,
+              109,
+              92,
+              66,
+              31,
+              31
+            ],
+            "min_size": 31,
+            "valid": true,
+            "reason": null
+          },
+          {
+            "k": 11,
+            "actual_k": 11,
+            "silhouette": 0.6068542997264946,
+            "singletons": 0,
+            "cluster_sizes": [
+              301,
+              148,
+              123,
+              110,
+              109,
+              92,
+              71,
+              67,
+              66,
+              31,
+              31
+            ],
+            "min_size": 31,
+            "valid": true,
+            "reason": null
+          },
+          {
+            "k": 12,
+            "actual_k": 12,
+            "silhouette": 0.6083076466848804,
+            "singletons": 0,
+            "cluster_sizes": [
+              301,
+              123,
+              110,
+              109,
+              92,
+              82,
+              71,
+              67,
+              66,
+              66,
+              31,
+              31
+            ],
+            "min_size": 31,
+            "valid": true,
+            "reason": null
+          },
+          {
+            "k": 13,
+            "actual_k": 13,
+            "silhouette": 0.6066754965716381,
+            "singletons": 0,
+            "cluster_sizes": [
+              301,
+              123,
+              110,
+              109,
+              82,
+              71,
+              67,
+              66,
+              66,
+              51,
+              41,
+              31,
+              31
+            ],
+            "min_size": 31,
+            "valid": true,
+            "reason": null
+          },
+          {
+            "k": 14,
+            "actual_k": 14,
+            "silhouette": 0.6074944955035904,
+            "singletons": 0,
+            "cluster_sizes": [
+              301,
+              123,
+              110,
+              109,
+              82,
+              71,
+              67,
+              66,
+              51,
+              43,
+              41,
+              31,
+              31,
+              23
+            ],
+            "min_size": 23,
+            "valid": true,
+            "reason": null
+          },
+          {
+            "k": 15,
+            "actual_k": 15,
+            "silhouette": 0.6110399575114399,
+            "singletons": 0,
+            "cluster_sizes": [
+              301,
+              123,
+              110,
+              109,
+              82,
+              71,
+              67,
+              66,
+              51,
+              43,
+              41,
+              31,
+              23,
+              17,
+              14
+            ],
+            "min_size": 14,
+            "valid": true,
+            "reason": null
+          }
+        ],
+        "status": "selected",
+        "descriptive_container": false,
+        "tied_merge_heights": true,
+        "partition_note": "descriptive partition selected by silhouette; not geological validation",
+        "sizes": {
+          "0": 791,
+          "1": 358
+        },
+        "names": {
+          "0": "Quartz-dominant",
+          "1": "Quartz + Chlorite-FeMg + Hornblende"
+        }
+      },
+      "distance_unchanged": true,
+      "source_distance_npz_sha256": "455fe849e7589dccc1e63a3159fefa601a445a2b252050746dc2c33c7a7672fe"
+    }
+  ],
+  "promoted": false,
+  "grouping_source_unchanged": true
+}

@@ -21,7 +21,7 @@ const ANALYSES = {
 const ANALYTES = ['Au', 'Cu', 'Zn', 'Pb', 'Ni', 'U', 'Th', 'As', 'Cr', 'S', 'K2O', 'MgO', 'CaO', 'Na2O', 'Fe2O3T', 'SiO2', 'Al2O3'];
 let map, layer, focusLayer, rows = [], colourBy = 'status', view = 'combined', holeK = 'auto', clusterNames = {};
 let chem = null, analyte = 'U', threshold = 100;
-let focus = null, simView = 'combined';
+let focus = null, simView = 'combined', groupingSupported = true;
 const markers = new Map();
 
 function statusOf(r) {
@@ -47,7 +47,7 @@ function chemColour(r) {
 function colourOf(r) {
   if (colourBy === 'chem') return chemColour(r);
   if (colourBy === 'status') return STATUS[statusOf(r)][1];
-  if (colourBy === 'cluster') return r.cluster_id == null ? '#d5dcdf' : clusterColor(r.cluster_id);
+  if (colourBy === 'cluster') return r.cluster_id == null || !groupingSupported ? '#d5dcdf' : clusterColor(r.cluster_id);
   if (colourBy === 'anomaly') return r.anomaly_score == null ? '#d5dcdf' : scoreColor(r.anomaly_score);
   if (colourBy === 'assays') return r.n_assay > 0 ? '#0f6e68' : '#d5dcdf';
   if (colourBy === 'tsa') return tsaColour(r.tsa_agreement);
@@ -127,8 +127,9 @@ async function load() {
   const data = await api(`/api/v2/map?view=${view}`);
   rows = data.rows.map(r => Object.fromEntries(data.columns.map((c, i) => [c, r[i]])));
   clusterNames = data.cluster_names || {};
+  groupingSupported = data.grouping?.supported !== false;
   const cut = await recut(view, holeK).catch(() => null);
-  if (cut) { rows.forEach(r => { r.cluster_id = cut.assignments[r.hole_id] ?? null; }); clusterNames = cut.names; }
+  if (cut) { rows.forEach(r => { r.cluster_id = cut.assignments[r.hole_id] ?? null; }); clusterNames = cut.names; groupingSupported = cut.supported !== false; }
 }
 
 function setupMap() {
@@ -165,7 +166,7 @@ function hoverText(r) {
   return `<b>${esc(r.hole_id)}</b>${r.name && r.name !== r.hole_id ? ` <span class="tip-minerals">${esc(r.name)}</span>` : ''}
     ${mineralLine('SWIR', r.swir_top)}${mineralLine('TIR', r.tir_top)}
     ${!r.swir_top && !r.tir_top ? `<div class="tip-minerals">${esc(statusText(PROCESSED, r.processed_status)[0])}</div>` : ''}
-    ${colourBy === 'cluster' && r.cluster_id != null ? `<div>Hole cluster ${r.cluster_id}: ${esc(clusterNames[r.cluster_id] || '')}</div>` : ''}
+    ${colourBy === 'cluster' && r.cluster_id != null ? `<div>${groupingSupported ? `Hole cluster ${r.cluster_id}: ${esc(clusterNames[r.cluster_id] || '')}` : 'Unassigned: no supported grouping'}</div>` : ''}
     ${colourBy === 'anomaly' && r.anomaly_score != null ? `<div>Unusualness ${pct(r.anomaly_score)}</div>` : ''}
     ${r.tsa_agreement != null ? `<div class="tip-minerals">Machine vs analyst (SWIR): first mineral agrees in ${pct(r.tsa_agreement)} of readings</div>` : ''}
     ${colourBy === 'chem' && h ? `<div>max ${analyte} ${num(h.max, 2)} ${chem.unit} · ${h.above} samples &gt; ${threshold}</div>` : ''}
@@ -230,6 +231,7 @@ function clearFocus() { focus = null; draw(); }
 function legend(shown) {
   let items = [];
   if (colourBy === 'status') items = Object.entries(STATUS).map(([k, [label, color]]) => [label, color, shown.filter(r => statusOf(r) === k).length]);
+  else if (colourBy === 'cluster' && !groupingSupported) items = [['Unassigned: no supported grouping', '#d5dcdf', shown.filter(r => r.cluster_id != null).length]];
   else if (colourBy === 'cluster') items = [...new Set(shown.map(r => r.cluster_id).filter(v => v != null))].sort((a, b) => a - b).map(id => [`${id} · ${clusterNames[id] || 'Hole cluster'}`, clusterColor(id), shown.filter(r => r.cluster_id === id).length]);
   else if (colourBy === 'anomaly') items = [['Typical', scoreColor(.5)], ['Unusual', scoreColor(.85)], ['Most unusual', scoreColor(1)], ['Not analysed', '#d5dcdf']];
   else if (colourBy === 'assays') items = [['Has assays', '#0f6e68'], ['No assays', '#d5dcdf']];

@@ -1,0 +1,439 @@
+{
+  "captured_at": "2026-10-14T12:21:21.281486+00:00",
+  "sample_holes_per_sensor": 24,
+  "seed": 42,
+  "sources": [
+    {
+      "sensor": "swir",
+      "hole_id": "ABDP2",
+      "dataset_id": "d9021cac-0372-4178-8afa-53a308f528c",
+      "source_path": "C:\\HyLoggerData\\downloads\\processed\\ABDP2\\d9021cac-0372-4178-8afa-53a308f528c\\scalar_logs.parquet",
+      "sha256": "1280433dc947aa959042aba365c05b41fef90073c45ca7028f29eb84d77ffca1",
+      "active_qc_sha256": "1280433dc947aa959042aba365c05b41fef90073c45ca7028f29eb84d77ffca1",
+      "matches_active_qc": true
+    },
+    {
+      "sensor": "swir",
+      "hole_id": "ABDP5B",
+      "dataset_id": "cb7a6b90-6952-4c85-b943-acdd7025dac",
+      "source_path": "C:\\HyLoggerData\\downloads\\processed\\ABDP5B\\cb7a6b90-6952-4c85-b943-acdd7025dac\\scalar_logs.parquet",
+      "sha256": "aa42829b214123b564e28b4fe06a251c66a1c1f3e62eac090c44b8c7dbe5ad53",
+      "active_qc_sha256": "aa42829b214123b564e28b4fe06a251c66a1c1f3e62eac090c44b8c7dbe5ad53",
+      "matches_active_qc": true
+    },
+    {
+      "sensor": "swir",
+      "hole_id": "ACACIA 2",
+      "dataset_id": "7c955413-e9ea-45a1-aae3-fd0afedcb64",
+      "source_path": "C:\\HyLoggerData\\downloads\\processed\\ACACIA 2\\7c955413-e9ea-45a1-aae3-fd0afedcb64\\scalar_logs.parquet",
+      "sha256": "c95dfaa55d714ab384a9bdd125679894b9e0698616df90411b6cb40b985da07d",
+      "active_qc_sha256": "c95dfaa55d714ab384a9bdd125679894b9e0698616df90411b6cb40b985da07d",
+      "matches_active_qc": true
+    },
+    {
+      "sensor": "swir",
+      "hole_id": "BBDD0003",
+      "dataset_id": "9dbbf130-84e9-4c12-8925-35faa4e462c",
+      "source_path": "C:\\HyLoggerData\\downloads\\processed\\BBDD0003\\9dbbf130-84e9-4c12-8925-35faa4e462c\\scalar_logs.parquet",
+      "sha256": "c5f9fa3a04be27ec9034d80f62d7e59358424f484ecc354232b47f6bcaa24436",
+      "active_qc_sha256": "c5f9fa3a04be27ec9034d80f62d7e59358424f484ecc354232b47f6bcaa24436",
+      "matches_active_qc": true
+    },
+    {
+      "sensor": "swir",
+      "hole_id": "BNRD005",
+      "dataset_id": "0991cc96-b4c9-4558-a458-f7f44590e55",
+      "source_path": "C:\\HyLoggerData\\downloads\\processed\\BNRD005\\0991cc96-b4c9-4558-a458-f7f44590e55\\scalar_logs.parquet",
+      "sha256": "2826c5d6208547cf0b014e69c69b8a709fbb56cf535ee7f7d05de15165951434",
+      "active_qc_sha256": "2826c5d6208547cf0b014e69c69b8a709fbb56cf535ee7f7d05de15165951434",
+      "matches_active_qc": true
+    },
+    {
+      "sensor": "swir",
+      "hole_id": "BRWD0014",
+      "dataset_id": "ffd512b2-bb32-4f5d-9916-c620d4f4d9a",
+      "source_path": "C:\\HyLoggerData\\downloads\\processed\\BRWD0014\\ffd512b2-bb32-4f5d-9916-c620d4f4d9a\\scalar_logs.parquet",
+      "sha256": "009b391ca4a32f4873385a05e1f4bb94bf8fbd74ebfe820b03014dd9182990de",
+      "active_qc_sha256": "009b391ca4a32f4873385a05e1f4bb94bf8fbd74ebfe820b03014dd9182990de",
+      "matches_active_qc": true
+    },
+    {
+      "sensor": "swir",
+      "hole_id": "ERCD0151",
+      "dataset_id": "c7314191-29a7-4596-b2b5-1d52c855269",
+      "source_path": "C:\\HyLoggerData\\downloads\\processed\\ERCD0151\\c7314191-29a7-4596-b2b5-1d52c855269\\scalar_logs.parquet",
+      "sha256": "a37e8dec9679fe316c5faabbb8712ab8644f08db391c342f5e3b512955f6f1d4",
+      "active_qc_sha256": "a37e8dec9679fe316c5faabbb8712ab8644f08db391c342f5e3b512955f6f1d4",
+      "matches_active_qc": true
+    },
+    {
+      "sensor": "swir",
+      "hole_id": "GSWA GNEUDNA 1",
+      "dataset_id": "849f2959-02e7-4180-a035-a8a01e20968",
+      "source_path": "C:\\HyLoggerData\\downloads\\processed\\GSWA GNEUDNA 1\\849f2959-02e7-4180-a035-a8a01e20968\\scalar_logs.parquet",
+      "sha256": "f548a73df0995f7de905741f5c338621d18a2fe5a60b12f9c63b2ccb5870b8a1",
+      "active_qc_sha256": "f548a73df0995f7de905741f5c338621d18a2fe5a60b12f9c63b2ccb5870b8a1",
+      "matches_active_qc": true
+    },
+    {
+      "sensor": "swir",
+      "hole_id": "GTRCD001",
+      "dataset_id": "e7a9b9a2-129e-4d31-b6ea-f3465ac77a5",
+      "source_path": "C:\\HyLoggerData\\downloads\\processed\\GTRCD001\\e7a9b9a2-129e-4d31-b6ea-f3465ac77a5\\scalar_logs.parquet",
+      "sha256": "29f65a77294c5c5289b5f03863c17f790fb230b5797e518521516a9738b00697",
+      "active_qc_sha256": "29f65a77294c5c5289b5f03863c17f790fb230b5797e518521516a9738b00697",
+      "matches_active_qc": true
+    },
+    {
+      "sensor": "swir",
+      "hole_id": "HCRD0053",
+      "dataset_id": "38bbb767-8028-4f1c-874a-4b7682085e0",
+      "source_path": "C:\\HyLoggerData\\downloads\\processed\\HCRD0053\\38bbb767-8028-4f1c-874a-4b7682085e0\\scalar_logs.parquet",
+      "sha256": "c272db09278f25b405d661cc124ccd462d6087b3436014db831e445200829d40",
+      "active_qc_sha256": "c272db09278f25b405d661cc124ccd462d6087b3436014db831e445200829d40",
+      "matches_active_qc": true
+    },
+    {
+      "sensor": "swir",
+      "hole_id": "KPDDH009",
+      "dataset_id": "847f9fb7-db73-4678-a6df-c3f2bb85185",
+      "source_path": "C:\\HyLoggerData\\downloads\\processed\\KPDDH009\\847f9fb7-db73-4678-a6df-c3f2bb85185\\scalar_logs.parquet",
+      "sha256": "0c3a654e18afd4fa2cee62a8a6c29da5b47ef051daef33d2aa069f13f84632af",
+      "active_qc_sha256": "0c3a654e18afd4fa2cee62a8a6c29da5b47ef051daef33d2aa069f13f84632af",
+      "matches_active_qc": true
+    },
+    {
+      "sensor": "swir",
+      "hole_id": "LEFD003",
+      "dataset_id": "e7ddc181-c614-4a3d-9710-6f4bc74c961",
+      "source_path": "C:\\HyLoggerData\\downloads\\processed\\LEFD003\\e7ddc181-c614-4a3d-9710-6f4bc74c961\\scalar_logs.parquet",
+      "sha256": "83710069bb6dd3ceb47bdeed7dc44ab479ba9dcd70a0a1bf7b06c04157e774aa",
+      "active_qc_sha256": "83710069bb6dd3ceb47bdeed7dc44ab479ba9dcd70a0a1bf7b06c04157e774aa",
+      "matches_active_qc": true
+    },
+    {
+      "sensor": "swir",
+      "hole_id": "LJM-D003",
+      "dataset_id": "37605598-98f9-44c2-b0a6-446a5e824fa",
+      "source_path": "C:\\HyLoggerData\\downloads\\processed\\LJM-D003\\37605598-98f9-44c2-b0a6-446a5e824fa\\scalar_logs.parquet",
+      "sha256": "0dd40a9875b7ef87bc531391ccd234d6bde40585d9f31801cf96b93734632a3f",
+      "active_qc_sha256": "0dd40a9875b7ef87bc531391ccd234d6bde40585d9f31801cf96b93734632a3f",
+      "matches_active_qc": true
+    },
+    {
+      "sensor": "swir",
+      "hole_id": "MTD006",
+      "dataset_id": "f0f2d7b7-ac6e-4ebf-b30a-f5f564c2f54",
+      "source_path": "C:\\HyLoggerData\\downloads\\processed\\MTD006\\f0f2d7b7-ac6e-4ebf-b30a-f5f564c2f54\\scalar_logs.parquet",
+      "sha256": "89c87d0693616f4a0b42863416606d89012df61f1f375725501cc31c22167bd4",
+      "active_qc_sha256": "89c87d0693616f4a0b42863416606d89012df61f1f375725501cc31c22167bd4",
+      "matches_active_qc": true
+    },
+    {
+      "sensor": "swir",
+      "hole_id": "NSD002",
+      "dataset_id": "3a477a8f-9eb7-4c3f-ae9f-924afef765d",
+      "source_path": "C:\\HyLoggerData\\downloads\\processed\\NSD002\\3a477a8f-9eb7-4c3f-ae9f-924afef765d\\scalar_logs.parquet",
+      "sha256": "a24cae9a78bc4aa57b5a3f526b48d6bee8ee464569c645152497935c8e7cfdcd",
+      "active_qc_sha256": "a24cae9a78bc4aa57b5a3f526b48d6bee8ee464569c645152497935c8e7cfdcd",
+      "matches_active_qc": true
+    },
+    {
+      "sensor": "swir",
+      "hole_id": "PARC003",
+      "dataset_id": "00cc6907-cc2c-429d-beab-cfcce11eda3",
+      "source_path": "C:\\HyLoggerData\\downloads\\processed\\PARC003\\00cc6907-cc2c-429d-beab-cfcce11eda3\\scalar_logs.parquet",
+      "sha256": "8829fca8af886849e232be19faabc0251e4437aed5181b83bcff6101f1533525",
+      "active_qc_sha256": "8829fca8af886849e232be19faabc0251e4437aed5181b83bcff6101f1533525",
+      "matches_active_qc": true
+    },
+    {
+      "sensor": "swir",
+      "hole_id": "PERINDI 1",
+      "dataset_id": "66cef009-8400-4106-8d03-a98c32f8f7c",
+      "source_path": "C:\\HyLoggerData\\downloads\\processed\\PERINDI 1\\66cef009-8400-4106-8d03-a98c32f8f7c\\scalar_logs.parquet",
+      "sha256": "3c7eecdea329ac5d82e2cb8f42fec9fbf4a9b10946b5e975bba8df2a6346be31",
+      "active_qc_sha256": "3c7eecdea329ac5d82e2cb8f42fec9fbf4a9b10946b5e975bba8df2a6346be31",
+      "matches_active_qc": true
+    },
+    {
+      "sensor": "swir",
+      "hole_id": "PWD 4",
+      "dataset_id": "545679fc-e67a-4ebe-9a04-1c6aeb84f02",
+      "source_path": "C:\\HyLoggerData\\downloads\\processed\\PWD 4\\545679fc-e67a-4ebe-9a04-1c6aeb84f02\\scalar_logs.parquet",
+      "sha256": "abcfc38b84396fdafb3aaf929e09718029c5208475d7fcbfa4ca05803b354099",
+      "active_qc_sha256": "abcfc38b84396fdafb3aaf929e09718029c5208475d7fcbfa4ca05803b354099",
+      "matches_active_qc": true
+    },
+    {
+      "sensor": "swir",
+      "hole_id": "RBDD009",
+      "dataset_id": "19087855-ea30-48a7-94d6-51ab46e2c1f",
+      "source_path": "C:\\HyLoggerData\\downloads\\processed\\RBDD009\\19087855-ea30-48a7-94d6-51ab46e2c1f\\scalar_logs.parquet",
+      "sha256": "eb803b5061482ce827b9ad523354670a4e15e984aa82b101d5594d6a34642417",
+      "active_qc_sha256": "eb803b5061482ce827b9ad523354670a4e15e984aa82b101d5594d6a34642417",
+      "matches_active_qc": true
+    },
+    {
+      "sensor": "swir",
+      "hole_id": "RRLCRDD005",
+      "dataset_id": "108cd15d-baf9-460c-9cd3-97e7bba1994",
+      "source_path": "C:\\HyLoggerData\\downloads\\processed\\RRLCRDD005\\108cd15d-baf9-460c-9cd3-97e7bba1994\\scalar_logs.parquet",
+      "sha256": "541c12148d84cfddffba48c852c9a94ea90326b346bce91f3838d6a01e868767",
+      "active_qc_sha256": "541c12148d84cfddffba48c852c9a94ea90326b346bce91f3838d6a01e868767",
+      "matches_active_qc": true
+    },
+    {
+      "sensor": "swir",
+      "hole_id": "SDH11-02",
+      "dataset_id": "9168f463-2adb-4e81-bbae-810c977ee67",
+      "source_path": "C:\\HyLoggerData\\downloads\\processed\\SDH11-02\\9168f463-2adb-4e81-bbae-810c977ee67\\scalar_logs.parquet",
+      "sha256": "2cebd3c889997811f78e2bc399c608e399c6a74b4d5a4b79290821eeaf25aca0",
+      "active_qc_sha256": "2cebd3c889997811f78e2bc399c608e399c6a74b4d5a4b79290821eeaf25aca0",
+      "matches_active_qc": true
+    },
+    {
+      "sensor": "swir",
+      "hole_id": "SED185",
+      "dataset_id": "8e85eaaf-8920-4412-b210-71484c54afc",
+      "source_path": "C:\\HyLoggerData\\downloads\\processed\\SED185\\8e85eaaf-8920-4412-b210-71484c54afc\\scalar_logs.parquet",
+      "sha256": "050d046c606d2da1706c5594e10341ba03f852a2203829296c4b65c9fda746c7",
+      "active_qc_sha256": "050d046c606d2da1706c5594e10341ba03f852a2203829296c4b65c9fda746c7",
+      "matches_active_qc": true
+    },
+    {
+      "sensor": "swir",
+      "hole_id": "WBD055UD",
+      "dataset_id": "9722da74-eaa2-4c0a-953b-c58b2e30e46",
+      "source_path": "C:\\HyLoggerData\\downloads\\processed\\WBD055UD\\9722da74-eaa2-4c0a-953b-c58b2e30e46\\scalar_logs.parquet",
+      "sha256": "3c877c4b40543cada15b586ebe6b9f1396d5301963f1d377eeaf5122871d4e6e",
+      "active_qc_sha256": "3c877c4b40543cada15b586ebe6b9f1396d5301963f1d377eeaf5122871d4e6e",
+      "matches_active_qc": true
+    },
+    {
+      "sensor": "swir",
+      "hole_id": "WTB-06",
+      "dataset_id": "ae67128d-2ecd-44fc-bab7-3dcde4ada31",
+      "source_path": "C:\\HyLoggerData\\downloads\\processed\\WTB-06\\ae67128d-2ecd-44fc-bab7-3dcde4ada31\\scalar_logs.parquet",
+      "sha256": "d838d3c9638cafff304554fb0ae8dfa2e527f25ac8d9299100150270e5b2127e",
+      "active_qc_sha256": "d838d3c9638cafff304554fb0ae8dfa2e527f25ac8d9299100150270e5b2127e",
+      "matches_active_qc": true
+    },
+    {
+      "sensor": "tir",
+      "hole_id": "ABND199",
+      "dataset_id": "d36781d6-68f2-47ff-95e9-ca5ba000b12",
+      "source_path": "C:\\HyLoggerData\\downloads\\processed\\ABND199\\d36781d6-68f2-47ff-95e9-ca5ba000b12\\scalar_logs.parquet",
+      "sha256": "7b847056ec75f03310daa4a480a523ed0995854993aea1b4a7f7cab4183dcac0",
+      "active_qc_sha256": "7b847056ec75f03310daa4a480a523ed0995854993aea1b4a7f7cab4183dcac0",
+      "matches_active_qc": true
+    },
+    {
+      "sensor": "tir",
+      "hole_id": "ADH 001",
+      "dataset_id": "52749e69-8e62-46a4-a86e-2b3b2df78b0",
+      "source_path": "C:\\HyLoggerData\\downloads\\processed\\ADH 001\\52749e69-8e62-46a4-a86e-2b3b2df78b0\\scalar_logs.parquet",
+      "sha256": "9fc265149b84c1c049ab2ac89f990b4f98a87663b281d1884d2e6995b878afbd",
+      "active_qc_sha256": "9fc265149b84c1c049ab2ac89f990b4f98a87663b281d1884d2e6995b878afbd",
+      "matches_active_qc": true
+    },
+    {
+      "sensor": "tir",
+      "hole_id": "AHDH0007",
+      "dataset_id": "f178cf64-242d-43e0-b586-a16b805d752",
+      "source_path": "C:\\HyLoggerData\\downloads\\processed\\AHDH0007\\f178cf64-242d-43e0-b586-a16b805d752\\scalar_logs.parquet",
+      "sha256": "cd446883bb66b679ed21172622d3641162c82ba7eb88b3be505760db1d5f6da3",
+      "active_qc_sha256": "cd446883bb66b679ed21172622d3641162c82ba7eb88b3be505760db1d5f6da3",
+      "matches_active_qc": true
+    },
+    {
+      "sensor": "tir",
+      "hole_id": "BBDD0011",
+      "dataset_id": "9629edcf-b3b1-40a3-8db6-369ad8d906e",
+      "source_path": "C:\\HyLoggerData\\downloads\\processed\\BBDD0011\\9629edcf-b3b1-40a3-8db6-369ad8d906e\\scalar_logs.parquet",
+      "sha256": "b07529e3cab7e89f1c48dab0d81b72a79c7a236505c699acd4d0a7dfb45a1c82",
+      "active_qc_sha256": "b07529e3cab7e89f1c48dab0d81b72a79c7a236505c699acd4d0a7dfb45a1c82",
+      "matches_active_qc": true
+    },
+    {
+      "sensor": "tir",
+      "hole_id": "BNDD004",
+      "dataset_id": "81f10b03-da13-4e98-9ad9-5808b75d7d8",
+      "source_path": "C:\\HyLoggerData\\downloads\\processed\\BNDD004\\81f10b03-da13-4e98-9ad9-5808b75d7d8\\scalar_logs.parquet",
+      "sha256": "aee5e78be0f430e2f9f4bcc28330421c58c114896aa82569d2c523112bfaf689",
+      "active_qc_sha256": "aee5e78be0f430e2f9f4bcc28330421c58c114896aa82569d2c523112bfaf689",
+      "matches_active_qc": true
+    },
+    {
+      "sensor": "tir",
+      "hole_id": "BRDD004",
+      "dataset_id": "d4895e55-a9fb-47dd-90d8-a98578c92ef",
+      "source_path": "C:\\HyLoggerData\\downloads\\processed\\BRDD004\\d4895e55-a9fb-47dd-90d8-a98578c92ef\\scalar_logs.parquet",
+      "sha256": "4fb2d555d49ca59247245a946650250ebe03db8d27d4b527f253cbf6c3d58c1c",
+      "active_qc_sha256": "4fb2d555d49ca59247245a946650250ebe03db8d27d4b527f253cbf6c3d58c1c",
+      "matches_active_qc": true
+    },
+    {
+      "sensor": "tir",
+      "hole_id": "EPT2294",
+      "dataset_id": "1dce5f15-8506-425f-82a5-69aa8bdf07e",
+      "source_path": "C:\\HyLoggerData\\downloads\\processed\\EPT2294\\1dce5f15-8506-425f-82a5-69aa8bdf07e\\scalar_logs.parquet",
+      "sha256": "6b84cbe2f14c9df89834623475d0f8ba0c718149ad2507b238c8f0c6bbbde73d",
+      "active_qc_sha256": "6b84cbe2f14c9df89834623475d0f8ba0c718149ad2507b238c8f0c6bbbde73d",
+      "matches_active_qc": true
+    },
+    {
+      "sensor": "tir",
+      "hole_id": "GRRCD007",
+      "dataset_id": "aca47b63-01a0-45e9-a87f-70c299cb8fd",
+      "source_path": "C:\\HyLoggerData\\downloads\\processed\\GRRCD007\\aca47b63-01a0-45e9-a87f-70c299cb8fd\\scalar_logs.parquet",
+      "sha256": "51b207933b43efe6c505c30dbc5c380664c2a054a34f65acfd7695591d83a7d8",
+      "active_qc_sha256": "51b207933b43efe6c505c30dbc5c380664c2a054a34f65acfd7695591d83a7d8",
+      "matches_active_qc": true
+    },
+    {
+      "sensor": "tir",
+      "hole_id": "GTC_8400_02",
+      "dataset_id": "83ff88f8-9119-4d31-ae25-b5cac548850",
+      "source_path": "C:\\HyLoggerData\\downloads\\processed\\GTC_8400_02\\83ff88f8-9119-4d31-ae25-b5cac548850\\scalar_logs.parquet",
+      "sha256": "b0e495b4fb721e4ca9a55267c89a1fa4d8d0193bfb166b5752fa8b7933448f6d",
+      "active_qc_sha256": "b0e495b4fb721e4ca9a55267c89a1fa4d8d0193bfb166b5752fa8b7933448f6d",
+      "matches_active_qc": true
+    },
+    {
+      "sensor": "tir",
+      "hole_id": "HCRD0050",
+      "dataset_id": "ce14e4f5-6b79-42ae-b31c-8cccfa3013a",
+      "source_path": "C:\\HyLoggerData\\downloads\\processed\\HCRD0050\\ce14e4f5-6b79-42ae-b31c-8cccfa3013a\\scalar_logs.parquet",
+      "sha256": "a62348db8afa884b7708e85520471356c93f95bfbbb717554e6847cd20d097e8",
+      "active_qc_sha256": "a62348db8afa884b7708e85520471356c93f95bfbbb717554e6847cd20d097e8",
+      "matches_active_qc": true
+    },
+    {
+      "sensor": "tir",
+      "hole_id": "LAMINARIA EAST 1",
+      "dataset_id": "f031f54b-e1e7-427b-9abf-5bbc5ba4bc2",
+      "source_path": "C:\\HyLoggerData\\downloads\\processed\\LAMINARIA EAST 1\\f031f54b-e1e7-427b-9abf-5bbc5ba4bc2\\scalar_logs.parquet",
+      "sha256": "b0a4b392025416f1c8b14f72cc3ab7697c87bd3dbf1fe71ba59c9ae74c98583f",
+      "active_qc_sha256": "b0a4b392025416f1c8b14f72cc3ab7697c87bd3dbf1fe71ba59c9ae74c98583f",
+      "matches_active_qc": true
+    },
+    {
+      "sensor": "tir",
+      "hole_id": "LGDD_052",
+      "dataset_id": "c937a823-61c9-4acf-ac9b-3cb97e9c2a2",
+      "source_path": "C:\\HyLoggerData\\downloads\\processed\\LGDD_052\\c937a823-61c9-4acf-ac9b-3cb97e9c2a2\\scalar_logs.parquet",
+      "sha256": "d32924531b739fc5c7bcb1cfe7733c243dc8564746fc993e6b4ed45a8b200f57",
+      "active_qc_sha256": "d32924531b739fc5c7bcb1cfe7733c243dc8564746fc993e6b4ed45a8b200f57",
+      "matches_active_qc": true
+    },
+    {
+      "sensor": "tir",
+      "hole_id": "LJM-D009",
+      "dataset_id": "6e14ae9a-5e56-44cd-800e-ed3770352d8",
+      "source_path": "C:\\HyLoggerData\\downloads\\processed\\LJM-D009\\6e14ae9a-5e56-44cd-800e-ed3770352d8\\scalar_logs.parquet",
+      "sha256": "0718a11a45b65a22e395edf968b1de6236d0a175a0b08fafc7d3e43a07a350c0",
+      "active_qc_sha256": "0718a11a45b65a22e395edf968b1de6236d0a175a0b08fafc7d3e43a07a350c0",
+      "matches_active_qc": true
+    },
+    {
+      "sensor": "tir",
+      "hole_id": "MTD010",
+      "dataset_id": "aaf2a6fe-3951-4976-bcd5-8e4418d6ffc",
+      "source_path": "C:\\HyLoggerData\\downloads\\processed\\MTD010\\aaf2a6fe-3951-4976-bcd5-8e4418d6ffc\\scalar_logs.parquet",
+      "sha256": "c4403a1cc8ed204b96ce89a79daec79b4386aa6f8de2fb988713855e1429a1c8",
+      "active_qc_sha256": "c4403a1cc8ed204b96ce89a79daec79b4386aa6f8de2fb988713855e1429a1c8",
+      "matches_active_qc": true
+    },
+    {
+      "sensor": "tir",
+      "hole_id": "NSDDH6",
+      "dataset_id": "32c493ca-5b05-4177-863b-618c5f5abde",
+      "source_path": "C:\\HyLoggerData\\downloads\\processed\\NSDDH6\\32c493ca-5b05-4177-863b-618c5f5abde\\scalar_logs.parquet",
+      "sha256": "eeae2dec5a2f6efd8b0563768ad0442e8ca37c212537e36fbb68961ca46c8546",
+      "active_qc_sha256": "eeae2dec5a2f6efd8b0563768ad0442e8ca37c212537e36fbb68961ca46c8546",
+      "matches_active_qc": true
+    },
+    {
+      "sensor": "tir",
+      "hole_id": "PARC001",
+      "dataset_id": "eebfb461-e905-43ff-9df2-f7e8eca564f",
+      "source_path": "C:\\HyLoggerData\\downloads\\processed\\PARC001\\eebfb461-e905-43ff-9df2-f7e8eca564f\\scalar_logs.parquet",
+      "sha256": "bc80e9dc90ce55f068c068599dd58a9df9b46935ca30d3c2eed9f7e737ab570c",
+      "active_qc_sha256": "bc80e9dc90ce55f068c068599dd58a9df9b46935ca30d3c2eed9f7e737ab570c",
+      "matches_active_qc": true
+    },
+    {
+      "sensor": "tir",
+      "hole_id": "PEPPER 1",
+      "dataset_id": "231faead-7072-4166-8a04-d5ce21f153c",
+      "source_path": "C:\\HyLoggerData\\downloads\\processed\\PEPPER 1\\231faead-7072-4166-8a04-d5ce21f153c\\scalar_logs.parquet",
+      "sha256": "166d39837cd97823ab782449e1b599d975f46a0ae18aa064967a8152b7c9390c",
+      "active_qc_sha256": "166d39837cd97823ab782449e1b599d975f46a0ae18aa064967a8152b7c9390c",
+      "matches_active_qc": true
+    },
+    {
+      "sensor": "tir",
+      "hole_id": "PRD76",
+      "dataset_id": "b57c9f00-622f-4f36-9e72-ded8d4a97ac",
+      "source_path": "C:\\HyLoggerData\\downloads\\processed\\PRD76\\b57c9f00-622f-4f36-9e72-ded8d4a97ac\\scalar_logs.parquet",
+      "sha256": "0435779e4fdbce1d3177d1b8120dcb75c852bc9d4016ff3a820b85baaef48fbf",
+      "active_qc_sha256": "0435779e4fdbce1d3177d1b8120dcb75c852bc9d4016ff3a820b85baaef48fbf",
+      "matches_active_qc": true
+    },
+    {
+      "sensor": "tir",
+      "hole_id": "RBDD009",
+      "dataset_id": "19087855-ea30-48a7-94d6-51ab46e2c1f",
+      "source_path": "C:\\HyLoggerData\\downloads\\processed\\RBDD009\\19087855-ea30-48a7-94d6-51ab46e2c1f\\scalar_logs.parquet",
+      "sha256": "eb803b5061482ce827b9ad523354670a4e15e984aa82b101d5594d6a34642417",
+      "active_qc_sha256": "eb803b5061482ce827b9ad523354670a4e15e984aa82b101d5594d6a34642417",
+      "matches_active_qc": true
+    },
+    {
+      "sensor": "tir",
+      "hole_id": "RRLCRDD004",
+      "dataset_id": "2e2737b5-1ed8-4ff9-bb69-1d14247b6d3",
+      "source_path": "C:\\HyLoggerData\\downloads\\processed\\RRLCRDD004\\2e2737b5-1ed8-4ff9-bb69-1d14247b6d3\\scalar_logs.parquet",
+      "sha256": "f45158256c7de53d55a5634a6f15bff5b90b881a6f2c085cef696a6be2246051",
+      "active_qc_sha256": "f45158256c7de53d55a5634a6f15bff5b90b881a6f2c085cef696a6be2246051",
+      "matches_active_qc": true
+    },
+    {
+      "sensor": "tir",
+      "hole_id": "SDH11-02",
+      "dataset_id": "9168f463-2adb-4e81-bbae-810c977ee67",
+      "source_path": "C:\\HyLoggerData\\downloads\\processed\\SDH11-02\\9168f463-2adb-4e81-bbae-810c977ee67\\scalar_logs.parquet",
+      "sha256": "2cebd3c889997811f78e2bc399c608e399c6a74b4d5a4b79290821eeaf25aca0",
+      "active_qc_sha256": "2cebd3c889997811f78e2bc399c608e399c6a74b4d5a4b79290821eeaf25aca0",
+      "matches_active_qc": true
+    },
+    {
+      "sensor": "tir",
+      "hole_id": "SE0019W1",
+      "dataset_id": "c4de93f5-7626-4afb-8aa3-5a57ba891fa",
+      "source_path": "C:\\HyLoggerData\\downloads\\processed\\SE0019W1\\c4de93f5-7626-4afb-8aa3-5a57ba891fa\\scalar_logs.parquet",
+      "sha256": "e28019a6ce8b8c95b5253ec7ef9bdf786cfae5d89bdea2eb58dbc8c3089a2c3d",
+      "active_qc_sha256": "e28019a6ce8b8c95b5253ec7ef9bdf786cfae5d89bdea2eb58dbc8c3089a2c3d",
+      "matches_active_qc": true
+    },
+    {
+      "sensor": "tir",
+      "hole_id": "WAITSIA 1",
+      "dataset_id": "4ea2b101-1809-4159-b745-63b2be9ebbe",
+      "source_path": "C:\\HyLoggerData\\downloads\\processed\\WAITSIA 1\\4ea2b101-1809-4159-b745-63b2be9ebbe\\scalar_logs.parquet",
+      "sha256": "a1f811c8f9f963c1f768d0d2b8aa6b76dec828d0e2e606618eee749d03af244a",
+      "active_qc_sha256": "a1f811c8f9f963c1f768d0d2b8aa6b76dec828d0e2e606618eee749d03af244a",
+      "matches_active_qc": true
+    },
+    {
+      "sensor": "tir",
+      "hole_id": "WRD12635-001",
+      "dataset_id": "3969db8c-e78f-41a3-baee-be87ed4a344",
+      "source_path": "C:\\HyLoggerData\\downloads\\processed\\WRD12635-001\\3969db8c-e78f-41a3-baee-be87ed4a344\\scalar_logs.parquet",
+      "sha256": "932145aa10080ac8ab852f1e926206a801964484d414c3f4b9e3f9126e26f13d",
+      "active_qc_sha256": "932145aa10080ac8ab852f1e926206a801964484d414c3f4b9e3f9126e26f13d",
+      "matches_active_qc": true
+    }
+  ]
+}

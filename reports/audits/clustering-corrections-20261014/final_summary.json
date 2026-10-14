@@ -1,0 +1,3931 @@
+{
+  "staged_runs": 13,
+  "promotion": "Local atomic15reviewed runs active, prior15archived but preserved",
+  "intervals": {
+    "swir": {
+      "run_id": "interval-swir-20261014T121201-c8ee6b",
+      "old_intervals": 373567,
+      "new_intervals": 289266,
+      "old_fine_k": 12,
+      "new_fine_k": 8,
+      "new_coarse_k": 6,
+      "final_training_min_share": 0.041688920315638235,
+      "model_cardinality": 8,
+      "data_quality": {
+        "policy": {
+          "min_admitted": 3,
+          "allow_primary_frequency": false,
+          "min_diagnostic_fraction": 0.5,
+          "allow_unknown_representation": false
+        },
+        "below_count": 42720,
+        "error_policy": "Fit error is descriptive only; no calibrated mineral-specific cutoff is available",
+        "policy_meaning": "Minimum count and diagnostic coverage for modelling (default: majority support); not a calibrated accuracy threshold",
+        "model_intervals": 289266,
+        "abundance_meaning": "Relative TSG interpretation weights conditional on diagnostic readings, not mineral mass percent",
+        "eligible_intervals": 289266,
+        "excluded_intervals": 127021,
+        "coverage_sensitivity": {
+          "0.5": 289266,
+          "0.25": 325054,
+          "0.75": 191260
+        },
+        "descriptive_intervals": 416287,
+        "mask_status_intervals": {
+          "unavailable_in_processed_log": 416287
+        },
+        "invalid_support_counts": 0,
+        "exclusion_counts_overlap": true,
+        "representation_intervals": {
+          "component_weight_mixture": 416257,
+          "primary_mineral_frequency": 30
+        },
+        "below_diagnostic_fraction": 113170,
+        "zero_composition_excluded": 0,
+        "primary_frequency_intervals": 30,
+        "unknown_representation_intervals": 0
+      },
+      "provenance": {
+        "data_sha256": "6c06e67e2a6a8d82d3aa937e80d23fab226143b5548b2018fcbdb9bc09cdec45",
+        "support_policy": {
+          "min_admitted": 3,
+          "allow_primary_frequency": false,
+          "min_diagnostic_fraction": 0.5,
+          "allow_unknown_representation": false
+        },
+        "analysis_version": "clustering-corrections-v2",
+        "schema_fit_scope": "full eligible cohort (descriptive/transductive)",
+        "algorithm_version": "hellinger-weighted-ward-v2",
+        "cluster_fit_scope": "hole-balanced training sample, at most 150 intervals per hole",
+        "feature_schema_sha256": "70713eda5328bc98da17dfaf3ebff440a859c4b05d40ddc9780516891e04b67a",
+        "algorithm_source_sha256": {
+          "data": "324071694d8c021f921dde621f7f88fd9c559b337a80f15e05927816a07292d4",
+          "analysis": "c097bc092eba4630613ed783bbfbfca7b5b1a2031cbf9deccd3311a0acef699e",
+          "clusters": "3f1c7c7e0249540d57c459a9503df9f9c55f29fa9c34979496612f90c49bb705",
+          "features": "d2388699bf1e3079abf6e15a997189b60fb7eedba466d66e439579dccabebf99",
+          "rawcluster": "e6328d23a0504a265ac3889ac66adf607c539acc2daf3e53b305340e76f5078b",
+          "fingerprints": "6e50d0f32ff7eb3568f3b8040851942ce214ee07d2a6b217857ec5f17c95c008"
+        }
+      }
+    },
+    "tir": {
+      "run_id": "interval-tir-20261014T121353-e7fc92",
+      "old_intervals": 359850,
+      "new_intervals": 353059,
+      "old_fine_k": 10,
+      "new_fine_k": 2,
+      "new_coarse_k": 2,
+      "final_training_min_share": 0.31902754356379986,
+      "model_cardinality": 2,
+      "data_quality": {
+        "policy": {
+          "min_admitted": 3,
+          "allow_primary_frequency": false,
+          "min_diagnostic_fraction": 0.5,
+          "allow_unknown_representation": false
+        },
+        "below_count": 24265,
+        "error_policy": "Fit error is descriptive only; no calibrated mineral-specific cutoff is available",
+        "policy_meaning": "Minimum count and diagnostic coverage for modelling (default: majority support); not a calibrated accuracy threshold",
+        "model_intervals": 353059,
+        "abundance_meaning": "Relative TSG interpretation weights conditional on diagnostic readings, not mineral mass percent",
+        "eligible_intervals": 353059,
+        "excluded_intervals": 31056,
+        "coverage_sensitivity": {
+          "0.5": 353059,
+          "0.25": 358171,
+          "0.75": 280299
+        },
+        "descriptive_intervals": 384115,
+        "mask_status_intervals": {
+          "unavailable_in_processed_log": 384115
+        },
+        "invalid_support_counts": 0,
+        "exclusion_counts_overlap": true,
+        "representation_intervals": {
+          "component_weight_mixture": 384115
+        },
+        "below_diagnostic_fraction": 15558,
+        "zero_composition_excluded": 0,
+        "primary_frequency_intervals": 0,
+        "unknown_representation_intervals": 0
+      },
+      "provenance": {
+        "data_sha256": "75977a08df00f4181ece9051316a0ef5038e9a2d3adcf287366d1feb8f1c16bc",
+        "support_policy": {
+          "min_admitted": 3,
+          "allow_primary_frequency": false,
+          "min_diagnostic_fraction": 0.5,
+          "allow_unknown_representation": false
+        },
+        "analysis_version": "clustering-corrections-v2",
+        "schema_fit_scope": "full eligible cohort (descriptive/transductive)",
+        "algorithm_version": "hellinger-weighted-ward-v2",
+        "cluster_fit_scope": "hole-balanced training sample, at most 150 intervals per hole",
+        "feature_schema_sha256": "1c1b951ce0fa1a491b9b5901a8a3e283dce129dadadf3b392f6e0f16962cd245",
+        "algorithm_source_sha256": {
+          "data": "324071694d8c021f921dde621f7f88fd9c559b337a80f15e05927816a07292d4",
+          "analysis": "c097bc092eba4630613ed783bbfbfca7b5b1a2031cbf9deccd3311a0acef699e",
+          "clusters": "3f1c7c7e0249540d57c459a9503df9f9c55f29fa9c34979496612f90c49bb705",
+          "features": "d2388699bf1e3079abf6e15a997189b60fb7eedba466d66e439579dccabebf99",
+          "rawcluster": "e6328d23a0504a265ac3889ac66adf607c539acc2daf3e53b305340e76f5078b",
+          "fingerprints": "6e50d0f32ff7eb3568f3b8040851942ce214ee07d2a6b217857ec5f17c95c008"
+        }
+      }
+    }
+  },
+  "holes": {
+    "combined": {
+      "run_id": "hole-combined-20261014T121439-746060",
+      "holes": 1100,
+      "distance": "equal mean of SWIR and TIR base-2 Jensen-Shannon distances on the common supported-hole cohort",
+      "distance_version": "common-cohort-mean-v2",
+      "shape": [
+        1100,
+        1100
+      ],
+      "finite": true,
+      "symmetric": true,
+      "zero_diagonal": true,
+      "hole_cluster_k": 2,
+      "hole_cluster_status": "selected",
+      "coverage": {
+        "policy": "intersection of supported holes in every sensor view",
+        "union_holes": 1226,
+        "common_holes": 1100,
+        "sensor_holes": {
+          "tir": 1149,
+          "swir": 1177
+        },
+        "excluded_holes": 126,
+        "excluded_hole_ids": [
+          "07THD003",
+          "09ATD015",
+          "09ATD019",
+          "09ATRCD025",
+          "09RTD001",
+          "17DHDD0016",
+          "17FCHRCD002",
+          "17NNMD001",
+          "18LCDD0001",
+          "19MMDD0456",
+          "20ALDD0001",
+          "20ALDD0002",
+          "20ALDD0003",
+          "20KGDD0008",
+          "20PQDD0005A",
+          "21SSC005",
+          "ABDP5",
+          "ACACIA 1",
+          "BEHARRA SPRINGS 2",
+          "BLINA 4",
+          "BLINA 5",
+          "BLRCD007",
+          "BOAB 1",
+          "CASSIA 1",
+          "CD20297W1",
+          "CD20297W2",
+          "CDDD0090",
+          "CENTELLA 1",
+          "CGDD005",
+          "CGDD006",
+          "CGDD007",
+          "CGDD008",
+          "CGDD009",
+          "CL1",
+          "CL2",
+          "CLIFF HEAD 6",
+          "CODY 1",
+          "DD85BMW2C",
+          "DD97BC14",
+          "DONGARA 11",
+          "DRDD327",
+          "DROVER 1",
+          "EAL302",
+          "EPT1702",
+          "EPT2260",
+          "EPT2262",
+          "FICUS 1",
+          "G50-22-001E",
+          "G50-22-002E",
+          "G50-22-003E",
+          "GBD016",
+          "GRCD0001",
+          "GRCD0002",
+          "HE001-NE",
+          "HE002-NE",
+          "HE003-NE",
+          "KBD094",
+          "KNCD180010",
+          "KNCD180011",
+          "KNCD180012",
+          "KNCD190101",
+          "KNCD190102",
+          "LAMINARIA EAST 1",
+          "LJM006",
+          "MAD011",
+          "MAD180",
+          "MC02DH01",
+          "MJGD27",
+          "MR1",
+          "MRDH400",
+          "MRDH401",
+          "MRDH402",
+          "MRDH403",
+          "MRDH407",
+          "MUTINEER 1B",
+          "MUTINEER 3",
+          "NGALTI 1",
+          "NUG0453",
+          "NUG0467",
+          "PDU2217",
+          "PETALUMA 1",
+          "PLRCD001",
+          "PLRCD003",
+          "PLRCD005",
+          "PLRCD006",
+          "PPDDD0002A",
+          "PWD 1",
+          "PWD 2",
+          "PWD 3",
+          "PWD 4",
+          "RAINIER 1",
+          "RBDD008",
+          "REINDEER 1",
+          "REINDEER 2",
+          "RRLRMDD040",
+          "RRLRMDD041",
+          "RRLRMDD041W1",
+          "SEDD0057",
+          "TCDP1",
+          "TCDP2",
+          "TCDP3",
+          "TDH 3",
+          "TMD001",
+          "UGD063",
+          "UGD288",
+          "UGD297",
+          "UGD378",
+          "WBD055UD",
+          "WK1",
+          "WOODADA 02",
+          "WTB-05",
+          "WTB-06",
+          "WTB-07",
+          "WTB-09",
+          "WTB-14",
+          "WTB-21",
+          "WTB-22",
+          "WTB-29",
+          "WTB-55",
+          "WTB-60",
+          "WTB-79",
+          "YDDD00003",
+          "YGDD002",
+          "YNC350",
+          "YOWALGA 3",
+          "ZNDD001"
+        ],
+        "excluded_by_sensor": {
+          "tir": 77,
+          "swir": 49
+        },
+        "pair_sensor_support": 2,
+        "missing_distance_imputation": "none"
+      },
+      "support": null,
+      "pca_components": null,
+      "pca_variance": null,
+      "pca_variance_target_met": null,
+      "distance_data_sha256": "a591c190bc03f81c0e5aca18daa558603287213e9f99ad5aa40712eb9ef71339"
+    },
+    "raw_nir": {
+      "run_id": "hole-raw_nir-20261014T121904-f124b4",
+      "holes": 1261,
+      "distance": "joint sliced Wasserstein W1 (finite projections, 50 midpoint quantiles)",
+      "distance_version": "sliced-wasserstein-v1",
+      "shape": [
+        1261,
+        1261
+      ],
+      "finite": true,
+      "symmetric": true,
+      "zero_diagonal": true,
+      "hole_cluster_k": 2,
+      "hole_cluster_status": "selected",
+      "coverage": null,
+      "support": {
+        "loading": {
+          "products_loaded": 1312,
+          "excluded_products": [
+            {
+              "reason": "incompatible_wavelength_grid",
+              "hole_id": "YDH13_TSG_MIR"
+            },
+            {
+              "reason": "incompatible_wavelength_grid",
+              "hole_id": "YD1_TSG_MIR"
+            },
+            {
+              "reason": "incompatible_wavelength_grid",
+              "hole_id": "YDH11_TSG_MIR"
+            },
+            {
+              "reason": "incompatible_wavelength_grid",
+              "hole_id": "ADD10_TSG_MIR"
+            },
+            {
+              "reason": "incompatible_wavelength_grid",
+              "hole_id": "YD2_TSG_MIR"
+            },
+            {
+              "reason": "incompatible_wavelength_grid",
+              "hole_id": "VHD10_TSG_MIR"
+            },
+            {
+              "reason": "incompatible_wavelength_grid",
+              "hole_id": "BR0006_TSG_MIR"
+            },
+            {
+              "reason": "incompatible_wavelength_grid",
+              "hole_id": "YD4_TSG_MIR"
+            }
+          ],
+          "products_excluded": 8,
+          "products_requested": 1320
+        },
+        "holes_loaded": 1312,
+        "support_note": "10 finite 1 m intervals is a compatibility floor, not a confidence guarantee; depth coverage may remain unequal",
+        "excluded_holes": [
+          {
+            "reason": "insufficient_finite_interval_support",
+            "hole_id": "14CADD003",
+            "finite_intervals": 9,
+            "intervals_loaded": 9
+          },
+          {
+            "reason": "insufficient_finite_interval_support",
+            "hole_id": "ALLANOOKA 1",
+            "finite_intervals": 7,
+            "intervals_loaded": 7
+          },
+          {
+            "reason": "insufficient_finite_interval_support",
+            "hole_id": "BADAMINNA 1",
+            "finite_intervals": 8,
+            "intervals_loaded": 8
+          },
+          {
+            "reason": "insufficient_finite_interval_support",
+            "hole_id": "BB1",
+            "finite_intervals": 3,
+            "intervals_loaded": 3
+          },
+          {
+            "reason": "insufficient_finite_interval_support",
+            "hole_id": "BB2",
+            "finite_intervals": 3,
+            "intervals_loaded": 3
+          },
+          {
+            "reason": "insufficient_finite_interval_support",
+            "hole_id": "BB3",
+            "finite_intervals": 3,
+            "intervals_loaded": 3
+          },
+          {
+            "reason": "insufficient_finite_interval_support",
+            "hole_id": "BB4",
+            "finite_intervals": 3,
+            "intervals_loaded": 3
+          },
+          {
+            "reason": "insufficient_finite_interval_support",
+            "hole_id": "BB5",
+            "finite_intervals": 3,
+            "intervals_loaded": 3
+          },
+          {
+            "reason": "insufficient_finite_interval_support",
+            "hole_id": "BH02",
+            "finite_intervals": 5,
+            "intervals_loaded": 5
+          },
+          {
+            "reason": "insufficient_finite_interval_support",
+            "hole_id": "BH03",
+            "finite_intervals": 7,
+            "intervals_loaded": 7
+          },
+          {
+            "reason": "insufficient_finite_interval_support",
+            "hole_id": "BH04",
+            "finite_intervals": 4,
+            "intervals_loaded": 4
+          },
+          {
+            "reason": "insufficient_finite_interval_support",
+            "hole_id": "BH05",
+            "finite_intervals": 9,
+            "intervals_loaded": 9
+          },
+          {
+            "reason": "insufficient_finite_interval_support",
+            "hole_id": "BH06",
+            "finite_intervals": 4,
+            "intervals_loaded": 4
+          },
+          {
+            "reason": "insufficient_finite_interval_support",
+            "hole_id": "BH08",
+            "finite_intervals": 5,
+            "intervals_loaded": 5
+          },
+          {
+            "reason": "insufficient_finite_interval_support",
+            "hole_id": "BH11",
+            "finite_intervals": 4,
+            "intervals_loaded": 4
+          },
+          {
+            "reason": "insufficient_finite_interval_support",
+            "hole_id": "BH15",
+            "finite_intervals": 8,
+            "intervals_loaded": 8
+          },
+          {
+            "reason": "insufficient_finite_interval_support",
+            "hole_id": "BH16",
+            "finite_intervals": 9,
+            "intervals_loaded": 9
+          },
+          {
+            "reason": "insufficient_finite_interval_support",
+            "hole_id": "BH22",
+            "finite_intervals": 7,
+            "intervals_loaded": 7
+          },
+          {
+            "reason": "insufficient_finite_interval_support",
+            "hole_id": "BH23",
+            "finite_intervals": 5,
+            "intervals_loaded": 5
+          },
+          {
+            "reason": "insufficient_finite_interval_support",
+            "hole_id": "BH24",
+            "finite_intervals": 9,
+            "intervals_loaded": 9
+          },
+          {
+            "reason": "insufficient_finite_interval_support",
+            "hole_id": "BH25",
+            "finite_intervals": 7,
+            "intervals_loaded": 7
+          },
+          {
+            "reason": "insufficient_finite_interval_support",
+            "hole_id": "BRUCE 1",
+            "finite_intervals": 5,
+            "intervals_loaded": 5
+          },
+          {
+            "reason": "insufficient_finite_interval_support",
+            "hole_id": "CANOPUS 1",
+            "finite_intervals": 9,
+            "intervals_loaded": 9
+          },
+          {
+            "reason": "insufficient_finite_interval_support",
+            "hole_id": "COASTER 1",
+            "finite_intervals": 5,
+            "intervals_loaded": 5
+          },
+          {
+            "reason": "insufficient_finite_interval_support",
+            "hole_id": "DA1",
+            "finite_intervals": 1,
+            "intervals_loaded": 1
+          },
+          {
+            "reason": "insufficient_finite_interval_support",
+            "hole_id": "DONGARA 07",
+            "finite_intervals": 4,
+            "intervals_loaded": 4
+          },
+          {
+            "reason": "insufficient_finite_interval_support",
+            "hole_id": "EMB2",
+            "finite_intervals": 3,
+            "intervals_loaded": 3
+          },
+          {
+            "reason": "insufficient_finite_interval_support",
+            "hole_id": "EMB3",
+            "finite_intervals": 3,
+            "intervals_loaded": 3
+          },
+          {
+            "reason": "insufficient_finite_interval_support",
+            "hole_id": "EMB4",
+            "finite_intervals": 3,
+            "intervals_loaded": 3
+          },
+          {
+            "reason": "insufficient_finite_interval_support",
+            "hole_id": "GLENROY 1",
+            "finite_intervals": 7,
+            "intervals_loaded": 7
+          },
+          {
+            "reason": "insufficient_finite_interval_support",
+            "hole_id": "HOVEA 1_CUTTINGS",
+            "finite_intervals": 8,
+            "intervals_loaded": 8
+          },
+          {
+            "reason": "insufficient_finite_interval_support",
+            "hole_id": "HOVEA 2_CUTTINGS",
+            "finite_intervals": 2,
+            "intervals_loaded": 2
+          },
+          {
+            "reason": "insufficient_finite_interval_support",
+            "hole_id": "IRWIN 1_CUTTINGS2",
+            "finite_intervals": 2,
+            "intervals_loaded": 2
+          },
+          {
+            "reason": "insufficient_finite_interval_support",
+            "hole_id": "K90C-01NE-W1A",
+            "finite_intervals": 9,
+            "intervals_loaded": 9
+          },
+          {
+            "reason": "insufficient_finite_interval_support",
+            "hole_id": "LJM-D008",
+            "finite_intervals": 8,
+            "intervals_loaded": 8
+          },
+          {
+            "reason": "insufficient_finite_interval_support",
+            "hole_id": "LJM-D012",
+            "finite_intervals": 2,
+            "intervals_loaded": 2
+          },
+          {
+            "reason": "insufficient_finite_interval_support",
+            "hole_id": "LYRM01",
+            "finite_intervals": 4,
+            "intervals_loaded": 4
+          },
+          {
+            "reason": "insufficient_finite_interval_support",
+            "hole_id": "LYRM09",
+            "finite_intervals": 3,
+            "intervals_loaded": 3
+          },
+          {
+            "reason": "insufficient_finite_interval_support",
+            "hole_id": "LYRM10",
+            "finite_intervals": 4,
+            "intervals_loaded": 4
+          },
+          {
+            "reason": "insufficient_finite_interval_support",
+            "hole_id": "MATCHES SPRING 1",
+            "finite_intervals": 4,
+            "intervals_loaded": 4
+          },
+          {
+            "reason": "insufficient_finite_interval_support",
+            "hole_id": "MT ADAMS 1",
+            "finite_intervals": 8,
+            "intervals_loaded": 8
+          },
+          {
+            "reason": "insufficient_finite_interval_support",
+            "hole_id": "POISSONNIER 1",
+            "finite_intervals": 7,
+            "intervals_loaded": 7
+          },
+          {
+            "reason": "insufficient_finite_interval_support",
+            "hole_id": "QUOBBA 1",
+            "finite_intervals": 9,
+            "intervals_loaded": 9
+          },
+          {
+            "reason": "insufficient_finite_interval_support",
+            "hole_id": "TUBRIDGI 15_CUTTINGS",
+            "finite_intervals": 8,
+            "intervals_loaded": 8
+          },
+          {
+            "reason": "insufficient_finite_interval_support",
+            "hole_id": "URALA 1",
+            "finite_intervals": 7,
+            "intervals_loaded": 7
+          },
+          {
+            "reason": "insufficient_finite_interval_support",
+            "hole_id": "WALYERING 3",
+            "finite_intervals": 9,
+            "intervals_loaded": 9
+          },
+          {
+            "reason": "insufficient_finite_interval_support",
+            "hole_id": "WANDAGEE COREHOLE 1",
+            "finite_intervals": 3,
+            "intervals_loaded": 3
+          },
+          {
+            "reason": "insufficient_finite_interval_support",
+            "hole_id": "WARRADONG 1",
+            "finite_intervals": 6,
+            "intervals_loaded": 6
+          },
+          {
+            "reason": "insufficient_finite_interval_support",
+            "hole_id": "WEELAWARREN 1",
+            "finite_intervals": 2,
+            "intervals_loaded": 2
+          },
+          {
+            "reason": "insufficient_finite_interval_support",
+            "hole_id": "WEST ERREGULLA 1",
+            "finite_intervals": 7,
+            "intervals_loaded": 7
+          },
+          {
+            "reason": "insufficient_finite_interval_support",
+            "hole_id": "WHITE HILLS 1",
+            "finite_intervals": 9,
+            "intervals_loaded": 9
+          }
+        ],
+        "holes_eligible": 1261,
+        "holes_excluded": 51,
+        "intervals_loaded": 400262,
+        "intervals_eligible": 399979,
+        "minimum_intervals_per_hole": 10,
+        "nonfinite_intervals_excluded": 0
+      },
+      "pca_components": 8,
+      "pca_variance": 0.9631,
+      "pca_variance_target_met": true,
+      "distance_data_sha256": "ac8e2bf8622d19ac9f7d3e8870e691d0172ca672192fcceeaf72c8486d7ab480"
+    },
+    "raw_tir": {
+      "run_id": "hole-raw_tir-20261014T122019-e6f74a",
+      "holes": 1225,
+      "distance": "joint sliced Wasserstein W1 (finite projections, 50 midpoint quantiles)",
+      "distance_version": "sliced-wasserstein-v1",
+      "shape": [
+        1225,
+        1225
+      ],
+      "finite": true,
+      "symmetric": true,
+      "zero_diagonal": true,
+      "hole_cluster_k": 2,
+      "hole_cluster_status": "selected",
+      "coverage": null,
+      "support": {
+        "loading": {
+          "products_loaded": 1280,
+          "excluded_products": [
+            {
+              "reason": "incompatible_wavelength_grid",
+              "hole_id": "WAKDD012"
+            },
+            {
+              "reason": "incompatible_wavelength_grid",
+              "hole_id": "WAKDD013"
+            },
+            {
+              "reason": "incompatible_wavelength_grid",
+              "hole_id": "YDH13_TSG_MIR"
+            },
+            {
+              "reason": "incompatible_wavelength_grid",
+              "hole_id": "NGALTI 1"
+            },
+            {
+              "reason": "incompatible_wavelength_grid",
+              "hole_id": "YDH12"
+            },
+            {
+              "reason": "incompatible_wavelength_grid",
+              "hole_id": "ADD10_TSG_MIR"
+            },
+            {
+              "reason": "incompatible_wavelength_grid",
+              "hole_id": "YD2_TSG_MIR"
+            },
+            {
+              "reason": "incompatible_wavelength_grid",
+              "hole_id": "YD4_TSG_MIR"
+            }
+          ],
+          "products_excluded": 8,
+          "products_requested": 1288
+        },
+        "holes_loaded": 1280,
+        "support_note": "10 finite 1 m intervals is a compatibility floor, not a confidence guarantee; depth coverage may remain unequal",
+        "excluded_holes": [
+          {
+            "reason": "insufficient_finite_interval_support",
+            "hole_id": "14CADD003",
+            "finite_intervals": 9,
+            "intervals_loaded": 9
+          },
+          {
+            "reason": "insufficient_finite_interval_support",
+            "hole_id": "ALLANOOKA 1",
+            "finite_intervals": 7,
+            "intervals_loaded": 7
+          },
+          {
+            "reason": "insufficient_finite_interval_support",
+            "hole_id": "BADAMINNA 1",
+            "finite_intervals": 8,
+            "intervals_loaded": 8
+          },
+          {
+            "reason": "insufficient_finite_interval_support",
+            "hole_id": "BB1",
+            "finite_intervals": 3,
+            "intervals_loaded": 3
+          },
+          {
+            "reason": "insufficient_finite_interval_support",
+            "hole_id": "BB2",
+            "finite_intervals": 3,
+            "intervals_loaded": 3
+          },
+          {
+            "reason": "insufficient_finite_interval_support",
+            "hole_id": "BB3",
+            "finite_intervals": 3,
+            "intervals_loaded": 3
+          },
+          {
+            "reason": "insufficient_finite_interval_support",
+            "hole_id": "BB4",
+            "finite_intervals": 3,
+            "intervals_loaded": 3
+          },
+          {
+            "reason": "insufficient_finite_interval_support",
+            "hole_id": "BB5",
+            "finite_intervals": 3,
+            "intervals_loaded": 3
+          },
+          {
+            "reason": "insufficient_finite_interval_support",
+            "hole_id": "BH02",
+            "finite_intervals": 5,
+            "intervals_loaded": 5
+          },
+          {
+            "reason": "insufficient_finite_interval_support",
+            "hole_id": "BH03",
+            "finite_intervals": 7,
+            "intervals_loaded": 7
+          },
+          {
+            "reason": "insufficient_finite_interval_support",
+            "hole_id": "BH04",
+            "finite_intervals": 4,
+            "intervals_loaded": 4
+          },
+          {
+            "reason": "insufficient_finite_interval_support",
+            "hole_id": "BH05",
+            "finite_intervals": 9,
+            "intervals_loaded": 9
+          },
+          {
+            "reason": "insufficient_finite_interval_support",
+            "hole_id": "BH06",
+            "finite_intervals": 4,
+            "intervals_loaded": 4
+          },
+          {
+            "reason": "insufficient_finite_interval_support",
+            "hole_id": "BH08",
+            "finite_intervals": 5,
+            "intervals_loaded": 5
+          },
+          {
+            "reason": "insufficient_finite_interval_support",
+            "hole_id": "BH11",
+            "finite_intervals": 4,
+            "intervals_loaded": 4
+          },
+          {
+            "reason": "insufficient_finite_interval_support",
+            "hole_id": "BH15",
+            "finite_intervals": 8,
+            "intervals_loaded": 8
+          },
+          {
+            "reason": "insufficient_finite_interval_support",
+            "hole_id": "BH16",
+            "finite_intervals": 9,
+            "intervals_loaded": 9
+          },
+          {
+            "reason": "insufficient_finite_interval_support",
+            "hole_id": "BH22",
+            "finite_intervals": 7,
+            "intervals_loaded": 7
+          },
+          {
+            "reason": "insufficient_finite_interval_support",
+            "hole_id": "BH23",
+            "finite_intervals": 5,
+            "intervals_loaded": 5
+          },
+          {
+            "reason": "insufficient_finite_interval_support",
+            "hole_id": "BH24",
+            "finite_intervals": 9,
+            "intervals_loaded": 9
+          },
+          {
+            "reason": "insufficient_finite_interval_support",
+            "hole_id": "BH25",
+            "finite_intervals": 7,
+            "intervals_loaded": 7
+          },
+          {
+            "reason": "insufficient_finite_interval_support",
+            "hole_id": "BR0006_TSG_MIR",
+            "finite_intervals": 6,
+            "intervals_loaded": 6
+          },
+          {
+            "reason": "insufficient_finite_interval_support",
+            "hole_id": "BRUCE 1",
+            "finite_intervals": 5,
+            "intervals_loaded": 5
+          },
+          {
+            "reason": "insufficient_finite_interval_support",
+            "hole_id": "CANOPUS 1",
+            "finite_intervals": 9,
+            "intervals_loaded": 9
+          },
+          {
+            "reason": "insufficient_finite_interval_support",
+            "hole_id": "COASTER 1",
+            "finite_intervals": 5,
+            "intervals_loaded": 5
+          },
+          {
+            "reason": "insufficient_finite_interval_support",
+            "hole_id": "DA1",
+            "finite_intervals": 1,
+            "intervals_loaded": 1
+          },
+          {
+            "reason": "insufficient_finite_interval_support",
+            "hole_id": "DONGARA 07",
+            "finite_intervals": 4,
+            "intervals_loaded": 4
+          },
+          {
+            "reason": "insufficient_finite_interval_support",
+            "hole_id": "EMB2",
+            "finite_intervals": 3,
+            "intervals_loaded": 3
+          },
+          {
+            "reason": "insufficient_finite_interval_support",
+            "hole_id": "EMB3",
+            "finite_intervals": 3,
+            "intervals_loaded": 3
+          },
+          {
+            "reason": "insufficient_finite_interval_support",
+            "hole_id": "EMB4",
+            "finite_intervals": 3,
+            "intervals_loaded": 3
+          },
+          {
+            "reason": "insufficient_finite_interval_support",
+            "hole_id": "GLENROY 1",
+            "finite_intervals": 7,
+            "intervals_loaded": 7
+          },
+          {
+            "reason": "insufficient_finite_interval_support",
+            "hole_id": "HOVEA 1_CUTTINGS",
+            "finite_intervals": 8,
+            "intervals_loaded": 8
+          },
+          {
+            "reason": "insufficient_finite_interval_support",
+            "hole_id": "HOVEA 2_CUTTINGS",
+            "finite_intervals": 2,
+            "intervals_loaded": 2
+          },
+          {
+            "reason": "insufficient_finite_interval_support",
+            "hole_id": "IRWIN 1_CUTTINGS2",
+            "finite_intervals": 2,
+            "intervals_loaded": 2
+          },
+          {
+            "reason": "insufficient_finite_interval_support",
+            "hole_id": "K90C-01NE-W1A",
+            "finite_intervals": 9,
+            "intervals_loaded": 9
+          },
+          {
+            "reason": "insufficient_finite_interval_support",
+            "hole_id": "LJM-D008",
+            "finite_intervals": 8,
+            "intervals_loaded": 8
+          },
+          {
+            "reason": "insufficient_finite_interval_support",
+            "hole_id": "LJM-D012",
+            "finite_intervals": 2,
+            "intervals_loaded": 2
+          },
+          {
+            "reason": "insufficient_finite_interval_support",
+            "hole_id": "LYRM01",
+            "finite_intervals": 4,
+            "intervals_loaded": 4
+          },
+          {
+            "reason": "insufficient_finite_interval_support",
+            "hole_id": "LYRM09",
+            "finite_intervals": 3,
+            "intervals_loaded": 3
+          },
+          {
+            "reason": "insufficient_finite_interval_support",
+            "hole_id": "LYRM10",
+            "finite_intervals": 4,
+            "intervals_loaded": 4
+          },
+          {
+            "reason": "insufficient_finite_interval_support",
+            "hole_id": "MATCHES SPRING 1",
+            "finite_intervals": 4,
+            "intervals_loaded": 4
+          },
+          {
+            "reason": "insufficient_finite_interval_support",
+            "hole_id": "MT ADAMS 1",
+            "finite_intervals": 8,
+            "intervals_loaded": 8
+          },
+          {
+            "reason": "insufficient_finite_interval_support",
+            "hole_id": "POISSONNIER 1",
+            "finite_intervals": 7,
+            "intervals_loaded": 7
+          },
+          {
+            "reason": "insufficient_finite_interval_support",
+            "hole_id": "QUOBBA 1",
+            "finite_intervals": 9,
+            "intervals_loaded": 9
+          },
+          {
+            "reason": "insufficient_finite_interval_support",
+            "hole_id": "TUBRIDGI 15_CUTTINGS",
+            "finite_intervals": 8,
+            "intervals_loaded": 8
+          },
+          {
+            "reason": "insufficient_finite_interval_support",
+            "hole_id": "URALA 1",
+            "finite_intervals": 7,
+            "intervals_loaded": 7
+          },
+          {
+            "reason": "insufficient_finite_interval_support",
+            "hole_id": "VHD10_TSG_MIR",
+            "finite_intervals": 2,
+            "intervals_loaded": 2
+          },
+          {
+            "reason": "insufficient_finite_interval_support",
+            "hole_id": "WALYERING 3",
+            "finite_intervals": 9,
+            "intervals_loaded": 9
+          },
+          {
+            "reason": "insufficient_finite_interval_support",
+            "hole_id": "WANDAGEE COREHOLE 1",
+            "finite_intervals": 3,
+            "intervals_loaded": 3
+          },
+          {
+            "reason": "insufficient_finite_interval_support",
+            "hole_id": "WARRADONG 1",
+            "finite_intervals": 6,
+            "intervals_loaded": 6
+          },
+          {
+            "reason": "insufficient_finite_interval_support",
+            "hole_id": "WEELAWARREN 1",
+            "finite_intervals": 2,
+            "intervals_loaded": 2
+          },
+          {
+            "reason": "insufficient_finite_interval_support",
+            "hole_id": "WEST ERREGULLA 1",
+            "finite_intervals": 7,
+            "intervals_loaded": 7
+          },
+          {
+            "reason": "insufficient_finite_interval_support",
+            "hole_id": "WHITE HILLS 1",
+            "finite_intervals": 9,
+            "intervals_loaded": 9
+          },
+          {
+            "reason": "insufficient_finite_interval_support",
+            "hole_id": "YD1_TSG_MIR",
+            "finite_intervals": 2,
+            "intervals_loaded": 2
+          },
+          {
+            "reason": "insufficient_finite_interval_support",
+            "hole_id": "YDH11_TSG_MIR",
+            "finite_intervals": 2,
+            "intervals_loaded": 2
+          }
+        ],
+        "holes_eligible": 1225,
+        "holes_excluded": 55,
+        "intervals_loaded": 393726,
+        "intervals_eligible": 393431,
+        "minimum_intervals_per_hole": 10,
+        "nonfinite_intervals_excluded": 0
+      },
+      "pca_components": 7,
+      "pca_variance": 0.9536,
+      "pca_variance_target_met": true,
+      "distance_data_sha256": "c0504b8c33c6439ed0eb1398e10723e9e9e909e7283b1773ba0d1eb24b2f0bab"
+    },
+    "seq_combined": {
+      "run_id": "hole-seq_combined-20261014T121618-40fc62",
+      "holes": 1106,
+      "distance": "equal mean of SWIR and TIR DTW sequence distances on the common supported-hole cohort; equal sensor weighting, no scale calibration",
+      "distance_version": "common-cohort-mean-v2",
+      "shape": [
+        1106,
+        1106
+      ],
+      "finite": true,
+      "symmetric": true,
+      "zero_diagonal": true,
+      "hole_cluster_k": 2,
+      "hole_cluster_status": "selected",
+      "coverage": {
+        "policy": "intersection of supported holes in every sensor view",
+        "union_holes": 1212,
+        "common_holes": 1106,
+        "sensor_holes": {
+          "tir": 1140,
+          "swir": 1178
+        },
+        "excluded_holes": 106,
+        "excluded_hole_ids": [
+          "07THD003",
+          "09ATD015",
+          "09ATD019",
+          "09ATRCD025",
+          "09RTD001",
+          "17DHDD0016",
+          "17NNMD001",
+          "18LCDD0001",
+          "19MMDD0456",
+          "20ALDD0001",
+          "20ALDD0002",
+          "20ALDD0003",
+          "20KGDD0008",
+          "20PQDD0005A",
+          "21SSC005",
+          "ABDP5",
+          "ACACIA 1",
+          "BLINA 5",
+          "BLRCD007",
+          "BOAB 1",
+          "CASSIA 1",
+          "CD20297W1",
+          "CD20297W2",
+          "CDDD0090",
+          "CENTELLA 1",
+          "CGDD005",
+          "CGDD006",
+          "CGDD007",
+          "CGDD008",
+          "CGDD009",
+          "CL1",
+          "CL2",
+          "CLIFF HEAD 6",
+          "CODY 1",
+          "DRDD327",
+          "DROVER 1",
+          "EAL302",
+          "EPT1702",
+          "EPT2194",
+          "EPT2260",
+          "EPT2262",
+          "FICUS 1",
+          "G50-22-001E",
+          "G50-22-002E",
+          "G50-22-003E",
+          "GRCD0001",
+          "GRCD0002",
+          "HE001-NE",
+          "HE002-NE",
+          "HE003-NE",
+          "KBD094",
+          "KNCD180010",
+          "KNCD180011",
+          "KNCD180012",
+          "KNCD190101",
+          "KNCD190102",
+          "MAD180",
+          "MJGD27",
+          "MR1",
+          "MRDH400",
+          "MRDH401",
+          "MRDH402",
+          "MRDH403",
+          "MUTINEER 1B",
+          "NGALTI 1",
+          "NUG0453",
+          "NUG0467",
+          "OBDDH2",
+          "PDP2B",
+          "PLRCD001",
+          "PLRCD003",
+          "PLRCD006",
+          "PPDDD0002A",
+          "PWD 1",
+          "RBDD008",
+          "REINDEER 1",
+          "RRLRMDD040",
+          "RRLRMDD041",
+          "RRLRMDD041W1",
+          "SEDD0057",
+          "TCDP1",
+          "TCDP3",
+          "TMD001",
+          "TUBRIDGI 15",
+          "UGD063",
+          "UGD288",
+          "UGD297",
+          "UGD378",
+          "WBD055UD",
+          "WK1",
+          "WOODADA 02",
+          "WTB-05",
+          "WTB-06",
+          "WTB-07",
+          "WTB-09",
+          "WTB-14",
+          "WTB-21",
+          "WTB-22",
+          "WTB-29",
+          "WTB-55",
+          "WTB-60",
+          "WTB-79",
+          "YDDD00003",
+          "YGDD002",
+          "YOWALGA 3",
+          "ZNDD001"
+        ],
+        "excluded_by_sensor": {
+          "tir": 72,
+          "swir": 34
+        },
+        "pair_sensor_support": 2,
+        "missing_distance_imputation": "none"
+      },
+      "support": null,
+      "pca_components": null,
+      "pca_variance": null,
+      "pca_variance_target_met": null,
+      "distance_data_sha256": "1c19d9e9279085e9074c12b1bc00b87353722e6896b37070a665843290320b19"
+    },
+    "seq_swir": {
+      "run_id": "hole-seq_swir-20261014T121525-b51998",
+      "holes": 1178,
+      "distance": "banded DTW (band 0.3) on 10 m true-vertical-depth steps of 8 PCA components of the mix; order down the hole matters, thickness may stretch",
+      "distance_version": null,
+      "shape": [
+        1178,
+        1178
+      ],
+      "finite": true,
+      "symmetric": true,
+      "zero_diagonal": true,
+      "hole_cluster_k": 2,
+      "hole_cluster_status": "selected",
+      "coverage": null,
+      "support": null,
+      "pca_components": null,
+      "pca_variance": null,
+      "pca_variance_target_met": null,
+      "distance_data_sha256": "00f37ac52f9ea3c195ec0fe47dedae4eac4fa58be4f1d22cfb930b9b7fe6a829"
+    },
+    "seq_tir": {
+      "run_id": "hole-seq_tir-20261014T121614-bfab29",
+      "holes": 1140,
+      "distance": "banded DTW (band 0.3) on 10 m true-vertical-depth steps of 8 PCA components of the mix; order down the hole matters, thickness may stretch",
+      "distance_version": null,
+      "shape": [
+        1140,
+        1140
+      ],
+      "finite": true,
+      "symmetric": true,
+      "zero_diagonal": true,
+      "hole_cluster_k": 2,
+      "hole_cluster_status": "selected",
+      "coverage": null,
+      "support": null,
+      "pca_components": null,
+      "pca_variance": null,
+      "pca_variance_target_met": null,
+      "distance_data_sha256": "3d9c90f42d4004e16bb215d98c61724101c2ccf1d9285b6c7db350383197cd8c"
+    },
+    "swir": {
+      "run_id": "hole-swir-20261014T121214-7e48f9",
+      "holes": 1177,
+      "distance": "Jensen-Shannon (base 2) on cluster shares",
+      "distance_version": "cluster-share-jensen-shannon-v1",
+      "shape": [
+        1177,
+        1177
+      ],
+      "finite": true,
+      "symmetric": true,
+      "zero_diagonal": true,
+      "hole_cluster_k": 8,
+      "hole_cluster_status": "selected",
+      "coverage": null,
+      "support": null,
+      "pca_components": null,
+      "pca_variance": null,
+      "pca_variance_target_met": null,
+      "distance_data_sha256": "93377cb04e389d72726c68519176ced26e723aead8458f6530617b3715f4d93b"
+    },
+    "tir": {
+      "run_id": "hole-tir-20261014T121407-de1339",
+      "holes": 1149,
+      "distance": "Jensen-Shannon (base 2) on cluster shares",
+      "distance_version": "cluster-share-jensen-shannon-v1",
+      "shape": [
+        1149,
+        1149
+      ],
+      "finite": true,
+      "symmetric": true,
+      "zero_diagonal": true,
+      "hole_cluster_k": 2,
+      "hole_cluster_status": "selected",
+      "coverage": null,
+      "support": null,
+      "pca_components": null,
+      "pca_variance": null,
+      "pca_variance_target_met": null,
+      "distance_data_sha256": "15d71c99e998bde8440dd7dbb09455a1da0442d2e4eb7e0d2433ac24f720ef27"
+    }
+  },
+  "raw_comparators": {
+    "raw_nir": {
+      "same_names": true,
+      "spearman_rho": 0.9277115335780267,
+      "interpretation": "Same cohort/PCA; rank agreement does not validate geological accuracy or select a champion",
+      "legacy_distance_version": "marginal-variance-weighted-wasserstein-v1"
+    },
+    "raw_tir": {
+      "same_names": true,
+      "spearman_rho": 0.9414371915710548,
+      "interpretation": "Same cohort/PCA; rank agreement does not validate geological accuracy or select a champion",
+      "legacy_distance_version": "marginal-variance-weighted-wasserstein-v1"
+    }
+  },
+  "snapshot_scope": "Initial full staged refresh; final grouping/promotion appears below",
+  "final_grouping": {
+    "combined": {
+      "k": 2,
+      "names": {
+        "0": "Quartz + Chlorite-FeMg + Muscovite",
+        "1": "Chlorite-FeMg + Hornblende + Quartz"
+      },
+      "sizes": {
+        "0": 700,
+        "1": 400
+      },
+      "k_rule": "smallest K within 0.02 of best silhouette among supported candidates",
+      "scores": [
+        {
+          "k": 2,
+          "valid": true,
+          "reason": null,
+          "actual_k": 2,
+          "min_size": 400,
+          "silhouette": 0.3005054281065235,
+          "singletons": 0,
+          "cluster_sizes": [
+            700,
+            400
+          ]
+        },
+        {
+          "k": 3,
+          "valid": true,
+          "reason": null,
+          "actual_k": 3,
+          "min_size": 46,
+          "silhouette": 0.2703067197396411,
+          "singletons": 0,
+          "cluster_sizes": [
+            700,
+            354,
+            46
+          ]
+        },
+        {
+          "k": 4,
+          "valid": true,
+          "reason": null,
+          "actual_k": 4,
+          "min_size": 7,
+          "silhouette": 0.23956018394448744,
+          "singletons": 0,
+          "cluster_sizes": [
+            700,
+            347,
+            46,
+            7
+          ]
+        },
+        {
+          "k": 5,
+          "valid": true,
+          "reason": null,
+          "actual_k": 5,
+          "min_size": 7,
+          "silhouette": 0.1980603096452123,
+          "singletons": 0,
+          "cluster_sizes": [
+            700,
+            340,
+            46,
+            7,
+            7
+          ]
+        },
+        {
+          "k": 6,
+          "valid": true,
+          "reason": null,
+          "actual_k": 6,
+          "min_size": 7,
+          "silhouette": 0.16487543667086882,
+          "singletons": 0,
+          "cluster_sizes": [
+            560,
+            340,
+            140,
+            46,
+            7,
+            7
+          ]
+        },
+        {
+          "k": 7,
+          "valid": true,
+          "reason": null,
+          "actual_k": 7,
+          "min_size": 7,
+          "silhouette": 0.18132008589638454,
+          "singletons": 0,
+          "cluster_sizes": [
+            560,
+            239,
+            140,
+            101,
+            46,
+            7,
+            7
+          ]
+        },
+        {
+          "k": 8,
+          "valid": true,
+          "reason": null,
+          "actual_k": 8,
+          "min_size": 7,
+          "silhouette": 0.18891030275390397,
+          "singletons": 0,
+          "cluster_sizes": [
+            466,
+            239,
+            140,
+            101,
+            94,
+            46,
+            7,
+            7
+          ]
+        },
+        {
+          "k": 9,
+          "valid": true,
+          "reason": null,
+          "actual_k": 9,
+          "min_size": 7,
+          "silhouette": 0.17362336952631174,
+          "singletons": 0,
+          "cluster_sizes": [
+            454,
+            239,
+            140,
+            101,
+            94,
+            46,
+            12,
+            7,
+            7
+          ]
+        },
+        {
+          "k": 10,
+          "valid": true,
+          "reason": null,
+          "actual_k": 10,
+          "min_size": 7,
+          "silhouette": 0.17639896496455326,
+          "singletons": 0,
+          "cluster_sizes": [
+            454,
+            164,
+            140,
+            101,
+            94,
+            75,
+            46,
+            12,
+            7,
+            7
+          ]
+        },
+        {
+          "k": 11,
+          "valid": true,
+          "reason": null,
+          "actual_k": 11,
+          "min_size": 7,
+          "silhouette": 0.20509272366219491,
+          "singletons": 0,
+          "cluster_sizes": [
+            232,
+            222,
+            164,
+            140,
+            101,
+            94,
+            75,
+            46,
+            12,
+            7,
+            7
+          ]
+        },
+        {
+          "k": 12,
+          "valid": true,
+          "reason": null,
+          "actual_k": 12,
+          "min_size": 4,
+          "silhouette": 0.19415876164306156,
+          "singletons": 0,
+          "cluster_sizes": [
+            232,
+            222,
+            164,
+            140,
+            101,
+            94,
+            75,
+            46,
+            8,
+            7,
+            7,
+            4
+          ]
+        },
+        {
+          "k": 13,
+          "valid": true,
+          "reason": null,
+          "actual_k": 13,
+          "min_size": 4,
+          "silhouette": 0.200902090765158,
+          "singletons": 0,
+          "cluster_sizes": [
+            222,
+            175,
+            164,
+            140,
+            101,
+            94,
+            75,
+            57,
+            46,
+            8,
+            7,
+            7,
+            4
+          ]
+        },
+        {
+          "k": 14,
+          "valid": true,
+          "reason": null,
+          "actual_k": 14,
+          "min_size": 3,
+          "silhouette": 0.19733804306257954,
+          "singletons": 0,
+          "cluster_sizes": [
+            222,
+            175,
+            164,
+            140,
+            101,
+            94,
+            75,
+            57,
+            46,
+            8,
+            7,
+            4,
+            4,
+            3
+          ]
+        },
+        {
+          "k": 15,
+          "valid": true,
+          "reason": null,
+          "actual_k": 15,
+          "min_size": 3,
+          "silhouette": 0.19424174388143026,
+          "singletons": 0,
+          "cluster_sizes": [
+            222,
+            175,
+            164,
+            124,
+            101,
+            94,
+            75,
+            57,
+            46,
+            16,
+            8,
+            7,
+            4,
+            4,
+            3
+          ]
+        }
+      ],
+      "status": "selected",
+      "algorithm": "average linkage; exact merge-count cut",
+      "candidate_k": [
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14,
+        15
+      ],
+      "partition_note": "descriptive partition selected by silhouette; not geological validation",
+      "support_policy": {
+        "meaning": "replication floor for descriptive groups; not geological validation",
+        "minimum_holes_per_group": 2
+      },
+      "grouping_version": "average-linkage-replicated-groups-v2",
+      "tied_merge_heights": true,
+      "descriptive_container": false
+    },
+    "raw_nir": {
+      "k": 1,
+      "names": {
+        "0": "Unassigned \u2014 no supported hole grouping"
+      },
+      "sizes": {
+        "0": 1261
+      },
+      "k_rule": "smallest K within 0.02 of best silhouette among supported candidates",
+      "reason": "every candidate fails the minimum replicated group support floor",
+      "scores": [
+        {
+          "k": 2,
+          "valid": false,
+          "reason": "minimum replicated group support not satisfied",
+          "actual_k": 2,
+          "min_size": 1,
+          "silhouette": 0.46938005523062276,
+          "singletons": 1,
+          "cluster_sizes": [
+            1260,
+            1
+          ]
+        },
+        {
+          "k": 3,
+          "valid": false,
+          "reason": "minimum replicated group support not satisfied",
+          "actual_k": 3,
+          "min_size": 1,
+          "silhouette": 0.30961838413873904,
+          "singletons": 1,
+          "cluster_sizes": [
+            1253,
+            7,
+            1
+          ]
+        },
+        {
+          "k": 4,
+          "valid": false,
+          "reason": "minimum replicated group support not satisfied",
+          "actual_k": 4,
+          "min_size": 1,
+          "silhouette": 0.32634016474225547,
+          "singletons": 1,
+          "cluster_sizes": [
+            721,
+            532,
+            7,
+            1
+          ]
+        },
+        {
+          "k": 5,
+          "valid": false,
+          "reason": "minimum replicated group support not satisfied",
+          "actual_k": 5,
+          "min_size": 1,
+          "silhouette": 0.27039121313494413,
+          "singletons": 2,
+          "cluster_sizes": [
+            720,
+            532,
+            7,
+            1,
+            1
+          ]
+        },
+        {
+          "k": 6,
+          "valid": false,
+          "reason": "minimum replicated group support not satisfied",
+          "actual_k": 6,
+          "min_size": 1,
+          "silhouette": 0.21155975917613754,
+          "singletons": 2,
+          "cluster_sizes": [
+            720,
+            526,
+            7,
+            6,
+            1,
+            1
+          ]
+        },
+        {
+          "k": 7,
+          "valid": false,
+          "reason": "minimum replicated group support not satisfied",
+          "actual_k": 7,
+          "min_size": 1,
+          "silhouette": 0.19968012266127544,
+          "singletons": 2,
+          "cluster_sizes": [
+            716,
+            526,
+            7,
+            6,
+            4,
+            1,
+            1
+          ]
+        },
+        {
+          "k": 8,
+          "valid": false,
+          "reason": "minimum replicated group support not satisfied",
+          "actual_k": 8,
+          "min_size": 1,
+          "silhouette": 0.19139413089104193,
+          "singletons": 2,
+          "cluster_sizes": [
+            716,
+            429,
+            97,
+            7,
+            6,
+            4,
+            1,
+            1
+          ]
+        },
+        {
+          "k": 9,
+          "valid": false,
+          "reason": "minimum replicated group support not satisfied",
+          "actual_k": 9,
+          "min_size": 1,
+          "silhouette": 0.18870808042390522,
+          "singletons": 3,
+          "cluster_sizes": [
+            716,
+            429,
+            97,
+            6,
+            6,
+            4,
+            1,
+            1,
+            1
+          ]
+        },
+        {
+          "k": 10,
+          "valid": false,
+          "reason": "minimum replicated group support not satisfied",
+          "actual_k": 10,
+          "min_size": 1,
+          "silhouette": 0.18104978201692687,
+          "singletons": 3,
+          "cluster_sizes": [
+            716,
+            425,
+            97,
+            6,
+            6,
+            4,
+            4,
+            1,
+            1,
+            1
+          ]
+        },
+        {
+          "k": 11,
+          "valid": false,
+          "reason": "minimum replicated group support not satisfied",
+          "actual_k": 11,
+          "min_size": 1,
+          "silhouette": 0.17174206578341136,
+          "singletons": 3,
+          "cluster_sizes": [
+            664,
+            425,
+            97,
+            52,
+            6,
+            6,
+            4,
+            4,
+            1,
+            1,
+            1
+          ]
+        },
+        {
+          "k": 12,
+          "valid": false,
+          "reason": "minimum replicated group support not satisfied",
+          "actual_k": 12,
+          "min_size": 1,
+          "silhouette": 0.16729682055957545,
+          "singletons": 3,
+          "cluster_sizes": [
+            646,
+            425,
+            97,
+            52,
+            18,
+            6,
+            6,
+            4,
+            4,
+            1,
+            1,
+            1
+          ]
+        },
+        {
+          "k": 13,
+          "valid": false,
+          "reason": "minimum replicated group support not satisfied",
+          "actual_k": 13,
+          "min_size": 1,
+          "silhouette": 0.15833086643176086,
+          "singletons": 4,
+          "cluster_sizes": [
+            646,
+            425,
+            97,
+            52,
+            18,
+            6,
+            5,
+            4,
+            4,
+            1,
+            1,
+            1,
+            1
+          ]
+        },
+        {
+          "k": 14,
+          "valid": false,
+          "reason": "minimum replicated group support not satisfied",
+          "actual_k": 14,
+          "min_size": 1,
+          "silhouette": 0.14932571506986345,
+          "singletons": 4,
+          "cluster_sizes": [
+            646,
+            420,
+            97,
+            52,
+            18,
+            6,
+            5,
+            5,
+            4,
+            4,
+            1,
+            1,
+            1,
+            1
+          ]
+        },
+        {
+          "k": 15,
+          "valid": false,
+          "reason": "minimum replicated group support not satisfied",
+          "actual_k": 15,
+          "min_size": 1,
+          "silhouette": 0.14665682873812766,
+          "singletons": 4,
+          "cluster_sizes": [
+            646,
+            420,
+            91,
+            52,
+            18,
+            6,
+            6,
+            5,
+            5,
+            4,
+            4,
+            1,
+            1,
+            1,
+            1
+          ]
+        }
+      ],
+      "status": "no_valid_candidates",
+      "algorithm": "average linkage; exact merge-count cut",
+      "candidate_k": [
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14,
+        15
+      ],
+      "support_policy": {
+        "meaning": "replication floor for descriptive groups; not geological validation",
+        "minimum_holes_per_group": 2
+      },
+      "grouping_version": "average-linkage-replicated-groups-v2",
+      "descriptive_container": true
+    },
+    "raw_tir": {
+      "k": 2,
+      "names": {
+        "0": "class 0-dominant",
+        "1": "class 2-dominant"
+      },
+      "sizes": {
+        "0": 1163,
+        "1": 62
+      },
+      "k_rule": "smallest K within 0.02 of best silhouette among supported candidates",
+      "scores": [
+        {
+          "k": 2,
+          "valid": true,
+          "reason": null,
+          "actual_k": 2,
+          "min_size": 62,
+          "silhouette": 0.4849255702669247,
+          "singletons": 0,
+          "cluster_sizes": [
+            1163,
+            62
+          ]
+        },
+        {
+          "k": 3,
+          "valid": false,
+          "reason": "minimum replicated group support not satisfied",
+          "actual_k": 3,
+          "min_size": 1,
+          "silhouette": 0.4782939272581935,
+          "singletons": 1,
+          "cluster_sizes": [
+            1163,
+            61,
+            1
+          ]
+        },
+        {
+          "k": 4,
+          "valid": false,
+          "reason": "minimum replicated group support not satisfied",
+          "actual_k": 4,
+          "min_size": 1,
+          "silhouette": 0.3612481099689232,
+          "singletons": 1,
+          "cluster_sizes": [
+            1126,
+            61,
+            37,
+            1
+          ]
+        },
+        {
+          "k": 5,
+          "valid": false,
+          "reason": "minimum replicated group support not satisfied",
+          "actual_k": 5,
+          "min_size": 1,
+          "silhouette": 0.3434415838722208,
+          "singletons": 1,
+          "cluster_sizes": [
+            1126,
+            43,
+            37,
+            18,
+            1
+          ]
+        },
+        {
+          "k": 6,
+          "valid": false,
+          "reason": "minimum replicated group support not satisfied",
+          "actual_k": 6,
+          "min_size": 1,
+          "silhouette": 0.22159257227722626,
+          "singletons": 1,
+          "cluster_sizes": [
+            1121,
+            43,
+            37,
+            18,
+            5,
+            1
+          ]
+        },
+        {
+          "k": 7,
+          "valid": false,
+          "reason": "minimum replicated group support not satisfied",
+          "actual_k": 7,
+          "min_size": 1,
+          "silhouette": 0.21703386459727983,
+          "singletons": 1,
+          "cluster_sizes": [
+            1050,
+            71,
+            43,
+            37,
+            18,
+            5,
+            1
+          ]
+        },
+        {
+          "k": 8,
+          "valid": false,
+          "reason": "minimum replicated group support not satisfied",
+          "actual_k": 8,
+          "min_size": 1,
+          "silhouette": 0.21405951939703616,
+          "singletons": 1,
+          "cluster_sizes": [
+            1050,
+            71,
+            41,
+            37,
+            18,
+            5,
+            2,
+            1
+          ]
+        },
+        {
+          "k": 9,
+          "valid": false,
+          "reason": "minimum replicated group support not satisfied",
+          "actual_k": 9,
+          "min_size": 1,
+          "silhouette": 0.2147267900246485,
+          "singletons": 1,
+          "cluster_sizes": [
+            1050,
+            71,
+            37,
+            32,
+            18,
+            9,
+            5,
+            2,
+            1
+          ]
+        },
+        {
+          "k": 10,
+          "valid": false,
+          "reason": "minimum replicated group support not satisfied",
+          "actual_k": 10,
+          "min_size": 1,
+          "silhouette": 0.26513419683594386,
+          "singletons": 1,
+          "cluster_sizes": [
+            724,
+            326,
+            71,
+            37,
+            32,
+            18,
+            9,
+            5,
+            2,
+            1
+          ]
+        },
+        {
+          "k": 11,
+          "valid": false,
+          "reason": "minimum replicated group support not satisfied",
+          "actual_k": 11,
+          "min_size": 1,
+          "silhouette": 0.2638962469969886,
+          "singletons": 3,
+          "cluster_sizes": [
+            724,
+            326,
+            71,
+            37,
+            32,
+            18,
+            9,
+            5,
+            1,
+            1,
+            1
+          ]
+        },
+        {
+          "k": 12,
+          "valid": false,
+          "reason": "minimum replicated group support not satisfied",
+          "actual_k": 12,
+          "min_size": 1,
+          "silhouette": 0.26236876374425805,
+          "singletons": 4,
+          "cluster_sizes": [
+            724,
+            326,
+            71,
+            37,
+            32,
+            17,
+            9,
+            5,
+            1,
+            1,
+            1,
+            1
+          ]
+        },
+        {
+          "k": 13,
+          "valid": false,
+          "reason": "minimum replicated group support not satisfied",
+          "actual_k": 13,
+          "min_size": 1,
+          "silhouette": 0.23264424693296193,
+          "singletons": 4,
+          "cluster_sizes": [
+            724,
+            305,
+            71,
+            37,
+            32,
+            21,
+            17,
+            9,
+            5,
+            1,
+            1,
+            1,
+            1
+          ]
+        },
+        {
+          "k": 14,
+          "valid": false,
+          "reason": "minimum replicated group support not satisfied",
+          "actual_k": 14,
+          "min_size": 1,
+          "silhouette": 0.2165111930034196,
+          "singletons": 4,
+          "cluster_sizes": [
+            724,
+            305,
+            71,
+            35,
+            32,
+            21,
+            17,
+            9,
+            5,
+            2,
+            1,
+            1,
+            1,
+            1
+          ]
+        },
+        {
+          "k": 15,
+          "valid": false,
+          "reason": "minimum replicated group support not satisfied",
+          "actual_k": 15,
+          "min_size": 1,
+          "silhouette": 0.21185251268496447,
+          "singletons": 4,
+          "cluster_sizes": [
+            724,
+            305,
+            71,
+            35,
+            32,
+            17,
+            14,
+            9,
+            7,
+            5,
+            2,
+            1,
+            1,
+            1,
+            1
+          ]
+        }
+      ],
+      "status": "selected",
+      "algorithm": "average linkage; exact merge-count cut",
+      "candidate_k": [
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14,
+        15
+      ],
+      "partition_note": "descriptive partition selected by silhouette; not geological validation",
+      "support_policy": {
+        "meaning": "replication floor for descriptive groups; not geological validation",
+        "minimum_holes_per_group": 2
+      },
+      "grouping_version": "average-linkage-replicated-groups-v2",
+      "tied_merge_heights": false,
+      "descriptive_container": false
+    },
+    "seq_combined": {
+      "k": 2,
+      "names": {
+        "0": "Chlorite-FeMg + Quartz + Hornblende",
+        "1": "Quartz + Kaolinite-WX + Muscovite"
+      },
+      "sizes": {
+        "0": 681,
+        "1": 425
+      },
+      "k_rule": "smallest K within 0.02 of best silhouette among supported candidates",
+      "scores": [
+        {
+          "k": 2,
+          "valid": true,
+          "reason": null,
+          "actual_k": 2,
+          "min_size": 425,
+          "silhouette": 0.18096792883435547,
+          "singletons": 0,
+          "cluster_sizes": [
+            681,
+            425
+          ]
+        },
+        {
+          "k": 3,
+          "valid": true,
+          "reason": null,
+          "actual_k": 3,
+          "min_size": 79,
+          "silhouette": 0.17005153380191426,
+          "singletons": 0,
+          "cluster_sizes": [
+            681,
+            346,
+            79
+          ]
+        },
+        {
+          "k": 4,
+          "valid": true,
+          "reason": null,
+          "actual_k": 4,
+          "min_size": 2,
+          "silhouette": 0.12833402110792855,
+          "singletons": 0,
+          "cluster_sizes": [
+            679,
+            346,
+            79,
+            2
+          ]
+        },
+        {
+          "k": 5,
+          "valid": true,
+          "reason": null,
+          "actual_k": 5,
+          "min_size": 2,
+          "silhouette": 0.10781782025325387,
+          "singletons": 0,
+          "cluster_sizes": [
+            679,
+            346,
+            66,
+            13,
+            2
+          ]
+        },
+        {
+          "k": 6,
+          "valid": true,
+          "reason": null,
+          "actual_k": 6,
+          "min_size": 2,
+          "silhouette": 0.11013340991354051,
+          "singletons": 0,
+          "cluster_sizes": [
+            679,
+            218,
+            128,
+            66,
+            13,
+            2
+          ]
+        },
+        {
+          "k": 7,
+          "valid": true,
+          "reason": null,
+          "actual_k": 7,
+          "min_size": 2,
+          "silhouette": 0.10899742897826498,
+          "singletons": 0,
+          "cluster_sizes": [
+            600,
+            218,
+            128,
+            79,
+            66,
+            13,
+            2
+          ]
+        },
+        {
+          "k": 8,
+          "valid": true,
+          "reason": null,
+          "actual_k": 8,
+          "min_size": 2,
+          "silhouette": 0.09703994335099787,
+          "singletons": 0,
+          "cluster_sizes": [
+            578,
+            218,
+            128,
+            79,
+            66,
+            22,
+            13,
+            2
+          ]
+        },
+        {
+          "k": 9,
+          "valid": true,
+          "reason": null,
+          "actual_k": 9,
+          "min_size": 2,
+          "silhouette": 0.08819889443887749,
+          "singletons": 0,
+          "cluster_sizes": [
+            578,
+            218,
+            128,
+            79,
+            60,
+            22,
+            13,
+            6,
+            2
+          ]
+        },
+        {
+          "k": 10,
+          "valid": true,
+          "reason": null,
+          "actual_k": 10,
+          "min_size": 2,
+          "silhouette": 0.09284851402304557,
+          "singletons": 0,
+          "cluster_sizes": [
+            578,
+            140,
+            128,
+            79,
+            78,
+            60,
+            22,
+            13,
+            6,
+            2
+          ]
+        },
+        {
+          "k": 11,
+          "valid": true,
+          "reason": null,
+          "actual_k": 11,
+          "min_size": 2,
+          "silhouette": 0.07251284738858889,
+          "singletons": 0,
+          "cluster_sizes": [
+            578,
+            140,
+            128,
+            78,
+            64,
+            60,
+            22,
+            15,
+            13,
+            6,
+            2
+          ]
+        },
+        {
+          "k": 12,
+          "valid": true,
+          "reason": null,
+          "actual_k": 12,
+          "min_size": 2,
+          "silhouette": 0.06991395998507835,
+          "singletons": 0,
+          "cluster_sizes": [
+            578,
+            140,
+            128,
+            78,
+            64,
+            60,
+            22,
+            15,
+            11,
+            6,
+            2,
+            2
+          ]
+        },
+        {
+          "k": 13,
+          "valid": true,
+          "reason": null,
+          "actual_k": 13,
+          "min_size": 2,
+          "silhouette": 0.09085807168261767,
+          "singletons": 0,
+          "cluster_sizes": [
+            404,
+            174,
+            140,
+            128,
+            78,
+            64,
+            60,
+            22,
+            15,
+            11,
+            6,
+            2,
+            2
+          ]
+        },
+        {
+          "k": 14,
+          "valid": true,
+          "reason": null,
+          "actual_k": 14,
+          "min_size": 2,
+          "silhouette": 0.0837590544058999,
+          "singletons": 0,
+          "cluster_sizes": [
+            404,
+            174,
+            140,
+            121,
+            78,
+            64,
+            60,
+            22,
+            15,
+            11,
+            7,
+            6,
+            2,
+            2
+          ]
+        },
+        {
+          "k": 15,
+          "valid": true,
+          "reason": null,
+          "actual_k": 15,
+          "min_size": 2,
+          "silhouette": 0.07760223827324866,
+          "singletons": 0,
+          "cluster_sizes": [
+            404,
+            174,
+            140,
+            117,
+            78,
+            64,
+            60,
+            22,
+            15,
+            11,
+            7,
+            6,
+            4,
+            2,
+            2
+          ]
+        }
+      ],
+      "status": "selected",
+      "algorithm": "average linkage; exact merge-count cut",
+      "candidate_k": [
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14,
+        15
+      ],
+      "partition_note": "descriptive partition selected by silhouette; not geological validation",
+      "support_policy": {
+        "meaning": "replication floor for descriptive groups; not geological validation",
+        "minimum_holes_per_group": 2
+      },
+      "grouping_version": "average-linkage-replicated-groups-v2",
+      "tied_merge_heights": false,
+      "descriptive_container": false
+    },
+    "seq_swir": {
+      "k": 2,
+      "names": {
+        "0": "Chlorite-FeMg + Muscovite + Hornblende",
+        "1": "Kaolinite-WX + Kaolinite-PX + Dickite"
+      },
+      "sizes": {
+        "0": 1059,
+        "1": 119
+      },
+      "k_rule": "smallest K within 0.02 of best silhouette among supported candidates",
+      "scores": [
+        {
+          "k": 2,
+          "valid": true,
+          "reason": null,
+          "actual_k": 2,
+          "min_size": 119,
+          "silhouette": 0.246274673669475,
+          "singletons": 0,
+          "cluster_sizes": [
+            1059,
+            119
+          ]
+        },
+        {
+          "k": 3,
+          "valid": true,
+          "reason": null,
+          "actual_k": 3,
+          "min_size": 6,
+          "silhouette": 0.1595370431444847,
+          "singletons": 0,
+          "cluster_sizes": [
+            1053,
+            119,
+            6
+          ]
+        },
+        {
+          "k": 4,
+          "valid": true,
+          "reason": null,
+          "actual_k": 4,
+          "min_size": 6,
+          "silhouette": 0.14496157043284924,
+          "singletons": 0,
+          "cluster_sizes": [
+            802,
+            251,
+            119,
+            6
+          ]
+        },
+        {
+          "k": 5,
+          "valid": true,
+          "reason": null,
+          "actual_k": 5,
+          "min_size": 6,
+          "silhouette": 0.15460550045934826,
+          "singletons": 0,
+          "cluster_sizes": [
+            657,
+            251,
+            145,
+            119,
+            6
+          ]
+        },
+        {
+          "k": 6,
+          "valid": true,
+          "reason": null,
+          "actual_k": 6,
+          "min_size": 6,
+          "silhouette": 0.1532421568572172,
+          "singletons": 0,
+          "cluster_sizes": [
+            657,
+            193,
+            145,
+            119,
+            58,
+            6
+          ]
+        },
+        {
+          "k": 7,
+          "valid": true,
+          "reason": null,
+          "actual_k": 7,
+          "min_size": 6,
+          "silhouette": 0.13694061978168384,
+          "singletons": 0,
+          "cluster_sizes": [
+            657,
+            193,
+            119,
+            101,
+            58,
+            44,
+            6
+          ]
+        },
+        {
+          "k": 8,
+          "valid": true,
+          "reason": null,
+          "actual_k": 8,
+          "min_size": 6,
+          "silhouette": 0.12730957394348638,
+          "singletons": 0,
+          "cluster_sizes": [
+            657,
+            173,
+            119,
+            101,
+            58,
+            44,
+            20,
+            6
+          ]
+        },
+        {
+          "k": 9,
+          "valid": true,
+          "reason": null,
+          "actual_k": 9,
+          "min_size": 3,
+          "silhouette": 0.10135800079391875,
+          "singletons": 0,
+          "cluster_sizes": [
+            657,
+            173,
+            119,
+            98,
+            58,
+            44,
+            20,
+            6,
+            3
+          ]
+        },
+        {
+          "k": 10,
+          "valid": true,
+          "reason": null,
+          "actual_k": 10,
+          "min_size": 3,
+          "silhouette": 0.10841285243655824,
+          "singletons": 0,
+          "cluster_sizes": [
+            657,
+            119,
+            98,
+            92,
+            81,
+            58,
+            44,
+            20,
+            6,
+            3
+          ]
+        },
+        {
+          "k": 11,
+          "valid": true,
+          "reason": null,
+          "actual_k": 11,
+          "min_size": 3,
+          "silhouette": 0.1095340690534455,
+          "singletons": 0,
+          "cluster_sizes": [
+            657,
+            119,
+            98,
+            81,
+            58,
+            54,
+            44,
+            38,
+            20,
+            6,
+            3
+          ]
+        },
+        {
+          "k": 12,
+          "valid": true,
+          "reason": null,
+          "actual_k": 12,
+          "min_size": 3,
+          "silhouette": 0.09952314751953091,
+          "singletons": 0,
+          "cluster_sizes": [
+            657,
+            119,
+            98,
+            81,
+            58,
+            54,
+            44,
+            38,
+            16,
+            6,
+            4,
+            3
+          ]
+        },
+        {
+          "k": 13,
+          "valid": true,
+          "reason": null,
+          "actual_k": 13,
+          "min_size": 3,
+          "silhouette": 0.10701417711693868,
+          "singletons": 0,
+          "cluster_sizes": [
+            553,
+            119,
+            104,
+            98,
+            81,
+            58,
+            54,
+            44,
+            38,
+            16,
+            6,
+            4,
+            3
+          ]
+        },
+        {
+          "k": 14,
+          "valid": true,
+          "reason": null,
+          "actual_k": 14,
+          "min_size": 2,
+          "silhouette": 0.10229179081801355,
+          "singletons": 0,
+          "cluster_sizes": [
+            553,
+            119,
+            104,
+            98,
+            81,
+            58,
+            54,
+            44,
+            36,
+            16,
+            6,
+            4,
+            3,
+            2
+          ]
+        },
+        {
+          "k": 15,
+          "valid": true,
+          "reason": null,
+          "actual_k": 15,
+          "min_size": 2,
+          "silhouette": 0.08836926942257654,
+          "singletons": 0,
+          "cluster_sizes": [
+            553,
+            119,
+            104,
+            81,
+            66,
+            58,
+            54,
+            44,
+            36,
+            32,
+            16,
+            6,
+            4,
+            3,
+            2
+          ]
+        }
+      ],
+      "status": "selected",
+      "algorithm": "average linkage; exact merge-count cut",
+      "candidate_k": [
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14,
+        15
+      ],
+      "partition_note": "descriptive partition selected by silhouette; not geological validation",
+      "support_policy": {
+        "meaning": "replication floor for descriptive groups; not geological validation",
+        "minimum_holes_per_group": 2
+      },
+      "grouping_version": "average-linkage-replicated-groups-v2",
+      "tied_merge_heights": false,
+      "descriptive_container": false
+    },
+    "seq_tir": {
+      "k": 2,
+      "names": {
+        "0": "Quartz + Albite + Chlorite-FeMg",
+        "1": "Quartz + Talc + Augite"
+      },
+      "sizes": {
+        "0": 1017,
+        "1": 123
+      },
+      "k_rule": "smallest K within 0.02 of best silhouette among supported candidates",
+      "scores": [
+        {
+          "k": 2,
+          "valid": true,
+          "reason": null,
+          "actual_k": 2,
+          "min_size": 123,
+          "silhouette": 0.19174144426225453,
+          "singletons": 0,
+          "cluster_sizes": [
+            1017,
+            123
+          ]
+        },
+        {
+          "k": 3,
+          "valid": true,
+          "reason": null,
+          "actual_k": 3,
+          "min_size": 64,
+          "silhouette": 0.16265315480881629,
+          "singletons": 0,
+          "cluster_sizes": [
+            953,
+            123,
+            64
+          ]
+        },
+        {
+          "k": 4,
+          "valid": true,
+          "reason": null,
+          "actual_k": 4,
+          "min_size": 37,
+          "silhouette": 0.12182397995388214,
+          "singletons": 0,
+          "cluster_sizes": [
+            916,
+            123,
+            64,
+            37
+          ]
+        },
+        {
+          "k": 5,
+          "valid": true,
+          "reason": null,
+          "actual_k": 5,
+          "min_size": 14,
+          "silhouette": 0.10466582421520285,
+          "singletons": 0,
+          "cluster_sizes": [
+            916,
+            123,
+            64,
+            23,
+            14
+          ]
+        },
+        {
+          "k": 6,
+          "valid": true,
+          "reason": null,
+          "actual_k": 6,
+          "min_size": 14,
+          "silhouette": 0.0968235687871412,
+          "singletons": 0,
+          "cluster_sizes": [
+            916,
+            66,
+            64,
+            57,
+            23,
+            14
+          ]
+        },
+        {
+          "k": 7,
+          "valid": true,
+          "reason": null,
+          "actual_k": 7,
+          "min_size": 7,
+          "silhouette": 0.08719553121782636,
+          "singletons": 0,
+          "cluster_sizes": [
+            916,
+            66,
+            57,
+            57,
+            23,
+            14,
+            7
+          ]
+        },
+        {
+          "k": 8,
+          "valid": true,
+          "reason": null,
+          "actual_k": 8,
+          "min_size": 6,
+          "silhouette": 0.07281365940936303,
+          "singletons": 0,
+          "cluster_sizes": [
+            916,
+            66,
+            57,
+            57,
+            17,
+            14,
+            7,
+            6
+          ]
+        },
+        {
+          "k": 9,
+          "valid": true,
+          "reason": null,
+          "actual_k": 9,
+          "min_size": 6,
+          "silhouette": 0.1035040669019577,
+          "singletons": 0,
+          "cluster_sizes": [
+            709,
+            207,
+            66,
+            57,
+            57,
+            17,
+            14,
+            7,
+            6
+          ]
+        },
+        {
+          "k": 10,
+          "valid": true,
+          "reason": null,
+          "actual_k": 10,
+          "min_size": 2,
+          "silhouette": 0.10115874078384411,
+          "singletons": 0,
+          "cluster_sizes": [
+            709,
+            207,
+            66,
+            57,
+            57,
+            17,
+            12,
+            7,
+            6,
+            2
+          ]
+        },
+        {
+          "k": 11,
+          "valid": true,
+          "reason": null,
+          "actual_k": 11,
+          "min_size": 2,
+          "silhouette": 0.09417505315894564,
+          "singletons": 0,
+          "cluster_sizes": [
+            709,
+            207,
+            66,
+            57,
+            54,
+            17,
+            12,
+            7,
+            6,
+            3,
+            2
+          ]
+        },
+        {
+          "k": 12,
+          "valid": true,
+          "reason": null,
+          "actual_k": 12,
+          "min_size": 2,
+          "silhouette": 0.07734465652494331,
+          "singletons": 0,
+          "cluster_sizes": [
+            709,
+            207,
+            66,
+            57,
+            47,
+            17,
+            12,
+            7,
+            7,
+            6,
+            3,
+            2
+          ]
+        },
+        {
+          "k": 13,
+          "valid": true,
+          "reason": null,
+          "actual_k": 13,
+          "min_size": 2,
+          "silhouette": 0.08998501620259494,
+          "singletons": 0,
+          "cluster_sizes": [
+            593,
+            207,
+            116,
+            66,
+            57,
+            47,
+            17,
+            12,
+            7,
+            7,
+            6,
+            3,
+            2
+          ]
+        },
+        {
+          "k": 14,
+          "valid": true,
+          "reason": null,
+          "actual_k": 14,
+          "min_size": 2,
+          "silhouette": 0.08127220676370726,
+          "singletons": 0,
+          "cluster_sizes": [
+            593,
+            207,
+            116,
+            66,
+            57,
+            47,
+            12,
+            11,
+            7,
+            7,
+            6,
+            6,
+            3,
+            2
+          ]
+        },
+        {
+          "k": 15,
+          "valid": true,
+          "reason": null,
+          "actual_k": 15,
+          "min_size": 2,
+          "silhouette": 0.07926256686473436,
+          "singletons": 0,
+          "cluster_sizes": [
+            593,
+            207,
+            116,
+            57,
+            57,
+            47,
+            12,
+            11,
+            9,
+            7,
+            7,
+            6,
+            6,
+            3,
+            2
+          ]
+        }
+      ],
+      "status": "selected",
+      "algorithm": "average linkage; exact merge-count cut",
+      "candidate_k": [
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14,
+        15
+      ],
+      "partition_note": "descriptive partition selected by silhouette; not geological validation",
+      "support_policy": {
+        "meaning": "replication floor for descriptive groups; not geological validation",
+        "minimum_holes_per_group": 2
+      },
+      "grouping_version": "average-linkage-replicated-groups-v2",
+      "tied_merge_heights": false,
+      "descriptive_container": false
+    },
+    "swir": {
+      "k": 8,
+      "names": {
+        "0": "Chlorite-FeMg + Hornblende + Chlorite-Fe",
+        "1": "Muscovite + Chlorite-FeMg + Chlorite-Fe",
+        "2": "Kaolinite-WX + Kaolinite-PX + Montmorillonite",
+        "3": "Hornblende + Chlorite-FeMg + Muscovite",
+        "4": "Phengite + Muscovite + Chlorite-FeMg",
+        "5": "Chlorite-Mg + Talc + Serpentine",
+        "6": "Paragonite + Chlorite-Fe + Montmorillonite",
+        "7": "Dolomite-dominant"
+      },
+      "sizes": {
+        "0": 306,
+        "1": 209,
+        "2": 161,
+        "3": 150,
+        "4": 123,
+        "5": 109,
+        "6": 68,
+        "7": 51
+      },
+      "k_rule": "smallest K within 0.02 of best silhouette among supported candidates",
+      "scores": [
+        {
+          "k": 2,
+          "valid": true,
+          "reason": null,
+          "actual_k": 2,
+          "min_size": 229,
+          "silhouette": 0.18663887543993637,
+          "singletons": 0,
+          "cluster_sizes": [
+            948,
+            229
+          ]
+        },
+        {
+          "k": 3,
+          "valid": true,
+          "reason": null,
+          "actual_k": 3,
+          "min_size": 174,
+          "silhouette": 0.21056178646497958,
+          "singletons": 0,
+          "cluster_sizes": [
+            774,
+            229,
+            174
+          ]
+        },
+        {
+          "k": 4,
+          "valid": true,
+          "reason": null,
+          "actual_k": 4,
+          "min_size": 68,
+          "silhouette": 0.2060163827038581,
+          "singletons": 0,
+          "cluster_sizes": [
+            774,
+            174,
+            161,
+            68
+          ]
+        },
+        {
+          "k": 5,
+          "valid": true,
+          "reason": null,
+          "actual_k": 5,
+          "min_size": 51,
+          "silhouette": 0.21165141400968784,
+          "singletons": 0,
+          "cluster_sizes": [
+            774,
+            161,
+            123,
+            68,
+            51
+          ]
+        },
+        {
+          "k": 6,
+          "valid": true,
+          "reason": null,
+          "actual_k": 6,
+          "min_size": 51,
+          "silhouette": 0.21962014755404813,
+          "singletons": 0,
+          "cluster_sizes": [
+            665,
+            161,
+            123,
+            109,
+            68,
+            51
+          ]
+        },
+        {
+          "k": 7,
+          "valid": true,
+          "reason": null,
+          "actual_k": 7,
+          "min_size": 51,
+          "silhouette": 0.23998940590472917,
+          "singletons": 0,
+          "cluster_sizes": [
+            515,
+            161,
+            150,
+            123,
+            109,
+            68,
+            51
+          ]
+        },
+        {
+          "k": 8,
+          "valid": true,
+          "reason": null,
+          "actual_k": 8,
+          "min_size": 51,
+          "silhouette": 0.27491672058085226,
+          "singletons": 0,
+          "cluster_sizes": [
+            306,
+            209,
+            161,
+            150,
+            123,
+            109,
+            68,
+            51
+          ]
+        },
+        {
+          "k": 9,
+          "valid": true,
+          "reason": null,
+          "actual_k": 9,
+          "min_size": 11,
+          "silhouette": 0.24381854711876774,
+          "singletons": 0,
+          "cluster_sizes": [
+            295,
+            209,
+            161,
+            150,
+            123,
+            109,
+            68,
+            51,
+            11
+          ]
+        },
+        {
+          "k": 10,
+          "valid": true,
+          "reason": null,
+          "actual_k": 10,
+          "min_size": 11,
+          "silhouette": 0.23279118411750985,
+          "singletons": 0,
+          "cluster_sizes": [
+            295,
+            209,
+            161,
+            150,
+            109,
+            85,
+            68,
+            51,
+            38,
+            11
+          ]
+        },
+        {
+          "k": 11,
+          "valid": true,
+          "reason": null,
+          "actual_k": 11,
+          "min_size": 11,
+          "silhouette": 0.23028173204943067,
+          "singletons": 0,
+          "cluster_sizes": [
+            295,
+            209,
+            161,
+            150,
+            109,
+            68,
+            68,
+            51,
+            38,
+            17,
+            11
+          ]
+        },
+        {
+          "k": 12,
+          "valid": true,
+          "reason": null,
+          "actual_k": 12,
+          "min_size": 6,
+          "silhouette": 0.22382339610767524,
+          "singletons": 0,
+          "cluster_sizes": [
+            295,
+            209,
+            161,
+            150,
+            109,
+            68,
+            68,
+            45,
+            38,
+            17,
+            11,
+            6
+          ]
+        },
+        {
+          "k": 13,
+          "valid": true,
+          "reason": null,
+          "actual_k": 13,
+          "min_size": 4,
+          "silhouette": 0.2087067072761752,
+          "singletons": 0,
+          "cluster_sizes": [
+            295,
+            209,
+            157,
+            150,
+            109,
+            68,
+            68,
+            45,
+            38,
+            17,
+            11,
+            6,
+            4
+          ]
+        },
+        {
+          "k": 14,
+          "valid": true,
+          "reason": null,
+          "actual_k": 14,
+          "min_size": 4,
+          "silhouette": 0.19706805334897118,
+          "singletons": 0,
+          "cluster_sizes": [
+            295,
+            209,
+            157,
+            150,
+            109,
+            68,
+            64,
+            45,
+            38,
+            17,
+            11,
+            6,
+            4,
+            4
+          ]
+        },
+        {
+          "k": 15,
+          "valid": true,
+          "reason": null,
+          "actual_k": 15,
+          "min_size": 4,
+          "silhouette": 0.19112309468986283,
+          "singletons": 0,
+          "cluster_sizes": [
+            295,
+            209,
+            157,
+            109,
+            101,
+            68,
+            64,
+            49,
+            45,
+            38,
+            17,
+            11,
+            6,
+            4,
+            4
+          ]
+        }
+      ],
+      "status": "selected",
+      "algorithm": "average linkage; exact merge-count cut",
+      "candidate_k": [
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14,
+        15
+      ],
+      "partition_note": "descriptive partition selected by silhouette; not geological validation",
+      "support_policy": {
+        "meaning": "replication floor for descriptive groups; not geological validation",
+        "minimum_holes_per_group": 2
+      },
+      "grouping_version": "average-linkage-replicated-groups-v2",
+      "tied_merge_heights": true,
+      "descriptive_container": false
+    },
+    "tir": {
+      "k": 2,
+      "names": {
+        "0": "Quartz-dominant",
+        "1": "Quartz + Chlorite-FeMg + Hornblende"
+      },
+      "sizes": {
+        "0": 791,
+        "1": 358
+      },
+      "k_rule": "smallest K within 0.02 of best silhouette among supported candidates",
+      "scores": [
+        {
+          "k": 2,
+          "valid": true,
+          "reason": null,
+          "actual_k": 2,
+          "min_size": 358,
+          "silhouette": 0.6205045906943619,
+          "singletons": 0,
+          "cluster_sizes": [
+            791,
+            358
+          ]
+        },
+        {
+          "k": 3,
+          "valid": true,
+          "reason": null,
+          "actual_k": 3,
+          "min_size": 62,
+          "silhouette": 0.558657387050251,
+          "singletons": 0,
+          "cluster_sizes": [
+            791,
+            296,
+            62
+          ]
+        },
+        {
+          "k": 4,
+          "valid": true,
+          "reason": null,
+          "actual_k": 4,
+          "min_size": 62,
+          "silhouette": 0.5800949060292968,
+          "singletons": 0,
+          "cluster_sizes": [
+            411,
+            380,
+            296,
+            62
+          ]
+        },
+        {
+          "k": 5,
+          "valid": true,
+          "reason": null,
+          "actual_k": 5,
+          "min_size": 62,
+          "silhouette": 0.5762960094363002,
+          "singletons": 0,
+          "cluster_sizes": [
+            411,
+            380,
+            158,
+            138,
+            62
+          ]
+        },
+        {
+          "k": 6,
+          "valid": true,
+          "reason": null,
+          "actual_k": 6,
+          "min_size": 62,
+          "silhouette": 0.5760953772003674,
+          "singletons": 0,
+          "cluster_sizes": [
+            411,
+            232,
+            158,
+            148,
+            138,
+            62
+          ]
+        },
+        {
+          "k": 7,
+          "valid": true,
+          "reason": null,
+          "actual_k": 7,
+          "min_size": 62,
+          "silhouette": 0.5780857764859535,
+          "singletons": 0,
+          "cluster_sizes": [
+            411,
+            232,
+            148,
+            138,
+            92,
+            66,
+            62
+          ]
+        },
+        {
+          "k": 8,
+          "valid": true,
+          "reason": null,
+          "actual_k": 8,
+          "min_size": 62,
+          "silhouette": 0.5907986360920354,
+          "singletons": 0,
+          "cluster_sizes": [
+            411,
+            148,
+            138,
+            123,
+            109,
+            92,
+            66,
+            62
+          ]
+        },
+        {
+          "k": 9,
+          "valid": true,
+          "reason": null,
+          "actual_k": 9,
+          "min_size": 62,
+          "silhouette": 0.6077680576362422,
+          "singletons": 0,
+          "cluster_sizes": [
+            301,
+            148,
+            138,
+            123,
+            110,
+            109,
+            92,
+            66,
+            62
+          ]
+        },
+        {
+          "k": 10,
+          "valid": true,
+          "reason": null,
+          "actual_k": 10,
+          "min_size": 31,
+          "silhouette": 0.6067379792291949,
+          "singletons": 0,
+          "cluster_sizes": [
+            301,
+            148,
+            138,
+            123,
+            110,
+            109,
+            92,
+            66,
+            31,
+            31
+          ]
+        },
+        {
+          "k": 11,
+          "valid": true,
+          "reason": null,
+          "actual_k": 11,
+          "min_size": 31,
+          "silhouette": 0.6068542997264946,
+          "singletons": 0,
+          "cluster_sizes": [
+            301,
+            148,
+            123,
+            110,
+            109,
+            92,
+            71,
+            67,
+            66,
+            31,
+            31
+          ]
+        },
+        {
+          "k": 12,
+          "valid": true,
+          "reason": null,
+          "actual_k": 12,
+          "min_size": 31,
+          "silhouette": 0.6083076466848804,
+          "singletons": 0,
+          "cluster_sizes": [
+            301,
+            123,
+            110,
+            109,
+            92,
+            82,
+            71,
+            67,
+            66,
+            66,
+            31,
+            31
+          ]
+        },
+        {
+          "k": 13,
+          "valid": true,
+          "reason": null,
+          "actual_k": 13,
+          "min_size": 31,
+          "silhouette": 0.6066754965716381,
+          "singletons": 0,
+          "cluster_sizes": [
+            301,
+            123,
+            110,
+            109,
+            82,
+            71,
+            67,
+            66,
+            66,
+            51,
+            41,
+            31,
+            31
+          ]
+        },
+        {
+          "k": 14,
+          "valid": true,
+          "reason": null,
+          "actual_k": 14,
+          "min_size": 23,
+          "silhouette": 0.6074944955035904,
+          "singletons": 0,
+          "cluster_sizes": [
+            301,
+            123,
+            110,
+            109,
+            82,
+            71,
+            67,
+            66,
+            51,
+            43,
+            41,
+            31,
+            31,
+            23
+          ]
+        },
+        {
+          "k": 15,
+          "valid": true,
+          "reason": null,
+          "actual_k": 15,
+          "min_size": 14,
+          "silhouette": 0.6110399575114399,
+          "singletons": 0,
+          "cluster_sizes": [
+            301,
+            123,
+            110,
+            109,
+            82,
+            71,
+            67,
+            66,
+            51,
+            43,
+            41,
+            31,
+            23,
+            17,
+            14
+          ]
+        }
+      ],
+      "status": "selected",
+      "algorithm": "average linkage; exact merge-count cut",
+      "candidate_k": [
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14,
+        15
+      ],
+      "partition_note": "descriptive partition selected by silhouette; not geological validation",
+      "support_policy": {
+        "meaning": "replication floor for descriptive groups; not geological validation",
+        "minimum_holes_per_group": 2
+      },
+      "grouping_version": "average-linkage-replicated-groups-v2",
+      "tied_merge_heights": true,
+      "descriptive_container": false
+    }
+  },
+  "active_runs": [
+    [
+      "hole-combined-20261014T123014-804589",
+      "hole",
+      "combined",
+      "active"
+    ],
+    [
+      "hole-raw_nir-20261014T123016-acf1f9",
+      "hole",
+      "raw_nir",
+      "active"
+    ],
+    [
+      "hole-raw_tir-20261014T123017-bd2953",
+      "hole",
+      "raw_tir",
+      "active"
+    ],
+    [
+      "hole-seq_combined-20261014T123019-4f7a0f",
+      "hole",
+      "seq_combined",
+      "active"
+    ],
+    [
+      "hole-seq_swir-20261014T123020-72a5b5",
+      "hole",
+      "seq_swir",
+      "active"
+    ],
+    [
+      "hole-seq_tir-20261014T123021-4b2327",
+      "hole",
+      "seq_tir",
+      "active"
+    ],
+    [
+      "hole-swir-20261014T123022-89a20a",
+      "hole",
+      "swir",
+      "active"
+    ],
+    [
+      "hole-tir-20261014T123024-ebc2ff",
+      "hole",
+      "tir",
+      "active"
+    ],
+    [
+      "interval-swir-20261014T121201-c8ee6b",
+      "interval",
+      "swir",
+      "active"
+    ],
+    [
+      "interval-tir-20261014T121353-e7fc92",
+      "interval",
+      "tir",
+      "active"
+    ],
+    [
+      "prediction-swir-20261014T121239-b57e5e",
+      "prediction",
+      "swir",
+      "active"
+    ],
+    [
+      "prediction-tir-20261014T121437-00a0f6",
+      "prediction",
+      "tir",
+      "active"
+    ],
+    [
+      "robustness-swir-20261014T122213-22bbc9",
+      "robustness",
+      "swir",
+      "active"
+    ],
+    [
+      "robustness-tir-20261014T122320-9f3e13",
+      "robustness",
+      "tir",
+      "active"
+    ],
+    [
+      "virtual_assay-combined-20261014T121007-c7e2d5",
+      "virtual_assay",
+      "combined",
+      "active"
+    ]
+  ]
+}

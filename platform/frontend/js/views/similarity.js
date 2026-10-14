@@ -10,7 +10,7 @@ let view = 'combined', colourBy = 'cluster', holeK = 'auto';
 const VIEWS = { combined: 'Mineral mix · SWIR + TIR', swir: 'Mineral mix · SWIR', tir: 'Mineral mix · TIR', seq_combined: 'Down-hole sequence · SWIR + TIR', seq_swir: 'Down-hole sequence · SWIR', seq_tir: 'Down-hole sequence · TIR', raw_nir: 'Raw spectra · NIR/SWIR', raw_tir: 'Raw spectra · TIR' };
 const VIEW_HELP = 'Mineral mix: what each hole contains (share of its metres in each interval cluster). Down-hole sequence: also the order of zones from top to bottom, allowing zones to be thicker or thinner (dynamic time warping). Raw spectra: the measured spectra themselves, independent of the TSG mineral interpretation.';
 let map, mapLayer, mapRows = [], mapNames = {}, embedding = null, lastMatrix = null, lastAlign = null, unsubscribe = null;
-let stripPick = null, spectraPick = null;
+let stripPick = null, spectraPick = null, mapGroupingSupported = true;
 
 export async function render(root, [focus]) {
   root.innerHTML = `<div class="page-head"><div><h1>Compare holes</h1>
@@ -57,7 +57,7 @@ export async function render(root, [focus]) {
   $('#fingerprint').value = view; $('#colour').value = colourBy;
   $('#fingerprint').onchange = e => { view = e.target.value; refresh(); };
   $('#colour').onchange = e => { colourBy = e.target.value; drawEmbedding(); };
-  $('#sim-k').onchange = async e => { holeK = e.target.value; await Promise.all([loadEmbedding(), loadMap()]); };
+  $('#sim-k').onchange = async e => { holeK = e.target.value; await Promise.all([loadEmbedding(), loadMap(), drawMatrix()]); };
   $('#seed').onclick = seed;
   $('#add-ids').onclick = addTyped;
   $('#type-ids').onkeydown = e => { if (e.key === 'Enter') addTyped(); };
@@ -154,8 +154,9 @@ async function loadMap() {
   if (!data) return;
   mapRows = data.rows.map(r => Object.fromEntries(data.columns.map((c, i) => [c, r[i]])));
   mapNames = data.cluster_names || {};
+  mapGroupingSupported = data.grouping?.supported !== false;
   const cut = await recut(view, holeK).catch(() => null);
-  if (cut) { mapRows.forEach(r => { r.cluster_id = cut.assignments[r.hole_id] ?? null; }); mapNames = cut.names; }
+  if (cut) { mapRows.forEach(r => { r.cluster_id = cut.assignments[r.hole_id] ?? null; }); mapNames = cut.names; mapGroupingSupported = cut.supported !== false; }
   styleMap();
 }
 
@@ -167,16 +168,16 @@ function styleMap() {
   for (const r of ordered) {
     const analysed = r.cluster_id != null, picked = inSet.has(r.hole_id);
     L.circleMarker([r.lat, r.lon], { radius: picked ? 6.5 : analysed ? 4 : 2, weight: picked ? 2.5 : .5, color: picked ? '#111' : '#fff',
-      fillColor: analysed ? clusterColor(r.cluster_id) : '#c9d1d5', fillOpacity: analysed ? .9 : .3, opacity: analysed || picked ? 1 : .3 })
-      .bindTooltip(() => `<b>${esc(r.hole_id)}</b>${analysed ? `<br>Hole cluster ${r.cluster_id}: ${esc(mapNames[r.cluster_id] || '')}` : '<br><span class="tip-minerals">not in this comparison</span>'}
+      fillColor: analysed ? (mapGroupingSupported ? clusterColor(r.cluster_id) : '#9ba6ad') : '#c9d1d5', fillOpacity: analysed ? .9 : .3, opacity: analysed || picked ? 1 : .3 })
+      .bindTooltip(() => `<b>${esc(r.hole_id)}</b>${analysed ? `<br>${mapGroupingSupported ? `Hole cluster ${r.cluster_id}: ${esc(mapNames[r.cluster_id] || '')}` : 'Unassigned: no supported grouping'}` : '<br><span class="tip-minerals">not in this comparison</span>'}
         ${r.swir_top ? `<div class="tip-minerals"><b>SWIR</b> ${r.swir_top.map(([m, v]) => `${esc(m)} ${pct(v)}`).join(' · ')}</div>` : ''}
         <div class="tip-minerals">${picked ? 'In the set · click to remove' : analysed ? 'Click to add to the set' : ''}</div>`, { direction: 'top', className: 'wrap-tip' })
       .on('click', () => { if (analysed || picked) selection.toggle(r.hole_id); })
       .addTo(mapLayer);
   }
   const counts = {}; mapRows.forEach(r => { if (r.cluster_id != null) counts[r.cluster_id] = (counts[r.cluster_id] || 0) + 1; });
-  $('#sim-legend').innerHTML = Object.keys(counts).sort((a, b) => a - b).map(id => `<span><i style="background:${clusterColor(id)}"></i>${id} · ${esc(mapNames[id] || 'Hole cluster')} <span class="muted">${num(counts[id])}</span></span>`).join('')
-    + `<span class="muted">${esc(VIEWS[view])} · ${num(Object.values(counts).reduce((s, n) => s + n, 0))} holes analysed</span>`;
+  $('#sim-legend').innerHTML = mapGroupingSupported ? Object.keys(counts).sort((a, b) => a - b).map(id => `<span><i style="background:${clusterColor(id)}"></i>${id} · ${esc(mapNames[id] || 'Hole cluster')} <span class="muted">${num(counts[id])}</span></span>`).join('')
+    + `<span class="muted">${esc(VIEWS[view])} · ${num(Object.values(counts).reduce((s, n) => s + n, 0))} holes analysed</span>` : `<span class="muted">Unassigned: no supported grouping. ${num(Object.values(counts).reduce((s, n) => s + n, 0))} holes retain distances and selection.</span>`;
 }
 
 /* --------------------------------------------------------------- matrix */
@@ -188,6 +189,11 @@ async function drawMatrix() {
   loading(node);
   let d;
   try { d = await api(`/api/v2/similarity?view=${view}&holes=${encodeURIComponent(holes.join(','))}`); } catch (error) { failure(node, error); return; }
+  const cut = await recut(view, holeK).catch(() => null);
+  if (cut) {
+    d.grouping = { supported: cut.supported !== false, status: cut.status, reason: cut.meaning };
+    Object.entries(d.profiles).forEach(([id, profile]) => { profile.cluster_id = cut.assignments[id] ?? null; });
+  }
   $('#matrix-note').textContent = `${VIEWS[view]}. ${d.missing.length ? `Not in this comparison: ${d.missing.slice(0, 20).join(', ')}${d.missing.length > 20 ? '…' : ''}. ` : ''}${all.length > 150 ? `Showing the first 150 of ${all.length} holes. ` : ''}Darker = more similar.`;
   lastMatrix = d;
   heatmap(node, { labels: d.holes, matrix: d.matrix, onPick: a => go(`hole/${encodeURIComponent(a)}`) });
@@ -195,7 +201,7 @@ async function drawMatrix() {
     const p = d.profiles[h]; const s = p?.summary || {};
     const minerals = s.top_minerals || (s.swir || s.tir || {}).top_minerals || {};
     const clusters = s.top_clusters || (s.swir || {}).top_clusters || {};
-    return `<tr><td><button class="link" data-hole="${esc(h)}">${esc(h)}</button></td><td>${p ? `<span class="swatch" style="background:${clusterColor(p.cluster_id)}"></span>${p.cluster_id}` : '–'}</td>
+    return `<tr><td><button class="link" data-hole="${esc(h)}">${esc(h)}</button></td><td>${d.grouping?.supported === false ? 'Unassigned' : p ? `<span class="swatch" style="background:${clusterColor(p.cluster_id)}"></span>${p.cluster_id}` : '–'}</td>
       <td style="min-width:200px">${stack(minerals, mineralColor)}<span class="muted small">${ranked(minerals, 3).map(([m, v]) => `${esc(m)} ${pct(v)}`).join(' · ')}</span></td>
       <td class="small">${ranked(clusters, 3).map(([n, v]) => `${esc(n)} ${pct(v)}`).join('<br>')}</td></tr>`;
   }).join('');
@@ -210,7 +216,7 @@ async function loadEmbedding() {
   const cut = embedding ? await recut(view, holeK).catch(() => null) : null;
   if (cut) {
     embedding.points.forEach(p => { p.cluster_id = cut.assignments[p.hole_id] ?? null; });
-    embedding.card = { ...embedding.card, hole_clustering: { ...(embedding.card.hole_clustering || {}), k: cut.k, names: cut.names, sizes: cut.sizes } };
+    embedding.card = { ...embedding.card, hole_clustering: { ...(embedding.card.hole_clustering || {}), k: cut.k, names: cut.names, sizes: cut.sizes, descriptive_container: cut.supported === false, status: cut.status, reason: cut.meaning } };
   }
   drawEmbedding();
 }
@@ -219,13 +225,14 @@ function drawEmbedding() {
   const node = $('#embed');
   if (!node) return;
   if (!embedding || !embedding.points.length) { node.innerHTML = '<p class="empty">This comparison has not been analysed yet.</p>'; return; }
-  const colour = p => colourBy === 'cluster' ? clusterColor(p.cluster_id) : colourBy === 'anomaly' ? scoreColor(p.anomaly_score)
+  const supported = !embedding.card?.hole_clustering?.descriptive_container;
+  const colour = p => colourBy === 'cluster' ? (supported ? clusterColor(p.cluster_id) : '#9ba6ad') : colourBy === 'anomaly' ? scoreColor(p.anomaly_score)
     : categoryColor(colourBy === 'commodity' ? (p.commodity || '').split(',')[0] : p.tectonic_region);
   scatter(node, { points: embedding.points, colorOf: colour, highlight: new Set(selection.list()), height: 430,
-    describe: p => `<b>${esc(p.hole_id)}</b><br>hole cluster ${p.cluster_id} · ${esc(p.commodity || '')}<br>${esc(p.tectonic_region || '')}<br><span class="muted">click to add/remove</span>`,
+    describe: p => `<b>${esc(p.hole_id)}</b><br>${supported ? `hole cluster ${p.cluster_id}` : 'Unassigned: no supported grouping'} · ${esc(p.commodity || '')}<br>${esc(p.tectonic_region || '')}<br><span class="muted">click to add/remove</span>`,
     onPick: p => selection.toggle(p.hole_id) });
   const card = embedding.card || {};
-  $('#embed-card').innerHTML = `${num(card.holes)} holes · ${card.hole_clustering?.k ?? '–'} hole clusters${card.agreement_with_processed ? ` · agrees with the processed SWIR comparison at ρ=${card.agreement_with_processed.spearman_rho}` : ''}`;
+  $('#embed-card').innerHTML = `${num(card.holes)} holes · ${supported ? `${card.hole_clustering?.k ?? '–'} hole clusters` : 'Unassigned: no supported grouping (distances and neighbours retained)'}${card.agreement_with_processed ? ` · agrees with the processed SWIR comparison at ρ=${card.agreement_with_processed.spearman_rho}` : ''}`;
 }
 
 /* ---------------------------------------------------------- strip logs */

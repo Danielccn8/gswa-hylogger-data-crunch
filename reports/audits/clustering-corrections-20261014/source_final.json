@@ -1,0 +1,19 @@
+{
+  "captured_at": "2026-10-14T12:43:54.773551+00:00",
+  "sha256": {
+    "analysis.py": "197307409da4150eea2023afe93aaea9f52c1e3656dec49fb767b65483430926",
+    "clusters.py": "4f8036e4471937f26bbe3aedf07a9143cc365278e6c999039946a404e9f98aa4",
+    "data.py": "324071694d8c021f921dde621f7f88fd9c559b337a80f15e05927816a07292d4",
+    "features.py": "d2388699bf1e3079abf6e15a997189b60fb7eedba466d66e439579dccabebf99",
+    "fingerprints.py": "b2e7ad05b019bd1514fa6115cd0a1f6f7db907b748c973c7650ecd67777dbbab",
+    "rawcluster.py": "e6328d23a0504a265ac3889ac66adf607c539acc2daf3e53b305340e76f5078b",
+    "robustness.py": "5791b1796e4fd01b36e3f59af3a07455b409bbb5123614bdd63952cadb6c6276"
+  },
+  "late_changes": {
+    "fingerprints.py": "replicated hole-group support selection and strict JSON card metadata; targeted regrouping lineage saved separately",
+    "clusters.py": "reason=None metadata serialization only, no interval arithmetic change",
+    "analysis.py": "future unsupported hole-run names are Unassigned, metadata only",
+    "robustness.py": "independent development-only validation final-fit gate and ten-interval width support, validated before hole regrouping"
+  },
+  "interval_and_robustness_cards": "retain exact source fingerprints consumed at fitting; final code source is not retroactively substituted"
+}

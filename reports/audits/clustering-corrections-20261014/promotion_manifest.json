@@ -1,0 +1,160 @@
+{
+  "local_database": "127.0.0.1:5434/hylogger",
+  "status": "READY; requires parent final go",
+  "new_runs": [
+    {
+      "run_id": "interval-swir-20261014T121201-c8ee6b",
+      "kind": "interval",
+      "sensor": "swir"
+    },
+    {
+      "run_id": "interval-tir-20261014T121353-e7fc92",
+      "kind": "interval",
+      "sensor": "tir"
+    },
+    {
+      "run_id": "prediction-swir-20261014T121239-b57e5e",
+      "kind": "prediction",
+      "sensor": "swir"
+    },
+    {
+      "run_id": "prediction-tir-20261014T121437-00a0f6",
+      "kind": "prediction",
+      "sensor": "tir"
+    },
+    {
+      "run_id": "virtual_assay-combined-20261014T121007-c7e2d5",
+      "kind": "virtual_assay",
+      "sensor": "combined"
+    },
+    {
+      "run_id": "hole-combined-20261014T123014-804589",
+      "kind": "hole",
+      "sensor": "combined"
+    },
+    {
+      "run_id": "hole-raw_nir-20261014T123016-acf1f9",
+      "kind": "hole",
+      "sensor": "raw_nir"
+    },
+    {
+      "run_id": "hole-raw_tir-20261014T123017-bd2953",
+      "kind": "hole",
+      "sensor": "raw_tir"
+    },
+    {
+      "run_id": "hole-seq_combined-20261014T123019-4f7a0f",
+      "kind": "hole",
+      "sensor": "seq_combined"
+    },
+    {
+      "run_id": "hole-seq_swir-20261014T123020-72a5b5",
+      "kind": "hole",
+      "sensor": "seq_swir"
+    },
+    {
+      "run_id": "hole-seq_tir-20261014T123021-4b2327",
+      "kind": "hole",
+      "sensor": "seq_tir"
+    },
+    {
+      "run_id": "hole-swir-20261014T123022-89a20a",
+      "kind": "hole",
+      "sensor": "swir"
+    },
+    {
+      "run_id": "hole-tir-20261014T123024-ebc2ff",
+      "kind": "hole",
+      "sensor": "tir"
+    },
+    {
+      "run_id": "robustness-swir-20261014T122213-22bbc9",
+      "kind": "robustness",
+      "sensor": "swir"
+    },
+    {
+      "run_id": "robustness-tir-20261014T122320-9f3e13",
+      "kind": "robustness",
+      "sensor": "tir"
+    }
+  ],
+  "prior_active": [
+    {
+      "run_id": "hole-combined-20261012T152809-4362d1",
+      "kind": "hole",
+      "sensor": "combined"
+    },
+    {
+      "run_id": "hole-raw_nir-20261012T153506-c03a37",
+      "kind": "hole",
+      "sensor": "raw_nir"
+    },
+    {
+      "run_id": "hole-raw_tir-20261012T153623-66a6bf",
+      "kind": "hole",
+      "sensor": "raw_tir"
+    },
+    {
+      "run_id": "hole-seq_combined-20261012T153051-2be116",
+      "kind": "hole",
+      "sensor": "seq_combined"
+    },
+    {
+      "run_id": "hole-seq_swir-20261012T152927-0af5be",
+      "kind": "hole",
+      "sensor": "seq_swir"
+    },
+    {
+      "run_id": "hole-seq_tir-20261012T153047-f68b74",
+      "kind": "hole",
+      "sensor": "seq_tir"
+    },
+    {
+      "run_id": "hole-swir-20261012T152431-ab4d3a",
+      "kind": "hole",
+      "sensor": "swir"
+    },
+    {
+      "run_id": "hole-tir-20261012T152716-314fae",
+      "kind": "hole",
+      "sensor": "tir"
+    },
+    {
+      "run_id": "interval-swir-20261012T152417-4c8ae5",
+      "kind": "interval",
+      "sensor": "swir"
+    },
+    {
+      "run_id": "interval-tir-20261012T152657-5336ea",
+      "kind": "interval",
+      "sensor": "tir"
+    },
+    {
+      "run_id": "prediction-swir-20261012T152455-017517",
+      "kind": "prediction",
+      "sensor": "swir"
+    },
+    {
+      "run_id": "prediction-tir-20261012T152806-c0ba4e",
+      "kind": "prediction",
+      "sensor": "tir"
+    },
+    {
+      "run_id": "robustness-swir-20261008T090904-b19122",
+      "kind": "robustness",
+      "sensor": "swir"
+    },
+    {
+      "run_id": "robustness-tir-20261008T091442-17f9d1",
+      "kind": "robustness",
+      "sensor": "tir"
+    },
+    {
+      "run_id": "virtual_assay-combined-20261012T152247-51b020",
+      "kind": "virtual_assay",
+      "sensor": "combined"
+    }
+  ],
+  "guard": "initial prior active IDs exactly unchanged;15new statusesstaged; everyexpectedkind/sensor appears once",
+  "rollback": "Atomically restore prior_active toactive and new_runs tostaged; preserve allruns/products"
+}

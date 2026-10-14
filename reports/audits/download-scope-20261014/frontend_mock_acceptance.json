@@ -1,0 +1,44 @@
+{
+  "status": "PASS",
+  "checks": [
+    "all scope passes no frontend IDs beyond800/2500",
+    "processed/raw both analyze:false",
+    "raw fullZIP setting retained",
+    "selected explicitIDs retained",
+    "selection/search unchanged",
+    "empty/error disabled/no submit",
+    "stale async estimate ignored"
+  ],
+  "mocked_submissions": [
+    {
+      "kind": "processed_fetch",
+      "params": {
+        "scope": "all_catalogue",
+        "analyze": false,
+        "parallel": 4
+      }
+    },
+    {
+      "kind": "raw_fetch",
+      "params": {
+        "scope": "all_catalogue",
+        "mode": "full_zip",
+        "discard_source": false,
+        "analyze": false,
+        "parallel": 2
+      }
+    },
+    {
+      "kind": "processed_fetch",
+      "params": {
+        "scope": "selected",
+        "holes": [
+          "H0001"
+        ],
+        "analyze": false,
+        "parallel": 4
+      }
+    }
+  ],
+  "real_jobs_submitted": 0
+}

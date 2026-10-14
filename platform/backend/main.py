@@ -15,6 +15,7 @@ import os
 import shutil
 import sys
 import time
+from datetime import UTC, datetime
 from functools import lru_cache
 from pathlib import Path, PurePosixPath, PureWindowsPath
 from typing import Annotated
@@ -29,7 +30,9 @@ from psycopg.rows import dict_row
 from psycopg.types.json import Jsonb
 from psycopg_pool import ConnectionPool
 
-ROOT = Path(__file__).resolve().parents[2]
+from hylogger.runtime import root as runtime_root
+
+ROOT = runtime_root()
 sys.path.insert(0, str(ROOT / "src"))
 from hylogger.explorer import prediction as predict_lib  # noqa: E402
 from hylogger.explorer.chemistry import ANALYTES, OXIDES, assays  # noqa: E402
@@ -39,7 +42,7 @@ DATABASE_URL = os.environ.get(
     "DATABASE_URL", "postgresql://hylogger:hylogger@127.0.0.1:5434/hylogger"
 )
 DATA_DIR = Path(os.environ.get("HYLOGGER_DATA_DIR", "C:/HyLoggerData"))
-FRONTEND = Path(__file__).resolve().parent.parent / "frontend"
+FRONTEND = ROOT / 'platform' / 'frontend'
 SENSORS = ("swir", "tir", "vnir")
 HOLE_VIEWS = (
     "combined",
@@ -184,6 +187,18 @@ def summary():
     )
 
 
+def grouping_display(card: dict) -> dict:
+    grouping = card.get("hole_clustering", {})
+    supported = not grouping.get("descriptive_container", False)
+    return {
+        "supported": supported,
+        "status": grouping.get("status"),
+        "k": grouping.get("k") if supported else None,
+        "reason": grouping.get("reason"),
+        "meaning": "Supported grouping" if supported else "Unassigned: no supported hole grouping",
+    }
+
+
 @app.get("/api/v2/map")
 def map_holes(
     view: str = Query(
@@ -222,7 +237,8 @@ def map_holes(
         {
             "view": view,
             "run_id": run["run_id"] if run else None,
-            "clusters": run["card"].get("hole_clustering", {}).get("k") if run else None,
+            "clusters": grouping_display(run["card"])["k"] if run else None,
+            "grouping": grouping_display(run["card"]) if run else None,
             "cluster_names": run["card"].get("hole_clustering", {}).get("names", {}) if run else {},
             "columns": columns,
             "rows": [[r[c] for c in columns] for r in rows],
@@ -961,6 +977,7 @@ def similarity(
             "view": view,
             "run_id": run["run_id"],
             "distance": run["card"].get("distance"),
+            "grouping": grouping_display(run["card"]),
             "holes": ordered,
             "missing": [h for h in wanted if h not in names],
             "matrix": sub[np.ix_(order, order)].round(4).tolist(),
@@ -1003,6 +1020,27 @@ def _mineral_means(run_id: str, path: str, card_json: str) -> pd.DataFrame | Non
     return table.div(table.sum(axis=1).replace(0, 1), axis=0)
 
 
+def manual_hole_grouping(tree: np.ndarray, n: int, k: int) -> tuple[np.ndarray, dict]:
+    """Exact manual cut, with an explicit replication check even for tied heights."""
+    from scipy.cluster.hierarchy import cut_tree
+
+    if not 2 <= k < n:
+        raise ValueError("Manual K must satisfy 2 <= K < supported holes")
+    labels = cut_tree(tree, n_clusters=[k]).ravel()
+    sizes = np.bincount(labels)
+    supported = bool(sizes.min() >= 2)
+    return labels, {
+        "requested_k": k,
+        "actual_k": len(sizes),
+        "supported": supported,
+        "status": "exploratory_supported" if supported else "exploratory_unsupported",
+        "minimum_holes_per_group": 2,
+        "meaning": "Manual exploratory cut; no calibrated confidence. "
+        + ("Every group has at least two holes." if supported else
+           "Some groups have fewer than two holes: no supported hole grouping."),
+    }
+
+
 @app.get("/api/v2/hole-clusters")
 def hole_clusters(
     view: str = Query(
@@ -1013,15 +1051,16 @@ def hole_clusters(
     """Re-cut the stored average-linkage tree at a chosen number of hole clusters."""
     import json
 
-    from scipy.cluster.hierarchy import fcluster
-
     from hylogger.explorer.clusters import name_profile
 
     run = active_run("hole", view)
     if run is None:
         raise HTTPException(404, f"No active {view} hole analysis")
     names, tree = _tree(run["run_id"], run["product_path"])
-    labels = fcluster(tree, min(k, len(names)), criterion="maxclust") - 1
+    try:
+        labels, grouping = manual_hole_grouping(tree, len(names), k)
+    except ValueError as exc:
+        raise HTTPException(422, str(exc)) from exc
     order = np.argsort(-np.bincount(labels))
     remap = np.empty(len(order), dtype=int)
     remap[order] = np.arange(len(order))
@@ -1031,7 +1070,7 @@ def hole_clusters(
     for cluster in np.unique(labels):
         members = [names[i] for i in np.flatnonzero(labels == cluster)]
         sizes[int(cluster)] = len(members)
-        if means is not None:
+        if means is not None and grouping["supported"]:
             mix = means.reindex(members).mean()
             mix.index = [
                 str(c).removeprefix("mineral_").replace("class_", "class ") for c in mix.index
@@ -1042,6 +1081,7 @@ def hole_clusters(
             "view": view,
             "run_id": run["run_id"],
             "k": int(len(np.unique(labels))),
+            **grouping,
             "assignments": dict(zip(names, labels.tolist(), strict=True)),
             "names": cluster_names,
             "sizes": sizes,
@@ -1300,6 +1340,26 @@ def _cluster_where(run_id: str) -> dict:
     return out
 
 
+def robustness_for_model(robust_run: dict | None, model_run: dict) -> tuple[dict | None, dict]:
+    """A historical validation report is current only for its exact model/provenance."""
+    if robust_run is None:
+        return None, {"status": "missing", "reason": "No robustness report"}
+    card = robust_run["card"]
+    match = (
+        card.get("source_interval_run") == model_run["run_id"]
+        and bool(model_run["card"].get("provenance"))
+        and card.get("source_provenance") == model_run["card"]["provenance"]
+    )
+    if match:
+        return card, {"status": "current", "run_id": robust_run["run_id"]}
+    return None, {
+        "status": "legacy_or_mismatched",
+        "run_id": robust_run["run_id"],
+        "reason": "Historical report is unlinked or belongs to a different model/cohort/schema",
+        "historical_card": card,
+    }
+
+
 @app.get("/api/v2/clusters")
 def clusters(sensor: str = Query("swir", pattern="^(swir|tir)$")):
     run = active_run("interval", sensor)
@@ -1339,7 +1399,7 @@ def clusters(sensor: str = Query("swir", pattern="^(swir|tir)$")):
         else None
     )
     robust_run = active_run("robustness", sensor)
-    robustness = robust_run["card"] if robust_run else None
+    robustness, robustness_status = robustness_for_model(robust_run, run)
     return clean(
         {
             "sensor": sensor,
@@ -1350,6 +1410,7 @@ def clusters(sensor: str = Query("swir", pattern="^(swir|tir)$")):
             "raw": raw,
             "virtual": virtual,
             "robustness": robustness,
+            "robustness_status": robustness_status,
         }
     )
 
@@ -1751,6 +1812,23 @@ def prediction_cv(sensor: str = Query("swir", pattern="^(swir|tir)$")):
 
 
 # -------------------------------------------------------------- data & jobs
+
+@app.get('/api/v2/autofill')
+def autofill_status():
+    from hylogger.jobs.autofill import report
+    with pool.connection() as conn:
+        return clean(report(conn))
+
+
+@app.post('/api/v2/autofill')
+def autofill_control(payload: Annotated[dict, Body()]):
+    from hylogger.jobs.autofill import report, set_enabled
+    if not isinstance(payload.get('enabled'), bool):
+        raise HTTPException(422, 'enabled must be a boolean')
+    with pool.connection() as conn:
+        set_enabled(conn, payload['enabled'], bool(payload.get('retry')))
+        return clean(report(conn))
+
 @lru_cache(maxsize=12)
 def _analyte(analyte: str) -> pd.DataFrame:
     from hylogger.explorer.chemistry import analyte_values
@@ -1854,38 +1932,79 @@ def catalog(
     return clean({"rows": rows, "regions": regions})
 
 
+def download_scope_rows(payload: dict) -> tuple[str, list[dict]]:
+    """Resolve acquisition scope independently of the displayed catalogue page."""
+    scope = payload.get("scope", "selected")
+    if scope not in ("selected", "all_catalogue"):
+        raise HTTPException(422, "scope must be selected or all_catalogue")
+    sql = ("SELECT hole_id, nvcl_available, raw_available, coalesce(raw_size_bytes,0) AS size, "
+           "processed_status, raw_status FROM explorer_hole")
+    if scope == "all_catalogue":
+        if payload.get("holes"):
+            raise HTTPException(422, "All catalogue resolves its holes on the server")
+        return scope, query(sql + " ORDER BY hole_id")
+    holes = payload.get("holes", [])
+    if not isinstance(holes, list) or any(not isinstance(h, str) or not h.strip() for h in holes):
+        raise HTTPException(422, "holes must be a list of nonempty hole IDs")
+    holes = list(dict.fromkeys(h.strip() for h in holes))
+    if len(holes) > MAX_JOB_HOLES:
+        raise HTTPException(422, f"Select at most {MAX_JOB_HOLES} holes, or use All catalogue")
+    rows = query(sql + " WHERE hole_id=ANY(%s) ORDER BY hole_id", (holes,)) if holes else []
+    unknown = sorted(set(holes) - {r["hole_id"] for r in rows})
+    if unknown:
+        raise HTTPException(422, f"Unknown holes: {', '.join(unknown[:10])}")
+    return scope, rows
+
+
+def acquisition_rows(rows: list[dict], source: str, scope: str, force: bool = False) -> list[dict]:
+    available = "nvcl_available" if source == "processed" else "raw_available"
+    eligible = [r for r in rows if r[available]]
+    if source == "processed":
+        return ([r for r in eligible if r["processed_status"] not in
+                 ("prepared", "no_logs", "no_usable_logs")] if scope == "all_catalogue" else eligible)
+    return [r for r in eligible if force or not str(r["raw_status"]).startswith("summarised")]
+
+
 @app.post("/api/v2/estimate")
 def estimate(payload: Annotated[dict, Body()]):
-    holes = list(dict.fromkeys(payload.get("holes", [])))[:MAX_JOB_HOLES]
-    rows = query(
-        "SELECT hole_id, nvcl_available, raw_available, coalesce(raw_size_bytes,0) AS size, "
-        "processed_status, raw_status FROM explorer_hole WHERE hole_id = ANY(%s)",
-        (holes,),
-    )
+    scope, rows = download_scope_rows(payload)
+    if scope == "all_catalogue" and payload.get("force"):
+        raise HTTPException(422, "All catalogue acquires missing data; force is selected-only")
     nvcl = [r for r in rows if r["nvcl_available"]]
     raw_rows = [r for r in rows if r["raw_available"]]
-    zip_bytes = sum(r["size"] for r in raw_rows)
+    processed_pending = acquisition_rows(rows, "processed", "all_catalogue")
+    processed_download = acquisition_rows(rows, "processed", scope)
+    raw_download = acquisition_rows(rows, "raw", scope, bool(payload.get("force", False)))
+    zip_bytes = sum(r["size"] for r in raw_download)
     free = shutil.disk_usage(DATA_DIR).free if DATA_DIR.exists() else None
     return {
+        "scope": scope,
         "holes": len(rows),
         "processed": {
             "holes": len(nvcl),
+            "pending": len(processed_pending),
+            "download_holes": len(processed_download),
             "already_prepared": sum(r["processed_status"] == "prepared" for r in nvcl),
-            "estimated_minutes": round(len(nvcl) * 17 / 4 / 60, 1),
-            "estimated_bytes": len(nvcl) * 30_000_000,  # CSV + Parquet + source snapshot
+            "no_public_logs": sum(r["processed_status"] in ("no_logs", "no_usable_logs")
+                                  for r in nvcl),
+            "estimated_minutes": round(len(processed_download) * 17 / 4 / 60, 1),
+            "estimated_bytes": len(processed_download) * 30_000_000,
         },
         "raw": {
             "holes": len(raw_rows),
-            "already_summarised": sum(
-                str(r["raw_status"]).startswith("summarised") for r in raw_rows
-            ),
+            "pending": len(raw_download),
+            "download_holes": len(raw_download),
+            "already_summarised": sum(str(r["raw_status"]).startswith("summarised")
+                                      for r in raw_rows),
             "zip_bytes": zip_bytes,
             "spectral_only_transfer_bytes": int(zip_bytes * 0.14),
             "spectral_only_disk_bytes": int(zip_bytes * 0.30),
-            "summary_bytes": len(raw_rows) * 3_000_000,
+            "summary_bytes": len(raw_download) * 3_000_000,
             "estimated_minutes_spectral_only": round(zip_bytes * 0.14 / 2e6 / 60 / 2, 1),
         },
         "free_bytes": free,
+        "estimate_note": "Approximate costs for work to download; catalogue/status is resolved "
+        "again at submission. Existing raw summaries do not imply retained original ZIP files.",
     }
 
 
@@ -1902,8 +2021,27 @@ def create_job(payload: Annotated[dict, Body()]):
     params = payload.get("params") or {}
     if kind not in LANES:
         raise HTTPException(422, f"Unknown job kind {kind!r}")
+    if not isinstance(params, dict):
+        raise HTTPException(422, "params must be an object")
+    params = dict(params)
+    resolved_all = False
+    if kind in ("processed_fetch", "raw_fetch"):
+        scope, rows = download_scope_rows(params)
+        resolved_all = scope == "all_catalogue"
+        if scope == "all_catalogue" and params.get("force"):
+            raise HTTPException(422, "All catalogue acquires missing data; force is selected-only")
+        source = "processed" if kind == "processed_fetch" else "raw"
+        eligible = acquisition_rows(rows, source, scope, bool(params.get("force", False)))
+        if not eligible:
+            raise HTTPException(422, "No available data to download for this source and scope")
+        params["holes"] = [r["hole_id"] for r in eligible]
+        params["scope"] = scope
+        params["catalogue_holes_at_submission"] = len(rows)
+        params["scope_resolved_at"] = datetime.now(UTC).isoformat()
+        if scope == "all_catalogue":
+            params["skip_existing"] = True
     holes = params.get("holes")
-    if holes is not None:
+    if holes is not None and not resolved_all:
         if not isinstance(holes, list) or len(holes) > MAX_JOB_HOLES:
             raise HTTPException(422, f"holes must be a list of at most {MAX_JOB_HOLES} IDs")
         known = {

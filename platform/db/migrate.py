@@ -10,11 +10,16 @@ from __future__ import annotations
 
 import argparse
 import os
+import sys
 from pathlib import Path
 
 import psycopg
 
-HERE = Path(__file__).resolve().parent
+HERE = (
+    Path(sys._MEIPASS) / "platform" / "db"
+    if getattr(sys, "frozen", False)
+    else Path(__file__).resolve().parent
+)
 MIGRATIONS = [
     ("001_schema", HERE / "schema.sql"),
     *sorted((path.stem, path) for path in (HERE / "migrations").glob("*.sql")),

@@ -71,6 +71,8 @@ def _clean(values: pd.Series, *, percent: bool = False, cap: float | None = None
 
 
 def assays(conn: psycopg.Connection, collar_ids: list[int] | None = None) -> pd.DataFrame:
+    if conn.execute("SELECT to_regclass('ref_assay')").fetchone()[0] is None:
+        return pd.DataFrame(columns=["collar_id", "f", "t", *ANALYTES])
     columns = sorted({c for spec in OXIDES.values() for c in spec[:2]} | set(ELEMENTS))
     select = ", ".join(f'"{c}"' for c in columns)
     where = 'WHERE "ToDepth" > "FromDepth"'
@@ -134,6 +136,8 @@ def analyte_columns(analyte: str) -> tuple[str | None, str | None, float]:
 
 def analyte_values(conn: psycopg.Connection, analyte: str) -> pd.DataFrame:
     """collar_id, f, t, value for one analyte across the whole package, cleaned."""
+    if conn.execute("SELECT to_regclass('ref_assay')").fetchone()[0] is None:
+        return pd.DataFrame(columns=["collar_id", "f", "t", "value", "rejected"])
     pct, ppm, factor = analyte_columns(analyte)
     columns = [c for c in (pct, ppm) if c]
     raw = read_frame(

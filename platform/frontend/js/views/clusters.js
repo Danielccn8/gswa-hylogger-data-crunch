@@ -49,10 +49,12 @@ async function draw() {
   const body = $('#body'); loading(body);
   let d; try { d = await api(`/api/v2/clusters?sensor=${sensor}`); } catch (error) { failure(body, error); return; }
   const card = d.card, c = card.clustering, v = card.validation || {};
+  const q = card.data_quality;
   const profiles = d.profiles.filter(p => p.level === level);
   const coarse = Object.fromEntries(d.profiles.filter(p => p.level === 'coarse').map(p => [p.cluster_id, p.name]));
   const seed = c.seed_ari.reduce((s, x) => s + x, 0) / c.seed_ari.length;
   body.innerHTML = `
+    ${q ? `<section class="panel" style="margin-bottom:14px"><h3>Model support</h3><p class="small">${num(q.eligible_intervals)} eligible intervals; ${num(q.excluded_intervals)} excluded from ${num(q.descriptive_intervals)} descriptive intervals. The model requires ≥${q.policy?.min_admitted ?? '–'} diagnostic readings and diagnostic fraction ≥${q.policy?.min_diagnostic_fraction ?? '–'}. Primary-frequency and unknown representations are excluded unless explicitly allowed.</p><p class="muted small">${esc(q.policy_meaning)}. ${esc(q.abundance_meaning)}. Source ${esc(d.run_id)}.</p></section>` : ''}
     <div class="metrics">
       <div class="metric" data-tip="${esc(TERMS.interval)}"><span>Metres grouped</span><strong>${num(card.intervals)}</strong><small>from ${num(card.holes)} holes</small></div>
       <div class="metric" data-tip="${esc(c.k_rule)}"><span>Clusters</span><strong>${c.k_fine} <small style="display:inline">fine</small> · ${c.k_coarse} <small style="display:inline">broad</small></strong><small>chosen by the silhouette rule</small></div>
@@ -62,7 +64,7 @@ async function draw() {
       <div class="metric" data-tip="Domains are contiguous zones down each hole with a consistent mix (penalised segmentation, at least 3 m)."><span>Domains</span><strong>${num(card.domains.count)}</strong><small>median ${num(card.domains.median_length_m)} m long</small></div>
     </div>
     <div class="cluster-cards">${profiles.map(p => clusterCard(p, coarse, d.where?.[level]?.[p.cluster_id])).join('')}</div>
-    ${robustSection(d.robustness, seed)}
+    ${robustSection(d.robustness, seed, d.robustness_status)}
     <section class="panel" style="margin-top:14px" id="tsa-section"><h2>How often does the analyst change the machine’s answer?</h2><p class="muted">Loading…</p></section>
     <div class="grid cols-2" style="margin-top:14px">
       <section class="panel"><h2>Does the mineralogy agree with the chemistry? ${info('Spearman rank correlation (ρ) between how much of a mineral group a metre has and the assay of the same depth. ρ near +1: more of the mineral, more of the element; near 0: no relation. “Within hole” repeats the test inside each hole, which removes differences between areas. Assays: GSWA package, unverified.')}</h2>
@@ -123,9 +125,13 @@ function clusterCard(p, coarse, where) {
     ${chem.n_assays ? `<h3 style="margin-top:10px">Median chemistry · ${num(chem.n_assays)} assays ${info('Median of the laboratory assays of the metres in this cluster (GSWA package, unverified).')}</h3><div class="chips">${CHEM.filter(a => chem[a] != null).map(a => `<span class="chip">${a} ${a === 'Au' ? Number(chem[a]).toPrecision(2) : num(chem[a], ['Cu', 'Ni', 'Zn', 'S'].includes(a) ? 0 : ['U', 'Th'].includes(a) ? 1 : 2)}${PPM.includes(a) ? ' ppm' : '%'}</span>`).join('')}</div>` : ''}</section>`;
 }
 
-function robustSection(r, seed) {
-  if (!r) return '';
+function robustSection(r, seed, status) {
+  if (!r) return `<section class="panel" style="margin-top:14px"><h2>Robustness evidence</h2><p class="muted">${esc(status?.reason || 'No report linked to this model.')}</p>${status?.historical_card ? `<details><summary>Historical report ${esc(status.run_id)} (not current-model validation)</summary><pre>${esc(JSON.stringify(status.historical_card, null, 2))}</pre></details>` : ''}</section>`;
   const t = r.district_transfer || {}, w = r.width_sensitivity || {};
+  if (t.version === 'district-development-only-v2') {
+    const evaluated = (t.repeats || []).filter(v => v.status === 'evaluated');
+    return `<section class="panel" style="margin-top:14px"><h2>Robustness evidence linked to this model</h2><p class="small">${esc(t.scope)}. Schema and K are learned separately on development districts in each split; held minerals outside the frozen schema remain unassigned.</p><table><thead><tr><th>Split</th><th>Development K</th><th>Held assigned / total</th><th>Hole-balanced squared distance</th></tr></thead><tbody>${(t.repeats || []).map(v => `<tr><td>${v.repeat + 1} · ${esc(v.status)}</td><td>${v.selected_k ?? '–'}</td><td>${v.held_assigned_intervals == null ? '–' : num(v.held_assigned_intervals)} / ${num(v.held_intervals)}</td><td>${v.held_hole_balanced_mean_squared_distance?.toFixed(4) ?? '–'}</td></tr>`).join('')}</tbody></table><p class="muted small">${evaluated.length} evaluated splits. This distance has no calibrated good/bad cutoff. Width checks use the shared-hole cohorts shown in the report.</p><details><summary>Linked report and support</summary><pre>${esc(JSON.stringify(r, null, 2))}</pre></details></section>`;
+  }
   const mantel = Object.values(w.mantel_vs_1m || {});
   const low = mantel.length ? Math.min(...mantel) : null;
   const held = (t.repeats || [])[0];
@@ -133,9 +139,9 @@ function robustSection(r, seed) {
     <p class="muted small">Three checks that the clusters are a property of the data, not of one particular run.</p>
     <div class="grid" style="grid-template-columns:repeat(auto-fit,minmax(260px,1fr));margin-top:8px">
       <div class="panel" style="box-shadow:none"><h3>New areas ${verdict(t.mean_ari, 0.8, 0.6)}</h3>
-        <p class="small">We hid whole districts (${held ? `about ${num(held.held_holes)} holes, ${num(held.held_districts)} districts` : '~20% of holes'}), rebuilt the clusters without them, then sorted the hidden metres into those clusters. They landed in the same clusters as in the full model with ARI <b>${t.mean_ari ?? '–'}</b> (worst of ${(t.repeats || []).length} repeats: ${t.min_ari ?? '–'}). The clusters should hold for holes from new areas.</p></div>
+        <p class="small">We hid whole districts (${held ? `about ${num(held.held_holes)} holes, ${num(held.held_districts)} districts` : '~20% of holes'}), rebuilt the clusters without them, then sorted the hidden metres into those clusters. They landed in the same clusters as in the full model with ARI <b>${t.mean_ari ?? '–'}</b> (worst of ${(t.repeats || []).length} repeats: ${t.min_ari ?? '–'}). This measures agreement on supported held rows; it does not establish geological accuracy.</p></div>
       <div class="panel" style="box-shadow:none"><h3>Interval width ${verdict(low, 0.8, 0.6)}</h3>
-        <p class="small">Repeating everything with ${Object.keys(w.mantel_vs_1m || {}).map(k => `${k} m`).join(', ') || 'other'} intervals instead of 1 m gives hole similarities that agree with the 1 m version at ρ ${mantel.map(x => x.toFixed(2)).join(', ') || '–'}. The choice of 1 m does not drive the results.${w.k_by_width ? ` Number of clusters chosen at each width: ${Object.entries(w.k_by_width).map(([k, n]) => `${k} m → ${n}`).join(', ')}.` : ''}</p></div>
+        <p class="small">Repeating everything with ${Object.keys(w.mantel_vs_1m || {}).map(k => `${k} m`).join(', ') || 'other'} intervals instead of 1 m gives hole similarities that agree with the 1 m version at ρ ${mantel.map(x => x.toFixed(2)).join(', ') || '–'}. Interpret this against the shared-hole support and K choices in the run card.${w.k_by_width ? ` Number of clusters chosen at each width: ${Object.entries(w.k_by_width).map(([k, n]) => `${k} m → ${n}`).join(', ')}.` : ''}</p></div>
       <div class="panel" style="box-shadow:none"><h3>Random starts ${verdict(seed, 0.8, 0.6)}</h3>
         <p class="small">K-Means starts from random centres. Re-running it from different starts gives the same clusters with ARI <b>${seed.toFixed(2)}</b>, so the result does not depend on luck.</p></div>
     </div></section>`;

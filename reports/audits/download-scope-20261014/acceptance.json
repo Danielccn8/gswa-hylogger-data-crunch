@@ -1,0 +1,31 @@
+{
+  "status": "PASS",
+  "target": "C:/HyLogger/explorer-v2",
+  "url": "http://127.0.0.1:8100/#/data",
+  "new_targeted_tests_passed": 11,
+  "frontend_mock_assertions": "PASS",
+  "active_models_unchanged": 15,
+  "jobs_count_unchanged": 19,
+  "active_jobs_unchanged": [],
+  "real_jobs_enqueued": 0,
+  "remote_downloads_or_retraining_started": 0,
+  "banner_markup_and_population_removed": true,
+  "api_restart": "hylogger_v2-api-1 only",
+  "worker_reload": "No Python worker active; no worker service changed",
+  "browser_validation": {
+    "status": "PASS",
+    "reviewer": "Parent read-only actual UI review via CUA",
+    "all_catalogue_holes": 2161,
+    "processed_downloads": 11,
+    "raw_downloads": 5,
+    "selection_preserved": "0 through all -> selected -> all",
+    "console_errors": [],
+    "banner_absent": true,
+    "download_buttons_clicked": false,
+    "screenshot": "browser_all_catalogue.png"
+  },
+  "proxy": "Stopped owned temporary test proxy; no real submits",
+  "download_scope_label": "Explicit for=\"download-scope\" association added",
+  "ruff_node_whitespace": "PASS",
+  "commit_push": "Neither"
+}

@@ -1,0 +1,6504 @@
+[
+  [
+    "hole-combined-20261014T121439-746060",
+    "hole",
+    "combined",
+    "staged",
+    {
+      "holes": 1100,
+      "views": {
+        "tir": "hole-tir-20261014T121407-de1339",
+        "swir": "hole-swir-20261014T121214-7e48f9"
+      },
+      "sensor": "combined",
+      "coverage": {
+        "policy": "intersection of supported holes in every sensor view",
+        "union_holes": 1226,
+        "common_holes": 1100,
+        "sensor_holes": {
+          "tir": 1149,
+          "swir": 1177
+        },
+        "excluded_holes": 126,
+        "excluded_hole_ids": [
+          "07THD003",
+          "09ATD015",
+          "09ATD019",
+          "09ATRCD025",
+          "09RTD001",
+          "17DHDD0016",
+          "17FCHRCD002",
+          "17NNMD001",
+          "18LCDD0001",
+          "19MMDD0456",
+          "20ALDD0001",
+          "20ALDD0002",
+          "20ALDD0003",
+          "20KGDD0008",
+          "20PQDD0005A",
+          "21SSC005",
+          "ABDP5",
+          "ACACIA 1",
+          "BEHARRA SPRINGS 2",
+          "BLINA 4",
+          "BLINA 5",
+          "BLRCD007",
+          "BOAB 1",
+          "CASSIA 1",
+          "CD20297W1",
+          "CD20297W2",
+          "CDDD0090",
+          "CENTELLA 1",
+          "CGDD005",
+          "CGDD006",
+          "CGDD007",
+          "CGDD008",
+          "CGDD009",
+          "CL1",
+          "CL2",
+          "CLIFF HEAD 6",
+          "CODY 1",
+          "DD85BMW2C",
+          "DD97BC14",
+          "DONGARA 11",
+          "DRDD327",
+          "DROVER 1",
+          "EAL302",
+          "EPT1702",
+          "EPT2260",
+          "EPT2262",
+          "FICUS 1",
+          "G50-22-001E",
+          "G50-22-002E",
+          "G50-22-003E",
+          "GBD016",
+          "GRCD0001",
+          "GRCD0002",
+          "HE001-NE",
+          "HE002-NE",
+          "HE003-NE",
+          "KBD094",
+          "KNCD180010",
+          "KNCD180011",
+          "KNCD180012",
+          "KNCD190101",
+          "KNCD190102",
+          "LAMINARIA EAST 1",
+          "LJM006",
+          "MAD011",
+          "MAD180",
+          "MC02DH01",
+          "MJGD27",
+          "MR1",
+          "MRDH400",
+          "MRDH401",
+          "MRDH402",
+          "MRDH403",
+          "MRDH407",
+          "MUTINEER 1B",
+          "MUTINEER 3",
+          "NGALTI 1",
+          "NUG0453",
+          "NUG0467",
+          "PDU2217",
+          "PETALUMA 1",
+          "PLRCD001",
+          "PLRCD003",
+          "PLRCD005",
+          "PLRCD006",
+          "PPDDD0002A",
+          "PWD 1",
+          "PWD 2",
+          "PWD 3",
+          "PWD 4",
+          "RAINIER 1",
+          "RBDD008",
+          "REINDEER 1",
+          "REINDEER 2",
+          "RRLRMDD040",
+          "RRLRMDD041",
+          "RRLRMDD041W1",
+          "SEDD0057",
+          "TCDP1",
+          "TCDP2",
+          "TCDP3",
+          "TDH 3",
+          "TMD001",
+          "UGD063",
+          "UGD288",
+          "UGD297",
+          "UGD378",
+          "WBD055UD",
+          "WK1",
+          "WOODADA 02",
+          "WTB-05",
+          "WTB-06",
+          "WTB-07",
+          "WTB-09",
+          "WTB-14",
+          "WTB-21",
+          "WTB-22",
+          "WTB-29",
+          "WTB-55",
+          "WTB-60",
+          "WTB-79",
+          "YDDD00003",
+          "YGDD002",
+          "YNC350",
+          "YOWALGA 3",
+          "ZNDD001"
+        ],
+        "excluded_by_sensor": {
+          "tir": 77,
+          "swir": 49
+        },
+        "pair_sensor_support": 2,
+        "missing_distance_imputation": "none"
+      },
+      "distance": "equal mean of SWIR and TIR base-2 Jensen-Shannon distances on the common supported-hole cohort",
+      "hole_clustering": {
+        "k": 2,
+        "names": {
+          "0": "Quartz + Chlorite-FeMg + Muscovite",
+          "1": "Chlorite-FeMg + Hornblende + Quartz"
+        },
+        "sizes": {
+          "0": 700,
+          "1": 400
+        },
+        "scores": [
+          {
+            "k": 2,
+            "actual_k": 2,
+            "silhouette": 0.30050542821308235,
+            "singletons": 0
+          },
+          {
+            "k": 3,
+            "actual_k": 3,
+            "silhouette": 0.2703067197675446,
+            "singletons": 0
+          },
+          {
+            "k": 4,
+            "actual_k": 4,
+            "silhouette": 0.23956018404391882,
+            "singletons": 0
+          },
+          {
+            "k": 5,
+            "actual_k": 5,
+            "silhouette": 0.1980603098932025,
+            "singletons": 0
+          },
+          {
+            "k": 6,
+            "actual_k": 6,
+            "silhouette": 0.16487543660901907,
+            "singletons": 0
+          },
+          {
+            "k": 7,
+            "actual_k": 7,
+            "silhouette": 0.18132008587914206,
+            "singletons": 0
+          },
+          {
+            "k": 8,
+            "actual_k": 8,
+            "silhouette": 0.18891030270357637,
+            "singletons": 0
+          },
+          {
+            "k": 9,
+            "actual_k": 9,
+            "silhouette": 0.17362336950241522,
+            "singletons": 0
+          },
+          {
+            "k": 10,
+            "actual_k": 10,
+            "silhouette": 0.17639896489511864,
+            "singletons": 0
+          },
+          {
+            "k": 11,
+            "actual_k": 11,
+            "silhouette": 0.2050927236678447,
+            "singletons": 0
+          },
+          {
+            "k": 12,
+            "actual_k": 12,
+            "silhouette": 0.19415876158781026,
+            "singletons": 0
+          },
+          {
+            "k": 13,
+            "actual_k": 13,
+            "silhouette": 0.20090209073239487,
+            "singletons": 0
+          },
+          {
+            "k": 14,
+            "actual_k": 14,
+            "silhouette": 0.1973380430069737,
+            "singletons": 0
+          },
+          {
+            "k": 15,
+            "actual_k": 15,
+            "silhouette": 0.19424174391508453,
+            "singletons": 0
+          }
+        ],
+        "status": "selected",
+        "algorithm": "average linkage; exact merge-count cut",
+        "candidate_k": [
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9,
+          10,
+          11,
+          12,
+          13,
+          14,
+          15
+        ],
+        "partition_note": "descriptive partition selected by silhouette; not geological validation",
+        "tied_merge_heights": true
+      },
+      "analysis_version": "clustering-corrections-v2",
+      "distance_version": "common-cohort-mean-v2",
+      "distance_data_sha256": "a591c190bc03f81c0e5aca18daa558603287213e9f99ad5aa40712eb9ef71339"
+    },
+    "C:\\HyLoggerData\\products\\analysis\\hole-combined-20261014T121439-746060",
+    "2026-10-14 12:04:34.467230+00:00"
+  ],
+  [
+    "hole-raw_nir-20261014T121904-f124b4",
+    "hole",
+    "raw_nir",
+    "staged",
+    {
+      "holes": 1261,
+      "sensor": "raw_nir",
+      "grid_nm": [
+        450.0,
+        460.0,
+        470.0,
+        480.0,
+        490.0,
+        500.0,
+        510.0,
+        520.0,
+        530.0,
+        540.0,
+        550.0,
+        560.0,
+        570.0,
+        580.0,
+        590.0,
+        600.0,
+        610.0,
+        620.0,
+        630.0,
+        640.0,
+        650.0,
+        660.0,
+        670.0,
+        680.0,
+        690.0,
+        700.0,
+        710.0,
+        720.0,
+        730.0,
+        740.0,
+        750.0,
+        760.0,
+        770.0,
+        780.0,
+        790.0,
+        800.0,
+        810.0,
+        820.0,
+        830.0,
+        840.0,
+        850.0,
+        860.0,
+        870.0,
+        880.0,
+        890.0,
+        900.0,
+        910.0,
+        920.0,
+        930.0,
+        940.0,
+        950.0,
+        960.0,
+        970.0,
+        980.0,
+        990.0,
+        1000.0,
+        1010.0,
+        1020.0,
+        1030.0,
+        1040.0,
+        1050.0,
+        1060.0,
+        1070.0,
+        1080.0,
+        1090.0,
+        1100.0,
+        1110.0,
+        1120.0,
+        1130.0,
+        1140.0,
+        1150.0,
+        1160.0,
+        1170.0,
+        1180.0,
+        1190.0,
+        1200.0,
+        1210.0,
+        1220.0,
+        1230.0,
+        1240.0,
+        1250.0,
+        1260.0,
+        1270.0,
+        1280.0,
+        1290.0,
+        1300.0,
+        1310.0,
+        1320.0,
+        1330.0,
+        1340.0,
+        1350.0,
+        1360.0,
+        1370.0,
+        1380.0,
+        1390.0,
+        1400.0,
+        1410.0,
+        1420.0,
+        1430.0,
+        1440.0,
+        1450.0,
+        1460.0,
+        1470.0,
+        1480.0,
+        1490.0,
+        1500.0,
+        1510.0,
+        1520.0,
+        1530.0,
+        1540.0,
+        1550.0,
+        1560.0,
+        1570.0,
+        1580.0,
+        1590.0,
+        1600.0,
+        1610.0,
+        1620.0,
+        1630.0,
+        1640.0,
+        1650.0,
+        1660.0,
+        1670.0,
+        1680.0,
+        1690.0,
+        1700.0,
+        1710.0,
+        1720.0,
+        1730.0,
+        1740.0,
+        1750.0,
+        1760.0,
+        1770.0,
+        1780.0,
+        1790.0,
+        1800.0,
+        1810.0,
+        1820.0,
+        1830.0,
+        1840.0,
+        1850.0,
+        1860.0,
+        1870.0,
+        1880.0,
+        1890.0,
+        1900.0,
+        1910.0,
+        1920.0,
+        1930.0,
+        1940.0,
+        1950.0,
+        1960.0,
+        1970.0,
+        1980.0,
+        1990.0,
+        2000.0,
+        2010.0,
+        2020.0,
+        2030.0,
+        2040.0,
+        2050.0,
+        2060.0,
+        2070.0,
+        2080.0,
+        2090.0,
+        2100.0,
+        2110.0,
+        2120.0,
+        2130.0,
+        2140.0,
+        2150.0,
+        2160.0,
+        2170.0,
+        2180.0,
+        2190.0,
+        2200.0,
+        2210.0,
+        2220.0,
+        2230.0,
+        2240.0,
+        2250.0,
+        2260.0,
+        2270.0,
+        2280.0,
+        2290.0,
+        2300.0,
+        2310.0,
+        2320.0,
+        2330.0,
+        2340.0,
+        2350.0,
+        2360.0,
+        2370.0,
+        2380.0,
+        2390.0,
+        2400.0,
+        2410.0,
+        2420.0,
+        2430.0,
+        2440.0,
+        2450.0
+      ],
+      "support": {
+        "loading": {
+          "products_loaded": 1312,
+          "excluded_products": [
+            {
+              "reason": "incompatible_wavelength_grid",
+              "hole_id": "YDH13_TSG_MIR"
+            },
+            {
+              "reason": "incompatible_wavelength_grid",
+              "hole_id": "YD1_TSG_MIR"
+            },
+            {
+              "reason": "incompatible_wavelength_grid",
+              "hole_id": "YDH11_TSG_MIR"
+            },
+            {
+              "reason": "incompatible_wavelength_grid",
+              "hole_id": "ADD10_TSG_MIR"
+            },
+            {
+              "reason": "incompatible_wavelength_grid",
+              "hole_id": "YD2_TSG_MIR"
+            },
+            {
+              "reason": "incompatible_wavelength_grid",
+              "hole_id": "VHD10_TSG_MIR"
+            },
+            {
+              "reason": "incompatible_wavelength_grid",
+              "hole_id": "BR0006_TSG_MIR"
+            },
+            {
+              "reason": "incompatible_wavelength_grid",
+              "hole_id": "YD4_TSG_MIR"
+            }
+          ],
+          "products_excluded": 8,
+          "products_requested": 1320
+        },
+        "holes_loaded": 1312,
+        "support_note": "10 finite 1 m intervals is a compatibility floor, not a confidence guarantee; depth coverage may remain unequal",
+        "excluded_holes": [
+          {
+            "reason": "insufficient_finite_interval_support",
+            "hole_id": "14CADD003",
+            "finite_intervals": 9,
+            "intervals_loaded": 9
+          },
+          {
+            "reason": "insufficient_finite_interval_support",
+            "hole_id": "ALLANOOKA 1",
+            "finite_intervals": 7,
+            "intervals_loaded": 7
+          },
+          {
+            "reason": "insufficient_finite_interval_support",
+            "hole_id": "BADAMINNA 1",
+            "finite_intervals": 8,
+            "intervals_loaded": 8
+          },
+          {
+            "reason": "insufficient_finite_interval_support",
+            "hole_id": "BB1",
+            "finite_intervals": 3,
+            "intervals_loaded": 3
+          },
+          {
+            "reason": "insufficient_finite_interval_support",
+            "hole_id": "BB2",
+            "finite_intervals": 3,
+            "intervals_loaded": 3
+          },
+          {
+            "reason": "insufficient_finite_interval_support",
+            "hole_id": "BB3",
+            "finite_intervals": 3,
+            "intervals_loaded": 3
+          },
+          {
+            "reason": "insufficient_finite_interval_support",
+            "hole_id": "BB4",
+            "finite_intervals": 3,
+            "intervals_loaded": 3
+          },
+          {
+            "reason": "insufficient_finite_interval_support",
+            "hole_id": "BB5",
+            "finite_intervals": 3,
+            "intervals_loaded": 3
+          },
+          {
+            "reason": "insufficient_finite_interval_support",
+            "hole_id": "BH02",
+            "finite_intervals": 5,
+            "intervals_loaded": 5
+          },
+          {
+            "reason": "insufficient_finite_interval_support",
+            "hole_id": "BH03",
+            "finite_intervals": 7,
+            "intervals_loaded": 7
+          },
+          {
+            "reason": "insufficient_finite_interval_support",
+            "hole_id": "BH04",
+            "finite_intervals": 4,
+            "intervals_loaded": 4
+          },
+          {
+            "reason": "insufficient_finite_interval_support",
+            "hole_id": "BH05",
+            "finite_intervals": 9,
+            "intervals_loaded": 9
+          },
+          {
+            "reason": "insufficient_finite_interval_support",
+            "hole_id": "BH06",
+            "finite_intervals": 4,
+            "intervals_loaded": 4
+          },
+          {
+            "reason": "insufficient_finite_interval_support",
+            "hole_id": "BH08",
+            "finite_intervals": 5,
+            "intervals_loaded": 5
+          },
+          {
+            "reason": "insufficient_finite_interval_support",
+            "hole_id": "BH11",
+            "finite_intervals": 4,
+            "intervals_loaded": 4
+          },
+          {
+            "reason": "insufficient_finite_interval_support",
+            "hole_id": "BH15",
+            "finite_intervals": 8,
+            "intervals_loaded": 8
+          },
+          {
+            "reason": "insufficient_finite_interval_support",
+            "hole_id": "BH16",
+            "finite_intervals": 9,
+            "intervals_loaded": 9
+          },
+          {
+            "reason": "insufficient_finite_interval_support",
+            "hole_id": "BH22",
+            "finite_intervals": 7,
+            "intervals_loaded": 7
+          },
+          {
+            "reason": "insufficient_finite_interval_support",
+            "hole_id": "BH23",
+            "finite_intervals": 5,
+            "intervals_loaded": 5
+          },
+          {
+            "reason": "insufficient_finite_interval_support",
+            "hole_id": "BH24",
+            "finite_intervals": 9,
+            "intervals_loaded": 9
+          },
+          {
+            "reason": "insufficient_finite_interval_support",
+            "hole_id": "BH25",
+            "finite_intervals": 7,
+            "intervals_loaded": 7
+          },
+          {
+            "reason": "insufficient_finite_interval_support",
+            "hole_id": "BRUCE 1",
+            "finite_intervals": 5,
+            "intervals_loaded": 5
+          },
+          {
+            "reason": "insufficient_finite_interval_support",
+            "hole_id": "CANOPUS 1",
+            "finite_intervals": 9,
+            "intervals_loaded": 9
+          },
+          {
+            "reason": "insufficient_finite_interval_support",
+            "hole_id": "COASTER 1",
+            "finite_intervals": 5,
+            "intervals_loaded": 5
+          },
+          {
+            "reason": "insufficient_finite_interval_support",
+            "hole_id": "DA1",
+            "finite_intervals": 1,
+            "intervals_loaded": 1
+          },
+          {
+            "reason": "insufficient_finite_interval_support",
+            "hole_id": "DONGARA 07",
+            "finite_intervals": 4,
+            "intervals_loaded": 4
+          },
+          {
+            "reason": "insufficient_finite_interval_support",
+            "hole_id": "EMB2",
+            "finite_intervals": 3,
+            "intervals_loaded": 3
+          },
+          {
+            "reason": "insufficient_finite_interval_support",
+            "hole_id": "EMB3",
+            "finite_intervals": 3,
+            "intervals_loaded": 3
+          },
+          {
+            "reason": "insufficient_finite_interval_support",
+            "hole_id": "EMB4",
+            "finite_intervals": 3,
+            "intervals_loaded": 3
+          },
+          {
+            "reason": "insufficient_finite_interval_support",
+            "hole_id": "GLENROY 1",
+            "finite_intervals": 7,
+            "intervals_loaded": 7
+          },
+          {
+            "reason": "insufficient_finite_interval_support",
+            "hole_id": "HOVEA 1_CUTTINGS",
+            "finite_intervals": 8,
+            "intervals_loaded": 8
+          },
+          {
+            "reason": "insufficient_finite_interval_support",
+            "hole_id": "HOVEA 2_CUTTINGS",
+            "finite_intervals": 2,
+            "intervals_loaded": 2
+          },
+          {
+            "reason": "insufficient_finite_interval_support",
+            "hole_id": "IRWIN 1_CUTTINGS2",
+            "finite_intervals": 2,
+            "intervals_loaded": 2
+          },
+          {
+            "reason": "insufficient_finite_interval_support",
+            "hole_id": "K90C-01NE-W1A",
+            "finite_intervals": 9,
+            "intervals_loaded": 9
+          },
+          {
+            "reason": "insufficient_finite_interval_support",
+            "hole_id": "LJM-D008",
+            "finite_intervals": 8,
+            "intervals_loaded": 8
+          },
+          {
+            "reason": "insufficient_finite_interval_support",
+            "hole_id": "LJM-D012",
+            "finite_intervals": 2,
+            "intervals_loaded": 2
+          },
+          {
+            "reason": "insufficient_finite_interval_support",
+            "hole_id": "LYRM01",
+            "finite_intervals": 4,
+            "intervals_loaded": 4
+          },
+          {
+            "reason": "insufficient_finite_interval_support",
+            "hole_id": "LYRM09",
+            "finite_intervals": 3,
+            "intervals_loaded": 3
+          },
+          {
+            "reason": "insufficient_finite_interval_support",
+            "hole_id": "LYRM10",
+            "finite_intervals": 4,
+            "intervals_loaded": 4
+          },
+          {
+            "reason": "insufficient_finite_interval_support",
+            "hole_id": "MATCHES SPRING 1",
+            "finite_intervals": 4,
+            "intervals_loaded": 4
+          },
+          {
+            "reason": "insufficient_finite_interval_support",
+            "hole_id": "MT ADAMS 1",
+            "finite_intervals": 8,
+            "intervals_loaded": 8
+          },
+          {
+            "reason": "insufficient_finite_interval_support",
+            "hole_id": "POISSONNIER 1",
+            "finite_intervals": 7,
+            "intervals_loaded": 7
+          },
+          {
+            "reason": "insufficient_finite_interval_support",
+            "hole_id": "QUOBBA 1",
+            "finite_intervals": 9,
+            "intervals_loaded": 9
+          },
+          {
+            "reason": "insufficient_finite_interval_support",
+            "hole_id": "TUBRIDGI 15_CUTTINGS",
+            "finite_intervals": 8,
+            "intervals_loaded": 8
+          },
+          {
+            "reason": "insufficient_finite_interval_support",
+            "hole_id": "URALA 1",
+            "finite_intervals": 7,
+            "intervals_loaded": 7
+          },
+          {
+            "reason": "insufficient_finite_interval_support",
+            "hole_id": "WALYERING 3",
+            "finite_intervals": 9,
+            "intervals_loaded": 9
+          },
+          {
+            "reason": "insufficient_finite_interval_support",
+            "hole_id": "WANDAGEE COREHOLE 1",
+            "finite_intervals": 3,
+            "intervals_loaded": 3
+          },
+          {
+            "reason": "insufficient_finite_interval_support",
+            "hole_id": "WARRADONG 1",
+            "finite_intervals": 6,
+            "intervals_loaded": 6
+          },
+          {
+            "reason": "insufficient_finite_interval_support",
+            "hole_id": "WEELAWARREN 1",
+            "finite_intervals": 2,
+            "intervals_loaded": 2
+          },
+          {
+            "reason": "insufficient_finite_interval_support",
+            "hole_id": "WEST ERREGULLA 1",
+            "finite_intervals": 7,
+            "intervals_loaded": 7
+          },
+          {
+            "reason": "insufficient_finite_interval_support",
+            "hole_id": "WHITE HILLS 1",
+            "finite_intervals": 9,
+            "intervals_loaded": 9
+          }
+        ],
+        "holes_eligible": 1261,
+        "holes_excluded": 51,
+        "intervals_loaded": 400262,
+        "intervals_eligible": 399979,
+        "minimum_intervals_per_hole": 10,
+        "nonfinite_intervals_excluded": 0
+      },
+      "distance": "joint sliced Wasserstein W1 (finite projections, 50 midpoint quantiles)",
+      "k_scores": [
+        {
+          "k": 2,
+          "valid": true,
+          "reason": null,
+          "inertia": 32052.875,
+          "actual_k": 2,
+          "min_share": 0.43625,
+          "silhouette": 0.37344369292259216
+        },
+        {
+          "k": 3,
+          "valid": true,
+          "reason": null,
+          "inertia": 25324.009765625,
+          "actual_k": 3,
+          "min_share": 0.21091666666666667,
+          "silhouette": 0.2917599678039551
+        },
+        {
+          "k": 4,
+          "valid": true,
+          "reason": null,
+          "inertia": 22796.51171875,
+          "actual_k": 4,
+          "min_share": 0.15198333333333333,
+          "silhouette": 0.2628661096096039
+        },
+        {
+          "k": 5,
+          "valid": true,
+          "reason": null,
+          "inertia": 20464.94140625,
+          "actual_k": 5,
+          "min_share": 0.0579,
+          "silhouette": 0.234622061252594
+        },
+        {
+          "k": 6,
+          "valid": true,
+          "reason": null,
+          "inertia": 18307.98828125,
+          "actual_k": 6,
+          "min_share": 0.05705,
+          "silhouette": 0.24210180342197418
+        },
+        {
+          "k": 8,
+          "valid": true,
+          "reason": null,
+          "inertia": 16253.771484375,
+          "actual_k": 8,
+          "min_share": 0.05325,
+          "silhouette": 0.20779238641262054
+        },
+        {
+          "k": 10,
+          "valid": true,
+          "reason": null,
+          "inertia": 14778.806640625,
+          "actual_k": 10,
+          "min_share": 0.02875,
+          "silhouette": 0.2072976976633072
+        },
+        {
+          "k": 12,
+          "valid": true,
+          "reason": null,
+          "inertia": 13637.296875,
+          "actual_k": 12,
+          "min_share": 0.0214,
+          "silhouette": 0.20506422221660614
+        }
+      ],
+      "intervals": 399979,
+      "pca_variance": 0.9631,
+      "model_version": "raw-joint-distribution-v2",
+      "n_projections": 64,
+      "preprocessing": "continuum removal (hull quotient)",
+      "class_profiles": [
+        {
+          "bands": {
+            "albedo": 0.1862870752811432,
+            "fe3_900_pos": 948.5688825529603,
+            "oh_1400_pos": 1410.9848977083407,
+            "h2o_1900_pos": 1925.5581280033934,
+            "aloh_2200_pos": 2205.0040892394973,
+            "fe3_900_depth": 0.04598620895634964,
+            "feoh_2250_pos": 2252.5211324577313,
+            "mgoh_2330_pos": 2334.3048028632343,
+            "oh_1400_depth": 0.038125500887303376,
+            "h2o_1900_depth": 0.06868659477115857,
+            "aloh_2200_depth": 0.028513594948086807,
+            "feoh_2250_depth": 0.008288442238506,
+            "mgoh_2330_depth": 0.028829692337468127
+          },
+          "n_holes": 1252,
+          "cluster_id": 0,
+          "n_intervals": 207082,
+          "mean_spectrum": [
+            0.18310000002384186,
+            0.18529999256134033,
+            0.18709999322891235,
+            0.1889999955892563,
+            0.19110000133514404,
+            0.19329999387264252,
+            0.195700004696846,
+            0.19830000400543213,
+            0.20100000500679016,
+            0.20399999618530273,
+            0.20739999413490295,
+            0.21119999885559082,
+            0.21490000188350677,
+            0.218299999833107,
+            0.22110000252723694,
+            0.22300000488758087,
+            0.22390000522136688,
+            0.2240000069141388,
+            0.22450000047683716,
+            0.22499999403953552,
+            0.22460000216960907,
+            0.2248000055551529,
+            0.225600004196167,
+            0.22630000114440918,
+            0.22679999470710754,
+            0.2273000031709671,
+            0.22769999504089355,
+            0.22789999842643738,
+            0.2280000001192093,
+            0.2281000018119812,
+            0.2280000001192093,
+            0.22779999673366547,
+            0.227400004863739,
+            0.22689999639987946,
+            0.22619999945163727,
+            0.22550000250339508,
+            0.22460000216960907,
+            0.22360000014305115,
+            0.22259999811649323,
+            0.2215999960899353,
+            0.22089999914169312,
+            0.21969999372959137,
+            0.21870000660419464,
+            0.21799999475479126,
+            0.21739999949932098,
+            0.21699999272823334,
+            0.2167000025510788,
+            0.21660000085830688,
+            0.21660000085830688,
+            0.2167000025510788,
+            0.21690000593662262,
+            0.21699999272823334,
+            0.21729999780654907,
+            0.21770000457763672,
+            0.21789999306201935,
+            0.21819999814033508,
+            0.21860000491142273,
+            0.21889999508857727,
+            0.2190999984741211,
+            0.21930000185966492,
+            0.21950000524520874,
+            0.21960000693798065,
+            0.21979999542236328,
+            0.2199999988079071,
+            0.22020000219345093,
+            0.22059999406337738,
+            0.22089999914169312,
+            0.22130000591278076,
+            0.2214999943971634,
+            0.22179999947547913,
+            0.22200000286102295,
+            0.2222999930381775,
+            0.2224999964237213,
+            0.22280000150203705,
+            0.2231999933719635,
+            0.22360000014305115,
+            0.2240999937057495,
+            0.22470000386238098,
+            0.22519999742507935,
+            0.22589999437332153,
+            0.226500004529953,
+            0.22709999978542328,
+            0.22759999334812164,
+            0.2280000001192093,
+            0.2282000035047531,
+            0.22840000689029694,
+            0.22859999537467957,
+            0.2287999987602234,
+            0.2290000021457672,
+            0.22910000383853912,
+            0.2289000004529953,
+            0.22830000519752502,
+            0.2280000001192093,
+            0.22579999268054962,
+            0.22010000050067902,
+            0.2151000052690506,
+            0.21170000731945038,
+            0.21619999408721924,
+            0.22130000591278076,
+            0.22349999845027924,
+            0.2248000055551529,
+            0.22540000081062317,
+            0.2264000028371811,
+            0.22750000655651093,
+            0.22869999706745148,
+            0.2296999990940094,
+            0.23070000112056732,
+            0.23149999976158142,
+            0.2321999967098236,
+            0.23280000686645508,
+            0.23340000212192535,
+            0.23399999737739563,
+            0.23440000414848328,
+            0.23489999771118164,
+            0.2353000044822693,
+            0.23569999635219574,
+            0.23589999973773956,
+            0.23600000143051147,
+            0.2361000031232834,
+            0.2363000065088272,
+            0.23659999668598175,
+            0.23669999837875366,
+            0.23669999837875366,
+            0.23649999499320984,
+            0.2362000048160553,
+            0.23600000143051147,
+            0.23600000143051147,
+            0.23579999804496765,
+            0.23559999465942383,
+            0.2353000044822693,
+            0.23489999771118164,
+            0.2345999926328659,
+            0.23440000414848328,
+            0.23420000076293945,
+            0.23389999568462372,
+            0.2337000072002411,
+            0.23350000381469727,
+            0.23309999704360962,
+            0.2328999936580658,
+            0.23260000348091125,
+            0.23199999332427979,
+            0.23070000112056732,
+            0.22830000519752502,
+            0.22360000014305115,
+            0.21619999408721924,
+            0.20649999380111694,
+            0.20069999992847443,
+            0.19979999959468842,
+            0.19949999451637268,
+            0.20000000298023224,
+            0.20100000500679016,
+            0.20239999890327454,
+            0.2037999927997589,
+            0.2054000049829483,
+            0.20730000734329224,
+            0.2094999998807907,
+            0.21160000562667847,
+            0.2134999930858612,
+            0.2150000035762787,
+            0.21629999577999115,
+            0.21719999611377716,
+            0.2176000028848648,
+            0.21770000457763672,
+            0.2176000028848648,
+            0.21729999780654907,
+            0.21690000593662262,
+            0.2159000039100647,
+            0.21549999713897705,
+            0.2151000052690506,
+            0.2134999930858612,
+            0.20999999344348907,
+            0.20600000023841858,
+            0.20350000262260437,
+            0.20080000162124634,
+            0.19519999623298645,
+            0.19089999794960022,
+            0.1873999983072281,
+            0.19380000233650208,
+            0.19599999487400055,
+            0.19499999284744263,
+            0.19329999387264252,
+            0.19280000030994415,
+            0.19280000030994415,
+            0.1914999932050705,
+            0.18850000202655792,
+            0.18559999763965607,
+            0.1817999929189682,
+            0.1784999966621399,
+            0.17649999260902405,
+            0.17569999396800995,
+            0.17550000548362732,
+            0.1762000024318695,
+            0.17659999430179596,
+            0.17499999701976776,
+            0.17440000176429749,
+            0.17419999837875366,
+            0.1728000044822693,
+            0.17069999873638153,
+            0.1678999960422516,
+            0.16529999673366547,
+            0.163100004196167
+          ]
+        },
+        {
+          "bands": {
+            "albedo": 0.15791915357112885,
+            "fe3_900_pos": 943.6409583376205,
+            "oh_1400_pos": 1408.39309494464,
+            "h2o_1900_pos": 1951.201466154652,
+            "aloh_2200_pos": 2198.353896193409,
+            "fe3_900_depth": 0.06288729985393815,
+            "feoh_2250_pos": 2252.732360191527,
+            "mgoh_2330_pos": 2337.981052475829,
+            "oh_1400_depth": 0.0451652667054695,
+            "h2o_1900_depth": 0.04837858814663287,
+            "aloh_2200_depth": 0.013985850306278746,
+            "feoh_2250_depth": 0.04931902423358148,
+            "mgoh_2330_depth": 0.08221389979768323
+          },
+          "n_holes": 1045,
+          "cluster_id": 1,
+          "n_intervals": 192897,
+          "mean_spectrum": [
+            0.20239999890327454,
+            0.20350000262260437,
+            0.20469999313354492,
+            0.20600000023841858,
+            0.2070000022649765,
+            0.20759999752044678,
+            0.20819999277591705,
+            0.2085999995470047,
+            0.2084999978542328,
+            0.20829999446868896,
+            0.20810000598430634,
+            0.2079000025987625,
+            0.20730000734329224,
+            0.20659999549388885,
+            0.20550000667572021,
+            0.20419999957084656,
+            0.20239999890327454,
+            0.20010000467300415,
+            0.19850000739097595,
+            0.19689999520778656,
+            0.19460000097751617,
+            0.19290000200271606,
+            0.1915999948978424,
+            0.19040000438690186,
+            0.1889999955892563,
+            0.1876000016927719,
+            0.18629999458789825,
+            0.18479999899864197,
+            0.1835000067949295,
+            0.18240000307559967,
+            0.18129999935626984,
+            0.18039999902248383,
+            0.17949999868869781,
+            0.1784999966621399,
+            0.17739999294281006,
+            0.17630000412464142,
+            0.17499999701976776,
+            0.1736000031232834,
+            0.1720000058412552,
+            0.1703999936580658,
+            0.16920000314712524,
+            0.1673000007867813,
+            0.1657000035047531,
+            0.16429999470710754,
+            0.16300000250339508,
+            0.16189999878406525,
+            0.16099999845027924,
+            0.16019999980926514,
+            0.15960000455379486,
+            0.1590999960899353,
+            0.15860000252723694,
+            0.15809999406337738,
+            0.15760000050067902,
+            0.15719999372959137,
+            0.1565999984741211,
+            0.15610000491142273,
+            0.15569999814033508,
+            0.15539999306201935,
+            0.1550000011920929,
+            0.15459999442100525,
+            0.15399999916553497,
+            0.1534000039100647,
+            0.15299999713897705,
+            0.1527000069618225,
+            0.15230000019073486,
+            0.15199999511241913,
+            0.15160000324249268,
+            0.15139999985694885,
+            0.15109999477863312,
+            0.1509000062942505,
+            0.15070000290870667,
+            0.15060000121593475,
+            0.15039999783039093,
+            0.15029999613761902,
+            0.15029999613761902,
+            0.15049999952316284,
+            0.15070000290870667,
+            0.1509999930858612,
+            0.15150000154972076,
+            0.15199999511241913,
+            0.1525000035762787,
+            0.15289999544620514,
+            0.1534000039100647,
+            0.15389999747276306,
+            0.1543000042438507,
+            0.15479999780654907,
+            0.15530000627040863,
+            0.1559000015258789,
+            0.15649999678134918,
+            0.15700000524520874,
+            0.1573999971151352,
+            0.15780000388622284,
+            0.15809999406337738,
+            0.15770000219345093,
+            0.15449999272823334,
+            0.15109999477863312,
+            0.15070000290870667,
+            0.15469999611377716,
+            0.1581999957561493,
+            0.15950000286102295,
+            0.16040000319480896,
+            0.16110000014305115,
+            0.16189999878406525,
+            0.16269999742507935,
+            0.16369999945163727,
+            0.16439999639987946,
+            0.16500000655651093,
+            0.1655000001192093,
+            0.16599999368190765,
+            0.1665000021457672,
+            0.1670999974012375,
+            0.16769999265670776,
+            0.16840000450611115,
+            0.16930000483989716,
+            0.17020000517368317,
+            0.17100000381469727,
+            0.17180000245571136,
+            0.17249999940395355,
+            0.17319999635219574,
+            0.17389999330043793,
+            0.17470000684261322,
+            0.17550000548362732,
+            0.1761000007390976,
+            0.17640000581741333,
+            0.17669999599456787,
+            0.17710000276565552,
+            0.1777999997138977,
+            0.17829999327659607,
+            0.17880000174045563,
+            0.17919999361038208,
+            0.17960000038146973,
+            0.18000000715255737,
+            0.18050000071525574,
+            0.1808999925851822,
+            0.18119999766349792,
+            0.18140000104904175,
+            0.18140000104904175,
+            0.18119999766349792,
+            0.1809999942779541,
+            0.18080000579357147,
+            0.18050000071525574,
+            0.17990000545978546,
+            0.17880000174045563,
+            0.17720000445842743,
+            0.17499999701976776,
+            0.17190000414848328,
+            0.16990000009536743,
+            0.1696999967098236,
+            0.1695999950170517,
+            0.1695999950170517,
+            0.16940000653266907,
+            0.16930000483989716,
+            0.16930000483989716,
+            0.16899999976158142,
+            0.16899999976158142,
+            0.16940000653266907,
+            0.1704999953508377,
+            0.1720999926328659,
+            0.17440000176429749,
+            0.17630000412464142,
+            0.1777999997138977,
+            0.17870000004768372,
+            0.17910000681877136,
+            0.179299995303154,
+            0.17870000004768372,
+            0.17759999632835388,
+            0.17579999566078186,
+            0.17470000684261322,
+            0.17440000176429749,
+            0.17409999668598175,
+            0.17299999296665192,
+            0.17059999704360962,
+            0.16740000247955322,
+            0.16300000250339508,
+            0.15680000185966492,
+            0.15289999544620514,
+            0.15139999985694885,
+            0.15119999647140503,
+            0.14910000562667847,
+            0.14319999516010284,
+            0.13590000569820404,
+            0.13510000705718994,
+            0.13779999315738678,
+            0.13770000636577606,
+            0.13369999825954437,
+            0.12929999828338623,
+            0.12460000067949295,
+            0.12030000239610672,
+            0.11710000038146973,
+            0.1152999997138977,
+            0.11599999666213989,
+            0.11869999766349792,
+            0.12240000069141388,
+            0.12380000203847885,
+            0.1242000013589859,
+            0.1251000016927719,
+            0.1257999986410141,
+            0.125900000333786,
+            0.125,
+            0.12389999628067017,
+            0.1225999966263771
+          ]
+        }
+      ],
+      "pca_components": 8,
+      "quantile_count": 50,
+      "wavelengths_nm": [
+        450.0,
+        2450.0
+      ],
+      "coordinate_axes": 8,
+      "final_min_share": 0.44373302522997427,
+      "hole_clustering": {
+        "k": 2,
+        "names": {
+          "0": "class 0-dominant",
+          "1": "class 1-dominant"
+        },
+        "sizes": {
+          "0": 1260,
+          "1": 1
+        },
+        "scores": [
+          {
+            "k": 2,
+            "actual_k": 2,
+            "silhouette": 0.46938005446404973,
+            "singletons": 1
+          },
+          {
+            "k": 3,
+            "actual_k": 3,
+            "silhouette": 0.3096183843448929,
+            "singletons": 1
+          },
+          {
+            "k": 4,
+            "actual_k": 4,
+            "silhouette": 0.3263401648124341,
+            "singletons": 1
+          },
+          {
+            "k": 5,
+            "actual_k": 5,
+            "silhouette": 0.2703912137365728,
+            "singletons": 2
+          },
+          {
+            "k": 6,
+            "actual_k": 6,
+            "silhouette": 0.21155975961723716,
+            "singletons": 2
+          },
+          {
+            "k": 7,
+            "actual_k": 7,
+            "silhouette": 0.19968012285562498,
+            "singletons": 2
+          },
+          {
+            "k": 8,
+            "actual_k": 8,
+            "silhouette": 0.19139413123002344,
+            "singletons": 2
+          },
+          {
+            "k": 9,
+            "actual_k": 9,
+            "silhouette": 0.18870808067863873,
+            "singletons": 3
+          },
+          {
+            "k": 10,
+            "actual_k": 10,
+            "silhouette": 0.18104978234630992,
+            "singletons": 3
+          },
+          {
+            "k": 11,
+            "actual_k": 11,
+            "silhouette": 0.17174206589033122,
+            "singletons": 3
+          },
+          {
+            "k": 12,
+            "actual_k": 12,
+            "silhouette": 0.16729682061809145,
+            "singletons": 3
+          },
+          {
+            "k": 13,
+            "actual_k": 13,
+            "silhouette": 0.15833086655533007,
+            "singletons": 4
+          },
+          {
+            "k": 14,
+            "actual_k": 14,
+            "silhouette": 0.14932571505097494,
+            "singletons": 4
+          },
+          {
+            "k": 15,
+            "actual_k": 15,
+            "silhouette": 0.14665682865703636,
+            "singletons": 4
+          }
+        ],
+        "status": "selected",
+        "algorithm": "average linkage; exact merge-count cut",
+        "candidate_k": [
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9,
+          10,
+          11,
+          12,
+          13,
+          14,
+          15
+        ],
+        "partition_note": "descriptive partition selected by silhouette; not geological validation",
+        "tied_merge_heights": false
+      },
+      "projection_seed": 1729,
+      "analysis_version": "clustering-corrections-v2",
+      "distance_version": "sliced-wasserstein-v1",
+      "interval_classes": 2,
+      "legacy_comparator": {
+        "note": "same cohort/PCA; marginal comparator ignores joint dependence and adds variance weights to unwhitened scores",
+        "distance": "variance-weighted per-component Wasserstein (50 quantiles)",
+        "distance_version": "marginal-variance-weighted-wasserstein-v1"
+      },
+      "pca_component_cap": 12,
+      "approximation_note": "finite projections and quantiles; identical distance is not proof of identical joint distributions",
+      "distance_data_sha256": "ac8e2bf8622d19ac9f7d3e8870e691d0172ca672192fcceeaf72c8486d7ab480",
+      "projection_weighting": "equal; unwhitened scores retain variance without reweighting",
+      "pca_requested_variance": 0.95,
+      "pca_variance_target_met": true,
+      "agreement_with_processed": {
+        "holes": 635,
+        "against": "processed SWIR (JS)",
+        "spearman_rho": 0.319
+      }
+    },
+    "C:\\HyLoggerData\\products\\analysis\\hole-raw_nir-20261014T121904-f124b4",
+    "2026-10-14 12:04:34.467230+00:00"
+  ],
+  [
+    "hole-raw_tir-20261014T122019-e6f74a",
+    "hole",
+    "raw_tir",
+    "staged",
+    {
+      "holes": 1225,
+      "sensor": "raw_tir",
+      "grid_nm": [
+        6000.0,
+        6050.0,
+        6100.0,
+        6150.0,
+        6200.0,
+        6250.0,
+        6300.0,
+        6350.0,
+        6400.0,
+        6450.0,
+        6500.0,
+        6550.0,
+        6600.0,
+        6650.0,
+        6700.0,
+        6750.0,
+        6800.0,
+        6850.0,
+        6900.0,
+        6950.0,
+        7000.0,
+        7050.0,
+        7100.0,
+        7150.0,
+        7200.0,
+        7250.0,
+        7300.0,
+        7350.0,
+        7400.0,
+        7450.0,
+        7500.0,
+        7550.0,
+        7600.0,
+        7650.0,
+        7700.0,
+        7750.0,
+        7800.0,
+        7850.0,
+        7900.0,
+        7950.0,
+        8000.0,
+        8050.0,
+        8100.0,
+        8150.0,
+        8200.0,
+        8250.0,
+        8300.0,
+        8350.0,
+        8400.0,
+        8450.0,
+        8500.0,
+        8550.0,
+        8600.0,
+        8650.0,
+        8700.0,
+        8750.0,
+        8800.0,
+        8850.0,
+        8900.0,
+        8950.0,
+        9000.0,
+        9050.0,
+        9100.0,
+        9150.0,
+        9200.0,
+        9250.0,
+        9300.0,
+        9350.0,
+        9400.0,
+        9450.0,
+        9500.0,
+        9550.0,
+        9600.0,
+        9650.0,
+        9700.0,
+        9750.0,
+        9800.0,
+        9850.0,
+        9900.0,
+        9950.0,
+        10000.0,
+        10050.0,
+        10100.0,
+        10150.0,
+        10200.0,
+        10250.0,
+        10300.0,
+        10350.0,
+        10400.0,
+        10450.0,
+        10500.0,
+        10550.0,
+        10600.0,
+        10650.0,
+        10700.0,
+        10750.0,
+        10800.0,
+        10850.0,
+        10900.0,
+        10950.0,
+        11000.0,
+        11050.0,
+        11100.0,
+        11150.0,
+        11200.0,
+        11250.0,
+        11300.0,
+        11350.0,
+        11400.0,
+        11450.0,
+        11500.0,
+        11550.0,
+        11600.0,
+        11650.0,
+        11700.0,
+        11750.0,
+        11800.0,
+        11850.0,
+        11900.0,
+        11950.0,
+        12000.0,
+        12050.0,
+        12100.0,
+        12150.0,
+        12200.0,
+        12250.0,
+        12300.0,
+        12350.0,
+        12400.0,
+        12450.0,
+        12500.0,
+        12550.0,
+        12600.0,
+        12650.0,
+        12700.0,
+        12750.0,
+        12800.0,
+        12850.0,
+        12900.0,
+        12950.0,
+        13000.0,
+        13050.0,
+        13100.0,
+        13150.0,
+        13200.0,
+        13250.0,
+        13300.0,
+        13350.0,
+        13400.0,
+        13450.0,
+        13500.0,
+        13550.0,
+        13600.0,
+        13650.0,
+        13700.0,
+        13750.0,
+        13800.0,
+        13850.0,
+        13900.0,
+        13950.0,
+        14000.0,
+        14050.0,
+        14100.0,
+        14150.0,
+        14200.0,
+        14250.0,
+        14300.0,
+        14350.0,
+        14400.0,
+        14450.0,
+        14500.0
+      ],
+      "support": {
+        "loading": {
+          "products_loaded": 1280,
+          "excluded_products": [
+            {
+              "reason": "incompatible_wavelength_grid",
+              "hole_id": "WAKDD012"
+            },
+            {
+              "reason": "incompatible_wavelength_grid",
+              "hole_id": "WAKDD013"
+            },
+            {
+              "reason": "incompatible_wavelength_grid",
+              "hole_id": "YDH13_TSG_MIR"
+            },
+            {
+              "reason": "incompatible_wavelength_grid",
+              "hole_id": "NGALTI 1"
+            },
+            {
+              "reason": "incompatible_wavelength_grid",
+              "hole_id": "YDH12"
+            },
+            {
+              "reason": "incompatible_wavelength_grid",
+              "hole_id": "ADD10_TSG_MIR"
+            },
+            {
+              "reason": "incompatible_wavelength_grid",
+              "hole_id": "YD2_TSG_MIR"
+            },
+            {
+              "reason": "incompatible_wavelength_grid",
+              "hole_id": "YD4_TSG_MIR"
+            }
+          ],
+          "products_excluded": 8,
+          "products_requested": 1288
+        },
+        "holes_loaded": 1280,
+        "support_note": "10 finite 1 m intervals is a compatibility floor, not a confidence guarantee; depth coverage may remain unequal",
+        "excluded_holes": [
+          {
+            "reason": "insufficient_finite_interval_support",
+            "hole_id": "14CADD003",
+            "finite_intervals": 9,
+            "intervals_loaded": 9
+          },
+          {
+            "reason": "insufficient_finite_interval_support",
+            "hole_id": "ALLANOOKA 1",
+            "finite_intervals": 7,
+            "intervals_loaded": 7
+          },
+          {
+            "reason": "insufficient_finite_interval_support",
+            "hole_id": "BADAMINNA 1",
+            "finite_intervals": 8,
+            "intervals_loaded": 8
+          },
+          {
+            "reason": "insufficient_finite_interval_support",
+            "hole_id": "BB1",
+            "finite_intervals": 3,
+            "intervals_loaded": 3
+          },
+          {
+            "reason": "insufficient_finite_interval_support",
+            "hole_id": "BB2",
+            "finite_intervals": 3,
+            "intervals_loaded": 3
+          },
+          {
+            "reason": "insufficient_finite_interval_support",
+            "hole_id": "BB3",
+            "finite_intervals": 3,
+            "intervals_loaded": 3
+          },
+          {
+            "reason": "insufficient_finite_interval_support",
+            "hole_id": "BB4",
+            "finite_intervals": 3,
+            "intervals_loaded": 3
+          },
+          {
+            "reason": "insufficient_finite_interval_support",
+            "hole_id": "BB5",
+            "finite_intervals": 3,
+            "intervals_loaded": 3
+          },
+          {
+            "reason": "insufficient_finite_interval_support",
+            "hole_id": "BH02",
+            "finite_intervals": 5,
+            "intervals_loaded": 5
+          },
+          {
+            "reason": "insufficient_finite_interval_support",
+            "hole_id": "BH03",
+            "finite_intervals": 7,
+            "intervals_loaded": 7
+          },
+          {
+            "reason": "insufficient_finite_interval_support",
+            "hole_id": "BH04",
+            "finite_intervals": 4,
+            "intervals_loaded": 4
+          },
+          {
+            "reason": "insufficient_finite_interval_support",
+            "hole_id": "BH05",
+            "finite_intervals": 9,
+            "intervals_loaded": 9
+          },
+          {
+            "reason": "insufficient_finite_interval_support",
+            "hole_id": "BH06",
+            "finite_intervals": 4,
+            "intervals_loaded": 4
+          },
+          {
+            "reason": "insufficient_finite_interval_support",
+            "hole_id": "BH08",
+            "finite_intervals": 5,
+            "intervals_loaded": 5
+          },
+          {
+            "reason": "insufficient_finite_interval_support",
+            "hole_id": "BH11",
+            "finite_intervals": 4,
+            "intervals_loaded": 4
+          },
+          {
+            "reason": "insufficient_finite_interval_support",
+            "hole_id": "BH15",
+            "finite_intervals": 8,
+            "intervals_loaded": 8
+          },
+          {
+            "reason": "insufficient_finite_interval_support",
+            "hole_id": "BH16",
+            "finite_intervals": 9,
+            "intervals_loaded": 9
+          },
+          {
+            "reason": "insufficient_finite_interval_support",
+            "hole_id": "BH22",
+            "finite_intervals": 7,
+            "intervals_loaded": 7
+          },
+          {
+            "reason": "insufficient_finite_interval_support",
+            "hole_id": "BH23",
+            "finite_intervals": 5,
+            "intervals_loaded": 5
+          },
+          {
+            "reason": "insufficient_finite_interval_support",
+            "hole_id": "BH24",
+            "finite_intervals": 9,
+            "intervals_loaded": 9
+          },
+          {
+            "reason": "insufficient_finite_interval_support",
+            "hole_id": "BH25",
+            "finite_intervals": 7,
+            "intervals_loaded": 7
+          },
+          {
+            "reason": "insufficient_finite_interval_support",
+            "hole_id": "BR0006_TSG_MIR",
+            "finite_intervals": 6,
+            "intervals_loaded": 6
+          },
+          {
+            "reason": "insufficient_finite_interval_support",
+            "hole_id": "BRUCE 1",
+            "finite_intervals": 5,
+            "intervals_loaded": 5
+          },
+          {
+            "reason": "insufficient_finite_interval_support",
+            "hole_id": "CANOPUS 1",
+            "finite_intervals": 9,
+            "intervals_loaded": 9
+          },
+          {
+            "reason": "insufficient_finite_interval_support",
+            "hole_id": "COASTER 1",
+            "finite_intervals": 5,
+            "intervals_loaded": 5
+          },
+          {
+            "reason": "insufficient_finite_interval_support",
+            "hole_id": "DA1",
+            "finite_intervals": 1,
+            "intervals_loaded": 1
+          },
+          {
+            "reason": "insufficient_finite_interval_support",
+            "hole_id": "DONGARA 07",
+            "finite_intervals": 4,
+            "intervals_loaded": 4
+          },
+          {
+            "reason": "insufficient_finite_interval_support",
+            "hole_id": "EMB2",
+            "finite_intervals": 3,
+            "intervals_loaded": 3
+          },
+          {
+            "reason": "insufficient_finite_interval_support",
+            "hole_id": "EMB3",
+            "finite_intervals": 3,
+            "intervals_loaded": 3
+          },
+          {
+            "reason": "insufficient_finite_interval_support",
+            "hole_id": "EMB4",
+            "finite_intervals": 3,
+            "intervals_loaded": 3
+          },
+          {
+            "reason": "insufficient_finite_interval_support",
+            "hole_id": "GLENROY 1",
+            "finite_intervals": 7,
+            "intervals_loaded": 7
+          },
+          {
+            "reason": "insufficient_finite_interval_support",
+            "hole_id": "HOVEA 1_CUTTINGS",
+            "finite_intervals": 8,
+            "intervals_loaded": 8
+          },
+          {
+            "reason": "insufficient_finite_interval_support",
+            "hole_id": "HOVEA 2_CUTTINGS",
+            "finite_intervals": 2,
+            "intervals_loaded": 2
+          },
+          {
+            "reason": "insufficient_finite_interval_support",
+            "hole_id": "IRWIN 1_CUTTINGS2",
+            "finite_intervals": 2,
+            "intervals_loaded": 2
+          },
+          {
+            "reason": "insufficient_finite_interval_support",
+            "hole_id": "K90C-01NE-W1A",
+            "finite_intervals": 9,
+            "intervals_loaded": 9
+          },
+          {
+            "reason": "insufficient_finite_interval_support",
+            "hole_id": "LJM-D008",
+            "finite_intervals": 8,
+            "intervals_loaded": 8
+          },
+          {
+            "reason": "insufficient_finite_interval_support",
+            "hole_id": "LJM-D012",
+            "finite_intervals": 2,
+            "intervals_loaded": 2
+          },
+          {
+            "reason": "insufficient_finite_interval_support",
+            "hole_id": "LYRM01",
+            "finite_intervals": 4,
+            "intervals_loaded": 4
+          },
+          {
+            "reason": "insufficient_finite_interval_support",
+            "hole_id": "LYRM09",
+            "finite_intervals": 3,
+            "intervals_loaded": 3
+          },
+          {
+            "reason": "insufficient_finite_interval_support",
+            "hole_id": "LYRM10",
+            "finite_intervals": 4,
+            "intervals_loaded": 4
+          },
+          {
+            "reason": "insufficient_finite_interval_support",
+            "hole_id": "MATCHES SPRING 1",
+            "finite_intervals": 4,
+            "intervals_loaded": 4
+          },
+          {
+            "reason": "insufficient_finite_interval_support",
+            "hole_id": "MT ADAMS 1",
+            "finite_intervals": 8,
+            "intervals_loaded": 8
+          },
+          {
+            "reason": "insufficient_finite_interval_support",
+            "hole_id": "POISSONNIER 1",
+            "finite_intervals": 7,
+            "intervals_loaded": 7
+          },
+          {
+            "reason": "insufficient_finite_interval_support",
+            "hole_id": "QUOBBA 1",
+            "finite_intervals": 9,
+            "intervals_loaded": 9
+          },
+          {
+            "reason": "insufficient_finite_interval_support",
+            "hole_id": "TUBRIDGI 15_CUTTINGS",
+            "finite_intervals": 8,
+            "intervals_loaded": 8
+          },
+          {
+            "reason": "insufficient_finite_interval_support",
+            "hole_id": "URALA 1",
+            "finite_intervals": 7,
+            "intervals_loaded": 7
+          },
+          {
+            "reason": "insufficient_finite_interval_support",
+            "hole_id": "VHD10_TSG_MIR",
+            "finite_intervals": 2,
+            "intervals_loaded": 2
+          },
+          {
+            "reason": "insufficient_finite_interval_support",
+            "hole_id": "WALYERING 3",
+            "finite_intervals": 9,
+            "intervals_loaded": 9
+          },
+          {
+            "reason": "insufficient_finite_interval_support",
+            "hole_id": "WANDAGEE COREHOLE 1",
+            "finite_intervals": 3,
+            "intervals_loaded": 3
+          },
+          {
+            "reason": "insufficient_finite_interval_support",
+            "hole_id": "WARRADONG 1",
+            "finite_intervals": 6,
+            "intervals_loaded": 6
+          },
+          {
+            "reason": "insufficient_finite_interval_support",
+            "hole_id": "WEELAWARREN 1",
+            "finite_intervals": 2,
+            "intervals_loaded": 2
+          },
+          {
+            "reason": "insufficient_finite_interval_support",
+            "hole_id": "WEST ERREGULLA 1",
+            "finite_intervals": 7,
+            "intervals_loaded": 7
+          },
+          {
+            "reason": "insufficient_finite_interval_support",
+            "hole_id": "WHITE HILLS 1",
+            "finite_intervals": 9,
+            "intervals_loaded": 9
+          },
+          {
+            "reason": "insufficient_finite_interval_support",
+            "hole_id": "YD1_TSG_MIR",
+            "finite_intervals": 2,
+            "intervals_loaded": 2
+          },
+          {
+            "reason": "insufficient_finite_interval_support",
+            "hole_id": "YDH11_TSG_MIR",
+            "finite_intervals": 2,
+            "intervals_loaded": 2
+          }
+        ],
+        "holes_eligible": 1225,
+        "holes_excluded": 55,
+        "intervals_loaded": 393726,
+        "intervals_eligible": 393431,
+        "minimum_intervals_per_hole": 10,
+        "nonfinite_intervals_excluded": 0
+      },
+      "distance": "joint sliced Wasserstein W1 (finite projections, 50 midpoint quantiles)",
+      "k_scores": [
+        {
+          "k": 2,
+          "valid": true,
+          "reason": null,
+          "inertia": 2364482.75,
+          "actual_k": 2,
+          "min_share": 0.3433333333333333,
+          "silhouette": 0.3521063029766083
+        },
+        {
+          "k": 3,
+          "valid": true,
+          "reason": null,
+          "inertia": 1565322.125,
+          "actual_k": 3,
+          "min_share": 0.07056666666666667,
+          "silhouette": 0.4147075414657593
+        },
+        {
+          "k": 4,
+          "valid": true,
+          "reason": null,
+          "inertia": 1326604.5,
+          "actual_k": 4,
+          "min_share": 0.06783333333333333,
+          "silhouette": 0.28163301944732666
+        },
+        {
+          "k": 5,
+          "valid": true,
+          "reason": null,
+          "inertia": 1157104.625,
+          "actual_k": 5,
+          "min_share": 0.041466666666666666,
+          "silhouette": 0.30233731865882874
+        },
+        {
+          "k": 6,
+          "valid": true,
+          "reason": null,
+          "inertia": 1011993.8125,
+          "actual_k": 6,
+          "min_share": 0.034333333333333334,
+          "silhouette": 0.3059491515159607
+        },
+        {
+          "k": 8,
+          "valid": true,
+          "reason": null,
+          "inertia": 831477.5,
+          "actual_k": 8,
+          "min_share": 0.033416666666666664,
+          "silhouette": 0.27831128239631653
+        },
+        {
+          "k": 10,
+          "valid": true,
+          "reason": null,
+          "inertia": 733841.0625,
+          "actual_k": 10,
+          "min_share": 0.029266666666666667,
+          "silhouette": 0.25374194979667664
+        },
+        {
+          "k": 12,
+          "valid": true,
+          "reason": null,
+          "inertia": 668753.4375,
+          "actual_k": 12,
+          "min_share": 0.014866666666666667,
+          "silhouette": 0.2511182427406311
+        }
+      ],
+      "intervals": 393431,
+      "pca_variance": 0.9536,
+      "model_version": "raw-joint-distribution-v2",
+      "n_projections": 64,
+      "preprocessing": "SNV",
+      "class_profiles": [
+        {
+          "bands": {
+            "albedo": 0.04507221281528473,
+            "quartz_8600_pos": 8237.587881478647,
+            "silicate_peak_pos": 9241.034368516757,
+            "quartz_8600_height": 0.0681305250951222,
+            "carbonate_11300_pos": 11321.106004573552,
+            "silicate_peak_height": 0.13726208521984518,
+            "carbonate_11300_height": 0.0011331643909215927
+          },
+          "n_holes": 1196,
+          "cluster_id": 0,
+          "n_intervals": 232749,
+          "mean_spectrum": [
+            0.022199999541044235,
+            0.022099999710917473,
+            0.0215000007301569,
+            0.020999999716877937,
+            0.020999999716877937,
+            0.02199999988079071,
+            0.02410000003874302,
+            0.027899999171495438,
+            0.03240000084042549,
+            0.0357000008225441,
+            0.03620000183582306,
+            0.03460000082850456,
+            0.03400000184774399,
+            0.03310000151395798,
+            0.03150000050663948,
+            0.030700000002980232,
+            0.03060000017285347,
+            0.03009999915957451,
+            0.029200000688433647,
+            0.028699999675154686,
+            0.028599999845027924,
+            0.028200000524520874,
+            0.026799999177455902,
+            0.025200000032782555,
+            0.02410000003874302,
+            0.023399999365210533,
+            0.023099999874830246,
+            0.02319999970495701,
+            0.02329999953508377,
+            0.023499999195337296,
+            0.023900000378489494,
+            0.02449999935925007,
+            0.024900000542402267,
+            0.026100000366568565,
+            0.027400000020861626,
+            0.02889999933540821,
+            0.03020000085234642,
+            0.03310000151395798,
+            0.03830000013113022,
+            0.046799998730421066,
+            0.057500001043081284,
+            0.07190000265836716,
+            0.09430000185966492,
+            0.12460000067949295,
+            0.14480000734329224,
+            0.15060000121593475,
+            0.15189999341964722,
+            0.15330000221729279,
+            0.15469999611377716,
+            0.15549999475479126,
+            0.15600000321865082,
+            0.1535000056028366,
+            0.13300000131130219,
+            0.13330000638961792,
+            0.1550000011920929,
+            0.16210000216960907,
+            0.16689999401569366,
+            0.17069999873638153,
+            0.17239999771118164,
+            0.1720000058412552,
+            0.17170000076293945,
+            0.17409999668598175,
+            0.1777999997138977,
+            0.18129999935626984,
+            0.18359999358654022,
+            0.1851000040769577,
+            0.1842000037431717,
+            0.1762000024318695,
+            0.16189999878406525,
+            0.1509999930858612,
+            0.14740000665187836,
+            0.14830000698566437,
+            0.14900000393390656,
+            0.1467999964952469,
+            0.14090000092983246,
+            0.13379999995231628,
+            0.13019999861717224,
+            0.13040000200271606,
+            0.13009999692440033,
+            0.1266999989748001,
+            0.12139999866485596,
+            0.11590000241994858,
+            0.11060000211000443,
+            0.10530000180006027,
+            0.0997999981045723,
+            0.09459999948740005,
+            0.09009999781847,
+            0.08619999885559082,
+            0.08269999921321869,
+            0.07940000295639038,
+            0.07639999687671661,
+            0.07370000332593918,
+            0.07129999995231628,
+            0.06909999996423721,
+            0.06689999997615814,
+            0.06499999761581421,
+            0.06340000033378601,
+            0.06239999830722809,
+            0.0617000013589859,
+            0.061000000685453415,
+            0.05990000069141388,
+            0.05860000103712082,
+            0.05739999935030937,
+            0.056699998676776886,
+            0.05649999901652336,
+            0.05640000104904175,
+            0.055799998342990875,
+            0.054499998688697815,
+            0.05310000106692314,
+            0.05130000039935112,
+            0.049300000071525574,
+            0.04749999940395355,
+            0.04610000178217888,
+            0.04479999840259552,
+            0.04340000078082085,
+            0.041999999433755875,
+            0.040699999779462814,
+            0.039500001817941666,
+            0.03819999843835831,
+            0.03689999878406525,
+            0.035599999129772186,
+            0.03440000116825104,
+            0.03310000151395798,
+            0.031700000166893005,
+            0.029899999499320984,
+            0.027799999341368675,
+            0.02759999968111515,
+            0.032600000500679016,
+            0.042100001126527786,
+            0.05079999938607216,
+            0.05400000140070915,
+            0.05180000141263008,
+            0.048500001430511475,
+            0.04830000177025795,
+            0.05249999836087227,
+            0.05810000002384186,
+            0.061000000685453415,
+            0.05959999933838844,
+            0.05559999868273735,
+            0.05180000141263008,
+            0.049800001084804535,
+            0.049400001764297485,
+            0.049300000071525574,
+            0.04859999939799309,
+            0.04740000143647194,
+            0.04619999974966049,
+            0.045499999076128006,
+            0.04529999941587448,
+            0.04529999941587448,
+            0.045099999755620956,
+            0.04439999908208847,
+            0.04349999874830246,
+            0.04259999841451645,
+            0.0421999990940094,
+            0.0421999990940094,
+            0.042500000447034836,
+            0.04270000010728836,
+            0.042500000447034836,
+            0.04170000180602074,
+            0.04089999943971634,
+            0.04010000079870224,
+            0.03929999843239784,
+            0.03830000013113022,
+            0.03700000047683716,
+            0.03539999946951866,
+            0.03460000082850456,
+            0.03519999980926514,
+            0.03720000013709068,
+            0.039500001817941666,
+            0.040800001472234726,
+            0.040800001472234726
+          ]
+        },
+        {
+          "bands": {
+            "albedo": 0.05021084100008011,
+            "quartz_8600_pos": 8694.871568873743,
+            "silicate_peak_pos": 9930.67698704841,
+            "quartz_8600_height": 0.022532512433826923,
+            "carbonate_11300_pos": 11248.658459258011,
+            "silicate_peak_height": 0.12063641063133745,
+            "carbonate_11300_height": 0.0013567411030332294
+          },
+          "n_holes": 1027,
+          "cluster_id": 1,
+          "n_intervals": 132136,
+          "mean_spectrum": [
+            0.027699999511241913,
+            0.027699999511241913,
+            0.0272000003606081,
+            0.027000000700354576,
+            0.02710000053048134,
+            0.027400000020861626,
+            0.028200000524520874,
+            0.02979999966919422,
+            0.03139999881386757,
+            0.03290000185370445,
+            0.033799998462200165,
+            0.03310000151395798,
+            0.03280000016093254,
+            0.03220000118017197,
+            0.03150000050663948,
+            0.030799999833106995,
+            0.030799999833106995,
+            0.030500000342726707,
+            0.02969999983906746,
+            0.02930000051856041,
+            0.029100000858306885,
+            0.028699999675154686,
+            0.02759999968111515,
+            0.026599999517202377,
+            0.025499999523162842,
+            0.024800000712275505,
+            0.024299999698996544,
+            0.024000000208616257,
+            0.023499999195337296,
+            0.02329999953508377,
+            0.023000000044703484,
+            0.02290000021457672,
+            0.022600000724196434,
+            0.02250000089406967,
+            0.02250000089406967,
+            0.02250000089406967,
+            0.02250000089406967,
+            0.02280000038444996,
+            0.02370000071823597,
+            0.025200000032782555,
+            0.027300000190734863,
+            0.030300000682473183,
+            0.03500000014901161,
+            0.041999999433755875,
+            0.04830000177025795,
+            0.053199999034404755,
+            0.05810000002384186,
+            0.06260000169277191,
+            0.06539999693632126,
+            0.06719999760389328,
+            0.06880000233650208,
+            0.07079999893903732,
+            0.0714000016450882,
+            0.07859999686479568,
+            0.08950000256299973,
+            0.09470000118017197,
+            0.09749999642372131,
+            0.09860000014305115,
+            0.10000000149011612,
+            0.10300000011920929,
+            0.10499999672174454,
+            0.10689999908208847,
+            0.10970000177621841,
+            0.11330000311136246,
+            0.11749999970197678,
+            0.12300000339746475,
+            0.12919999659061432,
+            0.13410000503063202,
+            0.13750000298023224,
+            0.14069999754428864,
+            0.14640000462532043,
+            0.15379999577999115,
+            0.1599999964237213,
+            0.16329999268054962,
+            0.16259999573230743,
+            0.1606999933719635,
+            0.16179999709129333,
+            0.1655000001192093,
+            0.16850000619888306,
+            0.16940000653266907,
+            0.1687999963760376,
+            0.16750000417232513,
+            0.16539999842643738,
+            0.16200000047683716,
+            0.15770000219345093,
+            0.15369999408721924,
+            0.15070000290870667,
+            0.14810000360012054,
+            0.1453000009059906,
+            0.14219999313354492,
+            0.13819999992847443,
+            0.133200004696846,
+            0.1274999976158142,
+            0.12139999866485596,
+            0.1152999997138977,
+            0.11020000278949738,
+            0.10689999908208847,
+            0.10540000349283218,
+            0.10440000146627426,
+            0.10249999910593033,
+            0.09989999979734421,
+            0.09730000048875809,
+            0.09510000050067902,
+            0.093299999833107,
+            0.09149999916553497,
+            0.09000000357627869,
+            0.08820000290870667,
+            0.08609999716281891,
+            0.08380000293254852,
+            0.08089999854564667,
+            0.07779999822378159,
+            0.07509999722242355,
+            0.07289999723434448,
+            0.07090000063180923,
+            0.06880000233650208,
+            0.06679999828338623,
+            0.06499999761581421,
+            0.06350000202655792,
+            0.06210000067949295,
+            0.06069999933242798,
+            0.05909999832510948,
+            0.0575999990105629,
+            0.05609999969601631,
+            0.05460000038146973,
+            0.05299999937415123,
+            0.05139999836683273,
+            0.05009999871253967,
+            0.05000000074505806,
+            0.051100000739097595,
+            0.05220000073313713,
+            0.05220000073313713,
+            0.051100000739097595,
+            0.05009999871253967,
+            0.04989999905228615,
+            0.05079999938607216,
+            0.05180000141263008,
+            0.05220000073313713,
+            0.051600001752376556,
+            0.0502999983727932,
+            0.049300000071525574,
+            0.049400001764297485,
+            0.05079999938607216,
+            0.052799999713897705,
+            0.05469999834895134,
+            0.05559999868273735,
+            0.05559999868273735,
+            0.05510000139474869,
+            0.05460000038146973,
+            0.05420000106096268,
+            0.053700000047683716,
+            0.05290000140666962,
+            0.052000001072883606,
+            0.050999999046325684,
+            0.05050000175833702,
+            0.0502999983727932,
+            0.050599999725818634,
+            0.05079999938607216,
+            0.05079999938607216,
+            0.05050000175833702,
+            0.05000000074505806,
+            0.04960000142455101,
+            0.0494999997317791,
+            0.049400001764297485,
+            0.04919999837875366,
+            0.04919999837875366,
+            0.0494999997317791,
+            0.05050000175833702,
+            0.052000001072883606,
+            0.05389999970793724,
+            0.055799998342990875,
+            0.05770000070333481
+          ]
+        },
+        {
+          "bands": {
+            "albedo": 0.05270455405116081,
+            "quartz_8600_pos": 8242.159296553313,
+            "silicate_peak_pos": 11172.65027590927,
+            "quartz_8600_height": 0.010082647470491271,
+            "carbonate_11300_pos": 11221.332798391635,
+            "silicate_peak_height": 0.060612389131596216,
+            "carbonate_11300_height": 0.04713379110520085
+          },
+          "n_holes": 526,
+          "cluster_id": 2,
+          "n_intervals": 28546,
+          "mean_spectrum": [
+            0.023499999195337296,
+            0.02370000071823597,
+            0.02419999986886978,
+            0.027000000700354576,
+            0.03150000050663948,
+            0.04170000180602074,
+            0.0681999996304512,
+            0.14079999923706055,
+            0.1995999962091446,
+            0.21539999544620514,
+            0.21539999544620514,
+            0.20029999315738678,
+            0.18719999492168427,
+            0.17260000109672546,
+            0.15940000116825104,
+            0.1500999927520752,
+            0.14480000734329224,
+            0.13910000026226044,
+            0.13210000097751617,
+            0.1298999935388565,
+            0.12950000166893005,
+            0.11630000174045563,
+            0.09839999675750732,
+            0.08829999715089798,
+            0.08100000023841858,
+            0.0771000012755394,
+            0.07530000060796738,
+            0.07479999959468842,
+            0.07400000095367432,
+            0.07259999960660934,
+            0.07180000096559525,
+            0.0723000019788742,
+            0.07180000096559525,
+            0.07119999825954437,
+            0.07090000063180923,
+            0.07129999995231628,
+            0.07190000265836716,
+            0.07280000299215317,
+            0.0731000006198883,
+            0.07440000027418137,
+            0.07559999823570251,
+            0.07699999958276749,
+            0.07919999957084656,
+            0.08389999717473984,
+            0.08820000290870667,
+            0.08810000121593475,
+            0.08569999784231186,
+            0.08190000057220459,
+            0.07959999889135361,
+            0.07909999787807465,
+            0.07940000295639038,
+            0.07890000194311142,
+            0.0746999979019165,
+            0.07500000298023224,
+            0.07890000194311142,
+            0.07999999821186066,
+            0.08110000193119049,
+            0.08150000125169754,
+            0.08160000294446945,
+            0.08110000193119049,
+            0.08060000091791153,
+            0.07999999821186066,
+            0.07999999821186066,
+            0.08139999955892563,
+            0.08160000294446945,
+            0.08259999752044678,
+            0.08299999684095383,
+            0.08110000193119049,
+            0.07769999653100967,
+            0.07530000060796738,
+            0.07429999858140945,
+            0.0737999975681305,
+            0.07329999655485153,
+            0.07249999791383743,
+            0.07050000131130219,
+            0.06790000200271606,
+            0.06639999896287918,
+            0.0658000037074089,
+            0.06530000269412994,
+            0.06419999897480011,
+            0.06239999830722809,
+            0.060600001364946365,
+            0.05920000001788139,
+            0.05810000002384186,
+            0.057100001722574234,
+            0.05609999969601631,
+            0.05530000105500221,
+            0.05469999834895134,
+            0.054099999368190765,
+            0.05339999869465828,
+            0.05260000005364418,
+            0.05180000141263008,
+            0.05130000039935112,
+            0.05090000107884407,
+            0.05050000175833702,
+            0.05009999871253967,
+            0.05009999871253967,
+            0.05040000006556511,
+            0.05119999870657921,
+            0.05220000073313713,
+            0.05299999937415123,
+            0.05700000002980232,
+            0.07599999755620956,
+            0.10429999977350235,
+            0.1185000017285347,
+            0.1143999993801117,
+            0.10329999774694443,
+            0.09099999815225601,
+            0.07909999787807465,
+            0.06809999793767929,
+            0.05990000069141388,
+            0.0551999993622303,
+            0.052400000393390656,
+            0.049400001764297485,
+            0.04639999940991402,
+            0.04520000144839287,
+            0.04529999941587448,
+            0.04490000009536743,
+            0.04410000145435333,
+            0.04309999942779541,
+            0.042100001126527786,
+            0.04129999876022339,
+            0.0406000018119812,
+            0.039799999445676804,
+            0.03909999877214432,
+            0.03830000013113022,
+            0.038100000470876694,
+            0.03889999911189079,
+            0.040699999779462814,
+            0.04230000078678131,
+            0.04280000180006027,
+            0.04230000078678131,
+            0.041200000792741776,
+            0.040699999779462814,
+            0.04100000113248825,
+            0.04190000146627426,
+            0.042399998754262924,
+            0.041999999433755875,
+            0.04089999943971634,
+            0.03970000147819519,
+            0.03889999911189079,
+            0.03819999843835831,
+            0.037700001150369644,
+            0.03700000047683716,
+            0.03629999980330467,
+            0.03550000116229057,
+            0.034699998795986176,
+            0.033900000154972076,
+            0.03310000151395798,
+            0.03180000185966492,
+            0.02969999983906746,
+            0.02710000053048134,
+            0.026100000366568565,
+            0.028699999675154686,
+            0.033900000154972076,
+            0.038100000470876694,
+            0.03889999911189079,
+            0.03720000013709068,
+            0.03519999980926514,
+            0.03440000116825104,
+            0.03460000082850456,
+            0.03519999980926514,
+            0.03539999946951866,
+            0.03500000014901161,
+            0.03420000150799751,
+            0.03370000049471855,
+            0.03359999880194664,
+            0.03400000184774399,
+            0.03440000116825104,
+            0.034699998795986176,
+            0.03449999913573265
+          ]
+        }
+      ],
+      "pca_components": 7,
+      "quantile_count": 50,
+      "wavelengths_nm": [
+        6000.0,
+        14500.0
+      ],
+      "coordinate_axes": 7,
+      "final_min_share": 0.07178378289662643,
+      "hole_clustering": {
+        "k": 2,
+        "names": {
+          "0": "class 0-dominant",
+          "1": "class 2-dominant"
+        },
+        "sizes": {
+          "0": 1163,
+          "1": 62
+        },
+        "scores": [
+          {
+            "k": 2,
+            "actual_k": 2,
+            "silhouette": 0.48492557033585243,
+            "singletons": 0
+          },
+          {
+            "k": 3,
+            "actual_k": 3,
+            "silhouette": 0.47829392752517713,
+            "singletons": 1
+          },
+          {
+            "k": 4,
+            "actual_k": 4,
+            "silhouette": 0.36124811030374465,
+            "singletons": 1
+          },
+          {
+            "k": 5,
+            "actual_k": 5,
+            "silhouette": 0.34344158396326857,
+            "singletons": 1
+          },
+          {
+            "k": 6,
+            "actual_k": 6,
+            "silhouette": 0.22159257213718014,
+            "singletons": 1
+          },
+          {
+            "k": 7,
+            "actual_k": 7,
+            "silhouette": 0.21703386445104086,
+            "singletons": 1
+          },
+          {
+            "k": 8,
+            "actual_k": 8,
+            "silhouette": 0.21405951917869273,
+            "singletons": 1
+          },
+          {
+            "k": 9,
+            "actual_k": 9,
+            "silhouette": 0.21472678989159935,
+            "singletons": 1
+          },
+          {
+            "k": 10,
+            "actual_k": 10,
+            "silhouette": 0.265134196688846,
+            "singletons": 1
+          },
+          {
+            "k": 11,
+            "actual_k": 11,
+            "silhouette": 0.2638962469644121,
+            "singletons": 3
+          },
+          {
+            "k": 12,
+            "actual_k": 12,
+            "silhouette": 0.2623687637277942,
+            "singletons": 4
+          },
+          {
+            "k": 13,
+            "actual_k": 13,
+            "silhouette": 0.2326442469491615,
+            "singletons": 4
+          },
+          {
+            "k": 14,
+            "actual_k": 14,
+            "silhouette": 0.2165111927077024,
+            "singletons": 4
+          },
+          {
+            "k": 15,
+            "actual_k": 15,
+            "silhouette": 0.2118525124492078,
+            "singletons": 4
+          }
+        ],
+        "status": "selected",
+        "algorithm": "average linkage; exact merge-count cut",
+        "candidate_k": [
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9,
+          10,
+          11,
+          12,
+          13,
+          14,
+          15
+        ],
+        "partition_note": "descriptive partition selected by silhouette; not geological validation",
+        "tied_merge_heights": false
+      },
+      "projection_seed": 1729,
+      "analysis_version": "clustering-corrections-v2",
+      "distance_version": "sliced-wasserstein-v1",
+      "interval_classes": 3,
+      "legacy_comparator": {
+        "note": "same cohort/PCA; marginal comparator ignores joint dependence and adds variance weights to unwhitened scores",
+        "distance": "variance-weighted per-component Wasserstein (50 quantiles)",
+        "distance_version": "marginal-variance-weighted-wasserstein-v1"
+      },
+      "pca_component_cap": 12,
+      "approximation_note": "finite projections and quantiles; identical distance is not proof of identical joint distributions",
+      "distance_data_sha256": "c0504b8c33c6439ed0eb1398e10723e9e9e909e7283b1773ba0d1eb24b2f0bab",
+      "projection_weighting": "equal; unwhitened scores retain variance without reweighting",
+      "pca_requested_variance": 0.95,
+      "pca_variance_target_met": true,
+      "agreement_with_processed": {
+        "holes": 606,
+        "against": "processed TIR (JS)",
+        "spearman_rho": 0.57
+      }
+    },
+    "C:\\HyLoggerData\\products\\analysis\\hole-raw_tir-20261014T122019-e6f74a",
+    "2026-10-14 12:04:34.467230+00:00"
+  ],
+  [
+    "hole-seq_combined-20261014T121618-40fc62",
+    "hole",
+    "seq_combined",
+    "staged",
+    {
+      "holes": 1106,
+      "views": {
+        "tir": "hole-seq_tir-20261014T121614-bfab29",
+        "swir": "hole-seq_swir-20261014T121525-b51998"
+      },
+      "sensor": "seq_combined",
+      "coverage": {
+        "policy": "intersection of supported holes in every sensor view",
+        "union_holes": 1212,
+        "common_holes": 1106,
+        "sensor_holes": {
+          "tir": 1140,
+          "swir": 1178
+        },
+        "excluded_holes": 106,
+        "excluded_hole_ids": [
+          "07THD003",
+          "09ATD015",
+          "09ATD019",
+          "09ATRCD025",
+          "09RTD001",
+          "17DHDD0016",
+          "17NNMD001",
+          "18LCDD0001",
+          "19MMDD0456",
+          "20ALDD0001",
+          "20ALDD0002",
+          "20ALDD0003",
+          "20KGDD0008",
+          "20PQDD0005A",
+          "21SSC005",
+          "ABDP5",
+          "ACACIA 1",
+          "BLINA 5",
+          "BLRCD007",
+          "BOAB 1",
+          "CASSIA 1",
+          "CD20297W1",
+          "CD20297W2",
+          "CDDD0090",
+          "CENTELLA 1",
+          "CGDD005",
+          "CGDD006",
+          "CGDD007",
+          "CGDD008",
+          "CGDD009",
+          "CL1",
+          "CL2",
+          "CLIFF HEAD 6",
+          "CODY 1",
+          "DRDD327",
+          "DROVER 1",
+          "EAL302",
+          "EPT1702",
+          "EPT2194",
+          "EPT2260",
+          "EPT2262",
+          "FICUS 1",
+          "G50-22-001E",
+          "G50-22-002E",
+          "G50-22-003E",
+          "GRCD0001",
+          "GRCD0002",
+          "HE001-NE",
+          "HE002-NE",
+          "HE003-NE",
+          "KBD094",
+          "KNCD180010",
+          "KNCD180011",
+          "KNCD180012",
+          "KNCD190101",
+          "KNCD190102",
+          "MAD180",
+          "MJGD27",
+          "MR1",
+          "MRDH400",
+          "MRDH401",
+          "MRDH402",
+          "MRDH403",
+          "MUTINEER 1B",
+          "NGALTI 1",
+          "NUG0453",
+          "NUG0467",
+          "OBDDH2",
+          "PDP2B",
+          "PLRCD001",
+          "PLRCD003",
+          "PLRCD006",
+          "PPDDD0002A",
+          "PWD 1",
+          "RBDD008",
+          "REINDEER 1",
+          "RRLRMDD040",
+          "RRLRMDD041",
+          "RRLRMDD041W1",
+          "SEDD0057",
+          "TCDP1",
+          "TCDP3",
+          "TMD001",
+          "TUBRIDGI 15",
+          "UGD063",
+          "UGD288",
+          "UGD297",
+          "UGD378",
+          "WBD055UD",
+          "WK1",
+          "WOODADA 02",
+          "WTB-05",
+          "WTB-06",
+          "WTB-07",
+          "WTB-09",
+          "WTB-14",
+          "WTB-21",
+          "WTB-22",
+          "WTB-29",
+          "WTB-55",
+          "WTB-60",
+          "WTB-79",
+          "YDDD00003",
+          "YGDD002",
+          "YOWALGA 3",
+          "ZNDD001"
+        ],
+        "excluded_by_sensor": {
+          "tir": 72,
+          "swir": 34
+        },
+        "pair_sensor_support": 2,
+        "missing_distance_imputation": "none"
+      },
+      "distance": "equal mean of SWIR and TIR DTW sequence distances on the common supported-hole cohort; equal sensor weighting, no scale calibration",
+      "hole_clustering": {
+        "k": 2,
+        "names": {
+          "0": "Chlorite-FeMg + Quartz + Hornblende",
+          "1": "Quartz + Kaolinite-WX + Muscovite"
+        },
+        "sizes": {
+          "0": 681,
+          "1": 425
+        },
+        "scores": [
+          {
+            "k": 2,
+            "actual_k": 2,
+            "silhouette": 0.18096792887381585,
+            "singletons": 0
+          },
+          {
+            "k": 3,
+            "actual_k": 3,
+            "silhouette": 0.17005153376679694,
+            "singletons": 0
+          },
+          {
+            "k": 4,
+            "actual_k": 4,
+            "silhouette": 0.12833402038206881,
+            "singletons": 0
+          },
+          {
+            "k": 5,
+            "actual_k": 5,
+            "silhouette": 0.10781781966791826,
+            "singletons": 0
+          },
+          {
+            "k": 6,
+            "actual_k": 6,
+            "silhouette": 0.11013340910652834,
+            "singletons": 0
+          },
+          {
+            "k": 7,
+            "actual_k": 7,
+            "silhouette": 0.10899742838964363,
+            "singletons": 0
+          },
+          {
+            "k": 8,
+            "actual_k": 8,
+            "silhouette": 0.09703994286012858,
+            "singletons": 0
+          },
+          {
+            "k": 9,
+            "actual_k": 9,
+            "silhouette": 0.08819889391150977,
+            "singletons": 0
+          },
+          {
+            "k": 10,
+            "actual_k": 10,
+            "silhouette": 0.09284851347678098,
+            "singletons": 0
+          },
+          {
+            "k": 11,
+            "actual_k": 11,
+            "silhouette": 0.07251284685158836,
+            "singletons": 0
+          },
+          {
+            "k": 12,
+            "actual_k": 12,
+            "silhouette": 0.06991395962799554,
+            "singletons": 0
+          },
+          {
+            "k": 13,
+            "actual_k": 13,
+            "silhouette": 0.090858071397268,
+            "singletons": 0
+          },
+          {
+            "k": 14,
+            "actual_k": 14,
+            "silhouette": 0.08375905422265545,
+            "singletons": 0
+          },
+          {
+            "k": 15,
+            "actual_k": 15,
+            "silhouette": 0.07760223826210877,
+            "singletons": 0
+          }
+        ],
+        "status": "selected",
+        "algorithm": "average linkage; exact merge-count cut",
+        "candidate_k": [
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9,
+          10,
+          11,
+          12,
+          13,
+          14,
+          15
+        ],
+        "partition_note": "descriptive partition selected by silhouette; not geological validation",
+        "tied_merge_heights": false
+      },
+      "analysis_version": "clustering-corrections-v2",
+      "distance_version": "common-cohort-mean-v2",
+      "distance_data_sha256": "1c19d9e9279085e9074c12b1bc00b87353722e6896b37070a665843290320b19"
+    },
+    "C:\\HyLoggerData\\products\\analysis\\hole-seq_combined-20261014T121618-40fc62",
+    "2026-10-14 12:04:34.467230+00:00"
+  ],
+  [
+    "hole-seq_swir-20261014T121525-b51998",
+    "hole",
+    "seq_swir",
+    "staged",
+    {
+      "band": 0.3,
+      "holes": 1178,
+      "sensor": "seq_swir",
+      "step_m": 10.0,
+      "distance": "banded DTW (band 0.3) on 10 m true-vertical-depth steps of 8 PCA components of the mix; order down the hole matters, thickness may stretch",
+      "interval_run": "interval-swir-20261014T121201-c8ee6b",
+      "hole_clustering": {
+        "k": 2,
+        "names": {
+          "0": "Chlorite-FeMg + Muscovite + Hornblende",
+          "1": "Kaolinite-WX + Kaolinite-PX + Dickite"
+        },
+        "sizes": {
+          "0": 1059,
+          "1": 119
+        },
+        "scores": [
+          {
+            "k": 2,
+            "actual_k": 2,
+            "silhouette": 0.24627467365931938,
+            "singletons": 0
+          },
+          {
+            "k": 3,
+            "actual_k": 3,
+            "silhouette": 0.15953704288155135,
+            "singletons": 0
+          },
+          {
+            "k": 4,
+            "actual_k": 4,
+            "silhouette": 0.14496157020514522,
+            "singletons": 0
+          },
+          {
+            "k": 5,
+            "actual_k": 5,
+            "silhouette": 0.1546055002396211,
+            "singletons": 0
+          },
+          {
+            "k": 6,
+            "actual_k": 6,
+            "silhouette": 0.15324215667670743,
+            "singletons": 0
+          },
+          {
+            "k": 7,
+            "actual_k": 7,
+            "silhouette": 0.13694061978930622,
+            "singletons": 0
+          },
+          {
+            "k": 8,
+            "actual_k": 8,
+            "silhouette": 0.1273095738477372,
+            "singletons": 0
+          },
+          {
+            "k": 9,
+            "actual_k": 9,
+            "silhouette": 0.10135800114443372,
+            "singletons": 0
+          },
+          {
+            "k": 10,
+            "actual_k": 10,
+            "silhouette": 0.10841285272482593,
+            "singletons": 0
+          },
+          {
+            "k": 11,
+            "actual_k": 11,
+            "silhouette": 0.10953406929200868,
+            "singletons": 0
+          },
+          {
+            "k": 12,
+            "actual_k": 12,
+            "silhouette": 0.09952314780140531,
+            "singletons": 0
+          },
+          {
+            "k": 13,
+            "actual_k": 13,
+            "silhouette": 0.10701417749756688,
+            "singletons": 0
+          },
+          {
+            "k": 14,
+            "actual_k": 14,
+            "silhouette": 0.10229179117247503,
+            "singletons": 0
+          },
+          {
+            "k": 15,
+            "actual_k": 15,
+            "silhouette": 0.08836926966409094,
+            "singletons": 0
+          }
+        ],
+        "status": "selected",
+        "algorithm": "average linkage; exact merge-count cut",
+        "candidate_k": [
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9,
+          10,
+          11,
+          12,
+          13,
+          14,
+          15
+        ],
+        "partition_note": "descriptive partition selected by silhouette; not geological validation",
+        "tied_merge_heights": false
+      },
+      "analysis_version": "clustering-corrections-v2",
+      "distance_data_sha256": "00f37ac52f9ea3c195ec0fe47dedae4eac4fa58be4f1d22cfb930b9b7fe6a829"
+    },
+    "C:\\HyLoggerData\\products\\analysis\\hole-seq_swir-20261014T121525-b51998",
+    "2026-10-14 12:04:34.467230+00:00"
+  ],
+  [
+    "hole-seq_tir-20261014T121614-bfab29",
+    "hole",
+    "seq_tir",
+    "staged",
+    {
+      "band": 0.3,
+      "holes": 1140,
+      "sensor": "seq_tir",
+      "step_m": 10.0,
+      "distance": "banded DTW (band 0.3) on 10 m true-vertical-depth steps of 8 PCA components of the mix; order down the hole matters, thickness may stretch",
+      "interval_run": "interval-tir-20261014T121353-e7fc92",
+      "hole_clustering": {
+        "k": 2,
+        "names": {
+          "0": "Quartz + Albite + Chlorite-FeMg",
+          "1": "Quartz + Talc + Augite"
+        },
+        "sizes": {
+          "0": 1017,
+          "1": 123
+        },
+        "scores": [
+          {
+            "k": 2,
+            "actual_k": 2,
+            "silhouette": 0.19174144436274526,
+            "singletons": 0
+          },
+          {
+            "k": 3,
+            "actual_k": 3,
+            "silhouette": 0.1626531548827358,
+            "singletons": 0
+          },
+          {
+            "k": 4,
+            "actual_k": 4,
+            "silhouette": 0.12182397994342076,
+            "singletons": 0
+          },
+          {
+            "k": 5,
+            "actual_k": 5,
+            "silhouette": 0.10466582428465956,
+            "singletons": 0
+          },
+          {
+            "k": 6,
+            "actual_k": 6,
+            "silhouette": 0.09682356889077687,
+            "singletons": 0
+          },
+          {
+            "k": 7,
+            "actual_k": 7,
+            "silhouette": 0.08719553144397936,
+            "singletons": 0
+          },
+          {
+            "k": 8,
+            "actual_k": 8,
+            "silhouette": 0.07281365965539018,
+            "singletons": 0
+          },
+          {
+            "k": 9,
+            "actual_k": 9,
+            "silhouette": 0.103504067096836,
+            "singletons": 0
+          },
+          {
+            "k": 10,
+            "actual_k": 10,
+            "silhouette": 0.10115874101830832,
+            "singletons": 0
+          },
+          {
+            "k": 11,
+            "actual_k": 11,
+            "silhouette": 0.09417505343730957,
+            "singletons": 0
+          },
+          {
+            "k": 12,
+            "actual_k": 12,
+            "silhouette": 0.07734465671972765,
+            "singletons": 0
+          },
+          {
+            "k": 13,
+            "actual_k": 13,
+            "silhouette": 0.08998501632661947,
+            "singletons": 0
+          },
+          {
+            "k": 14,
+            "actual_k": 14,
+            "silhouette": 0.0812722068030134,
+            "singletons": 0
+          },
+          {
+            "k": 15,
+            "actual_k": 15,
+            "silhouette": 0.0792625669011567,
+            "singletons": 0
+          }
+        ],
+        "status": "selected",
+        "algorithm": "average linkage; exact merge-count cut",
+        "candidate_k": [
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9,
+          10,
+          11,
+          12,
+          13,
+          14,
+          15
+        ],
+        "partition_note": "descriptive partition selected by silhouette; not geological validation",
+        "tied_merge_heights": false
+      },
+      "analysis_version": "clustering-corrections-v2",
+      "distance_data_sha256": "3d9c90f42d4004e16bb215d98c61724101c2ccf1d9285b6c7db350383197cd8c"
+    },
+    "C:\\HyLoggerData\\products\\analysis\\hole-seq_tir-20261014T121614-bfab29",
+    "2026-10-14 12:04:34.467230+00:00"
+  ],
+  [
+    "hole-swir-20261014T121214-7e48f9",
+    "hole",
+    "swir",
+    "staged",
+    {
+      "holes": 1177,
+      "sensor": "swir",
+      "distance": "Jensen-Shannon (base 2) on cluster shares",
+      "fingerprint": "share of intervals per fine cluster + mean mineral abundance",
+      "interval_run": "interval-swir-20261014T121201-c8ee6b",
+      "cluster_names": {
+        "0": "Chlorite-FeMg-dominant",
+        "1": "Muscovite-dominant",
+        "2": "Hornblende + Chlorite-FeMg + Biotite",
+        "3": "Kaolinite-WX-dominant",
+        "4": "Chlorite-Fe + Paragonite + Chlorite-FeMg",
+        "5": "Chlorite-Mg + Talc + Serpentine",
+        "6": "Phengite + Muscovite + Chlorite-FeMg",
+        "7": "Dolomite-dominant"
+      },
+      "hole_clustering": {
+        "k": 8,
+        "names": {
+          "0": "Chlorite-FeMg + Hornblende + Chlorite-Fe",
+          "1": "Muscovite + Chlorite-FeMg + Chlorite-Fe",
+          "2": "Kaolinite-WX + Kaolinite-PX + Montmorillonite",
+          "3": "Hornblende + Chlorite-FeMg + Muscovite",
+          "4": "Phengite + Muscovite + Chlorite-FeMg",
+          "5": "Chlorite-Mg + Talc + Serpentine",
+          "6": "Paragonite + Chlorite-Fe + Montmorillonite",
+          "7": "Dolomite-dominant"
+        },
+        "sizes": {
+          "0": 306,
+          "1": 209,
+          "2": 161,
+          "3": 150,
+          "4": 123,
+          "5": 109,
+          "6": 68,
+          "7": 51
+        },
+        "scores": [
+          {
+            "k": 2,
+            "actual_k": 2,
+            "silhouette": 0.1866388754580915,
+            "singletons": 0
+          },
+          {
+            "k": 3,
+            "actual_k": 3,
+            "silhouette": 0.21056178646534726,
+            "singletons": 0
+          },
+          {
+            "k": 4,
+            "actual_k": 4,
+            "silhouette": 0.20601638267353106,
+            "singletons": 0
+          },
+          {
+            "k": 5,
+            "actual_k": 5,
+            "silhouette": 0.21165141399818477,
+            "singletons": 0
+          },
+          {
+            "k": 6,
+            "actual_k": 6,
+            "silhouette": 0.21962014750047734,
+            "singletons": 0
+          },
+          {
+            "k": 7,
+            "actual_k": 7,
+            "silhouette": 0.23998940586341835,
+            "singletons": 0
+          },
+          {
+            "k": 8,
+            "actual_k": 8,
+            "silhouette": 0.27491672050612664,
+            "singletons": 0
+          },
+          {
+            "k": 9,
+            "actual_k": 9,
+            "silhouette": 0.24381854712693812,
+            "singletons": 0
+          },
+          {
+            "k": 10,
+            "actual_k": 10,
+            "silhouette": 0.23279118410596258,
+            "singletons": 0
+          },
+          {
+            "k": 11,
+            "actual_k": 11,
+            "silhouette": 0.23028173210551744,
+            "singletons": 0
+          },
+          {
+            "k": 12,
+            "actual_k": 12,
+            "silhouette": 0.2238233962526983,
+            "singletons": 0
+          },
+          {
+            "k": 13,
+            "actual_k": 13,
+            "silhouette": 0.20870670756062404,
+            "singletons": 0
+          },
+          {
+            "k": 14,
+            "actual_k": 14,
+            "silhouette": 0.19706805360300628,
+            "singletons": 0
+          },
+          {
+            "k": 15,
+            "actual_k": 15,
+            "silhouette": 0.19112309488423143,
+            "singletons": 0
+          }
+        ],
+        "status": "selected",
+        "algorithm": "average linkage; exact merge-count cut",
+        "candidate_k": [
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9,
+          10,
+          11,
+          12,
+          13,
+          14,
+          15
+        ],
+        "partition_note": "descriptive partition selected by silhouette; not geological validation",
+        "tied_merge_heights": true
+      },
+      "analysis_version": "clustering-corrections-v2",
+      "distance_version": "cluster-share-jensen-shannon-v1",
+      "interval_provenance": {
+        "data_sha256": "6c06e67e2a6a8d82d3aa937e80d23fab226143b5548b2018fcbdb9bc09cdec45",
+        "support_policy": {
+          "min_admitted": 3,
+          "allow_primary_frequency": false,
+          "min_diagnostic_fraction": 0.5,
+          "allow_unknown_representation": false
+        },
+        "analysis_version": "clustering-corrections-v2",
+        "schema_fit_scope": "full eligible cohort (descriptive/transductive)",
+        "algorithm_version": "hellinger-weighted-ward-v2",
+        "cluster_fit_scope": "hole-balanced training sample, at most 150 intervals per hole",
+        "feature_schema_sha256": "70713eda5328bc98da17dfaf3ebff440a859c4b05d40ddc9780516891e04b67a",
+        "algorithm_source_sha256": {
+          "data": "324071694d8c021f921dde621f7f88fd9c559b337a80f15e05927816a07292d4",
+          "analysis": "c097bc092eba4630613ed783bbfbfca7b5b1a2031cbf9deccd3311a0acef699e",
+          "clusters": "3f1c7c7e0249540d57c459a9503df9f9c55f29fa9c34979496612f90c49bb705",
+          "features": "d2388699bf1e3079abf6e15a997189b60fb7eedba466d66e439579dccabebf99",
+          "rawcluster": "e6328d23a0504a265ac3889ac66adf607c539acc2daf3e53b305340e76f5078b",
+          "fingerprints": "6e50d0f32ff7eb3568f3b8040851942ce214ee07d2a6b217857ec5f17c95c008"
+        }
+      },
+      "distance_data_sha256": "93377cb04e389d72726c68519176ced26e723aead8458f6530617b3715f4d93b"
+    },
+    "C:\\HyLoggerData\\products\\analysis\\hole-swir-20261014T121214-7e48f9",
+    "2026-10-14 12:04:34.467230+00:00"
+  ],
+  [
+    "hole-tir-20261014T121407-de1339",
+    "hole",
+    "tir",
+    "staged",
+    {
+      "holes": 1149,
+      "sensor": "tir",
+      "distance": "Jensen-Shannon (base 2) on cluster shares",
+      "fingerprint": "share of intervals per fine cluster + mean mineral abundance",
+      "interval_run": "interval-tir-20261014T121353-e7fc92",
+      "cluster_names": {
+        "0": "Quartz-dominant",
+        "1": "Hornblende + Chlorite-FeMg + Quartz"
+      },
+      "hole_clustering": {
+        "k": 2,
+        "names": {
+          "0": "Quartz-dominant",
+          "1": "Quartz + Chlorite-FeMg + Hornblende"
+        },
+        "sizes": {
+          "0": 791,
+          "1": 358
+        },
+        "scores": [
+          {
+            "k": 2,
+            "actual_k": 2,
+            "silhouette": 0.6205045907950318,
+            "singletons": 0
+          },
+          {
+            "k": 3,
+            "actual_k": 3,
+            "silhouette": 0.5586573871876865,
+            "singletons": 0
+          },
+          {
+            "k": 4,
+            "actual_k": 4,
+            "silhouette": 0.5800949061579296,
+            "singletons": 0
+          },
+          {
+            "k": 5,
+            "actual_k": 5,
+            "silhouette": 0.5762960095490836,
+            "singletons": 0
+          },
+          {
+            "k": 6,
+            "actual_k": 6,
+            "silhouette": 0.576095377549592,
+            "singletons": 0
+          },
+          {
+            "k": 7,
+            "actual_k": 7,
+            "silhouette": 0.5780857768035307,
+            "singletons": 0
+          },
+          {
+            "k": 8,
+            "actual_k": 8,
+            "silhouette": 0.5907986363838508,
+            "singletons": 0
+          },
+          {
+            "k": 9,
+            "actual_k": 9,
+            "silhouette": 0.6077680577217253,
+            "singletons": 0
+          },
+          {
+            "k": 10,
+            "actual_k": 10,
+            "silhouette": 0.6067379791750254,
+            "singletons": 0
+          },
+          {
+            "k": 11,
+            "actual_k": 11,
+            "silhouette": 0.6068542997009109,
+            "singletons": 0
+          },
+          {
+            "k": 12,
+            "actual_k": 12,
+            "silhouette": 0.6083076466188874,
+            "singletons": 0
+          },
+          {
+            "k": 13,
+            "actual_k": 13,
+            "silhouette": 0.6066754965824962,
+            "singletons": 0
+          },
+          {
+            "k": 14,
+            "actual_k": 14,
+            "silhouette": 0.6074944955341375,
+            "singletons": 0
+          },
+          {
+            "k": 15,
+            "actual_k": 15,
+            "silhouette": 0.6110399575692531,
+            "singletons": 0
+          }
+        ],
+        "status": "selected",
+        "algorithm": "average linkage; exact merge-count cut",
+        "candidate_k": [
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9,
+          10,
+          11,
+          12,
+          13,
+          14,
+          15
+        ],
+        "partition_note": "descriptive partition selected by silhouette; not geological validation",
+        "tied_merge_heights": true
+      },
+      "analysis_version": "clustering-corrections-v2",
+      "distance_version": "cluster-share-jensen-shannon-v1",
+      "interval_provenance": {
+        "data_sha256": "75977a08df00f4181ece9051316a0ef5038e9a2d3adcf287366d1feb8f1c16bc",
+        "support_policy": {
+          "min_admitted": 3,
+          "allow_primary_frequency": false,
+          "min_diagnostic_fraction": 0.5,
+          "allow_unknown_representation": false
+        },
+        "analysis_version": "clustering-corrections-v2",
+        "schema_fit_scope": "full eligible cohort (descriptive/transductive)",
+        "algorithm_version": "hellinger-weighted-ward-v2",
+        "cluster_fit_scope": "hole-balanced training sample, at most 150 intervals per hole",
+        "feature_schema_sha256": "1c1b951ce0fa1a491b9b5901a8a3e283dce129dadadf3b392f6e0f16962cd245",
+        "algorithm_source_sha256": {
+          "data": "324071694d8c021f921dde621f7f88fd9c559b337a80f15e05927816a07292d4",
+          "analysis": "c097bc092eba4630613ed783bbfbfca7b5b1a2031cbf9deccd3311a0acef699e",
+          "clusters": "3f1c7c7e0249540d57c459a9503df9f9c55f29fa9c34979496612f90c49bb705",
+          "features": "d2388699bf1e3079abf6e15a997189b60fb7eedba466d66e439579dccabebf99",
+          "rawcluster": "e6328d23a0504a265ac3889ac66adf607c539acc2daf3e53b305340e76f5078b",
+          "fingerprints": "6e50d0f32ff7eb3568f3b8040851942ce214ee07d2a6b217857ec5f17c95c008"
+        }
+      },
+      "distance_data_sha256": "15d71c99e998bde8440dd7dbb09455a1da0442d2e4eb7e0d2433ac24f720ef27"
+    },
+    "C:\\HyLoggerData\\products\\analysis\\hole-tir-20261014T121407-de1339",
+    "2026-10-14 12:04:34.467230+00:00"
+  ],
+  [
+    "interval-swir-20261014T121201-c8ee6b",
+    "interval",
+    "swir",
+    "staged",
+    {
+      "holes": 1272,
+      "sensor": "swir",
+      "anomaly": {
+        "meaning": "Relative unusualness within this dataset; a review candidate, not a finding",
+        "components": [
+          "poor_fit",
+          "isolation",
+          "downhole_contrast",
+          "chemistry_mismatch",
+          "rare_mineral"
+        ],
+        "rare_minerals": [
+          "Brucite",
+          "Opal",
+          "Palygorskite"
+        ],
+        "chemistry_rows": 58940,
+        "rare_prevalence": 0.002,
+        "reason_percentile": 0.98
+      },
+      "domains": {
+        "count": 18531,
+        "method": "penalised optimal partition (change in mean, Hellinger features)",
+        "median_length_m": 11.0,
+        "min_length_bins": 3
+      },
+      "features": [
+        "Actinolite",
+        "Alunite-K",
+        "Alunite-NH",
+        "Alunite-Na",
+        "Ankerite",
+        "Biotite",
+        "Calcite",
+        "Chlorite-Fe",
+        "Chlorite-FeMg",
+        "Chlorite-Mg",
+        "Diaspore",
+        "Dickite",
+        "Dolomite",
+        "Epidote",
+        "Gibbsite",
+        "Gypsum",
+        "Hornblende",
+        "Jarosite",
+        "Kaolinite-PX",
+        "Kaolinite-WX",
+        "Magnesite",
+        "Montmorillonite",
+        "Muscovite",
+        "MuscoviticIllite",
+        "Nacrite",
+        "Nontronite",
+        "Paragonite",
+        "ParagoniticIllite",
+        "Phengite",
+        "PhengiticIllite",
+        "Phlogopite",
+        "Prehnite",
+        "Pyrophyllite",
+        "Riebeckite",
+        "Rubellite",
+        "Saponite",
+        "Serpentine",
+        "Siderite",
+        "Talc",
+        "Topaz",
+        "Tourmaline",
+        "Tourmaline-Fe",
+        "Tremolite",
+        "Zoisite",
+        "OTHER-MGOH (rare)",
+        "PAL-SEP (rare)",
+        "SILICA (rare)"
+      ],
+      "minerals": [
+        "Actinolite",
+        "Alunite-K",
+        "Alunite-NH",
+        "Alunite-Na",
+        "Ankerite",
+        "Biotite",
+        "Brucite",
+        "Calcite",
+        "Chlorite-Fe",
+        "Chlorite-FeMg",
+        "Chlorite-Mg",
+        "Diaspore",
+        "Dickite",
+        "Dolomite",
+        "Epidote",
+        "Gibbsite",
+        "Gypsum",
+        "Hornblende",
+        "Jarosite",
+        "Kaolinite-PX",
+        "Kaolinite-WX",
+        "Magnesite",
+        "Montmorillonite",
+        "Muscovite",
+        "MuscoviticIllite",
+        "Nacrite",
+        "Nontronite",
+        "Opal",
+        "Palygorskite",
+        "Paragonite",
+        "ParagoniticIllite",
+        "Phengite",
+        "PhengiticIllite",
+        "Phlogopite",
+        "Prehnite",
+        "Pyrophyllite",
+        "Riebeckite",
+        "Rubellite",
+        "Saponite",
+        "Serpentine",
+        "Siderite",
+        "Talc",
+        "Topaz",
+        "Tourmaline",
+        "Tourmaline-Fe",
+        "Tremolite",
+        "Zoisite"
+      ],
+      "row_unit": "1 m interval",
+      "intervals": 289266,
+      "clustering": {
+        "rows": 289266,
+        "k_fine": 8,
+        "k_rule": "smallest K within 0.02 of best silhouette; min share 0.005",
+        "geometry": "Hellinger (square root of mineral abundance)",
+        "k_coarse": 6,
+        "seed_ari": [
+          0.9423,
+          1.0
+        ],
+        "algorithm": "K-Means, 10 starts (fine) + training-count-weighted Ward SSE (coarse)",
+        "fine_scores": [
+          {
+            "k": 2,
+            "valid": true,
+            "reason": null,
+            "inertia": 37443.5625,
+            "actual_k": 2,
+            "min_share": 0.47658333333333336,
+            "silhouette": 0.15306676924228668
+          },
+          {
+            "k": 3,
+            "valid": true,
+            "reason": null,
+            "inertia": 33960.171875,
+            "actual_k": 3,
+            "min_share": 0.11706666666666667,
+            "silhouette": 0.17561057209968567
+          },
+          {
+            "k": 4,
+            "valid": true,
+            "reason": null,
+            "inertia": 30599.5234375,
+            "actual_k": 4,
+            "min_share": 0.11711666666666666,
+            "silhouette": 0.179441437125206
+          },
+          {
+            "k": 5,
+            "valid": true,
+            "reason": null,
+            "inertia": 27998.4921875,
+            "actual_k": 5,
+            "min_share": 0.11503333333333333,
+            "silhouette": 0.18251237273216248
+          },
+          {
+            "k": 6,
+            "valid": true,
+            "reason": null,
+            "inertia": 26195.20703125,
+            "actual_k": 6,
+            "min_share": 0.07626666666666666,
+            "silhouette": 0.1968214511871338
+          },
+          {
+            "k": 8,
+            "valid": true,
+            "reason": null,
+            "inertia": 22879.30859375,
+            "actual_k": 8,
+            "min_share": 0.04148333333333333,
+            "silhouette": 0.22833916544914246
+          },
+          {
+            "k": 10,
+            "valid": true,
+            "reason": null,
+            "inertia": 20417.212890625,
+            "actual_k": 10,
+            "min_share": 0.041683333333333336,
+            "silhouette": 0.24157321453094482
+          },
+          {
+            "k": 12,
+            "valid": true,
+            "reason": null,
+            "inertia": 19012.705078125,
+            "actual_k": 12,
+            "min_share": 0.018416666666666668,
+            "silhouette": 0.22678951919078827
+          },
+          {
+            "k": 15,
+            "valid": true,
+            "reason": null,
+            "inertia": 16749.9921875,
+            "actual_k": 15,
+            "min_share": 0.019083333333333334,
+            "silhouette": 0.2438839226961136
+          },
+          {
+            "k": 18,
+            "valid": true,
+            "reason": null,
+            "inertia": 15365.94140625,
+            "actual_k": 18,
+            "min_share": 0.01695,
+            "silhouette": 0.23551045358181
+          },
+          {
+            "k": 22,
+            "valid": true,
+            "reason": null,
+            "inertia": 14241.5224609375,
+            "actual_k": 22,
+            "min_share": 0.008333333333333333,
+            "silhouette": 0.23718489706516266
+          }
+        ],
+        "cluster_sizes": [
+          86856,
+          43705,
+          39401,
+          24819,
+          28598,
+          25136,
+          27014,
+          13737
+        ],
+        "coarse_scores": [
+          {
+            "k": 2,
+            "valid": true,
+            "actual_k": 2,
+            "min_share": 0.4710802861505826,
+            "silhouette": 0.128469780087471
+          },
+          {
+            "k": 3,
+            "valid": true,
+            "actual_k": 3,
+            "min_share": 0.25185614238323417,
+            "silhouette": 0.11643123626708984
+          },
+          {
+            "k": 4,
+            "valid": true,
+            "actual_k": 4,
+            "min_share": 0.1124066287038221,
+            "silhouette": 0.1542392522096634
+          },
+          {
+            "k": 5,
+            "valid": true,
+            "actual_k": 5,
+            "min_share": 0.1124066287038221,
+            "silhouette": 0.17398658394813538
+          },
+          {
+            "k": 6,
+            "valid": true,
+            "actual_k": 6,
+            "min_share": 0.1124066287038221,
+            "silhouette": 0.19207724928855896
+          },
+          {
+            "k": 7,
+            "valid": true,
+            "actual_k": 7,
+            "min_share": 0.08685317105094895,
+            "silhouette": 0.21119417250156403
+          }
+        ],
+        "coarse_status": "selected",
+        "model_version": "hellinger-weighted-ward-v2",
+        "training_rows": 132937,
+        "final_min_share": 0.041688920315638235,
+        "coarse_weighting": "fine-cluster counts in the selected training population",
+        "training_cluster_sizes": [
+          33481,
+          22100,
+          18358,
+          14943,
+          14035,
+          12932,
+          11546,
+          5542
+        ],
+        "scaled_vs_hellinger_ari": 0.4202,
+        "minimum_share_population": "selected training rows; rechecked after final fit",
+        "dominant_mineral_baseline": {
+          "ari": 0.6195,
+          "nmi": 0.6384,
+          "note": "Agreement with grouping each interval by its largest mineral (Sathi baseline)"
+        }
+      },
+      "provenance": {
+        "data_sha256": "6c06e67e2a6a8d82d3aa937e80d23fab226143b5548b2018fcbdb9bc09cdec45",
+        "support_policy": {
+          "min_admitted": 3,
+          "allow_primary_frequency": false,
+          "min_diagnostic_fraction": 0.5,
+          "allow_unknown_representation": false
+        },
+        "analysis_version": "clustering-corrections-v2",
+        "schema_fit_scope": "full eligible cohort (descriptive/transductive)",
+        "algorithm_version": "hellinger-weighted-ward-v2",
+        "cluster_fit_scope": "hole-balanced training sample, at most 150 intervals per hole",
+        "feature_schema_sha256": "70713eda5328bc98da17dfaf3ebff440a859c4b05d40ddc9780516891e04b67a",
+        "algorithm_source_sha256": {
+          "data": "324071694d8c021f921dde621f7f88fd9c559b337a80f15e05927816a07292d4",
+          "analysis": "c097bc092eba4630613ed783bbfbfca7b5b1a2031cbf9deccd3311a0acef699e",
+          "clusters": "3f1c7c7e0249540d57c459a9503df9f9c55f29fa9c34979496612f90c49bb705",
+          "features": "d2388699bf1e3079abf6e15a997189b60fb7eedba466d66e439579dccabebf99",
+          "rawcluster": "e6328d23a0504a265ac3889ac66adf607c539acc2daf3e53b305340e76f5078b",
+          "fingerprints": "6e50d0f32ff7eb3568f3b8040851942ce214ee07d2a6b217857ec5f17c95c008"
+        }
+      },
+      "validation": {
+        "correlations": [
+          {
+            "n": 61044,
+            "rho": 0.582,
+            "holes": 458,
+            "analyte": "K2O",
+            "feature": "WHITE-MICA",
+            "expected": "positive",
+            "within_hole_count": 326,
+            "within_hole_median_rho": 0.517
+          },
+          {
+            "n": 41748,
+            "rho": 0.3,
+            "holes": 462,
+            "analyte": "MgO",
+            "feature": "SERPENTINE",
+            "expected": "positive",
+            "within_hole_count": 202,
+            "within_hole_median_rho": 0.199
+          },
+          {
+            "n": 41748,
+            "rho": 0.433,
+            "holes": 462,
+            "analyte": "MgO",
+            "feature": "OTHER-MGOH",
+            "expected": "positive",
+            "within_hole_count": 143,
+            "within_hole_median_rho": 0.353
+          },
+          {
+            "n": 41748,
+            "rho": 0.087,
+            "holes": 462,
+            "analyte": "MgO",
+            "feature": "CHLORITE",
+            "expected": "positive",
+            "within_hole_count": 325,
+            "within_hole_median_rho": 0.177
+          },
+          {
+            "n": 62134,
+            "rho": 0.359,
+            "holes": 444,
+            "analyte": "CaO",
+            "feature": "CARBONATE",
+            "expected": "positive",
+            "within_hole_count": 322,
+            "within_hole_median_rho": 0.231
+          },
+          {
+            "n": 1668,
+            "rho": 0.523,
+            "holes": 51,
+            "analyte": "LOI",
+            "feature": "CARBONATE",
+            "expected": "positive",
+            "within_hole_count": 24,
+            "within_hole_median_rho": 0.426
+          },
+          {
+            "n": 53133,
+            "rho": -0.025,
+            "holes": 381,
+            "analyte": "Al2O3",
+            "feature": "KAOLIN",
+            "expected": "positive",
+            "within_hole_count": 214,
+            "within_hole_median_rho": 0.003
+          },
+          {
+            "n": 62134,
+            "rho": 0.339,
+            "holes": 444,
+            "analyte": "CaO",
+            "feature": "AMPHIBOLE",
+            "expected": "positive",
+            "within_hole_count": 288,
+            "within_hole_median_rho": 0.411
+          }
+        ],
+        "assay_intervals": 135688,
+        "holes_with_assays": 708,
+        "cluster_separation": [
+          {
+            "n": 41032,
+            "analyte": "MgO",
+            "eta_squared": 0.357
+          },
+          {
+            "n": 56287,
+            "analyte": "Cr",
+            "eta_squared": 0.332
+          },
+          {
+            "n": 60522,
+            "analyte": "K2O",
+            "eta_squared": 0.315
+          },
+          {
+            "n": 1667,
+            "analyte": "LOI",
+            "eta_squared": 0.253
+          },
+          {
+            "n": 69039,
+            "analyte": "Ni",
+            "eta_squared": 0.236
+          },
+          {
+            "n": 40456,
+            "analyte": "U",
+            "eta_squared": 0.233
+          },
+          {
+            "n": 29864,
+            "analyte": "Na2O",
+            "eta_squared": 0.227
+          },
+          {
+            "n": 53042,
+            "analyte": "Al2O3",
+            "eta_squared": 0.201
+          },
+          {
+            "n": 62103,
+            "analyte": "CaO",
+            "eta_squared": 0.195
+          },
+          {
+            "n": 29415,
+            "analyte": "Th",
+            "eta_squared": 0.178
+          },
+          {
+            "n": 64596,
+            "analyte": "Pb",
+            "eta_squared": 0.177
+          },
+          {
+            "n": 65479,
+            "analyte": "MnO",
+            "eta_squared": 0.136
+          },
+          {
+            "n": 72958,
+            "analyte": "Zn",
+            "eta_squared": 0.113
+          },
+          {
+            "n": 41722,
+            "analyte": "P2O5",
+            "eta_squared": 0.111
+          },
+          {
+            "n": 26055,
+            "analyte": "SiO2",
+            "eta_squared": 0.107
+          },
+          {
+            "n": 67616,
+            "analyte": "Fe2O3T",
+            "eta_squared": 0.095
+          },
+          {
+            "n": 75586,
+            "analyte": "Cu",
+            "eta_squared": 0.068
+          },
+          {
+            "n": 60725,
+            "analyte": "TiO2",
+            "eta_squared": 0.043
+          },
+          {
+            "n": 53145,
+            "analyte": "As",
+            "eta_squared": 0.03
+          },
+          {
+            "n": 83292,
+            "analyte": "Au",
+            "eta_squared": 0.023
+          },
+          {
+            "n": 60135,
+            "analyte": "S",
+            "eta_squared": 0.02
+          }
+        ]
+      },
+      "data_quality": {
+        "policy": {
+          "min_admitted": 3,
+          "allow_primary_frequency": false,
+          "min_diagnostic_fraction": 0.5,
+          "allow_unknown_representation": false
+        },
+        "below_count": 42720,
+        "error_policy": "Fit error is descriptive only; no calibrated mineral-specific cutoff is available",
+        "policy_meaning": "Minimum count and diagnostic coverage for modelling (default: majority support); not a calibrated accuracy threshold",
+        "model_intervals": 289266,
+        "abundance_meaning": "Relative TSG interpretation weights conditional on diagnostic readings, not mineral mass percent",
+        "eligible_intervals": 289266,
+        "excluded_intervals": 127021,
+        "coverage_sensitivity": {
+          "0.5": 289266,
+          "0.25": 325054,
+          "0.75": 191260
+        },
+        "descriptive_intervals": 416287,
+        "mask_status_intervals": {
+          "unavailable_in_processed_log": 416287
+        },
+        "invalid_support_counts": 0,
+        "exclusion_counts_overlap": true,
+        "representation_intervals": {
+          "component_weight_mixture": 416257,
+          "primary_mineral_frequency": 30
+        },
+        "below_diagnostic_fraction": 113170,
+        "zero_composition_excluded": 0,
+        "primary_frequency_intervals": 30,
+        "unknown_representation_intervals": 0
+      },
+      "feature_schema": {
+        "names": [
+          "Actinolite",
+          "Alunite-K",
+          "Alunite-NH",
+          "Alunite-Na",
+          "Ankerite",
+          "Biotite",
+          "Calcite",
+          "Chlorite-Fe",
+          "Chlorite-FeMg",
+          "Chlorite-Mg",
+          "Diaspore",
+          "Dickite",
+          "Dolomite",
+          "Epidote",
+          "Gibbsite",
+          "Gypsum",
+          "Hornblende",
+          "Jarosite",
+          "Kaolinite-PX",
+          "Kaolinite-WX",
+          "Magnesite",
+          "Montmorillonite",
+          "Muscovite",
+          "MuscoviticIllite",
+          "Nacrite",
+          "Nontronite",
+          "Paragonite",
+          "ParagoniticIllite",
+          "Phengite",
+          "PhengiticIllite",
+          "Phlogopite",
+          "Prehnite",
+          "Pyrophyllite",
+          "Riebeckite",
+          "Rubellite",
+          "Saponite",
+          "Serpentine",
+          "Siderite",
+          "Talc",
+          "Topaz",
+          "Tourmaline",
+          "Tourmaline-Fe",
+          "Tremolite",
+          "Zoisite",
+          "OTHER-MGOH (rare)",
+          "PAL-SEP (rare)",
+          "SILICA (rare)"
+        ],
+        "version": "train-only-mineral-pooling-v1",
+        "min_prevalence": 0.002,
+        "mineral_to_feature": {
+          "Opal": "SILICA (rare)",
+          "Talc": "Talc",
+          "Topaz": "Topaz",
+          "Gypsum": "Gypsum",
+          "Biotite": "Biotite",
+          "Brucite": "OTHER-MGOH (rare)",
+          "Calcite": "Calcite",
+          "Dickite": "Dickite",
+          "Epidote": "Epidote",
+          "Nacrite": "Nacrite",
+          "Zoisite": "Zoisite",
+          "Ankerite": "Ankerite",
+          "Diaspore": "Diaspore",
+          "Dolomite": "Dolomite",
+          "Gibbsite": "Gibbsite",
+          "Jarosite": "Jarosite",
+          "Phengite": "Phengite",
+          "Prehnite": "Prehnite",
+          "Saponite": "Saponite",
+          "Siderite": "Siderite",
+          "Alunite-K": "Alunite-K",
+          "Magnesite": "Magnesite",
+          "Muscovite": "Muscovite",
+          "Rubellite": "Rubellite",
+          "Tremolite": "Tremolite",
+          "Actinolite": "Actinolite",
+          "Alunite-NH": "Alunite-NH",
+          "Alunite-Na": "Alunite-Na",
+          "Hornblende": "Hornblende",
+          "Nontronite": "Nontronite",
+          "Paragonite": "Paragonite",
+          "Phlogopite": "Phlogopite",
+          "Riebeckite": "Riebeckite",
+          "Serpentine": "Serpentine",
+          "Tourmaline": "Tourmaline",
+          "Chlorite-Fe": "Chlorite-Fe",
+          "Chlorite-Mg": "Chlorite-Mg",
+          "Kaolinite-PX": "Kaolinite-PX",
+          "Kaolinite-WX": "Kaolinite-WX",
+          "Palygorskite": "PAL-SEP (rare)",
+          "Pyrophyllite": "Pyrophyllite",
+          "Chlorite-FeMg": "Chlorite-FeMg",
+          "Tourmaline-Fe": "Tourmaline-Fe",
+          "Montmorillonite": "Montmorillonite",
+          "PhengiticIllite": "PhengiticIllite",
+          "MuscoviticIllite": "MuscoviticIllite",
+          "ParagoniticIllite": "ParagoniticIllite"
+        }
+      },
+      "mineral_groups": {
+        "Opal": "SILICA",
+        "Talc": "OTHER-MGOH",
+        "Topaz": "OTHER-ALOH",
+        "Gypsum": "SULPHATE",
+        "Biotite": "DARK-MICA",
+        "Brucite": "OTHER-MGOH",
+        "Calcite": "CARBONATE",
+        "Dickite": "KAOLIN",
+        "Epidote": "EPIDOTE",
+        "Nacrite": "KAOLIN",
+        "Zoisite": "EPIDOTE",
+        "Ankerite": "CARBONATE",
+        "Diaspore": "OTHER-ALOH",
+        "Dolomite": "CARBONATE",
+        "Gibbsite": "OTHER-ALOH",
+        "Jarosite": "SULPHATE",
+        "Phengite": "WHITE-MICA",
+        "Prehnite": "OTHER-ALOH",
+        "Saponite": "SMECTITE",
+        "Siderite": "CARBONATE",
+        "Alunite-K": "SULPHATE",
+        "Magnesite": "CARBONATE",
+        "Muscovite": "WHITE-MICA",
+        "Rubellite": "TOURMALINE",
+        "Tremolite": "AMPHIBOLE",
+        "Actinolite": "AMPHIBOLE",
+        "Alunite-NH": "SULPHATE",
+        "Alunite-Na": "SULPHATE",
+        "Hornblende": "AMPHIBOLE",
+        "Nontronite": "SMECTITE",
+        "Paragonite": "WHITE-MICA",
+        "Phlogopite": "DARK-MICA",
+        "Riebeckite": "AMPHIBOLE",
+        "Serpentine": "SERPENTINE",
+        "Tourmaline": "TOURMALINE",
+        "Chlorite-Fe": "CHLORITE",
+        "Chlorite-Mg": "CHLORITE",
+        "Kaolinite-PX": "KAOLIN",
+        "Kaolinite-WX": "KAOLIN",
+        "Palygorskite": "PAL-SEP",
+        "Pyrophyllite": "OTHER-ALOH",
+        "Chlorite-FeMg": "CHLORITE",
+        "Tourmaline-Fe": "TOURMALINE",
+        "Montmorillonite": "SMECTITE",
+        "PhengiticIllite": "WHITE-MICA",
+        "MuscoviticIllite": "WHITE-MICA",
+        "ParagoniticIllite": "WHITE-MICA"
+      },
+      "feature_transform": {
+        "normalization": "No renormalization; known feature mass plus unseen mass preserves input mass",
+        "assignable_rows": 289266,
+        "unseen_minerals": [],
+        "unseen_mass_mean": 0.0,
+        "schema_fingerprint": "70713eda5328bc98da17dfaf3ebff440a859c4b05d40ddc9780516891e04b67a",
+        "rows_with_unseen_mass": 0
+      },
+      "data_quality_outliers": [
+        {
+          "hole_id": "ALLANOOKA 1",
+          "support": 0.526,
+          "support_z": -3.564
+        },
+        {
+          "hole_id": "BLACK LEDGE 1",
+          "support": 1.0,
+          "support_z": 3.772
+        },
+        {
+          "hole_id": "CASUARINAS 1",
+          "support": 1.0,
+          "support_z": 3.772
+        },
+        {
+          "hole_id": "DENISON 1",
+          "support": 1.0,
+          "support_z": 3.772
+        },
+        {
+          "hole_id": "DEPOT HILL 1",
+          "support": 1.0,
+          "support_z": 3.772
+        },
+        {
+          "hole_id": "DONGARA 07",
+          "support": 0.521,
+          "support_z": -3.64
+        },
+        {
+          "hole_id": "DRAKEA 1",
+          "support": 1.0,
+          "support_z": 3.772
+        },
+        {
+          "hole_id": "EVANDRA 1",
+          "support": 1.0,
+          "support_z": 3.772
+        },
+        {
+          "hole_id": "HAKIA 2",
+          "support": 1.0,
+          "support_z": 3.772
+        },
+        {
+          "hole_id": "HOVEA 1",
+          "support": 1.0,
+          "support_z": 3.772
+        },
+        {
+          "hole_id": "HOVEA 2",
+          "support": 1.0,
+          "support_z": 3.772
+        },
+        {
+          "hole_id": "IRWIN 1",
+          "support": 1.0,
+          "support_z": 3.772
+        },
+        {
+          "hole_id": "KINGIA 1",
+          "support": 1.0,
+          "support_z": 3.772
+        },
+        {
+          "hole_id": "NORTH ERREGULLA DEEP 1",
+          "support": 0.5,
+          "support_z": -3.972
+        },
+        {
+          "hole_id": "NORTH YARDARINO 1",
+          "support": 1.0,
+          "support_z": 3.772
+        },
+        {
+          "hole_id": "PARC001",
+          "support": 1.0,
+          "support_z": 3.772
+        },
+        {
+          "hole_id": "PARC002",
+          "support": 1.0,
+          "support_z": 3.772
+        },
+        {
+          "hole_id": "PARC003",
+          "support": 1.0,
+          "support_z": 3.772
+        },
+        {
+          "hole_id": "PARC004",
+          "support": 1.0,
+          "support_z": 3.772
+        },
+        {
+          "hole_id": "PETALUMA 1",
+          "support": 1.0,
+          "support_z": 3.772
+        },
+        {
+          "hole_id": "PLRCD005",
+          "support": 0.526,
+          "support_z": -3.564
+        },
+        {
+          "hole_id": "ROCKINGHAM 1",
+          "support": 1.0,
+          "support_z": 3.772
+        },
+        {
+          "hole_id": "TUBRIDGI 15",
+          "support": 1.0,
+          "support_z": 3.772
+        },
+        {
+          "hole_id": "UNGANI 1 ST1",
+          "support": 1.0,
+          "support_z": 3.772
+        },
+        {
+          "hole_id": "WAITSIA 4",
+          "support": 1.0,
+          "support_z": 3.772
+        },
+        {
+          "hole_id": "WARRADONG 1",
+          "support": 0.523,
+          "support_z": -3.609
+        },
+        {
+          "hole_id": "XANADU 1",
+          "support": 1.0,
+          "support_z": 3.772
+        },
+        {
+          "hole_id": "XYRIS SOUTH 1",
+          "support": 1.0,
+          "support_z": 3.772
+        }
+      ]
+    },
+    "C:\\HyLoggerData\\products\\analysis\\interval-swir-20261014T121201-c8ee6b",
+    "2026-10-14 12:04:34.467230+00:00"
+  ],
+  [
+    "interval-tir-20261014T121353-e7fc92",
+    "interval",
+    "tir",
+    "staged",
+    {
+      "holes": 1224,
+      "sensor": "tir",
+      "anomaly": {
+        "meaning": "Relative unusualness within this dataset; a review candidate, not a finding",
+        "components": [
+          "poor_fit",
+          "isolation",
+          "downhole_contrast",
+          "chemistry_mismatch",
+          "rare_mineral"
+        ],
+        "rare_minerals": [
+          "Analcime",
+          "Andalusite",
+          "Anthophyllite",
+          "Aragonite",
+          "Arfvedsonite",
+          "Axinite",
+          "Cassiterite",
+          "Cerussite",
+          "Chromite",
+          "Gahnite",
+          "Gedrite",
+          "Hematite",
+          "Holmquistite",
+          "Ilmenite",
+          "Jadeite",
+          "Kaersutite",
+          "Kyanite",
+          "Manganocummingtonite",
+          "Palygorskite",
+          "Petalite",
+          "Psilomelane",
+          "Rhodochrosite",
+          "Sillimanite",
+          "Smithsonite",
+          "Staurolite",
+          "Strontianite",
+          "Uvarovite",
+          "Witherite",
+          "Zircon"
+        ],
+        "chemistry_rows": 75548,
+        "rare_prevalence": 0.002,
+        "reason_percentile": 0.98
+      },
+      "domains": {
+        "count": 17079,
+        "method": "penalised optimal partition (change in mean, Hellinger features)",
+        "median_length_m": 14.0,
+        "min_length_bins": 3
+      },
+      "features": [
+        "Actinolite",
+        "Aegirine",
+        "Albite",
+        "Almandine",
+        "Alunite-K",
+        "Alunite-Na",
+        "AmphiboleML48",
+        "Andesine",
+        "Andradite",
+        "Anhydrite",
+        "Ankerite",
+        "Anorthite",
+        "Anorthoclase",
+        "Antigorite",
+        "Apatite",
+        "Augite",
+        "Barite",
+        "Biotite",
+        "Bytownite",
+        "Calcite",
+        "Chlorite-Fe",
+        "Chlorite-FeMg",
+        "Cordierite",
+        "Diopside",
+        "Dolomite",
+        "Edenite",
+        "Enstatite",
+        "Epidote",
+        "Glauconite",
+        "Glaucophane",
+        "Goethite",
+        "Grossular",
+        "Grunerite",
+        "Gypsum",
+        "Hedenbergite",
+        "Hornblende",
+        "Jarosite",
+        "Kaolinite-WX",
+        "Labradorite",
+        "Lizardite",
+        "Magnesite",
+        "Microcline",
+        "Montmorillonite",
+        "Muscovite",
+        "Nontronite",
+        "Oligoclase",
+        "Olivine-Fe",
+        "Olivine-Mg",
+        "Opal",
+        "Orthoclase",
+        "Phengite",
+        "Phlogopite",
+        "Pigeonite",
+        "Prehnite",
+        "Pyrophyllite",
+        "Quartz",
+        "Riebeckite",
+        "Rutile",
+        "Siderite",
+        "Spessartine",
+        "Spodumene",
+        "Stilpnomelane",
+        "Talc",
+        "Topaz",
+        "Tourmaline",
+        "Zoisite",
+        "AMPHIBOLE (rare)",
+        "CARBONATE (rare)",
+        "GARNET (rare)",
+        "MISC-SILICATE (rare)",
+        "OTHER-ALOH (rare)",
+        "OXIDE (rare)",
+        "PAL-SEP (rare)",
+        "PYROXENE (rare)",
+        "ZEOLITE (rare)"
+      ],
+      "minerals": [
+        "Actinolite",
+        "Aegirine",
+        "Albite",
+        "Almandine",
+        "Alunite-K",
+        "Alunite-Na",
+        "AmphiboleML48",
+        "Analcime",
+        "Andalusite",
+        "Andesine",
+        "Andradite",
+        "Anhydrite",
+        "Ankerite",
+        "Anorthite",
+        "Anorthoclase",
+        "Anthophyllite",
+        "Antigorite",
+        "Apatite",
+        "Aragonite",
+        "Arfvedsonite",
+        "Augite",
+        "Axinite",
+        "Barite",
+        "Biotite",
+        "Bytownite",
+        "Calcite",
+        "Cassiterite",
+        "Cerussite",
+        "Chlorite-Fe",
+        "Chlorite-FeMg",
+        "Chromite",
+        "Cordierite",
+        "Diopside",
+        "Dolomite",
+        "Edenite",
+        "Enstatite",
+        "Epidote",
+        "Gahnite",
+        "Gedrite",
+        "Glauconite",
+        "Glaucophane",
+        "Goethite",
+        "Grossular",
+        "Grunerite",
+        "Gypsum",
+        "Hedenbergite",
+        "Hematite",
+        "Holmquistite",
+        "Hornblende",
+        "Ilmenite",
+        "Jadeite",
+        "Jarosite",
+        "Kaersutite",
+        "Kaolinite-WX",
+        "Kyanite",
+        "Labradorite",
+        "Lizardite",
+        "Magnesite",
+        "Manganocummingtonite",
+        "Microcline",
+        "Montmorillonite",
+        "Muscovite",
+        "Nontronite",
+        "Oligoclase",
+        "Olivine-Fe",
+        "Olivine-Mg",
+        "Opal",
+        "Orthoclase",
+        "Palygorskite",
+        "Petalite",
+        "Phengite",
+        "Phlogopite",
+        "Pigeonite",
+        "Prehnite",
+        "Psilomelane",
+        "Pyrophyllite",
+        "Quartz",
+        "Rhodochrosite",
+        "Riebeckite",
+        "Rutile",
+        "Siderite",
+        "Sillimanite",
+        "Smithsonite",
+        "Spessartine",
+        "Spodumene",
+        "Staurolite",
+        "Stilpnomelane",
+        "Strontianite",
+        "Talc",
+        "Topaz",
+        "Tourmaline",
+        "Uvarovite",
+        "Witherite",
+        "Zircon",
+        "Zoisite"
+      ],
+      "row_unit": "1 m interval",
+      "intervals": 353059,
+      "clustering": {
+        "rows": 353059,
+        "k_fine": 2,
+        "k_rule": "smallest K within 0.02 of best silhouette; min share 0.005",
+        "geometry": "Hellinger (square root of mineral abundance)",
+        "k_coarse": 2,
+        "seed_ari": [
+          1.0,
+          0.9997
+        ],
+        "algorithm": "K-Means, 10 starts (fine) + training-count-weighted Ward SSE (coarse)",
+        "fine_scores": [
+          {
+            "k": 2,
+            "valid": true,
+            "reason": null,
+            "inertia": 27133.439453125,
+            "actual_k": 2,
+            "min_share": 0.3187833333333333,
+            "silhouette": 0.22985537350177765
+          },
+          {
+            "k": 3,
+            "valid": true,
+            "reason": null,
+            "inertia": 25175.2421875,
+            "actual_k": 3,
+            "min_share": 0.27746666666666664,
+            "silhouette": 0.10351064801216125
+          },
+          {
+            "k": 4,
+            "valid": true,
+            "reason": null,
+            "inertia": 23388.21875,
+            "actual_k": 4,
+            "min_share": 0.1079,
+            "silhouette": 0.12015218287706375
+          },
+          {
+            "k": 5,
+            "valid": true,
+            "reason": null,
+            "inertia": 22204.6796875,
+            "actual_k": 5,
+            "min_share": 0.08098333333333334,
+            "silhouette": 0.13011379539966583
+          },
+          {
+            "k": 6,
+            "valid": true,
+            "reason": null,
+            "inertia": 21121.59765625,
+            "actual_k": 6,
+            "min_share": 0.06485,
+            "silhouette": 0.1307123750448227
+          },
+          {
+            "k": 8,
+            "valid": true,
+            "reason": null,
+            "inertia": 19330.9921875,
+            "actual_k": 8,
+            "min_share": 0.06436666666666667,
+            "silhouette": 0.13403737545013428
+          },
+          {
+            "k": 10,
+            "valid": true,
+            "reason": null,
+            "inertia": 17733.662109375,
+            "actual_k": 10,
+            "min_share": 0.0338,
+            "silhouette": 0.1470264494419098
+          },
+          {
+            "k": 12,
+            "valid": true,
+            "reason": null,
+            "inertia": 16647.169921875,
+            "actual_k": 12,
+            "min_share": 0.02315,
+            "silhouette": 0.1587645560503006
+          },
+          {
+            "k": 15,
+            "valid": true,
+            "reason": null,
+            "inertia": 15483.3935546875,
+            "actual_k": 15,
+            "min_share": 0.022516666666666667,
+            "silhouette": 0.16168679296970367
+          },
+          {
+            "k": 18,
+            "valid": true,
+            "reason": null,
+            "inertia": 14731.4560546875,
+            "actual_k": 18,
+            "min_share": 0.016966666666666668,
+            "silhouette": 0.16441559791564941
+          },
+          {
+            "k": 22,
+            "valid": true,
+            "reason": null,
+            "inertia": 13996.1162109375,
+            "actual_k": 22,
+            "min_share": 0.00825,
+            "silhouette": 0.1585325300693512
+          }
+        ],
+        "cluster_sizes": [
+          238592,
+          114467
+        ],
+        "coarse_scores": [],
+        "coarse_status": "same_as_fine",
+        "model_version": "hellinger-weighted-ward-v2",
+        "training_rows": 142320,
+        "final_min_share": 0.31902754356379986,
+        "coarse_weighting": "fine-cluster counts in the selected training population",
+        "training_cluster_sizes": [
+          96916,
+          45404
+        ],
+        "scaled_vs_hellinger_ari": 0.5114,
+        "minimum_share_population": "selected training rows; rechecked after final fit",
+        "dominant_mineral_baseline": {
+          "ari": 0.451,
+          "nmi": 0.2753,
+          "note": "Agreement with grouping each interval by its largest mineral (Sathi baseline)"
+        }
+      },
+      "provenance": {
+        "data_sha256": "75977a08df00f4181ece9051316a0ef5038e9a2d3adcf287366d1feb8f1c16bc",
+        "support_policy": {
+          "min_admitted": 3,
+          "allow_primary_frequency": false,
+          "min_diagnostic_fraction": 0.5,
+          "allow_unknown_representation": false
+        },
+        "analysis_version": "clustering-corrections-v2",
+        "schema_fit_scope": "full eligible cohort (descriptive/transductive)",
+        "algorithm_version": "hellinger-weighted-ward-v2",
+        "cluster_fit_scope": "hole-balanced training sample, at most 150 intervals per hole",
+        "feature_schema_sha256": "1c1b951ce0fa1a491b9b5901a8a3e283dce129dadadf3b392f6e0f16962cd245",
+        "algorithm_source_sha256": {
+          "data": "324071694d8c021f921dde621f7f88fd9c559b337a80f15e05927816a07292d4",
+          "analysis": "c097bc092eba4630613ed783bbfbfca7b5b1a2031cbf9deccd3311a0acef699e",
+          "clusters": "3f1c7c7e0249540d57c459a9503df9f9c55f29fa9c34979496612f90c49bb705",
+          "features": "d2388699bf1e3079abf6e15a997189b60fb7eedba466d66e439579dccabebf99",
+          "rawcluster": "e6328d23a0504a265ac3889ac66adf607c539acc2daf3e53b305340e76f5078b",
+          "fingerprints": "6e50d0f32ff7eb3568f3b8040851942ce214ee07d2a6b217857ec5f17c95c008"
+        }
+      },
+      "validation": {
+        "correlations": [
+          {
+            "n": 73814,
+            "rho": 0.388,
+            "holes": 448,
+            "analyte": "K2O",
+            "feature": "WHITE-MICA",
+            "expected": "positive",
+            "within_hole_count": 346,
+            "within_hole_median_rho": 0.418
+          },
+          {
+            "n": 39615,
+            "rho": 0.712,
+            "holes": 391,
+            "analyte": "Na2O",
+            "feature": "PLAGIOCLASE",
+            "expected": "positive",
+            "within_hole_count": 297,
+            "within_hole_median_rho": 0.673
+          },
+          {
+            "n": 55322,
+            "rho": 0.196,
+            "holes": 455,
+            "analyte": "MgO",
+            "feature": "SERPENTINE",
+            "expected": "positive",
+            "within_hole_count": 216,
+            "within_hole_median_rho": 0.072
+          },
+          {
+            "n": 55322,
+            "rho": 0.161,
+            "holes": 455,
+            "analyte": "MgO",
+            "feature": "OTHER-MGOH",
+            "expected": "positive",
+            "within_hole_count": 241,
+            "within_hole_median_rho": 0.03
+          },
+          {
+            "n": 55322,
+            "rho": 0.219,
+            "holes": 455,
+            "analyte": "MgO",
+            "feature": "CHLORITE",
+            "expected": "positive",
+            "within_hole_count": 355,
+            "within_hole_median_rho": 0.317
+          },
+          {
+            "n": 77155,
+            "rho": 0.303,
+            "holes": 436,
+            "analyte": "CaO",
+            "feature": "CARBONATE",
+            "expected": "positive",
+            "within_hole_count": 347,
+            "within_hole_median_rho": 0.192
+          },
+          {
+            "n": 2912,
+            "rho": 0.594,
+            "holes": 53,
+            "analyte": "LOI",
+            "feature": "CARBONATE",
+            "expected": "positive",
+            "within_hole_count": 29,
+            "within_hole_median_rho": 0.43
+          },
+          {
+            "n": 66128,
+            "rho": 0.024,
+            "holes": 377,
+            "analyte": "Al2O3",
+            "feature": "KAOLIN",
+            "expected": "positive",
+            "within_hole_count": 224,
+            "within_hole_median_rho": 0.02
+          },
+          {
+            "n": 30553,
+            "rho": 0.347,
+            "holes": 117,
+            "analyte": "SiO2",
+            "feature": "SILICA",
+            "expected": "positive",
+            "within_hole_count": 89,
+            "within_hole_median_rho": 0.424
+          },
+          {
+            "n": 77155,
+            "rho": 0.281,
+            "holes": 436,
+            "analyte": "CaO",
+            "feature": "AMPHIBOLE",
+            "expected": "positive",
+            "within_hole_count": 312,
+            "within_hole_median_rho": 0.334
+          },
+          {
+            "n": 73814,
+            "rho": 0.343,
+            "holes": 448,
+            "analyte": "K2O",
+            "feature": "K-FELDSPAR",
+            "expected": "positive",
+            "within_hole_count": 340,
+            "within_hole_median_rho": 0.25
+          },
+          {
+            "n": 82829,
+            "rho": 0.011,
+            "holes": 468,
+            "analyte": "Fe2O3T",
+            "feature": "OXIDE",
+            "expected": "positive",
+            "within_hole_count": 298,
+            "within_hole_median_rho": 0.097
+          }
+        ],
+        "assay_intervals": 149366,
+        "holes_with_assays": 673,
+        "cluster_separation": [
+          {
+            "n": 54516,
+            "analyte": "MgO",
+            "eta_squared": 0.173
+          },
+          {
+            "n": 50918,
+            "analyte": "U",
+            "eta_squared": 0.147
+          },
+          {
+            "n": 68758,
+            "analyte": "Cr",
+            "eta_squared": 0.131
+          },
+          {
+            "n": 73233,
+            "analyte": "K2O",
+            "eta_squared": 0.13
+          },
+          {
+            "n": 80019,
+            "analyte": "Pb",
+            "eta_squared": 0.126
+          },
+          {
+            "n": 85626,
+            "analyte": "Ni",
+            "eta_squared": 0.098
+          },
+          {
+            "n": 36212,
+            "analyte": "Th",
+            "eta_squared": 0.086
+          },
+          {
+            "n": 79286,
+            "analyte": "MnO",
+            "eta_squared": 0.067
+          },
+          {
+            "n": 77119,
+            "analyte": "CaO",
+            "eta_squared": 0.041
+          },
+          {
+            "n": 55010,
+            "analyte": "P2O5",
+            "eta_squared": 0.037
+          },
+          {
+            "n": 68929,
+            "analyte": "As",
+            "eta_squared": 0.036
+          },
+          {
+            "n": 66009,
+            "analyte": "Al2O3",
+            "eta_squared": 0.024
+          },
+          {
+            "n": 2906,
+            "analyte": "LOI",
+            "eta_squared": 0.024
+          },
+          {
+            "n": 92291,
+            "analyte": "Cu",
+            "eta_squared": 0.01
+          },
+          {
+            "n": 86999,
+            "analyte": "Au",
+            "eta_squared": 0.005
+          },
+          {
+            "n": 30548,
+            "analyte": "SiO2",
+            "eta_squared": 0.004
+          },
+          {
+            "n": 82827,
+            "analyte": "Fe2O3T",
+            "eta_squared": 0.004
+          },
+          {
+            "n": 76769,
+            "analyte": "S",
+            "eta_squared": 0.003
+          },
+          {
+            "n": 73169,
+            "analyte": "TiO2",
+            "eta_squared": 0.002
+          },
+          {
+            "n": 39555,
+            "analyte": "Na2O",
+            "eta_squared": 0.0
+          },
+          {
+            "n": 89163,
+            "analyte": "Zn",
+            "eta_squared": 0.0
+          }
+        ]
+      },
+      "data_quality": {
+        "policy": {
+          "min_admitted": 3,
+          "allow_primary_frequency": false,
+          "min_diagnostic_fraction": 0.5,
+          "allow_unknown_representation": false
+        },
+        "below_count": 24265,
+        "error_policy": "Fit error is descriptive only; no calibrated mineral-specific cutoff is available",
+        "policy_meaning": "Minimum count and diagnostic coverage for modelling (default: majority support); not a calibrated accuracy threshold",
+        "model_intervals": 353059,
+        "abundance_meaning": "Relative TSG interpretation weights conditional on diagnostic readings, not mineral mass percent",
+        "eligible_intervals": 353059,
+        "excluded_intervals": 31056,
+        "coverage_sensitivity": {
+          "0.5": 353059,
+          "0.25": 358171,
+          "0.75": 280299
+        },
+        "descriptive_intervals": 384115,
+        "mask_status_intervals": {
+          "unavailable_in_processed_log": 384115
+        },
+        "invalid_support_counts": 0,
+        "exclusion_counts_overlap": true,
+        "representation_intervals": {
+          "component_weight_mixture": 384115
+        },
+        "below_diagnostic_fraction": 15558,
+        "zero_composition_excluded": 0,
+        "primary_frequency_intervals": 0,
+        "unknown_representation_intervals": 0
+      },
+      "feature_schema": {
+        "names": [
+          "Actinolite",
+          "Aegirine",
+          "Albite",
+          "Almandine",
+          "Alunite-K",
+          "Alunite-Na",
+          "AmphiboleML48",
+          "Andesine",
+          "Andradite",
+          "Anhydrite",
+          "Ankerite",
+          "Anorthite",
+          "Anorthoclase",
+          "Antigorite",
+          "Apatite",
+          "Augite",
+          "Barite",
+          "Biotite",
+          "Bytownite",
+          "Calcite",
+          "Chlorite-Fe",
+          "Chlorite-FeMg",
+          "Cordierite",
+          "Diopside",
+          "Dolomite",
+          "Edenite",
+          "Enstatite",
+          "Epidote",
+          "Glauconite",
+          "Glaucophane",
+          "Goethite",
+          "Grossular",
+          "Grunerite",
+          "Gypsum",
+          "Hedenbergite",
+          "Hornblende",
+          "Jarosite",
+          "Kaolinite-WX",
+          "Labradorite",
+          "Lizardite",
+          "Magnesite",
+          "Microcline",
+          "Montmorillonite",
+          "Muscovite",
+          "Nontronite",
+          "Oligoclase",
+          "Olivine-Fe",
+          "Olivine-Mg",
+          "Opal",
+          "Orthoclase",
+          "Phengite",
+          "Phlogopite",
+          "Pigeonite",
+          "Prehnite",
+          "Pyrophyllite",
+          "Quartz",
+          "Riebeckite",
+          "Rutile",
+          "Siderite",
+          "Spessartine",
+          "Spodumene",
+          "Stilpnomelane",
+          "Talc",
+          "Topaz",
+          "Tourmaline",
+          "Zoisite",
+          "AMPHIBOLE (rare)",
+          "CARBONATE (rare)",
+          "GARNET (rare)",
+          "MISC-SILICATE (rare)",
+          "OTHER-ALOH (rare)",
+          "OXIDE (rare)",
+          "PAL-SEP (rare)",
+          "PYROXENE (rare)",
+          "ZEOLITE (rare)"
+        ],
+        "version": "train-only-mineral-pooling-v1",
+        "min_prevalence": 0.002,
+        "mineral_to_feature": {
+          "Opal": "Opal",
+          "Talc": "Talc",
+          "Topaz": "Topaz",
+          "Albite": "Albite",
+          "Augite": "Augite",
+          "Barite": "Barite",
+          "Gypsum": "Gypsum",
+          "Quartz": "Quartz",
+          "Rutile": "Rutile",
+          "Zircon": "MISC-SILICATE (rare)",
+          "Apatite": "Apatite",
+          "Axinite": "OTHER-ALOH (rare)",
+          "Biotite": "Biotite",
+          "Calcite": "Calcite",
+          "Edenite": "Edenite",
+          "Epidote": "Epidote",
+          "Gahnite": "OXIDE (rare)",
+          "Gedrite": "AMPHIBOLE (rare)",
+          "Jadeite": "PYROXENE (rare)",
+          "Kyanite": "MISC-SILICATE (rare)",
+          "Zoisite": "Zoisite",
+          "Aegirine": "Aegirine",
+          "Analcime": "ZEOLITE (rare)",
+          "Andesine": "Andesine",
+          "Ankerite": "Ankerite",
+          "Chromite": "OXIDE (rare)",
+          "Diopside": "Diopside",
+          "Dolomite": "Dolomite",
+          "Goethite": "Goethite",
+          "Hematite": "OXIDE (rare)",
+          "Ilmenite": "OXIDE (rare)",
+          "Jarosite": "Jarosite",
+          "Petalite": "MISC-SILICATE (rare)",
+          "Phengite": "Phengite",
+          "Prehnite": "Prehnite",
+          "Siderite": "Siderite",
+          "Almandine": "Almandine",
+          "Alunite-K": "Alunite-K",
+          "Andradite": "Andradite",
+          "Anhydrite": "Anhydrite",
+          "Anorthite": "Anorthite",
+          "Aragonite": "CARBONATE (rare)",
+          "Bytownite": "Bytownite",
+          "Cerussite": "CARBONATE (rare)",
+          "Enstatite": "Enstatite",
+          "Grossular": "Grossular",
+          "Grunerite": "Grunerite",
+          "Lizardite": "Lizardite",
+          "Magnesite": "Magnesite",
+          "Muscovite": "Muscovite",
+          "Pigeonite": "Pigeonite",
+          "Spodumene": "Spodumene",
+          "Uvarovite": "GARNET (rare)",
+          "Witherite": "CARBONATE (rare)",
+          "Actinolite": "Actinolite",
+          "Alunite-Na": "Alunite-Na",
+          "Andalusite": "MISC-SILICATE (rare)",
+          "Antigorite": "Antigorite",
+          "Cordierite": "Cordierite",
+          "Glauconite": "Glauconite",
+          "Hornblende": "Hornblende",
+          "Kaersutite": "AMPHIBOLE (rare)",
+          "Microcline": "Microcline",
+          "Nontronite": "Nontronite",
+          "Oligoclase": "Oligoclase",
+          "Olivine-Fe": "Olivine-Fe",
+          "Olivine-Mg": "Olivine-Mg",
+          "Orthoclase": "Orthoclase",
+          "Phlogopite": "Phlogopite",
+          "Riebeckite": "Riebeckite",
+          "Staurolite": "MISC-SILICATE (rare)",
+          "Tourmaline": "Tourmaline",
+          "Cassiterite": "OXIDE (rare)",
+          "Chlorite-Fe": "Chlorite-Fe",
+          "Glaucophane": "Glaucophane",
+          "Labradorite": "Labradorite",
+          "Psilomelane": "OXIDE (rare)",
+          "Sillimanite": "MISC-SILICATE (rare)",
+          "Smithsonite": "CARBONATE (rare)",
+          "Spessartine": "Spessartine",
+          "Anorthoclase": "Anorthoclase",
+          "Arfvedsonite": "AMPHIBOLE (rare)",
+          "Hedenbergite": "Hedenbergite",
+          "Holmquistite": "AMPHIBOLE (rare)",
+          "Kaolinite-WX": "Kaolinite-WX",
+          "Palygorskite": "PAL-SEP (rare)",
+          "Pyrophyllite": "Pyrophyllite",
+          "Strontianite": "CARBONATE (rare)",
+          "AmphiboleML48": "AmphiboleML48",
+          "Anthophyllite": "AMPHIBOLE (rare)",
+          "Chlorite-FeMg": "Chlorite-FeMg",
+          "Rhodochrosite": "CARBONATE (rare)",
+          "Stilpnomelane": "Stilpnomelane",
+          "Montmorillonite": "Montmorillonite",
+          "Manganocummingtonite": "AMPHIBOLE (rare)"
+        }
+      },
+      "mineral_groups": {
+        "Opal": "SILICA",
+        "Talc": "OTHER-MGOH",
+        "Topaz": "OTHER-ALOH",
+        "Albite": "PLAGIOCLASE",
+        "Augite": "PYROXENE",
+        "Barite": "SULPHATE",
+        "Gypsum": "SULPHATE",
+        "Quartz": "SILICA",
+        "Rutile": "OXIDE",
+        "Zircon": "MISC-SILICATE",
+        "Apatite": "PHOSPHATE",
+        "Axinite": "OTHER-ALOH",
+        "Biotite": "DARK-MICA",
+        "Calcite": "CARBONATE",
+        "Edenite": "AMPHIBOLE",
+        "Epidote": "EPIDOTE",
+        "Gahnite": "OXIDE",
+        "Gedrite": "AMPHIBOLE",
+        "Jadeite": "PYROXENE",
+        "Kyanite": "MISC-SILICATE",
+        "Zoisite": "EPIDOTE",
+        "Aegirine": "PYROXENE",
+        "Analcime": "ZEOLITE",
+        "Andesine": "PLAGIOCLASE",
+        "Ankerite": "CARBONATE",
+        "Chromite": "OXIDE",
+        "Diopside": "PYROXENE",
+        "Dolomite": "CARBONATE",
+        "Goethite": "OXIDE",
+        "Hematite": "OXIDE",
+        "Ilmenite": "OXIDE",
+        "Jarosite": "SULPHATE",
+        "Petalite": "MISC-SILICATE",
+        "Phengite": "WHITE-MICA",
+        "Prehnite": "OTHER-ALOH",
+        "Siderite": "CARBONATE",
+        "Almandine": "GARNET",
+        "Alunite-K": "SULPHATE",
+        "Andradite": "GARNET",
+        "Anhydrite": "SULPHATE",
+        "Anorthite": "PLAGIOCLASE",
+        "Aragonite": "CARBONATE",
+        "Bytownite": "PLAGIOCLASE",
+        "Cerussite": "CARBONATE",
+        "Enstatite": "PYROXENE",
+        "Grossular": "GARNET",
+        "Grunerite": "AMPHIBOLE",
+        "Lizardite": "SERPENTINE",
+        "Magnesite": "CARBONATE",
+        "Muscovite": "WHITE-MICA",
+        "Pigeonite": "PYROXENE",
+        "Spodumene": "PYROXENE",
+        "Uvarovite": "GARNET",
+        "Witherite": "CARBONATE",
+        "Actinolite": "AMPHIBOLE",
+        "Alunite-Na": "SULPHATE",
+        "Andalusite": "MISC-SILICATE",
+        "Antigorite": "SERPENTINE",
+        "Cordierite": "MISC-SILICATE",
+        "Glauconite": "WHITE-MICA",
+        "Hornblende": "AMPHIBOLE",
+        "Kaersutite": "AMPHIBOLE",
+        "Microcline": "K-FELDSPAR",
+        "Nontronite": "SMECTITE",
+        "Oligoclase": "PLAGIOCLASE",
+        "Olivine-Fe": "OLIVINE",
+        "Olivine-Mg": "OLIVINE",
+        "Orthoclase": "K-FELDSPAR",
+        "Phlogopite": "DARK-MICA",
+        "Riebeckite": "AMPHIBOLE",
+        "Staurolite": "MISC-SILICATE",
+        "Tourmaline": "TOURMALINE",
+        "Cassiterite": "OXIDE",
+        "Chlorite-Fe": "CHLORITE",
+        "Glaucophane": "AMPHIBOLE",
+        "Labradorite": "PLAGIOCLASE",
+        "Psilomelane": "OXIDE",
+        "Sillimanite": "MISC-SILICATE",
+        "Smithsonite": "CARBONATE",
+        "Spessartine": "GARNET",
+        "Anorthoclase": "K-FELDSPAR",
+        "Arfvedsonite": "AMPHIBOLE",
+        "Hedenbergite": "PYROXENE",
+        "Holmquistite": "AMPHIBOLE",
+        "Kaolinite-WX": "KAOLIN",
+        "Palygorskite": "PAL-SEP",
+        "Pyrophyllite": "OTHER-ALOH",
+        "Strontianite": "CARBONATE",
+        "AmphiboleML48": "AMPHIBOLE",
+        "Anthophyllite": "AMPHIBOLE",
+        "Chlorite-FeMg": "CHLORITE",
+        "Rhodochrosite": "CARBONATE",
+        "Stilpnomelane": "DARK-MICA",
+        "Montmorillonite": "SMECTITE",
+        "Manganocummingtonite": "AMPHIBOLE"
+      },
+      "feature_transform": {
+        "normalization": "No renormalization; known feature mass plus unseen mass preserves input mass",
+        "assignable_rows": 353059,
+        "unseen_minerals": [],
+        "unseen_mass_mean": 0.0,
+        "schema_fingerprint": "1c1b951ce0fa1a491b9b5901a8a3e283dce129dadadf3b392f6e0f16962cd245",
+        "rows_with_unseen_mass": 0
+      },
+      "data_quality_outliers": [
+        {
+          "hole_id": "20PQDD0006",
+          "support": 0.992,
+          "support_z": 3.631
+        },
+        {
+          "hole_id": "22USDH0207",
+          "support": 0.993,
+          "support_z": 3.65
+        },
+        {
+          "hole_id": "BLACK LEDGE 1",
+          "support": 1.0,
+          "support_z": 3.792
+        },
+        {
+          "hole_id": "BUR2034",
+          "support": 0.596,
+          "support_z": -3.965
+        },
+        {
+          "hole_id": "CASUARINAS 1",
+          "support": 1.0,
+          "support_z": 3.792
+        },
+        {
+          "hole_id": "CDD001",
+          "support": 0.594,
+          "support_z": -4.006
+        },
+        {
+          "hole_id": "DENISON 1",
+          "support": 1.0,
+          "support_z": 3.792
+        },
+        {
+          "hole_id": "DEPOT HILL 1",
+          "support": 1.0,
+          "support_z": 3.792
+        },
+        {
+          "hole_id": "DONGARA 07",
+          "support": 0.579,
+          "support_z": -4.307
+        },
+        {
+          "hole_id": "DONGARA 12",
+          "support": 0.613,
+          "support_z": -3.642
+        },
+        {
+          "hole_id": "DRAKEA 1",
+          "support": 1.0,
+          "support_z": 3.792
+        },
+        {
+          "hole_id": "DRDD309",
+          "support": 0.99,
+          "support_z": 3.597
+        },
+        {
+          "hole_id": "DRDD380",
+          "support": 0.986,
+          "support_z": 3.514
+        },
+        {
+          "hole_id": "EVANDRA 1",
+          "support": 1.0,
+          "support_z": 3.792
+        },
+        {
+          "hole_id": "FRESHWATER POINT 1",
+          "support": 0.986,
+          "support_z": 3.519
+        },
+        {
+          "hole_id": "G50-22-004E",
+          "support": 0.998,
+          "support_z": 3.749
+        },
+        {
+          "hole_id": "HAKIA 2",
+          "support": 1.0,
+          "support_z": 3.792
+        },
+        {
+          "hole_id": "HOVEA 1",
+          "support": 1.0,
+          "support_z": 3.792
+        },
+        {
+          "hole_id": "HOVEA 2",
+          "support": 1.0,
+          "support_z": 3.792
+        },
+        {
+          "hole_id": "IRWIN 1",
+          "support": 1.0,
+          "support_z": 3.792
+        },
+        {
+          "hole_id": "KINGIA 1",
+          "support": 1.0,
+          "support_z": 3.792
+        },
+        {
+          "hole_id": "KPDDH010",
+          "support": 0.998,
+          "support_z": 3.747
+        },
+        {
+          "hole_id": "MATCHES SPRING 1",
+          "support": 0.56,
+          "support_z": -4.669
+        },
+        {
+          "hole_id": "MONDARRA 1",
+          "support": 0.566,
+          "support_z": -4.552
+        },
+        {
+          "hole_id": "MONDARRA 8",
+          "support": 0.62,
+          "support_z": -3.508
+        },
+        {
+          "hole_id": "MT HILL 1",
+          "support": 0.575,
+          "support_z": -4.375
+        },
+        {
+          "hole_id": "NORTH ERREGULLA DEEP 1",
+          "support": 0.5,
+          "support_z": -5.817
+        },
+        {
+          "hole_id": "NORTH YARDARINO 1",
+          "support": 1.0,
+          "support_z": 3.792
+        },
+        {
+          "hole_id": "PARC001",
+          "support": 1.0,
+          "support_z": 3.792
+        },
+        {
+          "hole_id": "PARC002",
+          "support": 1.0,
+          "support_z": 3.792
+        },
+        {
+          "hole_id": "PARC003",
+          "support": 1.0,
+          "support_z": 3.792
+        },
+        {
+          "hole_id": "PARC004",
+          "support": 1.0,
+          "support_z": 3.792
+        },
+        {
+          "hole_id": "PLWDD001",
+          "support": 0.61,
+          "support_z": -3.705
+        },
+        {
+          "hole_id": "POINT LOUISE 1",
+          "support": 0.586,
+          "support_z": -4.156
+        },
+        {
+          "hole_id": "ROCKINGHAM 1",
+          "support": 1.0,
+          "support_z": 3.792
+        },
+        {
+          "hole_id": "RRLCRDD012",
+          "support": 0.997,
+          "support_z": 3.738
+        },
+        {
+          "hole_id": "RRLCRDD013",
+          "support": 0.997,
+          "support_z": 3.741
+        },
+        {
+          "hole_id": "TDH 3",
+          "support": 0.612,
+          "support_z": -3.665
+        },
+        {
+          "hole_id": "TUBRIDGI 15",
+          "support": 1.0,
+          "support_z": 3.792
+        },
+        {
+          "hole_id": "UNGANI 1 ST1",
+          "support": 1.0,
+          "support_z": 3.792
+        },
+        {
+          "hole_id": "WAITSIA 4",
+          "support": 1.0,
+          "support_z": 3.792
+        },
+        {
+          "hole_id": "WARRADONG 1",
+          "support": 0.527,
+          "support_z": -5.296
+        },
+        {
+          "hole_id": "WEST ERREGULLA 1",
+          "support": 0.607,
+          "support_z": -3.765
+        },
+        {
+          "hole_id": "WOODADA 02",
+          "support": 0.581,
+          "support_z": -4.254
+        },
+        {
+          "hole_id": "WOODADA 14",
+          "support": 0.57,
+          "support_z": -4.465
+        },
+        {
+          "hole_id": "XANADU 1",
+          "support": 1.0,
+          "support_z": 3.792
+        },
+        {
+          "hole_id": "XYRIS SOUTH 1",
+          "support": 1.0,
+          "support_z": 3.792
+        }
+      ]
+    },
+    "C:\\HyLoggerData\\products\\analysis\\interval-tir-20261014T121353-e7fc92",
+    "2026-10-14 12:04:34.467230+00:00"
+  ],
+  [
+    "prediction-swir-20261014T121239-b57e5e",
+    "prediction",
+    "swir",
+    "staged",
+    {
+      "groups": [
+        "AMPHIBOLE",
+        "CARBONATE",
+        "CHLORITE",
+        "DARK-MICA",
+        "EPIDOTE",
+        "KAOLIN",
+        "OTHER-ALOH",
+        "OTHER-MGOH",
+        "PAL-SEP",
+        "SERPENTINE",
+        "SILICA",
+        "SMECTITE",
+        "SULPHATE",
+        "TOURMALINE",
+        "WHITE-MICA"
+      ],
+      "method": "inverse-distance weighting, k=8, power=2.0",
+      "sensor": "swir",
+      "target": "mean mineral-group composition per hole (and per vertical-depth band)",
+      "summary": {
+        "holes": 1177,
+        "support_rule": "nearest-hole distance bins with skill >= 0.15 vs region",
+        "lodo_by_distance": [
+          {
+            "holes": 320,
+            "to_km": 10.0,
+            "from_km": 5.0,
+            "model_error": 0.3221,
+            "skill_vs_region": 0.24,
+            "region_baseline_error": 0.4236
+          },
+          {
+            "holes": 363,
+            "to_km": 20.0,
+            "from_km": 10.0,
+            "model_error": 0.377,
+            "skill_vs_region": 0.086,
+            "region_baseline_error": 0.4124
+          },
+          {
+            "holes": 316,
+            "to_km": 50.0,
+            "from_km": 20.0,
+            "model_error": 0.4258,
+            "skill_vs_region": -0.014,
+            "region_baseline_error": 0.4201
+          },
+          {
+            "holes": 155,
+            "to_km": 100.0,
+            "from_km": 50.0,
+            "model_error": 0.4591,
+            "skill_vs_region": -0.151,
+            "region_baseline_error": 0.3988
+          },
+          {
+            "holes": 23,
+            "to_km": 10000.0,
+            "from_km": 100.0,
+            "model_error": 0.5971,
+            "skill_vs_region": -0.117,
+            "region_baseline_error": 0.5344
+          }
+        ],
+        "support_limit_km": 20.0,
+        "lodo_median_error": 0.3937,
+        "loho_median_error": 0.2398,
+        "lodo_skill_vs_region": 0.062,
+        "loho_skill_vs_region": 0.429,
+        "global_baseline_median_error": 0.4603,
+        "region_baseline_median_error": 0.4197
+      },
+      "desurvey": {
+        "method": "minimum curvature",
+        "surveyed_holes": 1308
+      },
+      "by_distance": [
+        {
+          "holes": 659,
+          "to_km": 1.0,
+          "from_km": 0.0,
+          "model_error": 0.2009,
+          "skill_vs_region": 0.502,
+          "region_baseline_error": 0.4033
+        },
+        {
+          "holes": 102,
+          "to_km": 2.0,
+          "from_km": 1.0,
+          "model_error": 0.2276,
+          "skill_vs_region": 0.408,
+          "region_baseline_error": 0.3845
+        },
+        {
+          "holes": 124,
+          "to_km": 5.0,
+          "from_km": 2.0,
+          "model_error": 0.2715,
+          "skill_vs_region": 0.307,
+          "region_baseline_error": 0.3917
+        },
+        {
+          "holes": 92,
+          "to_km": 10.0,
+          "from_km": 5.0,
+          "model_error": 0.2811,
+          "skill_vs_region": 0.418,
+          "region_baseline_error": 0.4828
+        },
+        {
+          "holes": 70,
+          "to_km": 20.0,
+          "from_km": 10.0,
+          "model_error": 0.3538,
+          "skill_vs_region": 0.294,
+          "region_baseline_error": 0.5008
+        },
+        {
+          "holes": 78,
+          "to_km": 50.0,
+          "from_km": 20.0,
+          "model_error": 0.4606,
+          "skill_vs_region": 0.053,
+          "region_baseline_error": 0.4861
+        },
+        {
+          "holes": 40,
+          "to_km": 100.0,
+          "from_km": 50.0,
+          "model_error": 0.4229,
+          "skill_vs_region": 0.072,
+          "region_baseline_error": 0.4559
+        },
+        {
+          "holes": 12,
+          "to_km": 10000.0,
+          "from_km": 100.0,
+          "model_error": 0.4145,
+          "skill_vs_region": 0.249,
+          "region_baseline_error": 0.5521
+        }
+      ],
+      "interval_run": "interval-swir-20261014T121201-c8ee6b",
+      "depth_bands_m": [
+        [
+          0,
+          50
+        ],
+        [
+          50,
+          100
+        ],
+        [
+          100,
+          200
+        ],
+        [
+          200,
+          400
+        ],
+        [
+          400,
+          3000
+        ]
+      ],
+      "covariate_model": {
+        "folds": 5,
+        "method": "gradient boosting on lat/lon, tectonic region and IDW from other districts; folds hold out whole districts",
+        "by_distance": [
+          {
+            "holes": 320,
+            "to_km": 10.0,
+            "from_km": 5.0,
+            "model_error": 0.3881,
+            "skill_vs_region": 0.084,
+            "region_baseline_error": 0.4236
+          },
+          {
+            "holes": 363,
+            "to_km": 20.0,
+            "from_km": 10.0,
+            "model_error": 0.4049,
+            "skill_vs_region": 0.018,
+            "region_baseline_error": 0.4124
+          },
+          {
+            "holes": 316,
+            "to_km": 50.0,
+            "from_km": 20.0,
+            "model_error": 0.44,
+            "skill_vs_region": -0.047,
+            "region_baseline_error": 0.4201
+          },
+          {
+            "holes": 155,
+            "to_km": 100.0,
+            "from_km": 50.0,
+            "model_error": 0.446,
+            "skill_vs_region": -0.118,
+            "region_baseline_error": 0.3988
+          },
+          {
+            "holes": 23,
+            "to_km": 10000.0,
+            "from_km": 100.0,
+            "model_error": 0.4,
+            "skill_vs_region": 0.252,
+            "region_baseline_error": 0.5344
+          }
+        ],
+        "median_error": 0.4128,
+        "beats_lodo_idw": false,
+        "skill_vs_region": 0.017,
+        "used_beyond_support": false
+      }
+    },
+    "C:\\HyLoggerData\\products\\analysis\\prediction-swir-20261014T121239-b57e5e",
+    "2026-10-14 12:04:34.467230+00:00"
+  ],
+  [
+    "prediction-tir-20261014T121437-00a0f6",
+    "prediction",
+    "tir",
+    "staged",
+    {
+      "groups": [
+        "AMPHIBOLE",
+        "CARBONATE",
+        "CHLORITE",
+        "DARK-MICA",
+        "EPIDOTE",
+        "GARNET",
+        "K-FELDSPAR",
+        "KAOLIN",
+        "MISC-SILICATE",
+        "OLIVINE",
+        "OTHER-ALOH",
+        "OTHER-MGOH",
+        "OXIDE",
+        "PAL-SEP",
+        "PHOSPHATE",
+        "PLAGIOCLASE",
+        "PYROXENE",
+        "SERPENTINE",
+        "SILICA",
+        "SMECTITE",
+        "SULPHATE",
+        "TOURMALINE",
+        "WHITE-MICA",
+        "ZEOLITE"
+      ],
+      "method": "inverse-distance weighting, k=8, power=2.0",
+      "sensor": "tir",
+      "target": "mean mineral-group composition per hole (and per vertical-depth band)",
+      "summary": {
+        "holes": 1149,
+        "support_rule": "nearest-hole distance bins with skill >= 0.15 vs region",
+        "lodo_by_distance": [
+          {
+            "holes": 294,
+            "to_km": 10.0,
+            "from_km": 5.0,
+            "model_error": 0.2838,
+            "skill_vs_region": 0.202,
+            "region_baseline_error": 0.3558
+          },
+          {
+            "holes": 363,
+            "to_km": 20.0,
+            "from_km": 10.0,
+            "model_error": 0.3462,
+            "skill_vs_region": -0.007,
+            "region_baseline_error": 0.3437
+          },
+          {
+            "holes": 305,
+            "to_km": 50.0,
+            "from_km": 20.0,
+            "model_error": 0.3923,
+            "skill_vs_region": -0.05,
+            "region_baseline_error": 0.3737
+          },
+          {
+            "holes": 162,
+            "to_km": 100.0,
+            "from_km": 50.0,
+            "model_error": 0.4159,
+            "skill_vs_region": -0.176,
+            "region_baseline_error": 0.3537
+          },
+          {
+            "holes": 25,
+            "to_km": 10000.0,
+            "from_km": 100.0,
+            "model_error": 0.3776,
+            "skill_vs_region": 0.037,
+            "region_baseline_error": 0.3922
+          }
+        ],
+        "support_limit_km": 20.0,
+        "lodo_median_error": 0.3553,
+        "loho_median_error": 0.2303,
+        "lodo_skill_vs_region": 0.007,
+        "loho_skill_vs_region": 0.357,
+        "global_baseline_median_error": 0.3885,
+        "region_baseline_median_error": 0.3579
+      },
+      "desurvey": {
+        "method": "minimum curvature",
+        "surveyed_holes": 1308
+      },
+      "by_distance": [
+        {
+          "holes": 628,
+          "to_km": 1.0,
+          "from_km": 0.0,
+          "model_error": 0.1943,
+          "skill_vs_region": 0.456,
+          "region_baseline_error": 0.3568
+        },
+        {
+          "holes": 103,
+          "to_km": 2.0,
+          "from_km": 1.0,
+          "model_error": 0.2026,
+          "skill_vs_region": 0.412,
+          "region_baseline_error": 0.3447
+        },
+        {
+          "holes": 126,
+          "to_km": 5.0,
+          "from_km": 2.0,
+          "model_error": 0.2359,
+          "skill_vs_region": 0.299,
+          "region_baseline_error": 0.3363
+        },
+        {
+          "holes": 95,
+          "to_km": 10.0,
+          "from_km": 5.0,
+          "model_error": 0.2647,
+          "skill_vs_region": 0.295,
+          "region_baseline_error": 0.3754
+        },
+        {
+          "holes": 69,
+          "to_km": 20.0,
+          "from_km": 10.0,
+          "model_error": 0.3001,
+          "skill_vs_region": 0.178,
+          "region_baseline_error": 0.3652
+        },
+        {
+          "holes": 74,
+          "to_km": 50.0,
+          "from_km": 20.0,
+          "model_error": 0.3551,
+          "skill_vs_region": 0.081,
+          "region_baseline_error": 0.3861
+        },
+        {
+          "holes": 40,
+          "to_km": 100.0,
+          "from_km": 50.0,
+          "model_error": 0.4086,
+          "skill_vs_region": -0.181,
+          "region_baseline_error": 0.3459
+        },
+        {
+          "holes": 14,
+          "to_km": 10000.0,
+          "from_km": 100.0,
+          "model_error": 0.3075,
+          "skill_vs_region": 0.191,
+          "region_baseline_error": 0.3799
+        }
+      ],
+      "interval_run": "interval-tir-20261014T121353-e7fc92",
+      "depth_bands_m": [
+        [
+          0,
+          50
+        ],
+        [
+          50,
+          100
+        ],
+        [
+          100,
+          200
+        ],
+        [
+          200,
+          400
+        ],
+        [
+          400,
+          3000
+        ]
+      ],
+      "covariate_model": {
+        "folds": 5,
+        "method": "gradient boosting on lat/lon, tectonic region and IDW from other districts; folds hold out whole districts",
+        "by_distance": [
+          {
+            "holes": 294,
+            "to_km": 10.0,
+            "from_km": 5.0,
+            "model_error": 0.3344,
+            "skill_vs_region": 0.06,
+            "region_baseline_error": 0.3558
+          },
+          {
+            "holes": 363,
+            "to_km": 20.0,
+            "from_km": 10.0,
+            "model_error": 0.3548,
+            "skill_vs_region": -0.032,
+            "region_baseline_error": 0.3437
+          },
+          {
+            "holes": 305,
+            "to_km": 50.0,
+            "from_km": 20.0,
+            "model_error": 0.3901,
+            "skill_vs_region": -0.044,
+            "region_baseline_error": 0.3737
+          },
+          {
+            "holes": 162,
+            "to_km": 100.0,
+            "from_km": 50.0,
+            "model_error": 0.3898,
+            "skill_vs_region": -0.102,
+            "region_baseline_error": 0.3537
+          },
+          {
+            "holes": 25,
+            "to_km": 10000.0,
+            "from_km": 100.0,
+            "model_error": 0.4243,
+            "skill_vs_region": -0.082,
+            "region_baseline_error": 0.3922
+          }
+        ],
+        "median_error": 0.3686,
+        "beats_lodo_idw": false,
+        "skill_vs_region": -0.03,
+        "used_beyond_support": false
+      }
+    },
+    "C:\\HyLoggerData\\products\\analysis\\prediction-tir-20261014T121437-00a0f6",
+    "2026-10-14 12:04:34.467230+00:00"
+  ],
+  [
+    "virtual_assay-combined-20261014T121007-c7e2d5",
+    "virtual_assay",
+    "combined",
+    "staged",
+    {
+      "skill": [
+        {
+          "n": 31773,
+          "holes": 123,
+          "analyte": "SiO2",
+          "predictable": false,
+          "r2_holdout_holes": 0.094,
+          "median_abs_error_factor": 1.215
+        },
+        {
+          "n": 68841,
+          "holes": 394,
+          "analyte": "Al2O3",
+          "predictable": true,
+          "r2_holdout_holes": 0.303,
+          "median_abs_error_factor": 1.312
+        },
+        {
+          "n": 88088,
+          "holes": 500,
+          "analyte": "Fe2O3T",
+          "predictable": false,
+          "r2_holdout_holes": 0.124,
+          "median_abs_error_factor": 1.73
+        },
+        {
+          "n": 57990,
+          "holes": 478,
+          "analyte": "MgO",
+          "predictable": true,
+          "r2_holdout_holes": 0.533,
+          "median_abs_error_factor": 1.412
+        },
+        {
+          "n": 81996,
+          "holes": 460,
+          "analyte": "CaO",
+          "predictable": true,
+          "r2_holdout_holes": 0.435,
+          "median_abs_error_factor": 1.622
+        },
+        {
+          "n": 41504,
+          "holes": 405,
+          "analyte": "Na2O",
+          "predictable": true,
+          "r2_holdout_holes": 0.506,
+          "median_abs_error_factor": 1.703
+        },
+        {
+          "n": 77996,
+          "holes": 472,
+          "analyte": "K2O",
+          "predictable": true,
+          "r2_holdout_holes": 0.425,
+          "median_abs_error_factor": 1.744
+        },
+        {
+          "n": 2910,
+          "holes": 54,
+          "analyte": "LOI",
+          "predictable": true,
+          "r2_holdout_holes": 0.473,
+          "median_abs_error_factor": 1.74
+        },
+        {
+          "n": 80369,
+          "holes": 497,
+          "analyte": "S",
+          "predictable": false,
+          "r2_holdout_holes": 0.024,
+          "median_abs_error_factor": 3.301
+        },
+        {
+          "n": 89522,
+          "holes": 546,
+          "analyte": "Ni",
+          "predictable": false,
+          "r2_holdout_holes": 0.266,
+          "median_abs_error_factor": 1.995
+        },
+        {
+          "n": 73209,
+          "holes": 494,
+          "analyte": "Cr",
+          "predictable": true,
+          "r2_holdout_holes": 0.439,
+          "median_abs_error_factor": 2.008
+        },
+        {
+          "n": 53265,
+          "holes": 342,
+          "analyte": "U",
+          "predictable": false,
+          "r2_holdout_holes": -0.141,
+          "median_abs_error_factor": 3.328
+        }
+      ],
+      "method": "Histogram gradient boosting on SWIR+TIR Hellinger mineral abundances per 1 m bin; target log10(analyte); skill from GroupKFold with whole holes held out",
+      "meaning": "Predicted chemistry consistent with the mineralogy; not a measured assay",
+      "features": [
+        "swir:Actinolite",
+        "swir:Alunite-K",
+        "swir:Alunite-NH",
+        "swir:Alunite-Na",
+        "swir:Ankerite",
+        "swir:Biotite",
+        "swir:Calcite",
+        "swir:Chlorite-Fe",
+        "swir:Chlorite-FeMg",
+        "swir:Chlorite-Mg",
+        "swir:Diaspore",
+        "swir:Dickite",
+        "swir:Dolomite",
+        "swir:Epidote",
+        "swir:Gibbsite",
+        "swir:Gypsum",
+        "swir:Hornblende",
+        "swir:Jarosite",
+        "swir:Kaolinite-PX",
+        "swir:Kaolinite-WX",
+        "swir:Magnesite",
+        "swir:Montmorillonite",
+        "swir:Muscovite",
+        "swir:MuscoviticIllite",
+        "swir:Nacrite",
+        "swir:Nontronite",
+        "swir:Paragonite",
+        "swir:ParagoniticIllite",
+        "swir:Phengite",
+        "swir:PhengiticIllite",
+        "swir:Phlogopite",
+        "swir:Prehnite",
+        "swir:Pyrophyllite",
+        "swir:Riebeckite",
+        "swir:Rubellite",
+        "swir:Saponite",
+        "swir:Serpentine",
+        "swir:Siderite",
+        "swir:Talc",
+        "swir:Topaz",
+        "swir:Tourmaline",
+        "swir:Tourmaline-Fe",
+        "swir:Tremolite",
+        "swir:Zoisite",
+        "swir:OTHER-MGOH (rare)",
+        "swir:PAL-SEP (rare)",
+        "swir:SILICA (rare)",
+        "tir:Actinolite",
+        "tir:Aegirine",
+        "tir:Albite",
+        "tir:Almandine",
+        "tir:Alunite-K",
+        "tir:Alunite-Na",
+        "tir:AmphiboleML48",
+        "tir:Andesine",
+        "tir:Andradite",
+        "tir:Anhydrite",
+        "tir:Ankerite",
+        "tir:Anorthite",
+        "tir:Anorthoclase",
+        "tir:Antigorite",
+        "tir:Apatite",
+        "tir:Augite",
+        "tir:Barite",
+        "tir:Biotite",
+        "tir:Bytownite",
+        "tir:Calcite",
+        "tir:Chlorite-Fe",
+        "tir:Chlorite-FeMg",
+        "tir:Cordierite",
+        "tir:Diopside",
+        "tir:Dolomite",
+        "tir:Edenite",
+        "tir:Enstatite",
+        "tir:Epidote",
+        "tir:Glauconite",
+        "tir:Glaucophane",
+        "tir:Goethite",
+        "tir:Grossular",
+        "tir:Grunerite",
+        "tir:Gypsum",
+        "tir:Hedenbergite",
+        "tir:Hornblende",
+        "tir:Jarosite",
+        "tir:Kaolinite-WX",
+        "tir:Labradorite",
+        "tir:Lizardite",
+        "tir:Magnesite",
+        "tir:Microcline",
+        "tir:Montmorillonite",
+        "tir:Muscovite",
+        "tir:Nontronite",
+        "tir:Oligoclase",
+        "tir:Olivine-Fe",
+        "tir:Olivine-Mg",
+        "tir:Opal",
+        "tir:Orthoclase",
+        "tir:Phengite",
+        "tir:Phlogopite",
+        "tir:Pigeonite",
+        "tir:Prehnite",
+        "tir:Pyrophyllite",
+        "tir:Quartz",
+        "tir:Riebeckite",
+        "tir:Rutile",
+        "tir:Siderite",
+        "tir:Spessartine",
+        "tir:Spodumene",
+        "tir:Stilpnomelane",
+        "tir:Talc",
+        "tir:Topaz",
+        "tir:Tourmaline",
+        "tir:Zoisite",
+        "tir:AMPHIBOLE (rare)",
+        "tir:CARBONATE (rare)",
+        "tir:GARNET (rare)",
+        "tir:MISC-SILICATE (rare)",
+        "tir:OTHER-ALOH (rare)",
+        "tir:OXIDE (rare)",
+        "tir:PAL-SEP (rare)",
+        "tir:PYROXENE (rare)",
+        "tir:ZEOLITE (rare)"
+      ],
+      "assay_intervals": 167069
+    },
+    "C:\\HyLoggerData\\products\\analysis\\virtual_assay-combined-20261014T121007-c7e2d5",
+    "2026-10-14 12:04:34.467230+00:00"
+  ]
+]

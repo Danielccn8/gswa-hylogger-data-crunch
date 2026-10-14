@@ -23,7 +23,7 @@ from ..preparation import QC_VERSION, gate_readings
 from ..util import sha256_file
 
 SENSORS = {"swir": "u_tsas", "tir": "uj_clst", "vnir": "u_tsav"}
-FEATURE_VERSION = f"{QC_VERSION}+minerals-v2"
+FEATURE_VERSION = f"{QC_VERSION}+minerals-v3-support"
 NONDIAGNOSTIC = {"", "INVALID", "ASPECTRAL", "NOTAROK", "NOTAROCK", "NULL", "NAN", "NONE"}
 NOT_ROCK_GROUPS = {"NOTAROK", "NOTAROCK"}  # marker pen, core tray, wood, vegetation, tape...
 REASONS = (
@@ -91,7 +91,7 @@ def interval_features(
     primary = frame.primary_reason.to_numpy(copy=True)
 
     parts = []
-    for position in (1, 2, 3):
+    for position in (1, 2, 3) if weights_available else (1,):
         mineral_col, weight_col = f"min{position}_{suffix}", f"wt{position}_{suffix}"
         group_col = f"grp{position}_{suffix}"
         if mineral_col not in frame or weight_col not in frame:
@@ -178,6 +178,13 @@ def interval_features(
                 "depth_to_m": round(start + width_m, 6),
                 "n_total": int(total),
                 "n_admitted": n_admitted,
+                "diagnostic_fraction": n_admitted / int(total),
+                "representation": "component_weight_mixture"
+                if weights_available
+                else "primary_mineral_frequency",
+                "mask_status": "available"
+                if shared["mask_status"] == "available"
+                else "unavailable_in_processed_log",
                 "minerals": {str(k): float(v) for k, v in mix.items()},
                 "groups": {str(k): float(v) for k, v in grp.items()},
                 "dominant_mineral": max(mix, key=mix.get) if mix else None,
@@ -206,9 +213,20 @@ def interval_features(
         "intervals": len(table),
         "intervals_with_minerals": int((table.n_admitted > 0).sum()) if len(table) else 0,
         "weights_available": weights_available,
+        "representation": "component_weight_mixture"
+        if weights_available
+        else "primary_mineral_frequency",
+        "error_policy": (
+            "Descriptive fit-error mean; no calibrated mineral-specific accuracy threshold applied"
+        ),
         "minerals_seen": sorted(long.mineral.unique().tolist()),
         "mineral_groups": (long.drop_duplicates("mineral").set_index("mineral").group.to_dict()),
-        "meaning": "Mean normalised TSG component weight per diagnostic reading; not mass percent",
+        "meaning": (
+            "Mean normalised TSG component weight per diagnostic reading; not mass percent"
+            if weights_available
+            else "Primary-mineral frequency among diagnostic readings; "
+            "not a component mixture or mass percent"
+        ),
     }
     return table, report
 

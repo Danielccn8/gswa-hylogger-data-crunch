@@ -37,11 +37,61 @@ from . import (
     validation,
     virtual_assay,
 )
-from .data import balanced_sample, group_abundance, load_intervals, model_features
+from .data import (
+    FrozenFeatureSchema,
+    balanced_sample,
+    group_abundance,
+    load_intervals,
+    model_features,
+)
 from .db import connect, copy_frame, read_frame, resolve_product
 
 SENSORS = ("swir", "tir")
 SEED = 42
+
+
+ANALYSIS_VERSION = "clustering-corrections-v2"
+
+
+def _digest(*parts: bytes) -> str:
+    digest = hashlib.sha256()
+    for part in parts:
+        digest.update(len(part).to_bytes(8, "big"))
+        digest.update(part)
+    return digest.hexdigest()
+
+
+def interval_provenance(data, schema: FrozenFeatureSchema) -> dict:
+    """Bind a model to its eligible cohort, feature schema and algorithm source."""
+    identifiers = (
+        data.meta[[c for c in ("feature_set_id", "bin", "hole_id") if c in data.meta]]
+        .to_csv(index=False)
+        .encode()
+    )
+    source = {
+        module.__name__.split(".")[-1]: hashlib.sha256(
+            Path(module.__file__).read_bytes()
+        ).hexdigest()
+        for module in (clusters, fingerprints, rawcluster)
+    }
+    for name in ("data", "features", "analysis"):
+        source[name] = hashlib.sha256(
+            Path(__file__).with_name(name + ".py").read_bytes()
+        ).hexdigest()
+    return {
+        "analysis_version": ANALYSIS_VERSION,
+        "algorithm_version": getattr(clusters, "MODEL_VERSION", "legacy-unversioned"),
+        "algorithm_source_sha256": source,
+        "feature_schema_sha256": schema.fingerprint,
+        "support_policy": data.quality_report.get("policy"),
+        "data_sha256": _digest(
+            identifiers,
+            np.ascontiguousarray(data.abundance).tobytes(),
+            json.dumps(data.minerals).encode(),
+        ),
+        "schema_fit_scope": "full eligible cohort (descriptive/transductive)",
+        "cluster_fit_scope": "hole-balanced training sample, at most 150 intervals per hole",
+    }
 
 
 def _run_id(kind: str, sensor: str) -> str:
@@ -110,9 +160,22 @@ def interval_run(
         log(f"{sensor}: too few intervals ({len(data)}) for clustering")
         return None
     log(f"{sensor}: {len(data):,} intervals from {data.meta.hole_id.nunique()} holes")
-    x, feature_names = model_features(data)
+    schema = FrozenFeatureSchema.fit(data)
+    transformed = schema.transform(data)
+    x, feature_names = transformed.x, list(schema.names)
     train = balanced_sample(data.meta.hole_id, 150, SEED)
-    fit = clusters.fit(x, train, data.abundance, data.minerals, SEED)
+    try:
+        fit = clusters.fit(x, train, data.abundance, data.minerals, SEED)
+    except clusters.NoValidClusteringError as exc:
+        log(f"{sensor}: clustering unsupported: {exc}")
+        return {
+            "skipped": str(exc),
+            "sensor": sensor,
+            "quality": data.quality_report,
+            "k_scores": exc.scores,
+            "details": exc.details,
+        }
+    provenance = interval_provenance(data, schema)
     log(f"{sensor}: k_fine={fit['k']} k_coarse={fit['card']['k_coarse']}")
     domain_id, domain_table = domains.all_domains(
         data.meta, x, data.abundance, data.minerals, fit["labels"]
@@ -159,8 +222,13 @@ def interval_run(
         parent=fit["parent"],
         features=np.array(feature_names),
     )
+    (path / "feature_schema.json").write_text(json.dumps(schema.to_dict(), indent=2))
     card = {
         "sensor": sensor,
+        "provenance": provenance,
+        "feature_schema": schema.to_dict(),
+        "feature_transform": transformed.report,
+        "data_quality": data.quality_report,
         "row_unit": "1 m interval",
         "features": feature_names,
         "minerals": data.minerals,
@@ -242,6 +310,7 @@ def interval_run(
             copy_frame(conn, "domain", domain_table, json_columns=("minerals",))
     return {
         "run_id": run_id,
+        "provenance": provenance,
         "data": data,
         "fit": fit,
         "quality": quality,
@@ -265,7 +334,10 @@ def hole_run(
     naming: pd.DataFrame | None = None,
 ) -> str:
     labels, cluster_card, leaves = fingerprints.cluster_holes(distance, SEED)
-    if naming is not None:
+    if cluster_card.get("descriptive_container"):
+        cluster_card["names"] = {0: "Unassigned — no supported hole grouping"}
+        cluster_card["sizes"] = {0: len(names)}
+    elif naming is not None:
         table = naming.reindex(names).fillna(0)
         table = table.T.groupby(level=0).sum().T
         table = table.div(table.sum(axis=1).replace(0, 1), axis=0)
@@ -287,7 +359,15 @@ def hole_run(
     )
     if extra is not None:
         extra.to_parquet(path / "fingerprints.parquet")
-    card = {**card, "hole_clustering": cluster_card, "holes": len(names)}
+    card = {
+        **card,
+        "hole_clustering": cluster_card,
+        "holes": len(names),
+        "distance_data_sha256": _digest(
+            json.dumps(names).encode(), np.ascontiguousarray(distance).tobytes()
+        ),
+        "analysis_version": ANALYSIS_VERSION,
+    }
     with conn.transaction():
         _store_run(conn, run_id, "hole", sensor, card, path)
         profile = pd.DataFrame(
@@ -319,13 +399,19 @@ def hole_run(
     return run_id
 
 
-def hole_views(conn, data_dir: Path, run: dict, log) -> dict:
+def hole_views(conn, data_dir: Path, run: dict, log) -> dict | None:
     data, fit = run["data"], run["fit"]
     sensor = data.sensor
     share = fingerprints.shares(data.meta.hole_id, fit["labels"], fit["k"])
     counts = data.meta.groupby("hole_id").size()
     share = share[counts.reindex(share.index) >= fingerprints.MIN_INTERVALS]
     names = share.index.tolist()
+    if len(names) < 2:
+        log(
+            f"{sensor}: hole view skipped; {len(names)} holes with at least "
+            f"{fingerprints.MIN_INTERVALS} eligible intervals (need 2)"
+        )
+        return None
     mean = fingerprints.mean_abundance(data.meta.hole_id, data.abundance, data.minerals).loc[names]
     js = fingerprints.jensen_shannon(share.to_numpy())
     profiles = {p["cluster_id"]: p["name"] for p in fit["profiles"] if p["level"] == "fine"}
@@ -361,6 +447,8 @@ def hole_views(conn, data_dir: Path, run: dict, log) -> dict:
             "fingerprint": "share of intervals per fine cluster + mean mineral abundance",
             "distance": "Jensen-Shannon (base 2) on cluster shares",
             "interval_run": run["run_id"],
+            "interval_provenance": run.get("provenance"),
+            "distance_version": "cluster-share-jensen-shannon-v1",
             "cluster_names": profiles,
         },
         fingerprint_table,
@@ -378,32 +466,64 @@ def hole_views(conn, data_dir: Path, run: dict, log) -> dict:
     }
 
 
+def comparable_combined_distance(views: dict[str, dict]) -> tuple[list[str], np.ndarray, dict]:
+    """Equal sensor mean on holes supported by every supplied view; never impute evidence."""
+    support = {sensor: set(view["names"]) for sensor, view in views.items()}
+    union = set().union(*support.values()) if support else set()
+    common = set.intersection(*support.values()) if support else set()
+    names = sorted(common)
+    matrices = []
+    for sensor, view in views.items():
+        matrix = np.asarray(view["matrix"], dtype=float)
+        source_names = view["names"]
+        if len(set(source_names)) != len(source_names) or matrix.shape != (
+            len(source_names),
+            len(source_names),
+        ):
+            raise ValueError(f"{sensor}: invalid distance support or matrix shape")
+        if not np.isfinite(matrix).all() or (matrix < 0).any():
+            raise ValueError(f"{sensor}: distances must be finite and non-negative")
+        if not np.allclose(matrix, matrix.T) or not np.allclose(np.diag(matrix), 0):
+            raise ValueError(f"{sensor}: distances must be symmetric with zero diagonal")
+        index = {name: i for i, name in enumerate(source_names)}
+        selected = [index[name] for name in names]
+        matrices.append(matrix[np.ix_(selected, selected)])
+    distance = np.mean(matrices, axis=0) if matrices else np.empty((0, 0))
+    np.fill_diagonal(distance, 0)
+    coverage = {
+        "policy": "intersection of supported holes in every sensor view",
+        "union_holes": len(union),
+        "common_holes": len(common),
+        "excluded_holes": len(union - common),
+        "sensor_holes": {s: len(v) for s, v in support.items()},
+        "excluded_by_sensor": {s: len(union - v) for s, v in support.items()},
+        "excluded_hole_ids": sorted(union - common),
+        "pair_sensor_support": len(views),
+        "missing_distance_imputation": "none",
+    }
+    return names, distance, coverage
+
+
 def combined_view(
     conn,
     data_dir: Path,
     views: dict[str, dict],
     log,
     sensor: str = "combined",
-    description: str = "mean of SWIR and TIR JS distances where both exist; "
-    "1.0 where a pair shares no sensor",
+    description: str = "equal mean of SWIR and TIR base-2 Jensen-Shannon distances "
+    "on the common supported-hole cohort",
 ) -> str | None:
     if len(views) < 2:
+        log(f"{sensor}: skipped; both sensor views are required")
         return None
-    names = sorted(set().union(*(set(v["names"]) for v in views.values())))
-    index = {name: i for i, name in enumerate(names)}
-    total = np.zeros((len(names), len(names)))
-    count = np.zeros_like(total)
-    for view in views.values():
-        idx = [index[n] for n in view["names"]]
-        total[np.ix_(idx, idx)] += view["matrix"]
-        count[np.ix_(idx, idx)] += 1
-    distance = np.where(count > 0, total / np.maximum(count, 1), 1.0)
-    np.fill_diagonal(distance, 0)
-    summaries = {}
-    for name in names:
-        summaries[name] = {
-            s: v["summaries"].get(name) for s, v in views.items() if name in v["summaries"]
-        }
+    names, distance, coverage = comparable_combined_distance(views)
+    if len(names) < 2:
+        log(
+            f"{sensor}: skipped; {len(names)} common supported holes, "
+            f"{coverage['excluded_holes']} excluded (need at least 2)"
+        )
+        return None
+    summaries = {name: {s: v["summaries"].get(name) for s, v in views.items()} for name in names}
     run_id = hole_run(
         conn,
         data_dir,
@@ -414,14 +534,19 @@ def combined_view(
         {
             "sensor": sensor,
             "distance": description,
+            "distance_version": "common-cohort-mean-v2",
+            "coverage": coverage,
             "views": {s: v["run_id"] for s, v in views.items()},
         },
-        naming=pd.concat([v["minerals"] for v in views.values()], axis=1)
+        naming=pd.concat([v["minerals"].reindex(names) for v in views.values()], axis=1)
         .T.groupby(level=0)
         .sum()
         .T,
     )
-    log(f"{sensor}: hole run {run_id} ({len(names)} holes)")
+    log(
+        f"{sensor}: hole run {run_id} ({len(names)} common holes; "
+        f"{coverage['excluded_holes']} excluded)"
+    )
     return run_id
 
 
@@ -473,7 +598,8 @@ def sequence_views(conn, data_dir: Path, steps: dict, views: dict, log) -> list[
         seq_views,
         log,
         sensor="seq_combined",
-        description="mean of SWIR and TIR DTW sequence distances where both exist",
+        description="equal mean of SWIR and TIR DTW sequence distances on the common "
+        "supported-hole cohort; equal sensor weighting, no scale calibration",
     )
     if combined:
         created.append(combined)
@@ -489,7 +615,11 @@ def raw_views(conn, data_dir: Path, processed: dict[str, dict], log) -> dict:
         if part.hole_id.nunique() < 3:
             log(f"raw {sensor}: {part.hole_id.nunique()} summarised holes; need at least 3")
             continue
-        result = rawcluster.analyse(part, sensor, processed.get(processed_sensor), SEED)
+        try:
+            result = rawcluster.analyse(part, sensor, processed.get(processed_sensor), SEED)
+        except clusters.NoValidClusteringError as exc:
+            log(f"raw {sensor}: skipped unsupported clustering: {exc}; {exc.details}")
+            continue
         if result is None:
             continue
         summaries = {}
@@ -522,6 +652,12 @@ def raw_views(conn, data_dir: Path, processed: dict[str, dict], log) -> dict:
             naming=result["shares"].rename(columns=lambda c: f"class {c}"),
         )
         path = data_dir / "products" / "analysis" / run_id
+        if "legacy_wasserstein" in result:
+            np.savez_compressed(
+                path / "legacy_marginal_distance.npz",
+                names=np.array(result["names"]),
+                distance=result["legacy_wasserstein"].astype(np.float32),
+            )
         meta[
             ["hole_id", "bin", "depth_from_m", "depth_to_m", "spectral_class", "class_distance"]
         ].to_parquet(path / "interval_classes.parquet", index=False)
@@ -609,6 +745,8 @@ def _finite(value: float) -> float | None:
 
 def virtual_assay_run(conn, data_dir: Path, datasets: dict, holes: pd.DataFrame, log):
     """Fit chemistry-from-mineralogy models on SWIR+TIR together; store predictions."""
+    if not datasets or holes.wamex_collar_id.dropna().empty:
+        return None, None
     features = {s: (d.meta, *model_features(d)) for s, d in datasets.items()}
     meta, x, columns = virtual_assay.combined_features(features)
     collars = holes.wamex_collar_id.dropna().astype(int).to_dict()
@@ -657,6 +795,7 @@ def run_analysis(
     started = time.perf_counter()
     holes = hole_attributes(conn)
     created: list[str] = []
+    skipped: list[dict] = []
     views: dict[str, dict] = {}
     survey = desurvey.load(conn, holes)
     log(f"desurvey: {len(survey.surveyed())} holes with surveys (others treated as vertical)")
@@ -673,12 +812,23 @@ def run_analysis(
         run = interval_run(
             conn, data_dir, sensor, holes, log, data=datasets.get(sensor), chem_mismatch=mismatch
         )
-        if run is None:
+        if run is None or "skipped" in run:
+            skipped.append(
+                run
+                if run is not None
+                else {"sensor": sensor, "skipped": "fewer than 500 eligible intervals or 3 holes"}
+            )
             continue
         created.append(run["run_id"])
         progress(stage=f"{sensor} holes", step=step)
-        views[sensor] = hole_views(conn, data_dir, run, log)
-        created.append(views[sensor]["run_id"])
+        view = hole_views(conn, data_dir, run, log)
+        if view is not None:
+            views[sensor] = view
+            created.append(view["run_id"])
+        else:
+            skipped.append(
+                {"sensor": sensor, "kind": "hole", "skipped": "insufficient supported holes"}
+            )
         z = sequence.reduce(run["x"], run["train"], SEED)
         steps[sensor] = sequence.build_steps(run["data"].meta, z, run["fit"]["labels"], survey)
         progress(stage=f"{sensor} prediction", step=step)
@@ -701,6 +851,7 @@ def run_analysis(
     return {
         "runs": created,
         "promoted": promote,
+        "skipped": skipped,
         "mode": mode,
         "seconds": round(time.perf_counter() - started, 1),
     }
@@ -725,28 +876,48 @@ if __name__ == "__main__":
 
 
 def run_robustness(
-    conn, data_dir: Path, *, sample_holes: int = 150, log=print, promote=True
+    conn,
+    data_dir: Path,
+    *,
+    sample_holes: int = 150,
+    log=print,
+    promote=True,
+    interval_runs: dict[str, str] | None = None,
 ) -> dict:
-    """District-transfer and interval-width checks for the active interval clustering."""
+    """Checks bound to an exact interval model, eligible cohort and frozen schema."""
     from . import robustness
 
     holes = hole_attributes(conn)
     district = holes.district_id.dropna().astype(int).to_dict()
-    created = []
+    created, skipped = [], []
     for sensor in SENSORS:
-        active = read_frame(
+        requested = (interval_runs or {}).get(sensor)
+        source = read_frame(
             conn,
-            "SELECT card->'clustering'->>'k_fine' AS k FROM analysis_run "
-            "WHERE kind='interval' AND sensor=%s AND status='active'",
-            (sensor,),
+            "SELECT run_id, card FROM analysis_run WHERE kind='interval' AND sensor=%s "
+            + ("AND run_id=%s" if requested else "AND status='active'"),
+            (sensor, requested) if requested else (sensor,),
         )
         data = load_intervals(conn, sensor)
-        if active.empty or len(data) < 500:
+        if source.empty or len(data) < 500:
+            skipped.append({"sensor": sensor, "reason": "no model or too few eligible intervals"})
             continue
-        k = int(active.k.iloc[0])
+        source_card = source.card.iloc[0]
+        schema_card = source_card.get("feature_schema")
+        if not schema_card or not source_card.get("provenance"):
+            skipped.append({"sensor": sensor, "reason": "legacy model lacks frozen provenance"})
+            continue
+        schema = FrozenFeatureSchema.from_dict(schema_card)
+        current = interval_provenance(data, schema)
+        if current != source_card["provenance"]:
+            skipped.append({"sensor": sensor, "reason": "model source/cohort/schema changed"})
+            continue
+        k = int(source_card["clustering"]["k_fine"])
         transfer = robustness.district_transfer(data, k, district, seed=SEED)
-        mean_ari, min_ari = transfer["mean_ari"], transfer["min_ari"]
-        log(f"{sensor}: district transfer ARI mean {mean_ari} (min {min_ari})")
+        log(
+            f"{sensor}: district transfer ARI mean {transfer.get('mean_ari')} "
+            f"(min {transfer.get('min_ari')})"
+        )
         rng = np.random.default_rng(SEED)
         candidates = sorted(data.meta.hole_id.unique())
         sample = sorted(rng.choice(candidates, min(sample_holes, len(candidates)), replace=False))
@@ -756,15 +927,22 @@ def run_robustness(
         path = data_dir / "products" / "analysis" / run_id
         path.mkdir(parents=True, exist_ok=True)
         card = {
+            "source_interval_run": source.run_id.iloc[0],
+            "source_provenance": current,
+            "analysis_version": ANALYSIS_VERSION,
+            "data_quality": data.quality_report,
             "district_transfer": transfer,
             "width_sensitivity": width,
-            "meaning": "ARI near 1: withheld districts fall into the same clusters as in the "
-            "full fit. Mantel rho near 1: hole similarity does not depend on interval width.",
+            "meaning": "Development-only held-district checks evaluate assignable held rows "
+            "with an independently chosen K and frozen schema; this is not geological "
+            "accuracy. Mantel rho compares "
+            "hole-distance ordering across supported interval widths.",
         }
+        (path / "report.json").write_text(json.dumps(card, default=_default, indent=2))
         with conn.transaction():
             _store_run(conn, run_id, "robustness", sensor, card, path)
         created.append(run_id)
     if promote:
         for run_id in created:
             promote_run(conn, run_id)
-    return {"runs": created}
+    return {"runs": created, "skipped": skipped, "promoted": promote}

@@ -29,6 +29,7 @@ from psycopg.types.json import Jsonb
 
 from ..config import AppConfig
 from ..explorer.db import connect, database_url
+from ..runtime import command, hidden, root
 from . import queue
 
 STEP_TIMEOUTS = {"processed-fetch": 900, "raw-fetch": 4 * 3600, "raw-summarize": 1800}
@@ -72,9 +73,14 @@ def run_step(
 ) -> dict:
     """Run one child step; heartbeat, honour cancellation, enforce the timeout."""
     limit = timeout or STEP_TIMEOUTS[step]
-    command = [sys.executable, "-m", "hylogger.jobs.step", step, hole_id, *extra]
+    argv = command("hylogger.jobs.step", step, hole_id, *extra)
     process = subprocess.Popen(
-        command, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, text=True, env=os.environ.copy()
+        argv,
+        stdout=subprocess.PIPE,
+        stderr=subprocess.STDOUT,
+        text=True,
+        env=os.environ.copy(),
+        **hidden(),
     )
     lines: list[str] = []
     reader = threading.Thread(target=lambda: lines.extend(process.stdout), daemon=True)
@@ -187,6 +193,13 @@ def job_processed_fetch(ctx: Context) -> dict:
     prepare = ctx.params.get("prepare", True)
 
     def work(hole_id: str, conn: psycopg.Connection) -> dict:
+        if ctx.params.get("auto_sync") or ctx.params.get("skip_existing"):
+            status = conn.execute(
+                "SELECT processed_status FROM explorer_hole WHERE hole_id=%s", (hole_id,)
+            ).fetchone()
+            conn.commit()
+            if status and status[0] in ("prepared", "no_logs", "no_usable_logs"):
+                return {"ok": True, "skipped": status[0]}
         outcome = run_step(ctx, "processed-fetch", hole_id)
         if not outcome.get("ok"):
             error = str(outcome.get("error"))
@@ -288,8 +301,7 @@ def job_raw_fetch(ctx: Context) -> dict:
     summarize = ctx.params.get("summarize", True)
     discard = bool(ctx.params.get("discard_source", False))
     sizes = dict(
-        connect()
-        .execute(
+        ctx.conn.execute(
             "SELECT hole_id, coalesce(raw_size_bytes,0) FROM explorer_hole WHERE hole_id = ANY(%s)",
             (_holes(ctx),),
         )
@@ -310,6 +322,28 @@ def job_raw_fetch(ctx: Context) -> dict:
     def work(hole_id: str, conn: psycopg.Connection) -> dict:
         if hole_id in done_already and not force:
             return {"ok": True, "skipped": "already summarised"}
+        if not force:
+            summary_path = ctx.data_dir / "products" / "raw" / hole_id / "summary.json"
+            if summary_path.exists():
+                from ..errors import HyLoggerError
+                from ..explorer.raw_summary import validate_saved_summary
+
+                try:
+                    saved = json.loads(summary_path.read_text(encoding="utf-8"))
+                    if saved.get("validated"):
+                        validate_saved_summary(summary_path.parent, saved)
+                        _register_raw(conn, ctx.data_dir, hole_id, saved)
+                        set_status(
+                            conn,
+                            hole_id,
+                            "raw_status",
+                            "summarised_discarded"
+                            if saved.get("discard_requested")
+                            else "summarised",
+                        )
+                        return {"ok": True, "recovered": "validated saved products"}
+                except (HyLoggerError, ValueError, OSError, KeyError):
+                    pass  # Incomplete products are fetched and verified again.
         need = sizes.get(hole_id, 0) * (0.6 if mode == "spectral_only" else 1.4)
         free = shutil.disk_usage(ctx.data_dir).free
         if free - need < MIN_FREE_BYTES:
@@ -469,7 +503,7 @@ def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--lanes", default="processed:4,raw:2,analysis:1")
     args = parser.parse_args()
-    sys.path.insert(0, str(Path(__file__).resolve().parents[3] / "platform"))
+    sys.path.insert(0, str(root() / "platform"))
     from db.migrate import migrate
 
     for _attempt in range(30):
@@ -508,12 +542,22 @@ def main() -> None:
 
     with connect() as conn:
         presence(conn)
+    from .autofill import tick
+
     try:
+        last_presence = 0.0
         while True:
-            time.sleep(30)
+            time.sleep(3)
             with connect() as conn:
-                presence(conn)
-                queue.requeue_stale(conn)
+                if time.monotonic() - last_presence > 30:
+                    presence(conn)
+                    queue.requeue_stale(conn)
+                    last_presence = time.monotonic()
+                try:
+                    tick(conn)
+                except Exception:
+                    conn.rollback()
+                    traceback.print_exc()
     except KeyboardInterrupt:
         stop.set()
 

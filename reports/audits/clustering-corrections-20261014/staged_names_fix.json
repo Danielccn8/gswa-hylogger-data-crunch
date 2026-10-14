@@ -1,0 +1,116 @@
+[
+  {
+    "run_id": "hole-combined-20261014T123014-804589",
+    "source_run": "hole-combined-20261014T121439-746060",
+    "supported_partition_equivalent": true,
+    "before": {
+      "0": "Quartz + Chlorite-FeMg + Muscovite",
+      "1": "Chlorite-FeMg + Hornblende + Quartz"
+    },
+    "after": {
+      "0": "Quartz + Chlorite-FeMg + Muscovite",
+      "1": "Chlorite-FeMg + Hornblende + Quartz"
+    }
+  },
+  {
+    "run_id": "hole-raw_nir-20261014T123016-acf1f9",
+    "source_run": "hole-raw_nir-20261014T121904-f124b4",
+    "supported_partition_equivalent": false,
+    "before": {
+      "0": "Unassigned \u2014 no supported hole grouping"
+    },
+    "after": {
+      "0": "Unassigned \u2014 no supported hole grouping"
+    }
+  },
+  {
+    "run_id": "hole-raw_tir-20261014T123017-bd2953",
+    "source_run": "hole-raw_tir-20261014T122019-e6f74a",
+    "supported_partition_equivalent": true,
+    "before": {
+      "0": "class 0-dominant",
+      "1": "class 2-dominant"
+    },
+    "after": {
+      "0": "class 0-dominant",
+      "1": "class 2-dominant"
+    }
+  },
+  {
+    "run_id": "hole-seq_combined-20261014T123019-4f7a0f",
+    "source_run": "hole-seq_combined-20261014T121618-40fc62",
+    "supported_partition_equivalent": true,
+    "before": {
+      "0": "Chlorite-FeMg + Quartz + Hornblende",
+      "1": "Quartz + Kaolinite-WX + Muscovite"
+    },
+    "after": {
+      "0": "Chlorite-FeMg + Quartz + Hornblende",
+      "1": "Quartz + Kaolinite-WX + Muscovite"
+    }
+  },
+  {
+    "run_id": "hole-seq_swir-20261014T123020-72a5b5",
+    "source_run": "hole-seq_swir-20261014T121525-b51998",
+    "supported_partition_equivalent": true,
+    "before": {
+      "0": "Chlorite-FeMg + Muscovite + Hornblende",
+      "1": "Kaolinite-WX + Kaolinite-PX + Dickite"
+    },
+    "after": {
+      "0": "Chlorite-FeMg + Muscovite + Hornblende",
+      "1": "Kaolinite-WX + Kaolinite-PX + Dickite"
+    }
+  },
+  {
+    "run_id": "hole-seq_tir-20261014T123021-4b2327",
+    "source_run": "hole-seq_tir-20261014T121614-bfab29",
+    "supported_partition_equivalent": true,
+    "before": {
+      "0": "Quartz + Albite + Chlorite-FeMg",
+      "1": "Quartz + Talc + Augite"
+    },
+    "after": {
+      "0": "Quartz + Albite + Chlorite-FeMg",
+      "1": "Quartz + Talc + Augite"
+    }
+  },
+  {
+    "run_id": "hole-swir-20261014T123022-89a20a",
+    "source_run": "hole-swir-20261014T121214-7e48f9",
+    "supported_partition_equivalent": true,
+    "before": {
+      "0": "Chlorite-FeMg-dominant",
+      "1": "Muscovite + Chlorite-FeMg + Chlorite-Fe",
+      "2": "Kaolinite-WX + Kaolinite-PX + Montmorillonite",
+      "3": "Hornblende + Chlorite-FeMg + Muscovite",
+      "4": "Phengite + Muscovite + Chlorite-FeMg",
+      "5": "Chlorite-Mg + Talc + Serpentine",
+      "6": "Paragonite + Chlorite-Fe + Montmorillonite",
+      "7": "Dolomite-dominant"
+    },
+    "after": {
+      "0": "Chlorite-FeMg + Hornblende + Chlorite-Fe",
+      "1": "Muscovite + Chlorite-FeMg + Chlorite-Fe",
+      "4": "Phengite + Muscovite + Chlorite-FeMg",
+      "5": "Chlorite-Mg + Talc + Serpentine",
+      "2": "Kaolinite-WX + Kaolinite-PX + Montmorillonite",
+      "3": "Hornblende + Chlorite-FeMg + Muscovite",
+      "6": "Paragonite + Chlorite-Fe + Montmorillonite",
+      "7": "Dolomite-dominant"
+    }
+  },
+  {
+    "run_id": "hole-tir-20261014T123024-ebc2ff",
+    "source_run": "hole-tir-20261014T121407-de1339",
+    "supported_partition_equivalent": true,
+    "before": {
+      "0": "Quartz-dominant",
+      "1": "Quartz + Chlorite-FeMg + Hornblende"
+    },
+    "after": {
+      "0": "Quartz-dominant",
+      "1": "Quartz + Chlorite-FeMg + Hornblende"
+    }
+  }
+]

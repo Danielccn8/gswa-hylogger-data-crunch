@@ -1,0 +1,45 @@
+{
+  "intervals": {
+    "swir": {
+      "old_intervals": 373567,
+      "new_intervals": 289266,
+      "old_fine_k": 12,
+      "new_fine_k": 8,
+      "new_coarse_k": 6,
+      "final_training_min_share": 0.041688920315638235
+    },
+    "tir": {
+      "old_intervals": 359850,
+      "new_intervals": 353059,
+      "old_fine_k": 10,
+      "new_fine_k": 2,
+      "new_coarse_k": 2,
+      "final_training_min_share": 0.31902754356379986
+    }
+  },
+  "hole_counts": {
+    "combined": 1100,
+    "raw_nir": 1261,
+    "raw_tir": 1225,
+    "seq_combined": 1106,
+    "seq_swir": 1178,
+    "seq_tir": 1140,
+    "swir": 1177,
+    "tir": 1149
+  },
+  "raw_comparators": {
+    "raw_nir": {
+      "same_names": true,
+      "spearman_rho": 0.9277115335780267,
+      "interpretation": "Same cohort/PCA; rank agreement does not validate geological accuracy or select a champion",
+      "legacy_distance_version": "marginal-variance-weighted-wasserstein-v1"
+    },
+    "raw_tir": {
+      "same_names": true,
+      "spearman_rho": 0.9414371915710548,
+      "interpretation": "Same cohort/PCA; rank agreement does not validate geological accuracy or select a champion",
+      "legacy_distance_version": "marginal-variance-weighted-wasserstein-v1"
+    }
+  },
+  "raw_input_files": 5216
+}

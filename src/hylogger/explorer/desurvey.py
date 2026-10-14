@@ -65,6 +65,8 @@ class Desurvey:
 
 def load(conn: psycopg.Connection, holes: pd.DataFrame) -> Desurvey:
     """holes: index hole_id with wamex_collar_id and name columns."""
+    if conn.execute("SELECT to_regclass('ref_survey')").fetchone()[0] is None:
+        return Desurvey({})
     stations: dict[str, tuple[np.ndarray, np.ndarray, float]] = {}
     wamex = read_frame(
         conn,

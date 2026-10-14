@@ -1,0 +1,26 @@
+{
+  "scope": "all_catalogue",
+  "holes": 2161,
+  "processed": {
+    "holes": 1897,
+    "pending": 11,
+    "download_holes": 11,
+    "already_prepared": 1322,
+    "no_public_logs": 564,
+    "estimated_minutes": 0.8,
+    "estimated_bytes": 330000000
+  },
+  "raw": {
+    "holes": 1361,
+    "pending": 5,
+    "download_holes": 5,
+    "already_summarised": 1356,
+    "zip_bytes": 6171400000,
+    "spectral_only_transfer_bytes": 863996000,
+    "spectral_only_disk_bytes": 1851420000,
+    "summary_bytes": 15000000,
+    "estimated_minutes_spectral_only": 3.6
+  },
+  "free_bytes": 50325745664,
+  "estimate_note": "Approximate costs for work to download; catalogue/status is resolved again at submission. Existing raw summaries do not imply retained original ZIP files."
+}

@@ -1,0 +1,21 @@
+{
+  "active_ids": [
+    "hole-combined-20261014T123014-804589",
+    "hole-raw_nir-20261014T123016-acf1f9",
+    "hole-raw_tir-20261014T123017-bd2953",
+    "hole-seq_combined-20261014T123019-4f7a0f",
+    "hole-seq_swir-20261014T123020-72a5b5",
+    "hole-seq_tir-20261014T123021-4b2327",
+    "hole-swir-20261014T123022-89a20a",
+    "hole-tir-20261014T123024-ebc2ff",
+    "interval-swir-20261014T121201-c8ee6b",
+    "interval-tir-20261014T121353-e7fc92",
+    "prediction-swir-20261014T121239-b57e5e",
+    "prediction-tir-20261014T121437-00a0f6",
+    "robustness-swir-20261014T122213-22bbc9",
+    "robustness-tir-20261014T122320-9f3e13",
+    "virtual_assay-combined-20261014T121007-c7e2d5"
+  ],
+  "jobs_count": 19,
+  "jobs_active": []
+}

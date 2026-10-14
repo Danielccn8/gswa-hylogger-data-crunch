@@ -1,0 +1,41 @@
+{
+  "completed_at": "2026-10-14T12:37:02.330337+00:00",
+  "local_database": "127.0.0.1:5434/hylogger",
+  "active_ids": [
+    "interval-swir-20261014T121201-c8ee6b",
+    "interval-tir-20261014T121353-e7fc92",
+    "prediction-swir-20261014T121239-b57e5e",
+    "prediction-tir-20261014T121437-00a0f6",
+    "virtual_assay-combined-20261014T121007-c7e2d5",
+    "hole-combined-20261014T123014-804589",
+    "hole-raw_nir-20261014T123016-acf1f9",
+    "hole-raw_tir-20261014T123017-bd2953",
+    "hole-seq_combined-20261014T123019-4f7a0f",
+    "hole-seq_swir-20261014T123020-72a5b5",
+    "hole-seq_tir-20261014T123021-4b2327",
+    "hole-swir-20261014T123022-89a20a",
+    "hole-tir-20261014T123024-ebc2ff",
+    "robustness-swir-20261014T122213-22bbc9",
+    "robustness-tir-20261014T122320-9f3e13"
+  ],
+  "archived_previous_ids": [
+    "hole-combined-20261012T152809-4362d1",
+    "hole-raw_nir-20261012T153506-c03a37",
+    "hole-raw_tir-20261012T153623-66a6bf",
+    "hole-seq_combined-20261012T153051-2be116",
+    "hole-seq_swir-20261012T152927-0af5be",
+    "hole-seq_tir-20261012T153047-f68b74",
+    "hole-swir-20261012T152431-ab4d3a",
+    "hole-tir-20261012T152716-314fae",
+    "interval-swir-20261012T152417-4c8ae5",
+    "interval-tir-20261012T152657-5336ea",
+    "prediction-swir-20261012T152455-017517",
+    "prediction-tir-20261012T152806-c0ba4e",
+    "robustness-swir-20261008T090904-b19122",
+    "robustness-tir-20261008T091442-17f9d1",
+    "virtual_assay-combined-20261012T152247-51b020"
+  ],
+  "atomic": true,
+  "promotion_authority": "Parent review after user-authorized local correction",
+  "rollback_manifest": "promotion_manifest.json"
+}

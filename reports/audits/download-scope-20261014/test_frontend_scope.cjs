@@ -1,0 +1,40 @@
+const assert = require('node:assert/strict');
+const fs = require('node:fs');
+const vm = require('node:vm');
+const path = require('node:path');
+const repo = path.resolve(__dirname, '../../..');
+const code = fs.readFileSync(path.join(repo,'platform/frontend/js/views/data.js'),'utf8').replace(/^import .*;\r?\n/gm,'').replace(/export /g,'');
+const submissions = [];
+const nodes = {};
+const node = {isConnected:true,_html:'',set innerHTML(html){this._html=html; for(const id of ['analyze','full-zip','discard']){const tag=html.match(new RegExp('<input[^>]*id="'+id+'"[^>]*>'));if(tag)nodes['#'+id]={checked:tag[0].includes('checked')};}},get innerHTML(){return this._html;}};
+nodes['#actions']=node;
+nodes['#q']={value:'preserve this search'};
+let chosen=['H0001'];
+let failEstimate=false, deferEstimate=false;
+let deferred=[];
+const estimates=[];
+function estimate(payload){const all=payload.scope==='all_catalogue';return {scope:payload.scope,holes:all?3102:chosen.length,processed:{holes:all?3102:1,already_prepared:0,no_public_logs:0,pending:all?3100:1,download_holes:all?3100:1,estimated_minutes:1,estimated_bytes:1},raw:{holes:all?3102:1,already_summarised:0,pending:all?3102:1,download_holes:all?3102:1,zip_bytes:1,spectral_only_transfer_bytes:1,spectral_only_disk_bytes:1,summary_bytes:1,estimated_minutes_spectral_only:1},free_bytes:1,estimate_note:'test'}}
+const context={console,clearInterval, setInterval,$:id=>nodes[id]||null,selection:{list:()=>[...chosen]},num:String,bytes:String,esc:String,toast:()=>{},loading:()=>{},failure:()=>{},go:()=>{},confirm:()=>true, api:async(url,options)=>{if(url==='/api/v2/estimate'){estimates.push(options.body);if(failEstimate)throw Error('estimate unavailable');if(deferEstimate)return new Promise(resolve=>deferred.push(()=>resolve(estimate(options.body))));return estimate(options.body);}if(url==='/api/v2/jobs'){submissions.push(JSON.parse(JSON.stringify(options.body)));return {job_id:'mocked-123456'};}throw Error('Unexpected external request '+url);}};
+vm.createContext(context);new vm.Script(code,{filename:'data.js'}).runInContext(context);
+async function run(source){return await vm.runInContext(source,context)}
+(async()=>{
+ await run('actions()');
+ assert(node.innerHTML.includes('Selected holes (1)'));
+ nodes['#analyze'].checked=false;node.onchange({target:{id:'analyze',checked:false}});
+ nodes['#full-zip'].checked=true;node.onchange({target:{id:'full-zip',checked:true}});
+ await run("downloadScope='all_catalogue'; actions()");
+ assert(node.innerHTML.includes('All catalogue (missing data)'));
+ assert(node.innerHTML.includes('3102 catalogue holes'));
+ assert.equal(nodes['#analyze'].checked,false);assert.equal(nodes['#full-zip'].checked,true);
+ const click=kind=>node.onclick({target:{closest:()=>({dataset:{job:kind}})}});
+ await click('processed_fetch');await click('raw_fetch');
+ assert.equal(submissions[0].params.scope,'all_catalogue');assert.equal(submissions[0].params.holes,undefined);assert.equal(submissions[0].params.analyze,false);
+ assert.equal(submissions[1].params.scope,'all_catalogue');assert.equal(submissions[1].params.holes,undefined);assert.equal(submissions[1].params.analyze,false);assert.equal(submissions[1].params.mode,'full_zip');
+ await run("downloadScope='selected'; actions()");await click('processed_fetch');
+ assert.deepEqual(submissions[2].params.holes,['H0001']);assert.equal(submissions[2].params.scope,'selected');assert.equal(submissions[2].params.analyze,false);
+ assert.deepEqual(chosen,['H0001']);assert.equal(nodes['#q'].value,'preserve this search');
+ failEstimate=true;await run('actions()');assert(node.innerHTML.includes('estimate unavailable'));const count=submissions.length;await click('raw_fetch');assert.equal(submissions.length,count);failEstimate=false;
+ chosen=[];await run('actions()');assert(node.innerHTML.includes('Select holes, or choose All catalogue'));assert(node.innerHTML.includes('data-job="processed_fetch" disabled'));
+ chosen=['H0001'];deferEstimate=true;const old=run("downloadScope='all_catalogue'; actions()");const latest=run("downloadScope='selected'; actions()");deferred[1]();await latest;deferred[0]();await old;assert(node.innerHTML.includes('Selected holes (1)'));assert(!node.innerHTML.includes('3102 catalogue holes'));
+ const result={status:'PASS',checks:['all scope passes no frontend IDs beyond800/2500','processed/raw both analyze:false','raw fullZIP setting retained','selected explicitIDs retained','selection/search unchanged','empty/error disabled/no submit','stale async estimate ignored'],mocked_submissions:submissions,real_jobs_submitted:0};fs.writeFileSync(path.join(__dirname,'frontend_mock_acceptance.json'),JSON.stringify(result,null,2));console.log(JSON.stringify(result,null,2));
+})().catch(error=>{console.error(error);process.exitCode=1;});

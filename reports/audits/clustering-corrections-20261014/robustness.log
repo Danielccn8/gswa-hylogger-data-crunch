@@ -1,0 +1,5 @@
+swir: district transfer ARI mean None (min None)
+swir: width sensitivity {'0.5': 0.963, '2.0': 0.751} K {'0.5': 8, '1.0': 8, '2.0': 8}
+tir: district transfer ARI mean None (min None)
+tir: width sensitivity {'0.5': 0.987, '2.0': 0.977} K {'0.5': 2, '1.0': 2, '2.0': 2}
+{"runs": ["robustness-swir-20261014T122213-22bbc9", "robustness-tir-20261014T122320-9f3e13"], "skipped": [], "promoted": false, "width_sources_unchanged": true, "width_sources_match_active_qc": true, "validation_source_sha256": "5791b1796e4fd01b36e3f59af3a07455b409bbb5123614bdd63952cadb6c6276"}

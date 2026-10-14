@@ -1,0 +1,26 @@
+{
+  "full_pytest": {
+    "status": "PASS",
+    "passed": 132,
+    "skipped": 12,
+    "warnings": 2,
+    "seconds": 14.54,
+    "note": "Final source including grouping, strict JSON metadata and future Unassigned guard. Skips require a dedicated configured test DB; shared live local DB not used for fixtures."
+  },
+  "integration_tests": {
+    "status": "PASS",
+    "passed": 11
+  },
+  "ruff_touched_sources_tests_backend": "PASS",
+  "frontend_node_syntax": "PASS",
+  "git_diff_whitespace": "PASS",
+  "live_runtime": {
+    "url": "http://127.0.0.1:8100",
+    "active_runs": 15,
+    "promotion": "atomic local only",
+    "backend_new_metadata_gate_loaded": true,
+    "api_acceptance": "PASS",
+    "browser_acceptance": "PASS",
+    "api_restart": "hylogger_v2-api-1 only"
+  }
+}
