@@ -1,5 +1,65 @@
 # GSWA HyLogger Data Crunch
 
+## GSWA Hackathon 2026 delivery
+
+**Team:** Group 7 UWA Capstone. **Challenge:** Data Crunch.
+
+**Captain:** Daniel Cartagena ([@Danielccn8](https://github.com/Danielccn8)).
+Members: Avantika Naudiyal, Daniel Cartagena, Jovan Aurelius Wylen,
+Sathi Padippingal and Yeshwanth Reddy G Gunnamreddy.
+
+HyLogger Explorer helps geologists compare mineral and spectral patterns across
+Western Australian drill holes. It prepares depth intervals, records quality
+exclusions and provides a local browser interface for maps, profiles, similarity
+and exploratory clustering. Its outputs support geological review; they do not
+confirm rock types, ore grades or geological accuracy.
+
+### Run the Windows application
+
+Download [HyLoggerExplorer.exe from the release](https://github.com/Danielccn8/gswa-hylogger-data-crunch/releases/tag/explorer-v2-2026.10.14)
+and open it on Windows 64-bit. Python and Docker installation are not required.
+The application creates a local workspace and opens in your browser. Collection
+starts paused. Enable it when ready to acquire public data, then inspect progress
+and failures in the Data tab. Close with **Close Explorer and save progress**.
+
+A fresh installation does not include the populated research database or the
+1,000+ hole results shown in the presentation. Acquisition and analysis take time
+and depend on source availability. The executable is unsigned; a separate clean
+Windows machine has not yet been tested. See the [recipient guide](docs/delivery/DESKTOP_DELIVERY.md).
+
+### Data and results
+
+Public sources are [WA NVCL/NCI THREDDS packages](https://thredds.nci.org.au/thredds/catalog/rs07/WA/catalog.html)
+and NVCL scalar logs accessed through `nvcl-kit`. The local research installation
+also used the GSWA interim HyLogger Drillholes package from
+[DASC](https://dasc.dmirs.wa.gov.au/), with its source-specific access and attribution
+conditions. That reference package, geological data and local database are not
+distributed with the application.
+
+The [selection files](configs/selections/) identify pilot cohorts. The raw pilot
+used 13TRDD012, 13TRDD013, 15RCDVZ001, 16MYD0047, 22USDH0207, EPT2276, FDH002,
+KEDD002, LD82625W1, PND003, PND004, PND005, RRLGDDD093, SPBD0364 and WKDD15001.
+The larger Explorer collection uses available WA catalogue records; source
+identities and admission policies are recorded in its analysis products.
+
+The corrected 14 October models contain 289,266 eligible SWIR intervals from
+1,272 holes and 353,059 eligible TIR intervals from 1,224 holes. Their fine/broad
+group counts are 8/6 and 2/2. The combined processed whole-hole view covers
+1,100 holes with both sensors. See the [correction report](docs/delivery/CLUSTERING_CORRECTIONS_2026-10-14.md).
+The [12 October evidence](docs/delivery/EXPLORER_V2_EVIDENCE.md) is a historical
+snapshot and must not be used as the corrected model's results.
+
+These final models are separate from the 20-hole processed TIR and 15-hole raw
+notebook experiments. All are exploratory. No geological acceptance is claimed.
+
+### Licence and AI declaration
+
+Project code uses the [MIT licence](LICENSE). Third-party components retain their
+own licences. Data remain subject to their source licences and are not covered by
+the code licence. Cite GSWA, AuScope/NVCL and NCI for the products used.
+AI tools assisted development, review and presentation preparation. The team
+remains responsible for the submission and its claims.
+
 UWA CITS5553 Data Science Capstone, Group 7. This repository provides a reproducible path from GSWA/NVCL data discovery to clustering-ready HyLogger features.
 
 The primary workflow is:

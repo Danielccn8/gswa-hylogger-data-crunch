@@ -4,8 +4,13 @@
 
 Download `HyLoggerExplorer.exe` from the repository's
 [GitHub Releases](https://github.com/Danielccn8/gswa-hylogger-data-crunch/releases).
-The repository is private, so recipients need repository access to download it.
+The repository and release are public.
 Release assets include checksums and the corresponding source snapshot.
+
+A new installation does not include the populated research database or the
+1,000+ hole analysis shown in the presentation. Public acquisition and analysis
+must complete before those views contain results. Coverage depends on the data
+available when collection runs; exact research-snapshot counts are not guaranteed.
 
 1. Copy `HyLoggerExplorer.exe` to the recipient's Windows 64-bit computer and open it.
 2. Explorer creates its own database and opens the Data page in the default browser.
