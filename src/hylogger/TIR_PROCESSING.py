@@ -81,30 +81,22 @@ def download_team_cohort() -> None:
 # Step 1: Check TIR data availability across the 20-hole cohort
 # ---------------------------------------------------------------------------
 
-def check_tir_availability() -> pd.DataFrame:
-    """
-    For every hole in HOLE_IDS, run `hylogger processed preview` and count
-    how many log rows belong to the TIR region specifically (not SWIR).
-    """
+def check_tir_availability(hole_ids: list[str] | None = None) -> pd.DataFrame:
+    """For the given hole_ids (defaults to all 20), count TIR vs SWIR logs."""
+    hole_ids = hole_ids or HOLE_IDS
     rows = []
-    for hole_id in HOLE_IDS:
-        result = subprocess.run(
-            ["hylogger", "processed", "preview", hole_id],
-            capture_output=True, text=True,
-        )
+    for hole_id in hole_ids:
+        result = subprocess.run(["hylogger", "processed", "preview", hole_id], capture_output=True, text=True)
         output = result.stdout
         total_match = re.search(r"(\d+)\s+displayed logs", output)
         total_logs = int(total_match.group(1)) if total_match else 0
         tir_lines = [line for line in output.splitlines() if re.search(r"\bTIR\b", line)]
         swir_lines = [line for line in output.splitlines() if re.search(r"\bSWIR\b", line)]
         rows.append({
-            "hole_id": hole_id,
-            "total_logs": total_logs,
-            "tir_log_count": len(tir_lines),
-            "swir_log_count": len(swir_lines),
+            "hole_id": hole_id, "total_logs": total_logs,
+            "tir_log_count": len(tir_lines), "swir_log_count": len(swir_lines),
             "has_tir": len(tir_lines) > 0,
         })
-
     summary = pd.DataFrame(rows)
     print(summary.to_string(index=False))
     print(f"\nHoles with TIR data: {summary['has_tir'].sum()} of {len(summary)}")
@@ -159,10 +151,14 @@ def load_hole_tir(hole_id: str) -> dict:
     }
 
 
-def load_all_tir_holes() -> dict:
-    """Load TIR data for every hole in HOLE_IDS."""
+def load_all_tir_holes(hole_ids: list[str] | None = None) -> dict:
+    """
+    Load TIR data for the given hole_ids (defaults to the full HOLE_IDS
+    cohort if not specified). Pass a subset to work with fewer holes.
+    """
+    hole_ids = hole_ids or HOLE_IDS
     holes = {}
-    for hole_id in HOLE_IDS:
+    for hole_id in hole_ids:
         try:
             holes[hole_id] = load_hole_tir(hole_id)
             print(f"{hole_id}: loaded {len(holes[hole_id]['metadata'])} rows")
@@ -346,6 +342,7 @@ def cluster_tir_pca(pca_result: dict, *, n_clusters=None, k_values=range(2, 9), 
         "assignments": assignments, "cluster_sizes": cluster_sizes, "model": model,
         "pca": pca_result["pca"], "wavelengths": pca_result["wavelengths"],
         "mean_snv_spectra": mean_spectra, "k_scores": k_scores,
+        "spectra_pca": spectra_pca,
     }
 
 
@@ -464,18 +461,635 @@ def plot_hole_similarity_heatmap(similarity_df: pd.DataFrame) -> None:
     plt.tight_layout()
     plt.show()
 
+# ---------------------------------------------------------------------------
+# Step 9b: Whole-hole baseline clustering (Grp1 ujCLST) — for comparison
+# against the per-reading spectral clusters above, not as validation.
+# ---------------------------------------------------------------------------
+
+def run_whole_hole_baseline(config, selection=SELECTION_NAME, feature_log="grp1_uj_clst",
+                             n_clusters=2, random_state=42):
+    """
+    Cluster whole holes using TSG's own Grp1 ujCLST mineral-group proportions,
+    independent of the raw-spectral pipeline above. Mirrors the team's
+    02_tir_ujclst_clustering.ipynb baseline exactly (no PCA in the clustering
+    itself; PCA is only used later for visualization).
+    """
+    from hylogger.baseline import fit_baseline, load_baseline_inputs
+
+    inputs = load_baseline_inputs(config, selection, feature_log=feature_log)
+    result = fit_baseline(
+        inputs,
+        n_clusters=n_clusters,
+        random_state=random_state,
+        pca_variance=None,
+    )
+
+    print(f"Whole-hole baseline ({feature_log}): silhouette={result.metrics['silhouette_score']:.3f}, "
+          f"cluster sizes={result.metrics['cluster_sizes']}")
+    if result.metrics["has_singleton_cluster"]:
+        print("Caution: at least one whole-hole cluster contains only one hole.")
+
+    return inputs, result
+
+def check_baseline_stability(inputs, n_clusters=2, n_seeds=10):
+    """
+    Run K-means on the whole-hole proportions with different random seeds and
+    compute pairwise Adjusted Rand Index (ARI) between the resulting label
+    sets. Low mean/min ARI means the clustering is sensitive to initialization.
+    """
+    from itertools import combinations
+    from sklearn.cluster import KMeans
+    from sklearn.metrics import adjusted_rand_score
+    from sklearn.preprocessing import StandardScaler
+
+    varying = inputs.proportions.columns[inputs.proportions.nunique() > 1].tolist()
+    X_scaled = StandardScaler().fit_transform(inputs.proportions[varying])
+
+    label_sets = {}
+    for seed in range(n_seeds):
+        model = KMeans(n_clusters=n_clusters, random_state=seed, n_init=20)
+        label_sets[seed] = model.fit_predict(X_scaled)
+
+    ari_scores = [
+        adjusted_rand_score(label_sets[a], label_sets[b])
+        for a, b in combinations(label_sets.keys(), 2)
+    ]
+
+    print(f"Stability check ({n_seeds} seeds, {len(ari_scores)} pairs): "
+          f"mean ARI={sum(ari_scores)/len(ari_scores):.3f}, "
+          f"min ARI={min(ari_scores):.3f}, max ARI={max(ari_scores):.3f}")
+
+    return {"mean_ari": sum(ari_scores) / len(ari_scores), "min_ari": min(ari_scores), "max_ari": max(ari_scores)}
+
+
+def check_baseline_scaling_sensitivity(inputs, n_clusters=2, random_state=42):
+    """
+    Compare the whole-hole clustering with vs. without StandardScaler.
+    A low ARI here means the cluster split is an artifact of scaling choice,
+    not a robust pattern in the raw proportions.
+    """
+    from sklearn.cluster import KMeans
+    from sklearn.metrics import adjusted_rand_score
+    from sklearn.preprocessing import StandardScaler
+
+    varying = inputs.proportions.columns[inputs.proportions.nunique() > 1].tolist()
+
+    X_scaled = StandardScaler().fit_transform(inputs.proportions[varying])
+    scaled_labels = KMeans(n_clusters=n_clusters, random_state=random_state, n_init=20).fit_predict(X_scaled)
+
+    X_unscaled = inputs.proportions[varying]
+    unscaled_labels = KMeans(n_clusters=n_clusters, random_state=random_state, n_init=20).fit_predict(X_unscaled)
+
+    ari = adjusted_rand_score(scaled_labels, unscaled_labels)
+    print(f"Scaled-vs-unscaled sensitivity: ARI={ari:.3f} "
+          f"({'robust' if ari > 0.5 else 'fragile — depends heavily on scaling'})")
+
+    return ari
+
+
+# ---------------------------------------------------------------------------
+# Step 10: Interactive multi-panel dashboard (3D PCA + supporting 2D views)
+# ---------------------------------------------------------------------------
+
+def plot_tir_dashboard_3d(result: dict, *, sample_size: int = 8_000, random_state: int = 42) -> None:
+    """
+    Interactive multi-panel dashboard: 3D PCA scatter (top-left), mean
+    spectrum per cluster (top-right), cluster composition by hole heatmap
+    (bottom-left), depth distribution per cluster (bottom-right).
+    """
+    import plotly.graph_objects as go
+    from plotly.subplots import make_subplots
+
+    spectra_pca = result["spectra_pca"]
+    assignments = result["assignments"]
+    n_clusters = len(result["mean_snv_spectra"])
+    colors = ["#636EFA", "#EF553B", "#00CC96", "#AB63FA", "#FFA15A", "#19D3F3", "#FF6692", "#B6E880"]
+
+    n = len(assignments)
+    if n > sample_size:
+        rng = np.random.default_rng(random_state)
+        idx = rng.choice(n, size=sample_size, replace=False)
+    else:
+        idx = np.arange(n)
+
+    fig = make_subplots(
+        rows=2, cols=2,
+        specs=[[{"type": "scene"}, {"type": "xy"}], [{"type": "xy"}, {"type": "xy"}]],
+        subplot_titles=(
+            "PCA space (3D, colored by cluster)", "Mean spectrum per cluster",
+            "Cluster composition by hole (%)", "Depth distribution per cluster",
+        ),
+    )
+
+    for c in range(n_clusters):
+        mask = assignments["cluster_id"].to_numpy()[idx] == c
+        fig.add_trace(
+            go.Scatter3d(
+                x=spectra_pca[idx][mask, 0], y=spectra_pca[idx][mask, 1], z=spectra_pca[idx][mask, 2],
+                mode="markers", marker=dict(size=2, color=colors[c % len(colors)], opacity=0.5),
+                name=f"Cluster {c}", legendgroup=f"Cluster {c}",
+            ),
+            row=1, col=1,
+        )
+
+    for c in range(n_clusters):
+        fig.add_trace(
+            go.Scatter(
+                x=result["wavelengths"], y=result["mean_snv_spectra"][c],
+                mode="lines", line=dict(color=colors[c % len(colors)]),
+                name=f"Cluster {c}", legendgroup=f"Cluster {c}", showlegend=False,
+            ),
+            row=1, col=2,
+        )
+
+    pivot = result["cluster_sizes"].pivot(index="hole_id", columns="cluster_id", values="percentage").fillna(0)
+    fig.add_trace(
+        go.Heatmap(
+            z=pivot.values, x=[f"Cluster {c}" for c in pivot.columns], y=pivot.index,
+            colorscale="Viridis", colorbar=dict(title="%", x=0.44, y=0.22, len=0.4),
+        ),
+        row=2, col=1,
+    )
+
+    for c in range(n_clusters):
+        fig.add_trace(
+            go.Box(
+                y=assignments.loc[assignments["cluster_id"] == c, "depth_m"],
+                name=f"Cluster {c}", marker_color=colors[c % len(colors)],
+                legendgroup=f"Cluster {c}", showlegend=False,
+            ),
+            row=2, col=2,
+        )
+
+    fig.update_layout(height=900, width=1200, title_text="TIR clustering — interactive dashboard")
+    fig.show()
+
+
+# ---------------------------------------------------------------------------
+# Step 11: Dummy dashboard example
+# ---------------------------------------------------------------------------
+def _json_default(o):
+    import numpy as np
+    if isinstance(o, np.floating):
+        return float(o)
+    if isinstance(o, np.integer):
+        return int(o)
+    if isinstance(o, np.ndarray):
+        return o.tolist()
+    raise TypeError(f"Object of type {type(o)} is not JSON serializable")
+
+def export_tir_client_dashboard(
+    holes, result, similarity_df,
+    cluster_labels=None,
+    whole_hole_inputs=None,
+    whole_hole_result=None,
+    output_path="tir_client_dashboard.html",
+    open_browser=True,
+):
+    """
+    Step 11: writes a styled, standalone HTML dashboard (hole selector + summary
+    text + similarity + real spectra + depth profile + top named minerals) using
+    real numbers from your pipeline. Plain HTML/CSS/JS, not a Plotly figure.
+    Open the output file in any browser; no server or extra packages needed.
+    """
+    import json
+    import webbrowser
+    import numpy as np
+
+    assignments = result["assignments"]
+    hole_ids = sorted(assignments["hole_id"].unique())
+    n_clusters = assignments["cluster_id"].nunique()
+
+    if cluster_labels is None:
+        cluster_labels = {i: f"Cluster {i}" for i in range(n_clusters)}
+    cluster_names = [cluster_labels[i] for i in range(n_clusters)]
+    palette = ["#c9a53b", "#5b8c78", "#5a5f7a", "#8a5a34", "#b23a48", "#2f6f8f"]
+    cluster_cols = [palette[i % len(palette)] for i in range(n_clusters)]
+
+    counts = assignments.groupby(["hole_id", "cluster_id"]).size().unstack(fill_value=0)
+    counts = counts.reindex(columns=range(n_clusters), fill_value=0)
+    comp = counts.div(counts.sum(axis=1), axis=0) * 100
+    comp = comp.reindex(hole_ids)
+
+    N_DEPTH_BINS = 30
+    holes_data = {}
+
+    #Optional whole-hole comparison data (from run_whole_hole_baseline)
+    wh_proportions = wh_assignments = wh_quality = None
+    if whole_hole_inputs is not None and whole_hole_result is not None:
+        wh_proportions = whole_hole_inputs.proportions
+        wh_quality = whole_hole_inputs.quality
+        wh_assignments = whole_hole_result.assignments.set_index("hole_id")["cluster_id"]
+
+    for hole in hole_ids:
+        vals = comp.loc[hole].values.tolist()
+        dominant = int(np.argmax(vals))
+
+        meta = holes[hole]["metadata"]
+        labeled = meta[meta["Min1 ujCLST"].astype(str).str.strip() != ""]
+        mineral_counts = labeled["Min1 ujCLST"].value_counts()
+        n_minerals = int(mineral_counts.shape[0])
+        top6 = mineral_counts.head(6)
+        top6_pct = (top6 / len(labeled) * 100) if len(labeled) else top6 * 0
+
+        sims = similarity_df.loc[hole].drop(hole).sort_values(ascending=False).head(5)
+
+        # Depth profile: bin this hole's cleaned points by depth, get cluster % per bin
+        sub = assignments[assignments["hole_id"] == hole]
+        depths_arr = sub["depth_m"].to_numpy()
+        clusters_arr = sub["cluster_id"].to_numpy()
+        edges = np.linspace(depths_arr.min(), depths_arr.max(), N_DEPTH_BINS + 1)
+        bin_idx = np.clip(np.digitize(depths_arr, edges) - 1, 0, N_DEPTH_BINS - 1)
+        depth_bins = []
+        for b in range(N_DEPTH_BINS):
+            mask = bin_idx == b
+            if mask.sum() == 0:
+                depth_bins.append(None)
+            else:
+                c = np.bincount(clusters_arr[mask], minlength=n_clusters)
+                depth_bins.append([float(x) for x in (c / c.sum() * 100)])
+
+        if wh_proportions is not None and hole in wh_proportions.index:
+            grp1_row = (wh_proportions.loc[hole] * 100).sort_values(ascending=False)
+            grp1_composition = [[str(k), float(v)] for k, v in grp1_row.items() if v > 0]
+            whole_hole_cluster = int(wh_assignments.loc[hole]) if hole in wh_assignments.index else None
+            qc_valid_pct = float(wh_quality.loc[hole, "valid_pct"]) if hole in wh_quality.index else None
+        else:
+            grp1_composition, whole_hole_cluster, qc_valid_pct = [], None, None
+        
+        holes_data[hole] = {
+            "composition": vals,
+            "dominant": dominant,
+            "depth_min": float(meta["depth_m"].min()),
+            "depth_max": float(meta["depth_m"].max()),
+            "n_points": int(len(meta)),
+            "n_minerals": n_minerals,
+            "top_mineral": mineral_counts.index[0] if n_minerals else "n/a",
+            "top_mineral_pct": float(mineral_counts.iloc[0] / len(labeled) * 100) if n_minerals else 0.0,
+            "top_minerals": [[str(k), float(v)] for k, v in zip(top6_pct.index, top6_pct.values)],
+            "similar": [[str(k), float(v) * 100] for k, v in sims.items()],
+            "grp1_composition": grp1_composition,
+            "whole_hole_cluster": whole_hole_cluster,
+            "qc_valid_pct": qc_valid_pct,
+            "depth_profile": {
+                "depth_min": float(depths_arr.min()),
+                "depth_max": float(depths_arr.max()),
+                "bins": depth_bins,
+            },
+        }
+
+    wavelengths = [float(w) for w in result["wavelengths"]]
+    mean_spectra = [[float(v) for v in result["mean_snv_spectra"][c]] for c in range(n_clusters)]
+
+    # k-selection: silhouette score per candidate k, to justify choosing k=3
+    k_scores = result.get("k_scores")
+    k_list, sil_list = [], []
+    if isinstance(k_scores, dict):
+        for k, v in sorted(k_scores.items()):
+            k_list.append(int(k))
+            sil_list.append(float(v["silhouette"]) if isinstance(v, dict) else float(v))
+    elif hasattr(k_scores, "iterrows"):
+        for _, row in k_scores.sort_values("k").iterrows():
+            k_list.append(int(row["k"]))
+            sil_list.append(float(row["silhouette_score"]))
+
+    # cluster composition breakdown: top named minerals inside each cluster, cohort-wide
+    labeled_all = assignments[assignments["Min1 ujCLST"].astype(str).str.strip() != ""]
+    cluster_breakdown = []
+    for c in range(n_clusters):
+        sub = labeled_all[labeled_all["cluster_id"] == c]
+        vc = sub["Min1 ujCLST"].value_counts()
+        top5 = vc.head(5)
+        total = vc.sum()
+        cluster_breakdown.append({
+            "cluster": cluster_names[c],
+            "color": cluster_cols[c],
+            "minerals": [[str(k), float(v / total * 100)] for k, v in top5.items()] if total else [],
+        })
+
+    payload = {
+        "holeIds": hole_ids,
+        "clusterNames": cluster_names,
+        "clusterCols": cluster_cols,
+        "holes": holes_data,
+        "wavelengths": wavelengths,
+        "meanSpectra": mean_spectra,
+        "kSelection": {"k": k_list, "silhouette": sil_list, "chosenK": n_clusters},
+        "clusterBreakdown": cluster_breakdown,
+    }
+
+    html = _TIR_DASHBOARD_TEMPLATE.replace("__DATA_JSON__", json.dumps(payload, default=_json_default))
+    with open(output_path, "w") as f:
+        f.write(html)
+
+    print(f"Dashboard written to {output_path}")
+    if open_browser:
+        webbrowser.open(f"file://{__import__('os').path.abspath(output_path)}")
+
+
+_TIR_DASHBOARD_TEMPLATE = """<!doctype html>
+<html><head><meta charset="utf-8"><title>TIR Hole Explorer</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap">
+<style>
+:root{
+  --bg:#f4f1ec; --surface:#ffffff; --ink:#221d17; --ink-dim:#6b6152; --line:#ddd4c3; --accent:#8a5a34;
+}
+*{box-sizing:border-box}
+html,body{height:100%;margin:0}
+body{background:var(--bg);color:var(--ink);font-family:'IBM Plex Sans',system-ui,sans-serif;padding:12px 16px;min-height:100vh}
+.mono{font-family:'IBM Plex Mono',ui-monospace,monospace;font-variant-numeric:tabular-nums}
+.wrap{max-width:1280px;margin:0 auto;height:calc(100vh - 24px);min-height:600px;display:flex;flex-direction:column;gap:10px}
+header{flex:none;display:flex;justify-content:space-between;align-items:baseline;flex-wrap:wrap;gap:6px}
+header .titleblock{display:flex;align-items:baseline;gap:10px;flex-wrap:wrap}
+header h1{font-size:19px;font-weight:600;margin:0}
+header .eyebrow{font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:var(--accent)}
+header p{color:var(--ink-dim);font-size:11.5px;margin:0}
+.layout{flex:1;min-height:0;display:grid;grid-template-columns:190px minmax(0,1fr);gap:10px}
+.rail{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:8px;overflow-y:auto;min-height:0}
+.rail-label{font-size:10px;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-dim);padding:4px 6px 6px}
+.hole-btn{display:flex;justify-content:space-between;align-items:center;gap:6px;width:100%;text-align:left;border:1px solid transparent;background:none;color:var(--ink);font:inherit;font-size:12px;padding:6px 7px;border-radius:6px;cursor:pointer}
+.hole-btn:hover{background:var(--bg)}
+.hole-btn[aria-pressed="true"]{background:var(--accent);color:#fff}
+.hole-btn .dot{width:7px;height:7px;border-radius:50%;flex:none}
+.hole-btn .pct{font-family:'IBM Plex Mono',monospace;font-size:10.5px;color:var(--ink-dim)}
+.hole-btn[aria-pressed="true"] .pct{color:rgba(255,255,255,.85)}
+.main{min-height:0;display:flex;flex-direction:column;gap:10px;overflow-y:auto}
+.main > *{flex:none}
+.grid2b{display:grid;grid-template-columns:1fr 1fr;gap:10px;min-height:0;align-items:stretch}
+.grid2b > div {
+    overflow: hidden;
+}
+.grid2c{display:grid;grid-template-columns:1fr 1fr;gap:10px;min-height:0;align-items:start}
+.grid2c > div { overflow: hidden; }
+.card{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:12px 14px;min-width:0;display:flex;flex-direction:column;min-height:0}
+.card h2{font-size:11.5px;letter-spacing:.03em;text-transform:uppercase;color:var(--ink-dim);font-weight:600;margin:0;flex:none}
+.card .sub{font-size:10.5px;color:var(--ink-dim);margin-top:1px;line-height:1.4;flex:none}
+.topcard{flex-direction:row;flex-wrap:wrap;align-items:center;gap:18px;padding:10px 14px}
+.hole-head{display:flex;align-items:baseline;gap:8px;flex:none}
+.hole-head h1{font-size:18px;margin:0}
+.hole-head .depth{font-family:'IBM Plex Mono',monospace;font-size:10.5px;color:var(--ink-dim)}
+.summary{font-size:11.5px;line-height:1.5;flex:1 1 320px;min-width:260px}
+.summary b{color:var(--accent)}
+.bars{display:flex;flex-direction:column;gap:5px;flex:0 0 260px}
+.bar-row{display:grid;grid-template-columns:88px minmax(0,1fr) 44px;gap:6px;align-items:center}
+.bar-row .name{font-size:11px;display:flex;align-items:center;gap:5px}
+.bar-row .name .dot{width:7px;height:7px;border-radius:50%;flex:none}
+.bar-track{background:var(--bg);border-radius:5px;height:9px;overflow:hidden;border:1px solid var(--line)}
+.bar-fill{height:100%;border-radius:5px 0 0 5px}
+.bar-row .val{font-family:'IBM Plex Mono',monospace;font-size:11px;text-align:right}
+.flag{display:flex;gap:6px;align-items:flex-start;background:var(--bg);border:1px solid var(--line);border-radius:7px;padding:6px 9px;font-size:10.5px;color:var(--ink-dim);line-height:1.4;flex:0 0 230px}
+.grid4{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;min-height:0;align-items:stretch}
+.chartbox{flex:1;min-height:0;position:relative;margin-top:6px}
+.chartbox svg{width:100%;height:100%;display:block}
+.simlist{display:flex;flex-direction:column;gap:3px;margin-top:6px;overflow-y:auto;min-height:0}
+.simrow{display:grid;grid-template-columns:minmax(0,1fr) auto 42px;gap:6px;align-items:center;font-size:11px;padding:4px 0;border-bottom:1px solid var(--line)}
+.simrow:last-child{border-bottom:none}
+.simrow .simtrack{background:var(--bg);border-radius:5px;height:7px;overflow:hidden;border:1px solid var(--line)}
+.simrow .simfill{height:100%;background:var(--accent);border-radius:5px}
+.simrow .simval{font-family:'IBM Plex Mono',monospace;text-align:right;color:var(--ink-dim);font-size:10.5px}
+.minlist{display:flex;flex-direction:column;gap:5px;margin-top:6px;overflow-y:auto;min-height:0}
+#grp1List{max-height:240px}
+.minrow{display:grid;grid-template-columns:82px minmax(0,1fr) 38px;gap:6px;align-items:center;font-size:10.5px}
+.minrow .mintrack{background:var(--bg);border-radius:5px;height:9px;overflow:hidden;border:1px solid var(--line)}
+.minrow .minfill{height:100%;border-radius:5px}
+svg text{fill:var(--ink-dim);font-family:'IBM Plex Mono',monospace;font-size:9px}
+</style></head>
+<body><div class="wrap">
+<header>
+<div class="titleblock">
+<span class="eyebrow">GSWA HyLogger &middot; TIR</span>
+<h1>TIR Hole Explorer</h1>
+</div>
+<p>Pick a hole to see composition, similarity, spectra and depth profile at a glance.</p>
+</header>
+<div class="layout">
+<nav class="rail" id="rail"><div class="rail-label" id="railCount"></div><div id="holeList"></div></nav>
+<div class="main">
+<div class="card topcard">
+<div class="hole-head"><h1 id="holeName" class="mono">&mdash;</h1><span class="depth" id="holeMeta"></span></div>
+<div class="summary" id="summaryText"></div>
+<div class="bars" id="bars"></div>
+<div class="flag"><span>&#9888;</span><span>TIR cannot detect gold. Groups shown are the pipeline's 3 TIR clusters: Silica/Quartz, Carbonate, Mafic/ultramafic.</span></div>
+</div>
+<div class="grid4">
+<div class="card">
+<h2>Most similar holes</h2>
+<div class="sub">Full-spectra cosine similarity.</div>
+<div class="simlist" id="simlist"></div>
+</div>
+<div class="card">
+<h2>Cluster mean spectra</h2>
+<div class="sub">Real mean SNV spectra per cluster.</div>
+<div class="chartbox"><svg id="waveChart" viewBox="0 0 260 220" preserveAspectRatio="xMidYMid meet"></svg></div>
+</div>
+<div class="card">
+<h2>Depth profile</h2>
+<div class="sub">Composition by depth, shallow&rarr;deep.</div>
+<div class="chartbox"><svg id="depthChart" viewBox="0 0 240 240" preserveAspectRatio="xMidYMid meet"></svg></div>
+</div>
+<div class="card">
+<h2>Top named minerals</h2>
+<div class="sub">From Min1 ujCLST, real counts.</div>
+<div class="minlist" id="minlist"></div>
+</div>
+</div>
+<div class="grid2b">
+<div class="card">
+<h2>Choosing k=3</h2>
+<div class="sub">Silhouette score across candidate k values.</div>
+<div class="chartbox" style="flex:none;height:140px"><svg id="kChart" viewBox="0 0 260 140" width="260" height="140" preserveAspectRatio="xMidYMid meet" style="width:100%;height:100%;display:block"></svg></div>
+</div>
+<div class="card">
+<h2>What's inside each cluster</h2>
+<div class="sub">Top named minerals per cluster, cohort-wide.</div>
+<div id="clusterBreakdown" style="display:flex;gap:14px;margin-top:6px"></div>
+</div>
+</div>
+<div class="grid2c">
+<div class="card">
+<h2>Whole-hole mineral profile (Grp1 ujCLST)</h2>
+<div class="sub">TSG's own mineral-group interpretation, % of valid readings for this hole.</div>
+<div class="minlist" id="grp1List"></div>
+</div>
+<div class="card">
+<h2>Whole-hole clustering</h2>
+<div class="sub">Independent clustering on Grp1 ujCLST proportions (k=2 baseline). Shown for comparison only — not a validation of the spectral clusters above.</div>
+<div id="wholeHoleInfo" style="font-size:11.5px;line-height:1.6;margin-top:6px"></div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<script>
+function drawKChart(){
+  const svg=document.getElementById('kChart');
+  const ks=DATA.kSelection.k, sils=DATA.kSelection.silhouette, chosen=DATA.kSelection.chosenK;
+  if(!ks.length){svg.innerHTML='<text x="10" y="20">k-selection data not available</text>';return;}
+  const W=260,H=140,padL=30,padR=10,padT=10,padB=22;
+  const plotW=W-padL-padR, plotH=H-padT-padB;
+  const kmin=Math.min(...ks), kmax=Math.max(...ks);
+  const smin=Math.min(...sils), smax=Math.max(...sils);
+  const sx=k=>padL+((k-kmin)/((kmax-kmin)||1))*plotW;
+  const sy=s=>padT+plotH-((s-smin)/((smax-smin)||1))*plotH;
+  let d='';
+  ks.forEach((k,i)=>{ const x=sx(k), y=sy(sils[i]); d+=(i===0?'M':'L')+x.toFixed(1)+' '+y.toFixed(1)+' '; });
+  let out=`<path d="${d}" fill="none" stroke="var(--accent)" stroke-width="1.6"/>`;
+  ks.forEach((k,i)=>{
+    const x=sx(k), y=sy(sils[i]);
+    const isChosen = k===chosen;
+    out+=`<circle cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="${isChosen?4.5:2.5}" fill="${isChosen?'var(--accent)':'#bba98a'}"/>`;
+    out+=`<text x="${x.toFixed(1)}" y="${H-6}" text-anchor="middle">${k}</text>`;
+    if(isChosen) out+=`<text x="${x.toFixed(1)}" y="${(y-8).toFixed(1)}" text-anchor="middle" font-weight="600" fill="var(--accent)">chosen</text>`;
+  });
+  out+=`<text x="0" y="${padT+4}">${smax.toFixed(2)}</text><text x="0" y="${padT+plotH}">${smin.toFixed(2)}</text>`;
+  svg.innerHTML=out;
+}
+
+function buildClusterBreakdown(){
+  const el=document.getElementById('clusterBreakdown');
+  el.innerHTML = DATA.clusterBreakdown.map(cb=>`
+    <div style="flex:1;min-width:0;display:flex;flex-direction:column;gap:4px">
+      <div style="font-size:11px;font-weight:600;display:flex;align-items:center;gap:6px">
+        <span style="width:8px;height:8px;border-radius:50%;background:${cb.color}"></span>${cb.cluster}
+      </div>
+      ${cb.minerals.map(([m,p])=>`
+        <div style="display:grid;grid-template-columns:70px minmax(0,1fr) 36px;gap:5px;align-items:center;font-size:10px">
+          <span class="mono" style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${m}</span>
+          <div style="background:var(--bg);border-radius:5px;height:7px;overflow:hidden;border:1px solid var(--line)"><div style="height:100%;background:${cb.color};width:${Math.max(p,1)}%"></div></div>
+          <span>${p.toFixed(1)}%</span>
+        </div>`).join('')}
+    </div>`).join('');
+}
+const DATA = __DATA_JSON__;
+const holeIds = DATA.holeIds;
+const names = DATA.clusterNames;
+const cols = DATA.clusterCols;
+
+const rail = document.getElementById('holeList');
+document.getElementById('railCount').textContent = holeIds.length + " holes";
+holeIds.forEach(id=>{
+  const d = DATA.holes[id];
+  const btn = document.createElement('button');
+  btn.className='hole-btn'; btn.dataset.id=id; btn.setAttribute('aria-pressed','false');
+  btn.innerHTML = `<span style="display:flex;align-items:center;gap:6px;min-width:0"><span class="dot" style="background:${cols[d.dominant]}"></span><span class="mono">${id}</span></span><span class="pct">${d.composition[d.dominant].toFixed(0)}%</span>`;
+  btn.addEventListener('click',()=>select(id));
+  rail.appendChild(btn);
+});
+
+function pctBar(name,val,color){
+  return `<div class="bar-row"><div class="name"><span class="dot" style="background:${color}"></span>${name}</div><div class="bar-track"><div class="bar-fill" style="width:${Math.max(val,0.4)}%;background:${color}"></div></div><div class="val">${val.toFixed(1)}%</div></div>`;
+}
+
+function drawWaveChart(highlightIdx){
+  const svg=document.getElementById('waveChart');
+  const W=260,H=220,padL=8,padR=8,padT=8,padB=18;
+  const plotW=W-padL-padR, plotH=H-padT-padB;
+  const wl=DATA.wavelengths, spectra=DATA.meanSpectra;
+  let ymin=Infinity,ymax=-Infinity;
+  spectra.forEach(s=>s.forEach(v=>{if(v<ymin)ymin=v; if(v>ymax)ymax=v;}));
+  const xmin=wl[0], xmax=wl[wl.length-1];
+  let out=`<line x1="${padL}" y1="${padT+plotH}" x2="${padL+plotW}" y2="${padT+plotH}" stroke="var(--line)"/>`;
+  out+=`<text x="${padL}" y="${H-4}">${Math.round(xmin)} nm</text><text x="${padL+plotW-40}" y="${H-4}">${Math.round(xmax)} nm</text>`;
+  spectra.forEach((s,idx)=>{
+    let d='';
+    for(let i=0;i<s.length;i++){
+      const x=padL+((wl[i]-xmin)/(xmax-xmin))*plotW;
+      const y=padT+plotH-((s[i]-ymin)/(ymax-ymin))*(plotH-6);
+      d+=(i===0?'M':'L')+x.toFixed(1)+' '+y.toFixed(1)+' ';
+    }
+    const w = idx===highlightIdx?2.2:1;
+    const op = idx===highlightIdx?1:0.35;
+    out+=`<path d="${d}" fill="none" stroke="${cols[idx]}" stroke-width="${w}" opacity="${op}"/>`;
+  });
+  svg.innerHTML=out;
+}
+
+function drawDepthChart(profile){
+  const svg=document.getElementById('depthChart');
+  const W=240,H=240,padL=40,padR=6,padT=6,padB=6;
+  const plotW=W-padL-padR, plotH=H-padT-padB;
+  const bins=profile.bins, n=bins.length;
+  const rowH=plotH/n;
+  let out='';
+  for(let i=0;i<n;i++){
+    const y=padT+i*rowH;
+    const row=bins[i];
+    if(row===null){
+      out+=`<rect x="${padL}" y="${y.toFixed(1)}" width="${plotW}" height="${(rowH+0.5).toFixed(1)}" fill="var(--line)" opacity="0.5"/>`;
+      continue;
+    }
+    let x=padL;
+    row.forEach((pct,ci)=>{
+      const w=(pct/100)*plotW;
+      out+=`<rect x="${x.toFixed(1)}" y="${y.toFixed(1)}" width="${w.toFixed(1)}" height="${(rowH+0.5).toFixed(1)}" fill="${cols[ci]}"/>`;
+      x+=w;
+    });
+  }
+  const dmin=profile.depth_min, dmax=profile.depth_max;
+  [0,0.5,1].forEach(t=>{
+    const y=padT+t*plotH;
+    const depthVal=dmin+t*(dmax-dmin);
+    out+=`<text x="0" y="${(y+3).toFixed(1)}">${depthVal.toFixed(0)} m</text>`;
+  });
+  out+=`<rect x="${padL}" y="${padT}" width="${plotW}" height="${plotH}" fill="none" stroke="var(--line)"/>`;
+  svg.innerHTML=out;
+}
+
+function select(id){
+  document.querySelectorAll('.hole-btn').forEach(b=>b.setAttribute('aria-pressed', b.dataset.id===id?'true':'false'));
+  const d = DATA.holes[id];
+  document.getElementById('holeName').textContent = id;
+  document.getElementById('holeMeta').textContent = "k=3";
+  document.getElementById('summaryText').innerHTML =
+    `Depth: <b>${d.depth_min.toFixed(1)}\u2013${d.depth_max.toFixed(1)} m</b> (${d.n_points.toLocaleString()} pts). ` +
+    `Dominant: <b>${names[d.dominant]}</b> (${d.composition[d.dominant].toFixed(1)}%). ` +
+    `Top mineral: <b>${d.top_mineral}</b> (${d.top_mineral_pct.toFixed(1)}%). ` +
+    `<b>${d.n_minerals}</b> minerals found. ` +
+    (d.similar.length? `Closest: <b>${d.similar[0][0]}</b> (${d.similar[0][1].toFixed(0)}%).` : "");
+  document.getElementById('bars').innerHTML = names.map((n,i)=>pctBar(n, d.composition[i], cols[i])).join('');
+  document.getElementById('simlist').innerHTML = d.similar.map(([k,v])=>`<div class="simrow"><span class="mono">${k}</span><div class="simtrack"><div class="simfill" style="width:${v.toFixed(0)}%"></div></div><span class="simval">${v.toFixed(0)}%</span></div>`).join('');
+  document.getElementById('minlist').innerHTML = d.top_minerals.map(([k,v])=>`<div class="minrow"><span class="mono">${k}</span><div class="mintrack"><div class="minfill" style="width:${Math.max(v,0.4)}%;background:${cols[d.dominant]}"></div></div><span>${v.toFixed(1)}%</span></div>`).join('');
+  document.getElementById('grp1List').innerHTML = (d.grp1_composition && d.grp1_composition.length)
+  ? d.grp1_composition.map(([k,v])=>`<div class="minrow"><span class="mono">${k}</span><div class="mintrack"><div class="minfill" style="width:${Math.max(v,0.4)}%;background:#8a5a34"></div></div><span>${v.toFixed(1)}%</span></div>`).join('')
+  : '<span style="color:var(--ink-dim)">Not available for this hole.</span>';
+
+const whInfo = document.getElementById('wholeHoleInfo');
+whInfo.innerHTML = (d.whole_hole_cluster === null || d.whole_hole_cluster === undefined)
+  ? '<span style="color:var(--ink-dim)">Not available for this hole.</span>'
+  : `Whole-hole cluster: <b>${d.whole_hole_cluster}</b><br>Valid-label coverage: <b>${(d.qc_valid_pct ?? 0).toFixed(1)}%</b>`;
+  drawWaveChart(d.dominant);
+  drawDepthChart(d.depth_profile);
+}
+select(holeIds[0]);
+drawKChart();
+buildClusterBreakdown();
+</script>
+</body></html>"""
 
 # ---------------------------------------------------------------------------
 # Example usage (not run automatically on import):
 #
-# holes = load_all_tir_holes()
-# holes = remove_duplicate_depths(holes)
-# holes = clean_tir_holes(holes)
-# holes = decode_tir_codes(holes)
-# pca_result = run_tir_pca(holes)
-# result = cluster_tir_pca(pca_result, n_clusters=3)
-# describe_tir_clusters(result)
-# plot_tir_dashboard(result)
-# similarity_df = hole_similarity_matrix(result)
-# plot_hole_similarity_heatmap(similarity_df)
+if __name__ == "__main__":
+    from hylogger.config import AppConfig
+
+    holes = load_all_tir_holes()
+    holes = remove_duplicate_depths(holes)
+    holes = clean_tir_holes(holes)
+    holes = decode_tir_codes(holes)
+    pca_result = run_tir_pca(holes)
+    k_scan = cluster_tir_pca(pca_result)              # scans k=2..8, gives the real silhouette curve
+    result = cluster_tir_pca(pca_result, n_clusters=3)  # commits to k=3 for the actual clustering
+    result["k_scores"] = k_scan["k_scores"]             # give the dashboard the full curve, not just k=3
+    describe_tir_clusters(result)
+    similarity_df = hole_similarity_matrix(result)
+
+    config = AppConfig.load()
+    wh_inputs, wh_result = run_whole_hole_baseline(config)
+    check_baseline_stability(wh_inputs)
+    check_baseline_scaling_sensitivity(wh_inputs)
+
+    export_tir_client_dashboard(
+        holes, result, similarity_df,
+        whole_hole_inputs=wh_inputs, whole_hole_result=wh_result,
+    )
 # ---------------------------------------------------------------------------
